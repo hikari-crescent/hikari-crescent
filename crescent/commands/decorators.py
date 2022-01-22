@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import Parameter, signature
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Sequence, TypeVar
 
 from hikari import (
+    CommandOption,
     OptionType,
     PartialChannel,
     Role,
@@ -13,11 +14,12 @@ from hikari import (
 )
 
 from crescent.commands.args import Arg, Name, Description
-from crescent.internal.app_command import AppCommandOption
 from crescent.internal.registry import register_command
 
 if TYPE_CHECKING:
     from typing import Optional, Type, Dict
+
+    T = TypeVar("T")
 
 __all__: Sequence[str] = (
     "command",
@@ -37,7 +39,7 @@ _OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
 }
 
 
-def _gen_command_option(param: Parameter) -> AppCommandOption:
+def _gen_command_option(param: Parameter) -> CommandOption:
     name = param.name
     typehint = param.annotation
 
@@ -50,17 +52,19 @@ def _gen_command_option(param: Parameter) -> AppCommandOption:
 
     _type = _OPTIONS_TYPE_MAP[origin]
 
-    def get_arg(t: Type[Arg]) -> Optional[Any]:
+    def get_arg(t: Type[Arg]) -> Optional[T]:
+        data: T
         for data in metadata:
             if type(data) == t:
                 return data.payload
+        return None
 
     name = get_arg(Name) or name
     description = get_arg(Description) or "Description not set"
 
     required = param.default is param.empty
 
-    return AppCommandOption(
+    return CommandOption(
         name=name,
         type=_type,
         description=description,
@@ -69,8 +73,7 @@ def _gen_command_option(param: Parameter) -> AppCommandOption:
         channel_types=None,
         min_value=None,
         max_value=None,
-        autocomplete=None,
-        required=required
+        is_required=required
     )
 
 

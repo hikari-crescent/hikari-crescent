@@ -1,11 +1,16 @@
 from __future__ import annotations
-from asyncio import ensure_future
 
 from concurrent.futures import Executor
+from functools import partial
+from itertools import chain
 from typing import TYPE_CHECKING, Sequence, overload
 
 from hikari import GatewayBot, Intents, ProxySettings, ShardReadyEvent, Snowflake
 from hikari.config import CacheSettings, HTTPSettings
+
+from crescent.commands.decorators import command as _command
+from crescent.internal.app_command import AppCommandMeta
+from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler
 from crescent.partial import Partial
 from crescent.utils import iterate_vars
@@ -22,7 +27,11 @@ __all___: Sequence[str] = (
 
 class Bot(GatewayBot):
 
-    __slots__ = (*GatewayBot.__slots__, "__dict__")
+    __slots__ = (
+        "__dict__",
+        "_command_handler",
+        "default_guild",
+    )
 
     @overload  # type: ignore
     def __init__(
@@ -46,6 +55,7 @@ class Bot(GatewayBot):
     def __init__(
         self,
         *args,
+        default_guild: Optional[Snowflake] = None,
         guilds: Sequence[Snowflake] = None,
         **kwargs
     ):
@@ -54,9 +64,14 @@ class Bot(GatewayBot):
         if guilds is None:
             guilds = ()
 
+        if default_guild and default_guild not in guilds:
+            guilds = tuple(chain(guilds, (default_guild,)))
+
+        self._command_handler = CommandHandler(self, guilds)
+        self.default_guild = default_guild
+
         async def shard_ready(event: ShardReadyEvent):
-            print(event)
-            await CommandHandler.init(self, guilds, event)
+            await self._command_handler.init(event)
 
         self.subscribe(
             ShardReadyEvent,
@@ -66,3 +81,18 @@ class Bot(GatewayBot):
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, Partial):
                 value(self)
+            if isinstance(value, MetaStruct):
+                self._command_handler.register(value)
+
+    def include(self, command: MetaStruct[AppCommandMeta] = None):
+        if command is None:
+            return self.include
+
+        self._command_handler.register(command)
+
+        return command
+
+    def command(self, func=None, *args, **kwargs):
+        if func is None:
+            return partial(self.command, *args, **kwargs)
+        return self.include(command=_command(func, *args, **kwargs))

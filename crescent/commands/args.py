@@ -5,13 +5,13 @@ from attr import define
 
 class Arg(ABC):
     @property
-    def payload() -> Any:
+    def payload(self) -> Any:
         """Returns the data for this object"""
         ...
 
 
 @define
-class Description:
+class Description(Arg):
     description: str
 
     @property
@@ -20,7 +20,7 @@ class Description:
 
 
 @define
-class Name:
+class Name(Arg):
     name: str
 
     @property

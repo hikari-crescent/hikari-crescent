@@ -13,10 +13,7 @@ if TYPE_CHECKING:
 def event(
     callback: CallbackT[Any] = None,
     event_type: Type[Any] = None
-) -> Callable[
-    [CallbackT[EventT_co]],
-    CallbackT[EventT_co],
-]:
+):
     if callback is None:
         return partial(event, event_type=event_type)
 

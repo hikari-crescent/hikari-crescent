@@ -1,19 +1,25 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 from attr import define
-from hikari import ChannelType, OptionType
+from hikari import CommandOption
 
 if TYPE_CHECKING:
     from typing import Optional, Sequence
     from hikari import Snowflake
 
+    Unique = Tuple[
+        str,
+        Optional[Snowflake],
+        Optional[str],
+        Optional[str]
+    ]
 
 __all__: Sequence[str] = (
     "AppCommandMeta",
-    "AppCommand"
+    "AppCommand",
 )
 
 
@@ -30,28 +36,10 @@ class AppCommand:
     name: str
     description: str
     guild_id: Optional[Snowflake]
-    options: Optional[Sequence[AppCommandOption]]
+    options: Optional[Sequence[CommandOption]]
     default_permission: Optional[bool]
 
-
-@define
-class AppCommandOption:
-    type: OptionType
-    name: str
-    description: str
-    required: Optional[bool]
-    choices: Optional[Sequence[Choice]]
-    options: Optional[Sequence[AppCommandOption]]
-    channel_types: Optional[Sequence[ChannelType]]
-    min_value: Optional[int | float]
-    max_value: Optional[int | float]
-    autocomplete: Optional[bool]
-
-
-@define
-class Choice:
-    name: str
-    value: str | int | float
+    id: Optional[Snowflake] = None
 
 
 @define
@@ -61,12 +49,10 @@ class AppCommandMeta:
     sub_group: Optional[str] = None
 
     @property
-    def unique(self) -> int:
-        return hash(
-            (
-                self.app.name,
-                self.app.guild_id,
-                self.group,
-                self.sub_group,
-            )
+    def unique(self) -> Unique:
+        return (
+            self.app.name,
+            self.app.guild_id,
+            self.group,
+            self.sub_group,
         )
