@@ -1,0 +1,107 @@
+from __future__ import annotations
+
+from functools import partial
+from inspect import Parameter, signature
+from typing import TYPE_CHECKING, Any, Sequence
+
+from hikari import (
+    OptionType,
+    PartialChannel,
+    Role,
+    Snowflake,
+    User,
+)
+
+from crescent.commands.args import Arg, Name, Description
+from crescent.internal.app_command import AppCommandOption
+from crescent.internal.registry import register_command
+
+if TYPE_CHECKING:
+    from typing import Optional, Type, Dict
+
+__all__: Sequence[str] = (
+    "command",
+)
+
+_OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
+    str: OptionType.STRING,
+    bool: OptionType.BOOLEAN,
+    int: OptionType.INTEGER,
+    float: OptionType.FLOAT,
+    PartialChannel: OptionType.CHANNEL,
+    Role: OptionType.ROLE,
+    User: OptionType.USER,
+
+    # TODO
+    # OptionType.MENTIONABLE
+}
+
+
+def _gen_command_option(param: Parameter) -> AppCommandOption:
+    name = param.name
+    typehint = param.annotation
+
+    metadata = ()
+
+    origin = typehint
+    if hasattr(typehint, "__metadata__"):
+        metadata = typehint.__metadata__
+        origin = typehint.__origin__
+
+    _type = _OPTIONS_TYPE_MAP[origin]
+
+    def get_arg(t: Type[Arg]) -> Optional[Any]:
+        for data in metadata:
+            if type(data) == t:
+                return data.payload
+
+    name = get_arg(Name) or name
+    description = get_arg(Description) or "Description not set"
+
+    required = param.default is param.empty
+
+    return AppCommandOption(
+        name=name,
+        type=_type,
+        description=description,
+        choices=None,
+        options=None,
+        channel_types=None,
+        min_value=None,
+        max_value=None,
+        autocomplete=None,
+        required=required
+    )
+
+
+def command(
+    callback=None,
+    guild: Optional[Snowflake] = None,
+    name: Optional[str] = None,
+    group: Optional[str] = None,
+    sub_group: Optional[str] = None,
+    description: Optional[str] = None,
+):
+    if not callback:
+        return partial(
+            command,
+            name=name,
+            group=group,
+            sub_group=sub_group,
+            description=description
+        )
+
+    options = tuple(
+        _gen_command_option(param)
+        for param in signature(callback).parameters.values()
+    )
+
+    return register_command(
+        callback=callback,
+        guild=guild,
+        name=name,
+        group=group,
+        sub_group=sub_group,
+        description=description,
+        options=options
+    )
