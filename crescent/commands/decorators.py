@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import Parameter, signature
-from typing import TYPE_CHECKING, Sequence, TypeVar
+from typing import TYPE_CHECKING
 
 from hikari import (
     CommandOption,
@@ -13,13 +13,21 @@ from hikari import (
     User,
 )
 
-from crescent.commands.args import Arg, Name, Description
+from crescent.commands.args import (
+    Arg,
+    ChannelTypes,
+    Choices,
+    MaxValue,
+    MinValue,
+    Name,
+    Description,
+)
 from crescent.context import Context
 from crescent.internal.registry import register_command
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
-    from typing import Optional, Type, Dict
+    from typing import Any, Optional, Type, Dict, Sequence, TypeVar
 
     T = TypeVar("T")
 
@@ -55,15 +63,19 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
 
     _type = _OPTIONS_TYPE_MAP[origin]
 
-    def get_arg(t: Type[Arg]) -> Optional[T]:
+    def get_arg(t: Type[Arg] | Type[Any]) -> Optional[T]:
         data: T
         for data in metadata:
             if type(data) == t:
-                return data.payload
+                return getattr(data, "payload", data)
         return None
 
     name = get_arg(Name) or name
-    description = get_arg(Description) or "Description not set"
+    description = get_arg(Description) or get_arg(str) or "\u200B"
+    choices = get_arg(Choices)
+    channel_types = get_arg(ChannelTypes)
+    min_value = get_arg(MinValue)
+    max_value = get_arg(MaxValue)
 
     required = param.default is param.empty
 
@@ -71,11 +83,11 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
         name=name,
         type=_type,
         description=description,
-        choices=None,
+        choices=choices,
         options=None,
-        channel_types=None,
-        min_value=None,
-        max_value=None,
+        channel_types=channel_types,
+        min_value=min_value,
+        max_value=max_value,
         is_required=required
     )
 

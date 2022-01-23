@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from hikari import CommandInteraction, CommandInteractionOption, OptionType
 from crescent.context import Context
-from crescent.internal.app_command import Unique
+from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
 from crescent.utils.options import unwrap
 
@@ -28,20 +28,35 @@ async def handle_resp(event: InteractionCreateEvent):
         interaction = cast(CommandInteraction, interaction)
         bot = cast(Bot, bot)
 
-    key = Unique(
-        interaction.command_name,
-        interaction.guild_id,
-        None,
-        None,
-    )
+    name: str = interaction.command_name
+    group: Optional[str] = None
+    sub_group: Optional[str] = None
+    options: Sequence[CommandInteractionOption] = interaction.options
 
-    command = bot._command_handler.registry.get(key)
+    if interaction.options:
+        option = unwrap(options)[0]
+        if option.type == 1:
+            group = name
+            name = option.name
+            options = option.options
+        elif option.type == 2:
+            group = interaction.command_name
+            sub_group = option.name
+            name = unwrap(option.options)[0].name
+            options = unwrap(option.options)[0].options
 
-    options = _options_to_kwargs(interaction)
+    command = bot._command_handler.registry.get(Unique(
+        name=name,
+        type=AppCommandType.CHAT_INPUT,
+        guild_id=interaction.guild_id,
+        group=group,
+        sub_group=sub_group,
+    ))
 
     ctx = Context._from_partial_interaction(interaction)
+    callback_params = _options_to_kwargs(interaction, options)
 
-    await unwrap(command).callback(ctx, **options)
+    await unwrap(command).callback(ctx, **callback_params)
 
 _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
     OptionType.ROLE: "roles",
@@ -50,12 +65,15 @@ _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
 }
 
 
-def _options_to_kwargs(interaction: CommandInteraction) -> Dict[str, Any]:
-    if not interaction.options:
+def _options_to_kwargs(
+    interaction: CommandInteraction,
+    options: CommandInteractionOption
+) -> Dict[str, Any]:
+    if not options:
         return {}
 
     return {
-        option.name: _extract_value(option, interaction) for option in interaction.options
+        option.name: _extract_value(option, interaction) for option in options
     }
 
 

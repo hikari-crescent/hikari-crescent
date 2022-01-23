@@ -2,22 +2,22 @@ from __future__ import annotations
 from asyncio import gather
 from itertools import chain
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
-from hikari import UNDEFINED, CommandOption, ShardReadyEvent, Snowflake
+from hikari import UNDEFINED, CommandOption, OptionType, ShardReadyEvent, Snowflake
 
 from crescent.utils import gather_iter
+from crescent.utils.options import unwrap
 from crescent.internal.app_command import AppCommand, AppCommandType
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.app_command import AppCommandMeta
-from crescent.utils.options import unwrap
+from crescent.internal.app_command import Unique
 
 if TYPE_CHECKING:
     from typing import Callable, Any, Awaitable, Optional, Sequence
     from hikari import Command, UndefinedOr
     from crescent.bot import Bot
-    from crescent.internal.app_command import Unique
 
 
 def register_command(
@@ -32,7 +32,7 @@ def register_command(
 ):
 
     name = name or callback.__name__
-    description = description or "No Description Set"
+    description = description or "\u200B"
 
     meta: MetaStruct[AppCommandMeta] = MetaStruct(
         callback=callback,
@@ -111,11 +111,132 @@ class CommandHandler:
         ]
 
     def build_commands(self) -> Sequence[AppCommand]:
-        def set_guild(command: AppCommand) -> AppCommand:
-            command.guild_id = command.guild_id or self.bot.default_guild
-            return command
 
-        return tuple(set_guild(app.metadata.app) for app in self.registry.values())
+        built_commands: Dict[Unique, AppCommand] = {}
+
+        for command in self.registry.values():
+            command.metadata.app.guild_id = (
+                command.metadata.app.guild_id or self.bot.default_guild
+            )
+
+            if command.metadata.sub_group:
+                # If a command has a sub_group, it must be nested 2 levels deep.
+                #
+                # command
+                #     subcommand-group
+                #         subcommand
+                #
+                # The children of the subcommand-group object are being set to include
+                # `command` If that subcommand-group object does not exist, it will be
+                # created here. The same goes for the top-level command.
+                #
+                # First make sure the command exists. This command will hold the
+                # subcommand-group for `command`.
+
+                # `key` represents the unique value for the top-level command that will
+                # hold the subcommand.
+                key = Unique(
+                    name=unwrap(command.metadata.group),
+                    type=command.metadata.app.type,
+                    guild_id=command.metadata.app.guild_id,
+                    group=None,
+                    sub_group=None,
+                )
+
+                if key not in built_commands:
+                    built_commands[key] = AppCommand(
+                        name=unwrap(command.metadata.group),
+                        description="HIDDEN",
+                        type=AppCommandType.CHAT_INPUT,
+                        guild_id=command.metadata.app.guild_id,
+                        options=[],
+                        default_permission=command.metadata.app.default_permission
+                    )
+
+                # The top-level command now exists. A subcommand group now if placed
+                # inside the top-level command. This subcommand group will hold `command`.
+
+                children = unwrap(built_commands[key].options)
+
+                sub_command_group = CommandOption(
+                    name=command.metadata.sub_group,
+                    description="HIDDEN",
+                    type=OptionType.SUB_COMMAND_GROUP,
+                    options=[],
+                    is_required=None,  # type: ignore
+                )
+
+                # This for-else makes sure that sub_command_group will hold a reference
+                # to the subcommand group that we want to modify to hold `command`
+                for cmd_in_children in children:
+                    if all(
+                        (
+                            cmd_in_children.name == sub_command_group.name,
+                            cmd_in_children.description == sub_command_group.description,
+                            cmd_in_children.type == sub_command_group.type
+                        )
+                    ):
+                        sub_command_group = cmd_in_children
+                        break
+                else:
+                    cast(list, children).append(sub_command_group)
+
+                cast(list, sub_command_group.options).append(CommandOption(
+                    name=command.metadata.app.name,
+                    description=command.metadata.app.description,
+                    type=OptionType.SUB_COMMAND,
+                    options=command.metadata.app.options,
+                    is_required=None,  # type: ignore
+                ))
+
+                continue
+
+            if command.metadata.group:
+                # Any command at this point will only have one level of nesting.
+                #
+                # Command
+                #    subcommand
+                #
+                # A subcommand object is what is being generated here. If there is no
+                # top level command, it will be created here.
+
+                # `key` represents the unique value for the top-level command that will
+                # hold the subcommand.
+                key = Unique(
+                    name=command.metadata.group,
+                    type=command.metadata.app.type,
+                    guild_id=command.metadata.app.guild_id,
+                    group=None,
+                    sub_group=None,
+                )
+
+                if key not in built_commands:
+                    built_commands[key] = AppCommand(
+                        name=command.metadata.group,
+                        description="HIDDEN",
+                        type=command.metadata.app.type,
+                        guild_id=command.metadata.app.guild_id,
+                        options=[],
+                        default_permission=command.metadata.app.default_permission
+                    )
+
+                # No checking has to be done before appending `command` since it is the
+                # lowest level.
+                cast(list, built_commands[key].options).append(
+                    CommandOption(
+                        name=command.metadata.app.name,
+                        description=command.metadata.app.description,
+                        type=command.metadata.app.type,
+                        options=command.metadata.app.options,
+                        is_required=None,  # type: ignore
+                    )
+                )
+
+                continue
+
+            built_commands[Unique.from_meta_struct(command)] = command.metadata.app
+
+        return tuple(built_commands.values())
 
     async def create_application_command(self, command: AppCommand):
         await self.bot.rest.create_application_command(

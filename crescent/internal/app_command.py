@@ -6,14 +6,17 @@ from typing import TYPE_CHECKING
 from attr import define
 from hikari import UNDEFINED, CommandOption
 
+from crescent.internal.meta_struct import MetaStruct
+
 if TYPE_CHECKING:
-    from typing import Optional, Sequence
+    from typing import Optional, Sequence, Type
     from hikari import Snowflake, UndefinedOr, UndefinedNoneOr
 
 
 @define(hash=True)
 class Unique:
     name: str
+    type: AppCommandType
     guild_id: UndefinedNoneOr[Snowflake]
     group: UndefinedNoneOr[str]
     sub_group: UndefinedNoneOr[str]
@@ -25,6 +28,26 @@ class Unique:
             self.group = None
         if self.sub_group is UNDEFINED:
             self.sub_group = None
+
+    @classmethod
+    def from_meta_struct(cls: Type[Unique], command: MetaStruct[AppCommandMeta]) -> Unique:
+        return cls(
+            name=command.metadata.app.name,
+            type=command.metadata.app.type,
+            guild_id=command.metadata.app.guild_id,
+            group=command.metadata.group,
+            sub_group=command.metadata.sub_group
+        )
+
+    @classmethod
+    def from_app_command_meta(cls: Type[Unique], command: AppCommandMeta) -> Unique:
+        return cls(
+            name=command.app.name,
+            type=command.app.type,
+            guild_id=command.app.guild_id,
+            group=command.group,
+            sub_group=command.sub_group
+        )
 
 
 __all__: Sequence[str] = (
@@ -89,6 +112,7 @@ class AppCommandMeta:
     def unique(self) -> Unique:
         return Unique(
             self.app.name,
+            self.app.type,
             self.app.guild_id,
             self.group,
             self.sub_group,

@@ -13,8 +13,12 @@ bot = crescent.Bot(
     guilds=[750862883075915826]
 )
 
+group = crescent.Group("my_group")
+sub_group = crescent.Group("my_sub_group")
 
-@bot.command(guild=750862883075915826)
+
+@bot.include
+@crescent.command(guild=750862883075915826)
 def app_command(
     ctx: crescent.Context,
     arg: typing.Annotated[str, crescent.Description("Hello world!")],
@@ -24,6 +28,20 @@ def app_command(
         content="Hello world!",
         response_type=hikari.ResponseType.MESSAGE_CREATE,
     )
+
+
+@bot.include
+@group
+@crescent.command
+def sub_command(ctx):
+    pass
+
+
+@bot.include
+@sub_group
+@crescent.command
+def sub_sub_command(ctx):
+    pass
 
 
 bot.run()

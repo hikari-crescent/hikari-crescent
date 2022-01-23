@@ -1,6 +1,10 @@
-from typing import Any, Awaitable, Callable, Generic, Sequence, TypeVar, Optional
+from __future__ import annotations
 
+from typing import TYPE_CHECKING, Generic, TypeVar
 from attr import define
+
+if TYPE_CHECKING:
+    from typing import Any, Awaitable, Callable, Sequence, Optional
 
 T = TypeVar("T")
 

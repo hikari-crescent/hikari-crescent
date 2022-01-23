@@ -1,10 +1,15 @@
 from abc import ABC
 from typing import Any, Sequence
 from attr import define
+from hikari import ChannelType, CommandChoice
 
 __all__: Sequence[str] = (
     "Description",
-    "Name"
+    "Name",
+    "Choices",
+    "ChannelTypes",
+    "MaxValue",
+    "MinValue",
 )
 
 
@@ -31,3 +36,36 @@ class Name(Arg):
     @property
     def payload(self) -> str:
         return self.name
+
+
+@define
+class Choices(Arg):
+    choices: Sequence[CommandChoice]
+
+    @property
+    def payload(self) -> Sequence[CommandChoice]:
+        return self.choices
+
+
+@define
+class ChannelTypes(Arg):
+    channel_types: Sequence[ChannelType]
+
+    def payload(self) -> Sequence[ChannelType]:
+        return self.channel_types
+
+
+@define
+class MaxValue(Arg):
+    max_value: int
+
+    def payload(self) -> int:
+        return self.max_value
+
+
+@define
+class MinValue(Arg):
+    min_value: int
+
+    def payload(self) -> int:
+        return self.min_value
