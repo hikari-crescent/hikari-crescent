@@ -7,7 +7,7 @@ from hikari import GatewayBot
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, Type
-    from hikari.api.event_manager import CallbackT, EventT_co
+    from hikari.api.event_manager import CallbackT
 
 
 def event(

@@ -6,7 +6,7 @@ T = TypeVar("T")
 
 
 __all__: Sequence[str] = (
-    "MetaStruct"
+    "MetaStruct",
 )
 
 

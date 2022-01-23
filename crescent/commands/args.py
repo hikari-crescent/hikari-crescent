@@ -1,6 +1,11 @@
 from abc import ABC
-from typing import Any
+from typing import Any, Sequence
 from attr import define
+
+__all__: Sequence[str] = (
+    "Description",
+    "Name"
+)
 
 
 class Arg(ABC):
