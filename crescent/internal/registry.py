@@ -1,19 +1,21 @@
 from __future__ import annotations
 from asyncio import gather
+from itertools import chain
 
 from typing import TYPE_CHECKING
 from weakref import WeakValueDictionary
 
-from hikari import CommandOption, ShardReadyEvent, Snowflake
+from hikari import UNDEFINED, CommandOption, ShardReadyEvent, Snowflake
 
 from crescent.utils import gather_iter
 from crescent.internal.app_command import AppCommand, AppCommandType
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.app_command import AppCommandMeta
+from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
     from typing import Callable, Any, Awaitable, Optional, Sequence
-    from hikari import Command
+    from hikari import Command, UndefinedOr
     from crescent.bot import Bot
     from crescent.internal.app_command import Unique
 
@@ -21,12 +23,12 @@ if TYPE_CHECKING:
 def register_command(
     callback: Callable[..., Awaitable[Any]],
     guild: Optional[Snowflake] = None,
-    name: Optional[str] = None,
     group: Optional[str] = None,
     sub_group: Optional[str] = None,
+    name: Optional[str] = None,
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
-    default_permission: Optional[bool] = None
+    default_permission: UndefinedOr[bool] = UNDEFINED
 ):
 
     name = name or callback.__name__
@@ -72,18 +74,21 @@ class CommandHandler:
         ] = WeakValueDictionary()
 
     def register(self, command: MetaStruct[AppCommandMeta]) -> MetaStruct[AppCommandMeta]:
+        command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
         self.registry[command.metadata.unique] = command
         return command
 
-    async def get_discord_commands(self) -> Sequence[Command]:
+    async def get_discord_commands(self) -> Sequence[AppCommand]:
         """Fetches commands from Discord"""
 
-        commands = await self.bot.rest.fetch_application_commands(self.application_id)
+        commands = list(
+            await self.bot.rest.fetch_application_commands(unwrap(self.application_id))
+        )
 
         commands.extend(
             *await gather_iter(
                 self.bot.rest.fetch_application_commands(
-                    self.application_id, guild=guild
+                    unwrap(self.application_id), guild=guild
                 )
                 for guild in self.guilds
             )
@@ -105,8 +110,8 @@ class CommandHandler:
             for command in commands
         ]
 
-    def build_commands(self) -> Sequence[MetaStruct[AppCommand]]:
-        def set_guild(command: AppCommand):
+    def build_commands(self) -> Sequence[AppCommand]:
+        def set_guild(command: AppCommand) -> AppCommand:
             command.guild_id = command.guild_id or self.bot.default_guild
             return command
 
@@ -114,19 +119,19 @@ class CommandHandler:
 
     async def create_application_command(self, command: AppCommand):
         await self.bot.rest.create_application_command(
-            application=self.application_id,
+            application=unwrap(self.application_id),
             name=command.name,
             description=command.description,
-            guild=command.guild_id,
-            options=command.options,
+            guild=command.guild_id or UNDEFINED,
+            options=command.options or UNDEFINED,
             default_permission=command.default_permission
         )
 
     async def delete_application_command(self, command: AppCommand):
         await self.bot.rest.delete_application_command(
-            application=self.application_id,
-            command=command.id,
-            guild=command.guild_id
+            application=unwrap(self.application_id),
+            command=unwrap(command.id),
+            guild=command.guild_id or UNDEFINED
         )
 
     async def init(self, event: ShardReadyEvent):
@@ -136,8 +141,13 @@ class CommandHandler:
         discord_commands = await self.get_discord_commands()
         local_commands = self.build_commands()
 
-        to_delete = filter(lambda command: command in discord_commands, discord_commands)
-        to_post = filter(lambda command: command not in discord_commands, local_commands)
+        to_delete = filter(
+            lambda dc: not any(dc.is_same_command(lc) for lc in local_commands),
+            discord_commands
+        )
+        to_post = list(filter(lambda lc: lc not in discord_commands, local_commands))
 
-        await gather(*map(self.delete_application_command, to_delete))
-        await gather(*map(self.create_application_command, to_post))
+        await gather(*chain(
+            map(self.delete_application_command, to_delete),
+            map(self.create_application_command, to_post),
+        ))

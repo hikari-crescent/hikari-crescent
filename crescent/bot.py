@@ -5,13 +5,21 @@ from functools import partial
 from itertools import chain
 from typing import TYPE_CHECKING, Sequence, overload
 
-from hikari import GatewayBot, Intents, ProxySettings, ShardReadyEvent, Snowflake
-from hikari.config import CacheSettings, HTTPSettings
-
+from hikari import (
+    GatewayBot,
+    Intents,
+    InteractionCreateEvent,
+    ProxySettings,
+    ShardReadyEvent,
+    Snowflake,
+    CacheSettings,
+    HTTPSettings,
+)
 from crescent.commands.decorators import command as _command
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler
+from crescent.internal.handle_resp import handle_resp
 from crescent.partial import Partial
 from crescent.utils import iterate_vars
 
@@ -67,8 +75,8 @@ class Bot(GatewayBot):
         if default_guild and default_guild not in guilds:
             guilds = tuple(chain(guilds, (default_guild,)))
 
-        self._command_handler = CommandHandler(self, guilds)
-        self.default_guild = default_guild
+        self._command_handler: CommandHandler = CommandHandler(self, guilds)
+        self.default_guild: Optional[Snowflake] = default_guild
 
         async def shard_ready(event: ShardReadyEvent):
             await self._command_handler.init(event)
@@ -76,6 +84,11 @@ class Bot(GatewayBot):
         self.subscribe(
             ShardReadyEvent,
             shard_ready
+        )
+
+        self.subscribe(
+            InteractionCreateEvent,
+            handle_resp
         )
 
         for _, value in iterate_vars(self.__class__):

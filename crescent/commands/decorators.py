@@ -14,7 +14,9 @@ from hikari import (
 )
 
 from crescent.commands.args import Arg, Name, Description
+from crescent.context import Context
 from crescent.internal.registry import register_command
+from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
     from typing import Optional, Type, Dict
@@ -33,13 +35,11 @@ _OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
     PartialChannel: OptionType.CHANNEL,
     Role: OptionType.ROLE,
     User: OptionType.USER,
-
-    # TODO
-    # OptionType.MENTIONABLE
+    Mentionable: OptionType.MENTIONABLE,
 }
 
 
-def _gen_command_option(param: Parameter) -> CommandOption:
+def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
     name = param.name
     typehint = param.annotation
 
@@ -49,6 +49,9 @@ def _gen_command_option(param: Parameter) -> CommandOption:
     if hasattr(typehint, "__metadata__"):
         metadata = typehint.__metadata__
         origin = typehint.__origin__
+
+    if origin is Context:
+        return None
 
     _type = _OPTIONS_TYPE_MAP[origin]
 
@@ -94,9 +97,13 @@ def command(
             description=description
         )
 
-    options = tuple(
-        _gen_command_option(param)
-        for param in signature(callback).parameters.values()
+    options: Sequence[CommandOption] = tuple(
+        param for param in
+        (
+            _gen_command_option(param)
+            for param in signature(callback).parameters.values()
+        )
+        if param is not None
     )
 
     return register_command(

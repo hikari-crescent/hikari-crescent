@@ -7,6 +7,7 @@ __all__: Sequence[str] = (
     "iterate_vars",
 )
 
+
 def iterate_vars(*objs) -> Iterator[Any]:
     return chain.from_iterable(
         chain(
