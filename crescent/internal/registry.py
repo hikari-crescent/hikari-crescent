@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from asyncio import gather
 from itertools import chain
 
@@ -17,6 +18,7 @@ from crescent.internal.app_command import Unique
 if TYPE_CHECKING:
     from typing import Callable, Any, Awaitable, Optional, Sequence
     from hikari import Command, UndefinedOr
+    from crescent.typedefs import CommandCallback
     from crescent.bot import Bot
 
 
@@ -29,14 +31,17 @@ def register_command(
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED
-):
+) -> MetaStruct[CommandCallback, AppCommandMeta]:
 
     name = name or callback.__name__
     description = description or "\u200B"
 
-    meta: MetaStruct[AppCommandMeta] = MetaStruct(
+    def hook(self: MetaStruct[CommandCallback, AppCommandMeta]) -> None:
+        self.app._command_handler.register(self)
+
+    meta: MetaStruct[CommandCallback, AppCommandMeta] = MetaStruct(
         callback=callback,
-        manager=None,
+        app_set_hooks=[hook],
         metadata=AppCommandMeta(
             group=group,
             sub_group=sub_group,
@@ -70,10 +75,13 @@ class CommandHandler:
 
         self.registry: WeakValueDictionary[
             Unique,
-            MetaStruct[AppCommandMeta]
+            MetaStruct[CommandCallback, AppCommandMeta]
         ] = WeakValueDictionary()
 
-    def register(self, command: MetaStruct[AppCommandMeta]) -> MetaStruct[AppCommandMeta]:
+    def register(
+        self,
+        command: MetaStruct[CommandCallback, AppCommandMeta]
+    ) -> MetaStruct[CommandCallback, AppCommandMeta]:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
         self.registry[command.metadata.unique] = command
         return command

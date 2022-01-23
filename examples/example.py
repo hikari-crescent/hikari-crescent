@@ -44,4 +44,10 @@ def sub_sub_command(ctx):
     pass
 
 
+@bot.include
+@crescent.event
+def event(event: hikari.ShardReadyEvent):
+    print(event)
+
+
 bot.run()

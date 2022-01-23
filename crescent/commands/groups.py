@@ -5,8 +5,10 @@ from typing import TYPE_CHECKING
 from attr import define
 
 
+
 if TYPE_CHECKING:
     from typing import Sequence
+    from crescent.typedefs import CommandCallback
     from crescent.internal.meta_struct import MetaStruct
     from crescent.internal.app_command import AppCommandMeta
 
@@ -26,7 +28,10 @@ class Group:
             self.name
         )
 
-    def __call__(self, meta: MetaStruct[AppCommandMeta]) -> MetaStruct[AppCommandMeta]:
+    def __call__(
+        self,
+        meta: MetaStruct[CommandCallback, AppCommandMeta]
+    ) -> MetaStruct[CommandCallback, AppCommandMeta]:
         meta.metadata.group = self.name
         return meta
 
@@ -36,7 +41,10 @@ class SubGroup:
     name: str
     parent: str
 
-    def __call__(self, meta: MetaStruct[AppCommandMeta]) -> MetaStruct[AppCommandMeta]:
+    def __call__(
+        self,
+        meta: MetaStruct[CommandCallback, AppCommandMeta]
+    ) -> MetaStruct[CommandCallback, AppCommandMeta]:
         meta.metadata.group = self.parent
         meta.metadata.sub_group = self.name
         return meta

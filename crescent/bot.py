@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from concurrent.futures import Executor
-from functools import partial
 from itertools import chain
 from typing import TYPE_CHECKING, Sequence, overload
 
@@ -15,12 +14,9 @@ from hikari import (
     CacheSettings,
     HTTPSettings,
 )
-from crescent.commands.decorators import command as _command
-from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler
 from crescent.internal.handle_resp import handle_resp
-from crescent.partial import Partial
 from crescent.utils import iterate_vars
 
 
@@ -92,23 +88,21 @@ class Bot(GatewayBot):
         )
 
         for _, value in iterate_vars(self.__class__):
-            if isinstance(value, Partial):
-                value(self)
             if isinstance(value, MetaStruct):
-                value.manager = self
-                value.is_method = True
-                self._command_handler.register(value)
+                value.register_to_app(
+                    self,
+                    self,
+                    True
+                )
 
-    def include(self, command: MetaStruct[AppCommandMeta] = None):
+    def include(self, command: MetaStruct[Any, Any] = None):
         if command is None:
             return self.include
 
-        command.manager = self
-        self._command_handler.register(command)
+        command.register_to_app(
+            self,
+            self,
+            False,
+        )
 
         return command
-
-    def command(self, func=None, *args, **kwargs):
-        if func is None:
-            return partial(self.command, *args, **kwargs)
-        return self.include(command=_command(func, *args, **kwargs))

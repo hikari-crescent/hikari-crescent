@@ -11,6 +11,7 @@ from crescent.internal.meta_struct import MetaStruct
 if TYPE_CHECKING:
     from typing import Optional, Sequence, Type
     from hikari import Snowflake, UndefinedOr, UndefinedNoneOr
+    from crescent.typedefs import CommandCallback
 
 
 @define(hash=True)
@@ -30,7 +31,10 @@ class Unique:
             self.sub_group = None
 
     @classmethod
-    def from_meta_struct(cls: Type[Unique], command: MetaStruct[AppCommandMeta]) -> Unique:
+    def from_meta_struct(
+        cls: Type[Unique],
+        command: MetaStruct[CommandCallback, AppCommandMeta]
+    ) -> Unique:
         return cls(
             name=command.metadata.app.name,
             type=command.metadata.app.type,

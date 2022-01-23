@@ -22,7 +22,7 @@ class MyBot(crescent.Bot):
     # Special event decorator that makes subclassing possible, although it will not be
     # required.
     @crescent.event
-    def on_event(event: hikari.ShardReadyEvent):
+    def on_event(self, event: hikari.ShardReadyEvent):
         pass
 
     @crescent.command
