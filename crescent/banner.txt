@@ -1,17 +1,13 @@
-
-
-    ${yellow}      ...                                     .x+=:.                                           s
-    ${yellow}   xH88"`~ .x8X                              z`    ^%                                         :8
-    ${yellow} :8888   .f"8888Hf    .u    .                   .     X8L  ^""`   .d88B :@8c       .u       .@8Ned8"
-    ${yellow}X8888  X888h       ="8888f8888r   ud8888.   .@^%8888"   .udR88N    ud8888.  ^"8888""8888" -*8888888
-    ${yellow}88888  !88888.       4888>'88"  :888'8888. x88:  `)8b. <888'888k :888'8888.   8888  888R    8888
-    ${yellow}88888   %88888       4888> '    d888 '88%" 8888N=*8888 9888 'Y"  d888 '88%"   8888  888R    8888
-    ${yellow}88888 '> `8888>      4888>      8888.+"     %8"    R88 9888      8888.+"      8888  888R    8888
-    ${yellow}`8888L %  ?888   !  .d888L .+   8888L        @8Wou 9%  9888      8888L        8888  888R   .8888Lu=
-    ${yellow} `8888  `-*""   /   ^"8888*"    '8888c. .+ .888888P`   ?8888u../ '8888c. .+  "*88*" 8888"  ^%888*    
-    ${yellow}   "888.      :"       "Y"       "88888%   `   ^"F      "8888P'   "88888%      ""   'Y"      'Y"      
-    ${yellow}     `""***~"`                     "YP'                   "P'       "YP'
-
-
-Thank you for using Crescent! Banner generated with https://www.coolgenerator.com/ascii-text-generator.
-
+${yellow}                                                 
+${yellow}     ,gggg,                                                                
+${yellow}   ,88"""Y8b,                                                I8    ${reset}${bold_white} 光 ${hikari_version} ${thin_white}[${hikari_git_sha1}]${reset}
+${yellow}  d8"     `Y8                                                I8    ${reset}${bold_white} ☾ Unreleased${reset}
+${yellow} d8'   8b  d8                                              888888   ${reset}${bold_white}${hikari_copyright}${thin_white} - ${hikari_license} license${reset}
+${yellow},8I    "Y88P'                                                I8     ${reset}${bold_white}interpreter:   ${thin_white}${python_implementation} ${python_version}${reset}
+${yellow}I8'        ,gggggf ,ggg,    ,g,     ,ggg,   ,ggg,   ,gg,,gg, I8     ${reset}${bold_white}running on:    ${thin_white}${system_description}${reset}
+${green}d8         dP""8I i8" "8i  ,8'8,  ,P"  `` i8" "8i ,8""8P""8, I8     ${reset}${bold_white}documentation: ${thin_white}${hikari_documentation_url}${reset}
+${cyan}Y8,       ,8'  8I I8, ,8I ,8'  b  i8'    I8, ,8I I8  8I  8I ,I8,    ${reset}${bold_white}support:       ${thin_white}${hikari_discord_invite}${reset}
+${blue}`Yba,,___,dP   Y8,`YbadP',8'_  8),d8g,    ,badP',dP  8I  Yb,d88b,   ${reset}${bold_white}installed at:  ${thin_white}${hikari_install_location}${reset}
+${purple}`"Y88888P    `Y888P"Y88P' "YYP8P""Y  8P888P`Y888P'  8I  `Y8P"" Y8 
+                                                                                                                 
+${reset}Thank you for using Crescent!
