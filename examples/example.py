@@ -3,7 +3,7 @@ Example of the public API.
 Does do much right now.
 """
 
-from typing import Annotated
+import typing
 import crescent
 import hikari
 
@@ -17,7 +17,7 @@ bot = crescent.Bot(
 @bot.command(guild=750862883075915826)
 def app_command(
     ctx: crescent.Context,
-    arg: Annotated[str, crescent.Description("Hello world!")],
+    arg: typing.Annotated[str, crescent.Description("Hello world!")],
     arg2: str = 10
 ):
     ctx.create_initial_response(

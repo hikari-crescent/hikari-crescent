@@ -4,6 +4,7 @@ version = "0.0.1"
 description = "🌕 A dead simple command handler for Hikari"
 authors = ["Lunarmagpie <Bambolambo0@gmail.com>"]
 license = "GPLv2"
+include = ["crescent/banner.txt"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
