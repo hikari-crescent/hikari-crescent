@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from hikari import CommandInteraction, CommandInteractionOption, OptionType
 from crescent.context import Context
@@ -31,9 +31,9 @@ async def handle_resp(event: InteractionCreateEvent):
     name: str = interaction.command_name
     group: Optional[str] = None
     sub_group: Optional[str] = None
-    options: Sequence[CommandInteractionOption] = interaction.options
+    options: Optional[Sequence[CommandInteractionOption]] = interaction.options
 
-    if interaction.options:
+    if options:
         option = unwrap(options)[0]
         if option.type == 1:
             group = name
@@ -45,18 +45,22 @@ async def handle_resp(event: InteractionCreateEvent):
             name = unwrap(option.options)[0].name
             options = unwrap(option.options)[0].options
 
-    command = bot._command_handler.registry.get(Unique(
+    command = bot._command_handler.registry[Unique(
         name=name,
         type=AppCommandType.CHAT_INPUT,
         guild_id=interaction.guild_id,
         group=group,
         sub_group=sub_group,
-    ))
+    )]
 
-    ctx = Context._from_partial_interaction(interaction)
+    ctx = Context._from_command_interaction(interaction)
     callback_params = _options_to_kwargs(interaction, options)
 
-    await unwrap(command).callback(ctx, **callback_params)
+    args: List[Any] = [ctx]
+    if command.is_method:
+        args.insert(0, command.manager)
+
+    await command.callback(*args, **callback_params)
 
 _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
     OptionType.ROLE: "roles",
@@ -67,7 +71,7 @@ _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
 
 def _options_to_kwargs(
     interaction: CommandInteraction,
-    options: CommandInteractionOption
+    options: Optional[Sequence[CommandInteractionOption]],
 ) -> Dict[str, Any]:
     if not options:
         return {}

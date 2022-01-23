@@ -26,34 +26,42 @@ class MyBot(crescent.Bot):
         pass
 
     @crescent.command
-    def say(word: typing.Annotated[
-        str,
-        "This is an extremely long description that takes up more than one line because"
-        "i think Annotated doesn't make it hard to write these."
-    ]):
+    def say(
+        self,
+        ctx: crescent.Context,
+        word: typing.Annotated[
+            str,
+            "This is an extremely long description that takes up more than one line because"
+            "i think Annotated doesn't make it hard to write these."
+        ]
+    ):
         # Command returns can be used
         return word
 
 
 # Also declare commands outside class
 # Read signiture to pass self and context
+@bot.include
 @crescent.command
 def mycommand(self, ctx: crescent.Context):
     pass
 
 
 # Once Hikari adds support
+@bot.include
 @crescent.user_command
 def user_command(self, ctx, user):
     pass
 
 
+@bot.include
 @crescent.message_command
 def message_command(self, ctx, user):
     pass
 
 
 # Class based command system
+@bot.include
 @crescent.command
 class Command:
     option_one = crescent.field(str, description="Hello world")

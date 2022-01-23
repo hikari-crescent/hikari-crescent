@@ -58,7 +58,7 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
         metadata = typehint.__metadata__
         origin = typehint.__origin__
 
-    if origin is Context:
+    if origin is Context or origin is param.empty:
         return None
 
     _type = _OPTIONS_TYPE_MAP[origin]

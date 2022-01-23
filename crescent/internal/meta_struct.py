@@ -19,3 +19,5 @@ class MetaStruct(Generic[T]):
     callback: Callable[..., Awaitable[Any]]
     metadata: T
     manager: Optional[Any]
+
+    is_method: bool = False

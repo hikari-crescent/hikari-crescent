@@ -89,8 +89,7 @@ class CommandHandler:
             *await gather_iter(
                 self.bot.rest.fetch_application_commands(
                     unwrap(self.application_id), guild=guild
-                )
-                for guild in self.guilds
+                ) for guild in self.guilds
             )
         )
 

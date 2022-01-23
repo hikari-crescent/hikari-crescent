@@ -14,7 +14,7 @@ bot = crescent.Bot(
 )
 
 group = crescent.Group("my_group")
-sub_group = crescent.Group("my_sub_group")
+sub_group = group.sub_group("my_sub_group")
 
 
 @bot.include

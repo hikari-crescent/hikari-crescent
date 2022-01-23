@@ -51,6 +51,7 @@ class Choices(Arg):
 class ChannelTypes(Arg):
     channel_types: Sequence[ChannelType]
 
+    @property
     def payload(self) -> Sequence[ChannelType]:
         return self.channel_types
 
@@ -59,6 +60,7 @@ class ChannelTypes(Arg):
 class MaxValue(Arg):
     max_value: int
 
+    @property
     def payload(self) -> int:
         return self.max_value
 
@@ -67,5 +69,6 @@ class MaxValue(Arg):
 class MinValue(Arg):
     min_value: int
 
+    @property
     def payload(self) -> int:
         return self.min_value

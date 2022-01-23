@@ -95,12 +95,15 @@ class Bot(GatewayBot):
             if isinstance(value, Partial):
                 value(self)
             if isinstance(value, MetaStruct):
+                value.manager = self
+                value.is_method = True
                 self._command_handler.register(value)
 
     def include(self, command: MetaStruct[AppCommandMeta] = None):
         if command is None:
             return self.include
 
+        command.manager = self
         self._command_handler.register(command)
 
         return command
