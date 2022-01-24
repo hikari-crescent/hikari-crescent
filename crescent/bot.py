@@ -80,8 +80,8 @@ class Bot(GatewayBot):
         async def shard_ready(event: ShardReadyEvent):
             self._command_handler.application_id = event.application_id
 
-        async def started(event: StartedEvent):
-            await self._command_handler.init(event)
+        async def started(_: StartedEvent):
+            await self._command_handler.register_commands()
 
         self.subscribe(ShardReadyEvent, shard_ready)
         self.subscribe(StartedEvent, started)

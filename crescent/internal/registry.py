@@ -11,7 +11,6 @@ from hikari import (
     OptionType,
     Snowflake,
     Snowflakeish,
-    StartedEvent,
 )
 
 from crescent.internal.app_command import (
@@ -275,7 +274,7 @@ class CommandHandler:
             guild=command.guild_id or UNDEFINED,
         )
 
-    async def init(self, _: StartedEvent):
+    async def register_commands(self):
         self.guilds = self.guilds or tuple(self.bot.cache.get_guilds_view().keys())
 
         discord_commands = await self.get_discord_commands()
