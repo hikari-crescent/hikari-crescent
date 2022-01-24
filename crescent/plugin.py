@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-import importlib
-from typing import TypeVar, TYPE_CHECKING
+from importlib import import_module
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .bot import Bot
     from .internal.meta_struct import MetaStruct
+    from typing import TypeVar
 
-_T = TypeVar("_T", bound="MetaStruct")
+    T = TypeVar("T", bound="MetaStruct")
 
 
 class Plugin:
@@ -15,18 +16,18 @@ class Plugin:
         self.name = name
         self._children: list[MetaStruct] = []
 
-    def include(self, obj: _T) -> _T:
+    def include(self, obj: T) -> T:
         self._children.append(obj)
         return obj
 
-    def setup(self, bot: Bot) -> None:
+    def _setup(self, bot: Bot) -> None:
         for item in self._children:
             bot.include(item)
 
     @classmethod
     def _from_module(cls, path: str) -> Plugin:
         parents = path.split(".")
-        module = importlib.import_module(
+        module = import_module(
             parents.pop(0),
             ".".join(parents),
         )

@@ -73,7 +73,7 @@ class Bot(GatewayBot):
 
         self._command_handler: CommandHandler = CommandHandler(self, guilds)
         self.default_guild: Optional[Snowflake] = default_guild
-        self.plugins: dict[str, Plugin] = {}
+        self.plugins: Dict[str, Plugin] = {}
 
         async def shard_ready(event: ShardReadyEvent):
             await self._command_handler.init(event)
