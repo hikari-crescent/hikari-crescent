@@ -83,6 +83,11 @@ class AppCommand:
     __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
 
     def __eq__(self, __o: object) -> bool:
+        """
+        Compares properties or class. Any two attributes that are `False` when
+        converted to a bool with be considered equal so different methods of
+        saying an attribute doesn't exist won't cause issues.
+        """
         for prop in self.__eq__props:
             my_attr = getattr(self, prop)
             o_attr = getattr(__o, prop)
