@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from attr import define
 
 
-
 if TYPE_CHECKING:
     from typing import Sequence
     from crescent.typedefs import CommandCallback
