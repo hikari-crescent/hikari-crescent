@@ -13,21 +13,20 @@ bot = crescent.Bot(
     guilds=[750862883075915826]
 )
 
+bot.load_module("plugin")
+
 group = crescent.Group("my_group")
 sub_group = group.sub_group("my_sub_group")
 
 
 @bot.include
 @crescent.command(guild=750862883075915826)
-def app_command(
+async def app_command(
     ctx: crescent.Context,
     arg: typing.Annotated[str, crescent.Description("Hello world!")],
     arg2: str = 10
 ):
-    ctx.create_initial_response(
-        content="Hello world!",
-        response_type=hikari.ResponseType.MESSAGE_CREATE,
-    )
+    await ctx.respond("Hello")
 
 
 @bot.include
