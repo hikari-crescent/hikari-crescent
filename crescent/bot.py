@@ -18,7 +18,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler
 from crescent.internal.handle_resp import handle_resp
 from crescent.utils import iterate_vars
-
+from crescent.plugin import Plugin
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union
@@ -73,6 +73,7 @@ class Bot(GatewayBot):
 
         self._command_handler: CommandHandler = CommandHandler(self, guilds)
         self.default_guild: Optional[Snowflake] = default_guild
+        self.plugins: Dict[str, Plugin] = {}
 
         async def shard_ready(event: ShardReadyEvent):
             await self._command_handler.init(event)
@@ -106,3 +107,14 @@ class Bot(GatewayBot):
         )
 
         return command
+
+    def add_plugin(self, plugin: Plugin) -> None:
+        if plugin.name in self.plugins:
+            raise ValueError(f"Plugin name {plugin.name} already exists.")
+        self.plugins[plugin.name] = plugin
+        plugin.setup(self)
+
+    def load_module(self, path: str) -> Plugin:
+        plugin = Plugin._from_module(path)
+        self.add_plugin(plugin)
+        return plugin

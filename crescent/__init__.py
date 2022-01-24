@@ -4,6 +4,7 @@ from crescent.context import *
 from crescent.event import *
 from crescent.mentionable import *
 from crescent.typedefs import *
+from crescent.plugin import *
 
 from typing import Sequence
 
@@ -28,4 +29,5 @@ __all__: Sequence[str] = (
     "event",
     "Mentionable",
     "CommandCallback",
+    "Plugin",
 )
