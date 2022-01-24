@@ -103,7 +103,7 @@ class Bot(GatewayBot):
         if plugin.name in self.plugins:
             raise ValueError(f"Plugin name {plugin.name} already exists.")
         self.plugins[plugin.name] = plugin
-        plugin.setup(self)
+        plugin._setup(self)
 
     def load_module(self, path: str) -> Plugin:
         plugin = Plugin._from_module(path)
