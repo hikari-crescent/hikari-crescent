@@ -1,40 +1,31 @@
 from __future__ import annotations
-from collections import namedtuple
 
+from collections import namedtuple
 from functools import partial
 from inspect import Parameter, signature
 from typing import TYPE_CHECKING, get_type_hints
 
-from hikari import (
-    CommandOption,
-    OptionType,
-    PartialChannel,
-    Role,
-    Snowflakeish,
-    User,
-)
+from hikari import CommandOption, OptionType, PartialChannel, Role, Snowflakeish, User
 
 from crescent.commands.args import (
     Arg,
     ChannelTypes,
     Choices,
+    Description,
     MaxValue,
     MinValue,
     Name,
-    Description,
 )
 from crescent.context import Context
 from crescent.internal.registry import register_command
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Type, Dict, Sequence, TypeVar
+    from typing import Any, Dict, Optional, Sequence, Type, TypeVar
 
     T = TypeVar("T")
 
-__all__: Sequence[str] = (
-    "command",
-)
+__all__: Sequence[str] = ("command",)
 
 _OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
     str: OptionType.STRING,
@@ -94,7 +85,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
         channel_types=channel_types,
         min_value=min_value,
         max_value=max_value,
-        is_required=required
+        is_required=required,
     )
 
 
@@ -112,7 +103,7 @@ def command(
             name=name,
             group=group,
             sub_group=sub_group,
-            description=description
+            description=description,
         )
 
     # NOTE: If python 3.10 becomes the minimum supported version, this section
@@ -132,8 +123,8 @@ def command(
     sig = map(convert_signiture, signature(callback).parameters.values())
 
     options: Sequence[CommandOption] = tuple(
-        param for param in
-        (
+        param
+        for param in (
             _gen_command_option(param)
             for param in sig
         )
@@ -147,5 +138,5 @@ def command(
         group=group,
         sub_group=sub_group,
         description=description,
-        options=options
+        options=options,
     )

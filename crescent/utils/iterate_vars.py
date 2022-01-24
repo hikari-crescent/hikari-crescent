@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Iterator, Sequence
 from itertools import chain
+from typing import Any, Iterator, Sequence
 
-__all__: Sequence[str] = (
-    "iterate_vars",
-)
+__all__: Sequence[str] = ("iterate_vars",)
 
 
 def iterate_vars(*objs) -> Iterator[Any]:
@@ -13,8 +11,8 @@ def iterate_vars(*objs) -> Iterator[Any]:
         chain(
             getattr(obj, "__dict__", {}).items(),
             {
-                key: getattr(obj, key, None)
-                for key in getattr(obj, "__slots__", [])
+                key: getattr(obj, key, None) for key in getattr(obj, "__slots__", [])
             }.items(),
-        ) for obj in objs
+        )
+        for obj in objs
     )

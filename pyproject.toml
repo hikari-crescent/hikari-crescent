@@ -3,8 +3,11 @@ name = "hikari-crescent"
 version = "0.0.1"
 description = "🌕 A dead simple command handler for Hikari"
 authors = ["Lunarmagpie <Bambolambo0@gmail.com>"]
-license = "GPLv2"
+license = "MPL-2.0"
 include = ["crescent/banner.txt"]
+packages = [
+    { include = "crescent"}
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
@@ -15,6 +18,8 @@ attr = "^0.3.1"
 flake8 = "^4.0.1"
 mypy = "^0.931"
 autopep8 = "^1.6.0"
+isort = "^5.10.1"
+black = "^21.12b0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

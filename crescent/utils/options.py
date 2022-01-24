@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, TypeVar, Sequence, Optional, overload
+from typing import Callable, Optional, Sequence, TypeVar, overload
 
 T = TypeVar("T")
 U = TypeVar("U")

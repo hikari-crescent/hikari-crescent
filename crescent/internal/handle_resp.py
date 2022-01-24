@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Optional
 
 from hikari import CommandInteraction, CommandInteractionOption, OptionType
+
 from crescent.context import Context
 from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
@@ -10,13 +11,13 @@ from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Sequence, cast
+
     from hikari import InteractionCreateEvent
+
     from crescent.bot import Bot
 
 
-__all__: Sequence = (
-    "handle_resp",
-)
+__all__: Sequence = ("handle_resp",)
 
 
 async def handle_resp(event: InteractionCreateEvent):
@@ -45,13 +46,15 @@ async def handle_resp(event: InteractionCreateEvent):
             name = unwrap(option.options)[0].name
             options = unwrap(option.options)[0].options
 
-    command = bot._command_handler.registry[Unique(
-        name=name,
-        type=AppCommandType.CHAT_INPUT,
-        guild_id=interaction.guild_id,
-        group=group,
-        sub_group=sub_group,
-    )]
+    command = bot._command_handler.registry[
+        Unique(
+            name=name,
+            type=AppCommandType.CHAT_INPUT,
+            guild_id=interaction.guild_id,
+            group=group,
+            sub_group=sub_group,
+        )
+    ]
 
     ctx = Context._from_command_interaction(interaction)
     callback_params = _options_to_kwargs(interaction, options)
@@ -62,10 +65,11 @@ async def handle_resp(event: InteractionCreateEvent):
 
     await command.callback(*args, **callback_params)
 
+
 _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
     OptionType.ROLE: "roles",
     OptionType.USER: "users",
-    OptionType.CHANNEL: "channels"
+    OptionType.CHANNEL: "channels",
 }
 
 
@@ -76,12 +80,12 @@ def _options_to_kwargs(
     if not options:
         return {}
 
-    return {
-        option.name: _extract_value(option, interaction) for option in options
-    }
+    return {option.name: _extract_value(option, interaction) for option in options}
 
 
-def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:
+def _extract_value(
+    option: CommandInteractionOption, interaction: CommandInteraction
+) -> Any:
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 
