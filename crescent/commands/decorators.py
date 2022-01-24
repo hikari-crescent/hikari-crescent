@@ -113,7 +113,7 @@ def command(
         param for param in
         (
             _gen_command_option(param)
-            for param in signature(callback).parameters.values()
+            for param in signature(callback, eval_str=True).parameters.values()
         )
         if param is not None
     )
