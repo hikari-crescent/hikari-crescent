@@ -87,7 +87,7 @@ class AppCommand:
             my_attr = getattr(self, prop)
             o_attr = getattr(__o, prop)
 
-            if my_attr != o_attr and my_attr and o_attr:
+            if my_attr != o_attr and (my_attr or o_attr):
                 return False
 
         return True
