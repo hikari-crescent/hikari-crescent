@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 
 from attr import define
 
-
 if TYPE_CHECKING:
     from typing import Sequence
-    from crescent.typedefs import CommandCallback
-    from crescent.internal.meta_struct import MetaStruct
+
     from crescent.internal.app_command import AppCommandMeta
+    from crescent.internal.meta_struct import MetaStruct
+    from crescent.typedefs import CommandCallback
 
 __all__: Sequence[str] = (
     "Group",

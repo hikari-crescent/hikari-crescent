@@ -1,8 +1,8 @@
+from typing import Sequence
+
 from crescent.commands.args import *
 from crescent.commands.decorators import *
 from crescent.commands.groups import *
-
-from typing import Sequence
 
 __all__: Sequence[str] = (
     "Description",

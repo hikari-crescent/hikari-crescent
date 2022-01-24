@@ -7,7 +7,8 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, Type, Optional
+    from typing import Any, Optional, Sequence, Type
+
     from hikari.api.event_manager import CallbackT
 
 

@@ -1,5 +1,6 @@
 from abc import ABC
 from typing import Any, Sequence
+
 from attr import define
 from hikari import ChannelType, CommandChoice
 

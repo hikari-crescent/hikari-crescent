@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
 from attr import define
 
 if TYPE_CHECKING:
-    from typing import Sequence, Optional, Type
+    from typing import Optional, Sequence, Type
+
     from hikari import CommandInteraction, Role, User
 
 __all__: Sequence[str] = ("Mentionable",)

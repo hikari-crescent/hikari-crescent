@@ -3,7 +3,9 @@ Example showing the theoretical API
 """
 
 import typing
+
 import hikari
+
 import crescent
 
 bot = crescent.Bot(

@@ -4,9 +4,10 @@ Does do much right now.
 """
 
 import typing
-import crescent
+
 import hikari
 
+import crescent
 
 bot = crescent.Bot("TOKEN", guilds=[750862883075915826])
 

@@ -5,20 +5,21 @@ from itertools import chain
 from typing import TYPE_CHECKING, Sequence, overload
 
 from hikari import (
+    CacheSettings,
     GatewayBot,
+    HTTPSettings,
     Intents,
     InteractionCreateEvent,
     ProxySettings,
     ShardReadyEvent,
     Snowflake,
-    CacheSettings,
-    HTTPSettings,
 )
+
+from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler
-from crescent.internal.handle_resp import handle_resp
-from crescent.utils import iterate_vars
 from crescent.plugin import Plugin
+from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union

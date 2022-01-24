@@ -2,24 +2,28 @@ from __future__ import annotations
 
 from asyncio import gather
 from itertools import chain
-
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
 from hikari import UNDEFINED, CommandOption, OptionType, ShardReadyEvent, Snowflake
 
+from crescent.internal.app_command import (
+    AppCommand,
+    AppCommandMeta,
+    AppCommandType,
+    Unique,
+)
+from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter
 from crescent.utils.options import unwrap
-from crescent.internal.app_command import AppCommand, AppCommandType
-from crescent.internal.meta_struct import MetaStruct
-from crescent.internal.app_command import AppCommandMeta
-from crescent.internal.app_command import Unique
 
 if TYPE_CHECKING:
-    from typing import Callable, Any, Awaitable, Optional, Sequence
+    from typing import Any, Awaitable, Callable, Optional, Sequence
+
     from hikari import Command, UndefinedOr
-    from crescent.typedefs import CommandCallback
+
     from crescent.bot import Bot
+    from crescent.typedefs import CommandCallback
 
 
 def register_command(

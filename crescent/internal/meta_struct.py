@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar
+
 from attr import define, field
 
 from crescent.utils.options import unwrap
 
-
 if TYPE_CHECKING:
+    from typing import Any, Callable, List, Optional, Sequence
+
     from crescent.bot import Bot
-    from typing import Any, Callable, Sequence, Optional, List
 
 T = TypeVar("T")
 U = TypeVar("U")

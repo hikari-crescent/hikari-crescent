@@ -1,34 +1,36 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
-from attr import define
 
+from attr import define
 from hikari import (
+    UNDEFINED,
     CacheAware,
     Guild,
     GuildChannel,
     Member,
     MessageFlag,
-    RESTAware,
     ResponseType,
-    UNDEFINED,
+    RESTAware,
     Snowflake,
     User,
 )
+
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
-    from typing import Any, Type, Sequence, Optional
+    from typing import Any, Optional, Sequence, Type
+
     from hikari import (
+        CommandInteraction,
         Embed,
-        UndefinedOr,
-        UndefinedType,
         PartialRole,
         PartialUser,
+        Resourceish,
         SnowflakeishSequence,
         UndefinedNoneOr,
-        Resourceish,
-        CommandInteraction,
+        UndefinedOr,
+        UndefinedType,
     )
     from hikari.api import ComponentBuilder
 

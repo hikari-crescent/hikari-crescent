@@ -4,30 +4,23 @@ from functools import partial
 from inspect import Parameter, signature
 from typing import TYPE_CHECKING
 
-from hikari import (
-    CommandOption,
-    OptionType,
-    PartialChannel,
-    Role,
-    Snowflake,
-    User,
-)
+from hikari import CommandOption, OptionType, PartialChannel, Role, Snowflake, User
 
 from crescent.commands.args import (
     Arg,
     ChannelTypes,
     Choices,
+    Description,
     MaxValue,
     MinValue,
     Name,
-    Description,
 )
 from crescent.context import Context
 from crescent.internal.registry import register_command
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Type, Dict, Sequence, TypeVar
+    from typing import Any, Dict, Optional, Sequence, Type, TypeVar
 
     T = TypeVar("T")
 

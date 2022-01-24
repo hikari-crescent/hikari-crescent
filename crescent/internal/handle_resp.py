@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Optional
 
 from hikari import CommandInteraction, CommandInteractionOption, OptionType
+
 from crescent.context import Context
 from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
@@ -10,7 +11,9 @@ from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Sequence, cast
+
     from hikari import InteractionCreateEvent
+
     from crescent.bot import Bot
 
 
