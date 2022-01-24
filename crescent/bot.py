@@ -5,28 +5,27 @@ from itertools import chain
 from typing import TYPE_CHECKING, Sequence, overload
 
 from hikari import (
+    CacheSettings,
     GatewayBot,
+    HTTPSettings,
     Intents,
     InteractionCreateEvent,
     ProxySettings,
     ShardReadyEvent,
     Snowflake,
-    CacheSettings,
-    HTTPSettings,
 )
+
+from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler
-from crescent.internal.handle_resp import handle_resp
-from crescent.utils import iterate_vars
 from crescent.plugin import Plugin
+from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union
 
 
-__all___: Sequence[str] = (
-    "Bot"
-)
+__all___: Sequence[str] = "Bot"
 
 
 class Bot(GatewayBot):
@@ -40,7 +39,8 @@ class Bot(GatewayBot):
     @overload  # type: ignore
     def __init__(
         self,
-        token: str, *,
+        token: str,
+        *,
         guilds: Sequence[Snowflake] = None,
         allow_color: bool = True,
         banner: Optional[str] = "hikari",
@@ -50,9 +50,10 @@ class Bot(GatewayBot):
         http_settings: Optional[HTTPSettings] = None,
         intents: Intents = ...,
         logs: Union[None, int, str, Dict[str, Any]] = "INFO",
-        max_rate_limit: float = 300, max_retries: int = 3,
+        max_rate_limit: float = 300,
+        max_retries: int = 3,
         proxy_settings: Optional[ProxySettings] = None,
-        rest_url: Optional[str] = None
+        rest_url: Optional[str] = None,
     ):
         ...
 
@@ -61,7 +62,7 @@ class Bot(GatewayBot):
         *args,
         default_guild: Optional[Snowflake] = None,
         guilds: Sequence[Snowflake] = None,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
 
@@ -78,23 +79,13 @@ class Bot(GatewayBot):
         async def shard_ready(event: ShardReadyEvent):
             await self._command_handler.init(event)
 
-        self.subscribe(
-            ShardReadyEvent,
-            shard_ready
-        )
+        self.subscribe(ShardReadyEvent, shard_ready)
 
-        self.subscribe(
-            InteractionCreateEvent,
-            handle_resp
-        )
+        self.subscribe(InteractionCreateEvent, handle_resp)
 
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, MetaStruct):
-                value.register_to_app(
-                    self,
-                    self,
-                    True
-                )
+                value.register_to_app(self, self, True)
 
     def include(self, command: MetaStruct[Any, Any] = None):
         if command is None:

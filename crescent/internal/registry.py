@@ -2,24 +2,28 @@ from __future__ import annotations
 
 from asyncio import gather
 from itertools import chain
-
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
 from hikari import UNDEFINED, CommandOption, OptionType, ShardReadyEvent, Snowflake
 
+from crescent.internal.app_command import (
+    AppCommand,
+    AppCommandMeta,
+    AppCommandType,
+    Unique,
+)
+from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter
 from crescent.utils.options import unwrap
-from crescent.internal.app_command import AppCommand, AppCommandType
-from crescent.internal.meta_struct import MetaStruct
-from crescent.internal.app_command import AppCommandMeta
-from crescent.internal.app_command import Unique
 
 if TYPE_CHECKING:
-    from typing import Callable, Any, Awaitable, Optional, Sequence
+    from typing import Any, Awaitable, Callable, Optional, Sequence
+
     from hikari import Command, UndefinedOr
-    from crescent.typedefs import CommandCallback
+
     from crescent.bot import Bot
+    from crescent.typedefs import CommandCallback
 
 
 def register_command(
@@ -30,7 +34,7 @@ def register_command(
     name: Optional[str] = None,
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
-    default_permission: UndefinedOr[bool] = UNDEFINED
+    default_permission: UndefinedOr[bool] = UNDEFINED,
 ) -> MetaStruct[CommandCallback, AppCommandMeta]:
 
     name = name or callback.__name__
@@ -51,9 +55,9 @@ def register_command(
                 guild_id=guild,
                 name=name,
                 options=options,
-                default_permission=default_permission
-            )
-        )
+                default_permission=default_permission,
+            ),
+        ),
     )
 
     return meta
@@ -74,15 +78,15 @@ class CommandHandler:
         self.application_id: Optional[Snowflake] = None
 
         self.registry: WeakValueDictionary[
-            Unique,
-            MetaStruct[CommandCallback, AppCommandMeta]
+            Unique, MetaStruct[CommandCallback, AppCommandMeta]
         ] = WeakValueDictionary()
 
     def register(
-        self,
-        command: MetaStruct[CommandCallback, AppCommandMeta]
+        self, command: MetaStruct[CommandCallback, AppCommandMeta]
     ) -> MetaStruct[CommandCallback, AppCommandMeta]:
-        command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
+        command.metadata.app.guild_id = (
+            command.metadata.app.guild_id or self.bot.default_guild
+        )
         self.registry[command.metadata.unique] = command
         return command
 
@@ -97,7 +101,8 @@ class CommandHandler:
             *await gather_iter(
                 self.bot.rest.fetch_application_commands(
                     unwrap(self.application_id), guild=guild
-                ) for guild in self.guilds
+                )
+                for guild in self.guilds
             )
         )
 
@@ -112,10 +117,7 @@ class CommandHandler:
                 id=command.id,
             )
 
-        return [
-            hikari_to_crescent_command(command)
-            for command in commands
-        ]
+        return [hikari_to_crescent_command(command) for command in commands]
 
     def build_commands(self) -> Sequence[AppCommand]:
 
@@ -157,7 +159,7 @@ class CommandHandler:
                         type=AppCommandType.CHAT_INPUT,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
-                        default_permission=command.metadata.app.default_permission
+                        default_permission=command.metadata.app.default_permission,
                     )
 
                 # The top-level command now exists. A subcommand group now if placed
@@ -179,8 +181,9 @@ class CommandHandler:
                     if all(
                         (
                             cmd_in_children.name == sub_command_group.name,
-                            cmd_in_children.description == sub_command_group.description,
-                            cmd_in_children.type == sub_command_group.type
+                            cmd_in_children.description
+                            == sub_command_group.description,
+                            cmd_in_children.type == sub_command_group.type,
                         )
                     ):
                         sub_command_group = cmd_in_children
@@ -188,13 +191,15 @@ class CommandHandler:
                 else:
                     cast(list, children).append(sub_command_group)
 
-                cast(list, sub_command_group.options).append(CommandOption(
-                    name=command.metadata.app.name,
-                    description=command.metadata.app.description,
-                    type=OptionType.SUB_COMMAND,
-                    options=command.metadata.app.options,
-                    is_required=None,  # type: ignore
-                ))
+                cast(list, sub_command_group.options).append(
+                    CommandOption(
+                        name=command.metadata.app.name,
+                        description=command.metadata.app.description,
+                        type=OptionType.SUB_COMMAND,
+                        options=command.metadata.app.options,
+                        is_required=None,  # type: ignore
+                    )
+                )
 
                 continue
 
@@ -224,7 +229,7 @@ class CommandHandler:
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
-                        default_permission=command.metadata.app.default_permission
+                        default_permission=command.metadata.app.default_permission,
                     )
 
                 # No checking has to be done before appending `command` since it is the
@@ -252,14 +257,14 @@ class CommandHandler:
             description=command.description,
             guild=command.guild_id or UNDEFINED,
             options=command.options or UNDEFINED,
-            default_permission=command.default_permission
+            default_permission=command.default_permission,
         )
 
     async def delete_application_command(self, command: AppCommand):
         await self.bot.rest.delete_application_command(
             application=unwrap(self.application_id),
             command=unwrap(command.id),
-            guild=command.guild_id or UNDEFINED
+            guild=command.guild_id or UNDEFINED,
         )
 
     async def init(self, event: ShardReadyEvent):
@@ -271,11 +276,13 @@ class CommandHandler:
 
         to_delete = filter(
             lambda dc: not any(dc.is_same_command(lc) for lc in local_commands),
-            discord_commands
+            discord_commands,
         )
         to_post = list(filter(lambda lc: lc not in discord_commands, local_commands))
 
-        await gather(*chain(
-            map(self.delete_application_command, to_delete),
-            map(self.create_application_command, to_post),
-        ))
+        await gather(
+            *chain(
+                map(self.delete_application_command, to_delete),
+                map(self.create_application_command, to_post),
+            )
+        )

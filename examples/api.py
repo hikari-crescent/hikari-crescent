@@ -3,7 +3,9 @@ Example showing the theoretical API
 """
 
 import typing
+
 import hikari
+
 import crescent
 
 bot = crescent.Bot(
@@ -13,7 +15,7 @@ bot = crescent.Bot(
     default_guild=12345678,
     # List of guilds you want to register guild commands to. I think this is required
     # to efficiently compare guild commands on the bot's startup.
-    guilds=[12345678, 87654321, 92311421]
+    guilds=[12345678, 87654321, 92311421],
 )
 
 
@@ -32,8 +34,8 @@ class MyBot(crescent.Bot):
         word: typing.Annotated[
             str,
             "This is an extremely long description that takes up more than one line because"
-            "i think Annotated doesn't make it hard to write these."
-        ]
+            "i think Annotated doesn't make it hard to write these.",
+        ],
     ):
         # Command returns can be used
         return word

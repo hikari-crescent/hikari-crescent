@@ -4,14 +4,12 @@ Does do much right now.
 """
 
 import typing
-import crescent
+
 import hikari
 
+import crescent
 
-bot = crescent.Bot(
-    "TOKEN",
-    guilds=[750862883075915826]
-)
+bot = crescent.Bot("TOKEN", guilds=[750862883075915826])
 
 bot.load_module("plugin")
 
@@ -24,7 +22,7 @@ sub_group = group.sub_group("my_sub_group")
 async def app_command(
     ctx: crescent.Context,
     arg: typing.Annotated[str, crescent.Description("Hello world!")],
-    arg2: str = 10
+    arg2: str = 10,
 ):
     await ctx.respond("Hello")
 

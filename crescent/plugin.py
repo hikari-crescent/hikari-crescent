@@ -4,9 +4,10 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from typing import TypeVar
+
     from .bot import Bot
     from .internal.meta_struct import MetaStruct
-    from typing import TypeVar
 
     T = TypeVar("T", bound="MetaStruct")
 

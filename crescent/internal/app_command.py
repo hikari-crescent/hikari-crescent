@@ -10,7 +10,9 @@ from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
     from typing import Optional, Sequence, Type
-    from hikari import Snowflake, UndefinedOr, UndefinedNoneOr
+
+    from hikari import Snowflake, UndefinedNoneOr, UndefinedOr
+
     from crescent.typedefs import CommandCallback
 
 
@@ -32,15 +34,14 @@ class Unique:
 
     @classmethod
     def from_meta_struct(
-        cls: Type[Unique],
-        command: MetaStruct[CommandCallback, AppCommandMeta]
+        cls: Type[Unique], command: MetaStruct[CommandCallback, AppCommandMeta]
     ) -> Unique:
         return cls(
             name=command.metadata.app.name,
             type=command.metadata.app.type,
             guild_id=command.metadata.app.guild_id,
             group=command.metadata.group,
-            sub_group=command.metadata.sub_group
+            sub_group=command.metadata.sub_group,
         )
 
     @classmethod
@@ -50,7 +51,7 @@ class Unique:
             type=command.app.type,
             guild_id=command.app.guild_id,
             group=command.group,
-            sub_group=command.sub_group
+            sub_group=command.sub_group,
         )
 
 
@@ -69,6 +70,7 @@ class AppCommandType(IntEnum):
 @define
 class AppCommand:
     """Local representation of an Application Command"""
+
     type: AppCommandType
     name: str
     description: str
@@ -78,13 +80,7 @@ class AppCommand:
 
     id: Optional[Snowflake] = None
 
-    __eq__props: Sequence[str] = (
-        "type",
-        "name",
-        "description",
-        "guild_id",
-        "options"
-    )
+    __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
 
     def __eq__(self, __o: object) -> bool:
         for prop in self.__eq__props:
@@ -98,11 +94,7 @@ class AppCommand:
 
     def is_same_command(self, o: AppCommand):
         return all(
-            (
-                self.guild_id == o.guild_id,
-                self.name == o.name,
-                self.type == o.type
-            )
+            (self.guild_id == o.guild_id, self.name == o.name, self.type == o.type)
         )
 
 
