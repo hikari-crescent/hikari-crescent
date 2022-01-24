@@ -5,13 +5,7 @@ from itertools import chain
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
-from hikari import (
-    UNDEFINED,
-    CommandOption,
-    OptionType,
-    Snowflake,
-    Snowflakeish,
-)
+from hikari import UNDEFINED, CommandOption, OptionType, Snowflake, Snowflakeish
 
 from crescent.internal.app_command import (
     AppCommand,
