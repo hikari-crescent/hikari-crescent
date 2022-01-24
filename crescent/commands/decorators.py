@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from functools import partial
-from inspect import Parameter, signature
-from typing import TYPE_CHECKING
+from inspect import signature
+from typing import TYPE_CHECKING, NamedTuple, get_type_hints
 
-from hikari import CommandOption, OptionType, PartialChannel, Role, Snowflake, User
+from hikari import CommandOption, OptionType, PartialChannel, Role, Snowflakeish, User
 
 from crescent.commands.args import (
     Arg,
@@ -20,6 +20,7 @@ from crescent.internal.registry import register_command
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
+    from inspect import Parameter, _empty
     from typing import Any, Dict, Optional, Sequence, Type, TypeVar
 
     T = TypeVar("T")
@@ -38,7 +39,14 @@ _OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
 }
 
 
-def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
+class _Parameter(NamedTuple):
+    name: str
+    annotation: Type[Any]
+    empty: Type[_empty]
+    default: Any
+
+
+def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     name = param.name
     typehint = param.annotation
 
@@ -85,7 +93,7 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
 
 def command(
     callback=None,
-    guild: Optional[Snowflake] = None,
+    guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     group: Optional[str] = None,
     sub_group: Optional[str] = None,
@@ -100,12 +108,25 @@ def command(
             description=description,
         )
 
+    # NOTE: If python 3.10 becomes the minimum supported version, this section
+    # can be replaced with `signature(callback, eval_str=True)`
+
+    type_hints = get_type_hints(callback)
+
+    def convert_signiture(param: Parameter) -> _Parameter:
+        annotation = type_hints.get(param.name, None)
+        return _Parameter(
+            name=param.name,
+            annotation=annotation or param.annotation,
+            empty=param.empty,
+            default=param.default,
+        )
+
+    sig = map(convert_signiture, signature(callback).parameters.values())
+
     options: Sequence[CommandOption] = tuple(
         param
-        for param in (
-            _gen_command_option(param)
-            for param in signature(callback, eval_str=True).parameters.values()
-        )
+        for param in (_gen_command_option(param) for param in sig)
         if param is not None
     )
 

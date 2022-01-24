@@ -18,6 +18,8 @@ attr = "^0.3.1"
 flake8 = "^4.0.1"
 mypy = "^0.931"
 autopep8 = "^1.6.0"
+isort = "^5.10.1"
+black = "^21.12b0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
