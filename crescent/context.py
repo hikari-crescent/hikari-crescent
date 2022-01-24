@@ -28,7 +28,7 @@ if TYPE_CHECKING:
         SnowflakeishSequence,
         UndefinedNoneOr,
         Resourceish,
-        CommandInteraction
+        CommandInteraction,
     )
     from hikari.api import ComponentBuilder
 
@@ -37,9 +37,7 @@ class RestAndCacheAware(RESTAware, CacheAware):
     ...
 
 
-__all__: Sequence[str] = (
-    "Context",
-)
+__all__: Sequence[str] = ("Context",)
 
 
 @define
@@ -62,7 +60,9 @@ class Context:
     _used_first_resp: bool = False
 
     @classmethod
-    def _from_command_interaction(cls: Type[Context], interaction: CommandInteraction) -> Context:
+    def _from_command_interaction(
+        cls: Type[Context], interaction: CommandInteraction
+    ) -> Context:
         return cls(
             app=cast(RestAndCacheAware, interaction.app),
             application_id=interaction.application_id,
@@ -78,17 +78,11 @@ class Context:
 
     @property
     def channel(self) -> Optional[GuildChannel]:
-        return map_or(
-            self.guild_id,
-            self.app.cache.get_guild_channel
-        )
+        return map_or(self.guild_id, self.app.cache.get_guild_channel)
 
     @property
     def guild(self) -> Optional[Guild]:
-        return map_or(
-            self.guild_id,
-            self.app.cache.get_available_guild
-        )
+        return map_or(self.guild_id, self.app.cache.get_available_guild)
 
     async def defer(self, ephemeral: bool = False):
         self._has_replied = True
@@ -105,7 +99,7 @@ class Context:
             interaction=self.id,
             token=self.token,
             flags=MessageFlag.EPHEMERAL if ephemeral else UNDEFINED,
-            response_type=ResponseType.DEFERRED_MESSAGE_UPDATE
+            response_type=ResponseType.DEFERRED_MESSAGE_UPDATE,
         )
 
     async def respond(
@@ -150,7 +144,7 @@ class Context:
                 embeds=embeds,
                 mentions_everyone=mentions_everyone,
                 user_mentions=user_mentions,
-                role_mentions=role_mentions
+                role_mentions=role_mentions,
             )
 
         if not self._used_first_resp:
@@ -163,7 +157,7 @@ class Context:
                 embeds=embeds,
                 mentions_everyone=mentions_everyone,
                 user_mentions=user_mentions,
-                role_mentions=role_mentions
+                role_mentions=role_mentions,
             )
 
         return await self.followup(
@@ -189,9 +183,12 @@ class Context:
         embeds: UndefinedNoneOr[Sequence[Embed]] = UNDEFINED,
         replace_attachments: bool = False,
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
-        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
-        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
-
+        user_mentions: UndefinedOr[
+            SnowflakeishSequence[PartialUser] | bool
+        ] = UNDEFINED,
+        role_mentions: UndefinedOr[
+            SnowflakeishSequence[PartialRole] | bool
+        ] = UNDEFINED,
     ):
         return await self.app.rest.edit_interaction_response(
             application=self.application_id,
@@ -220,8 +217,12 @@ class Context:
         embed: UndefinedOr[Embed] = UNDEFINED,
         embeds: UndefinedOr[Sequence[Embed]] = UNDEFINED,
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
-        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
-        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+        user_mentions: UndefinedOr[
+            SnowflakeishSequence[PartialUser] | bool
+        ] = UNDEFINED,
+        role_mentions: UndefinedOr[
+            SnowflakeishSequence[PartialRole] | bool
+        ] = UNDEFINED,
     ):
         return await self.app.rest.execute_webhook(
             webhook=self.application_id,

@@ -31,9 +31,7 @@ if TYPE_CHECKING:
 
     T = TypeVar("T")
 
-__all__: Sequence[str] = (
-    "command",
-)
+__all__: Sequence[str] = ("command",)
 
 _OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
     str: OptionType.STRING,
@@ -88,7 +86,7 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
         channel_types=channel_types,
         min_value=min_value,
         max_value=max_value,
-        is_required=required
+        is_required=required,
     )
 
 
@@ -106,12 +104,12 @@ def command(
             name=name,
             group=group,
             sub_group=sub_group,
-            description=description
+            description=description,
         )
 
     options: Sequence[CommandOption] = tuple(
-        param for param in
-        (
+        param
+        for param in (
             _gen_command_option(param)
             for param in signature(callback, eval_str=True).parameters.values()
         )
@@ -125,5 +123,5 @@ def command(
         group=group,
         sub_group=sub_group,
         description=description,
-        options=options
+        options=options,
     )

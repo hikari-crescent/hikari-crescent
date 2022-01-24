@@ -13,9 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 U = TypeVar("U")
 
-__all__: Sequence[str] = (
-    "MetaStruct",
-)
+__all__: Sequence[str] = ("MetaStruct",)
 
 
 @define

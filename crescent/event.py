@@ -11,15 +11,10 @@ if TYPE_CHECKING:
     from hikari.api.event_manager import CallbackT
 
 
-__all__: Sequence[str] = (
-    "event",
-)
+__all__: Sequence[str] = ("event",)
 
 
-def event(
-    callback: Optional[CallbackT] = None,
-    event_type: Optional[Type[Any]] = None
-):
+def event(callback: Optional[CallbackT] = None, event_type: Optional[Type[Any]] = None):
     if callback is None:
         return partial(event, event_type=event_type)
 
@@ -40,8 +35,4 @@ def event(
             callback=self.callback,
         )
 
-    return MetaStruct(
-        callback=callback,
-        metadata=None,
-        app_set_hooks=[hook]
-    )
+    return MetaStruct(callback=callback, metadata=None, app_set_hooks=[hook])
