@@ -4,7 +4,7 @@ from enum import IntEnum
 from typing import TYPE_CHECKING
 
 from attr import define
-from hikari import UNDEFINED, CommandOption
+from hikari import UNDEFINED, CommandOption, Snowflakeish
 
 from crescent.internal.meta_struct import MetaStruct
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class Unique:
     name: str
     type: AppCommandType
-    guild_id: UndefinedNoneOr[Snowflake]
+    guild_id: UndefinedNoneOr[Snowflakeish]
     group: UndefinedNoneOr[str]
     sub_group: UndefinedNoneOr[str]
 
@@ -72,7 +72,7 @@ class AppCommand:
     type: AppCommandType
     name: str
     description: str
-    guild_id: Optional[Snowflake]
+    guild_id: Optional[Snowflakeish]
     options: Optional[Sequence[CommandOption]]
     default_permission: UndefinedOr[bool]
 

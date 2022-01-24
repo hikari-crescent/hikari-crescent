@@ -6,7 +6,7 @@ from itertools import chain
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
-from hikari import UNDEFINED, CommandOption, OptionType, ShardReadyEvent, Snowflake
+from hikari import UNDEFINED, CommandOption, OptionType, ShardReadyEvent, Snowflake, Snowflakeish
 
 from crescent.utils import gather_iter
 from crescent.utils.options import unwrap
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 def register_command(
     callback: Callable[..., Awaitable[Any]],
-    guild: Optional[Snowflake] = None,
+    guild: Optional[Snowflakeish] = None,
     group: Optional[str] = None,
     sub_group: Optional[str] = None,
     name: Optional[str] = None,

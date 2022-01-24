@@ -1,15 +1,17 @@
 from __future__ import annotations
+from collections import namedtuple
 
 from functools import partial
 from inspect import Parameter, signature
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, get_type_hints
+from sys import version_info
 
 from hikari import (
     CommandOption,
     OptionType,
     PartialChannel,
     Role,
-    Snowflake,
+    Snowflakeish,
     User,
 )
 
@@ -94,7 +96,7 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
 
 def command(
     callback=None,
-    guild: Optional[Snowflake] = None,
+    guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     group: Optional[str] = None,
     sub_group: Optional[str] = None,
@@ -109,11 +111,33 @@ def command(
             description=description
         )
 
+    if version_info.minor >= 10:
+        sig = signature(callback, eval_str=True).parameters.values()
+    else:
+        sig = signature(callback).parameters.values()
+        type_hints = get_type_hints(callback)
+        _Parameter = namedtuple(
+            "_Parameter",
+            ("name", "annotation", "empty", "default")
+        )
+
+        def convert_signiture(param: Parameter):
+            if annotation := type_hints.get(param.name, None):
+                return _Parameter(
+                    name=param.name,
+                    annotation=annotation,
+                    empty=param.empty,
+                    default=param.default,
+                )
+            return param
+
+        sig = map(convert_signiture, sig)
+
     options: Sequence[CommandOption] = tuple(
         param for param in
         (
             _gen_command_option(param)
-            for param in signature(callback, eval_str=True).parameters.values()
+            for param in sig
         )
         if param is not None
     )
