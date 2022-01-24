@@ -20,8 +20,8 @@ from crescent.internal.registry import register_command
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Sequence, Type, TypeVar
     from inspect import Parameter, _empty
+    from typing import Any, Dict, Optional, Sequence, Type, TypeVar
 
     T = TypeVar("T")
 
@@ -126,10 +126,7 @@ def command(
 
     options: Sequence[CommandOption] = tuple(
         param
-        for param in (
-            _gen_command_option(param)
-            for param in sig
-        )
+        for param in (_gen_command_option(param) for param in sig)
         if param is not None
     )
 
