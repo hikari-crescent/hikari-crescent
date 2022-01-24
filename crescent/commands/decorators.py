@@ -18,6 +18,7 @@ from crescent.commands.args import (
 from crescent.context import Context
 from crescent.internal.registry import register_command
 from crescent.mentionable import Mentionable
+from crescent.typedefs import CommandCallback
 
 if TYPE_CHECKING:
     from inspect import Parameter, _empty
@@ -92,7 +93,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
 
 def command(
-    callback=None,
+    callback: CommandCallback = None,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     group: Optional[str] = None,
@@ -102,6 +103,7 @@ def command(
     if not callback:
         return partial(
             command,
+            guild=guild,
             name=name,
             group=group,
             sub_group=sub_group,

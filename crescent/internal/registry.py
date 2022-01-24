@@ -5,14 +5,7 @@ from itertools import chain
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
-from hikari import (
-    UNDEFINED,
-    CommandOption,
-    OptionType,
-    ShardReadyEvent,
-    Snowflake,
-    Snowflakeish,
-)
+from hikari import UNDEFINED, CommandOption, OptionType, Snowflake, Snowflakeish
 
 from crescent.internal.app_command import (
     AppCommand,
@@ -100,18 +93,19 @@ class CommandHandler:
     async def get_discord_commands(self) -> Sequence[AppCommand]:
         """Fetches commands from Discord"""
 
-        commands = list(
+        res_commands = list(
             await self.bot.rest.fetch_application_commands(unwrap(self.application_id))
         )
 
-        commands.extend(
-            *await gather_iter(
-                self.bot.rest.fetch_application_commands(
-                    unwrap(self.application_id), guild=guild
-                )
-                for guild in self.guilds
+        guild_commands = await gather_iter(
+            self.bot.rest.fetch_application_commands(
+                unwrap(self.application_id), guild=guild
             )
+            for guild in self.guilds
         )
+
+        for commands in guild_commands:
+            res_commands.extend(commands)
 
         def hikari_to_crescent_command(command: Command) -> AppCommand:
             return AppCommand(
@@ -124,7 +118,7 @@ class CommandHandler:
                 id=command.id,
             )
 
-        return [hikari_to_crescent_command(command) for command in commands]
+        return [hikari_to_crescent_command(command) for command in res_commands]
 
     def build_commands(self) -> Sequence[AppCommand]:
 
@@ -274,8 +268,7 @@ class CommandHandler:
             guild=command.guild_id or UNDEFINED,
         )
 
-    async def init(self, event: ShardReadyEvent):
-        self.application_id = event.application_id
+    async def register_commands(self):
         self.guilds = self.guilds or tuple(self.bot.cache.get_guilds_view().keys())
 
         discord_commands = await self.get_discord_commands()
