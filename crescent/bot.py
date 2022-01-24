@@ -13,6 +13,7 @@ from hikari import (
     ProxySettings,
     ShardReadyEvent,
     Snowflake,
+    StartedEvent,
 )
 
 from crescent.internal.handle_resp import handle_resp
@@ -77,9 +78,13 @@ class Bot(GatewayBot):
         self.plugins: Dict[str, Plugin] = {}
 
         async def shard_ready(event: ShardReadyEvent):
+            self._command_handler.application_id = event.application_id
+
+        async def started(event: StartedEvent):
             await self._command_handler.init(event)
 
         self.subscribe(ShardReadyEvent, shard_ready)
+        self.subscribe(StartedEvent, started)
 
         self.subscribe(InteractionCreateEvent, handle_resp)
 
