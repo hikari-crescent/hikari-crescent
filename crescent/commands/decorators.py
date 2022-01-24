@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from collections import namedtuple
 from functools import partial
-from inspect import Parameter, signature
-from typing import TYPE_CHECKING, get_type_hints
+from inspect import signature
+from typing import TYPE_CHECKING, NamedTuple, get_type_hints
 
 from hikari import CommandOption, OptionType, PartialChannel, Role, Snowflakeish, User
 
@@ -22,6 +21,7 @@ from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Sequence, Type, TypeVar
+    from inspect import Parameter, _empty
 
     T = TypeVar("T")
 
@@ -38,10 +38,12 @@ _OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
     Mentionable: OptionType.MENTIONABLE,
 }
 
-_Parameter = namedtuple(
-    "_Parameter",
-    ("name", "annotation", "empty", "default")
-)
+
+class _Parameter(NamedTuple):
+    name: str
+    annotation: Type[Any]
+    empty: Type[_empty]
+    default: Any
 
 
 def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
