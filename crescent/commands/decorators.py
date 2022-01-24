@@ -4,7 +4,6 @@ from collections import namedtuple
 from functools import partial
 from inspect import Parameter, signature
 from typing import TYPE_CHECKING, get_type_hints
-from sys import version_info
 
 from hikari import (
     CommandOption,
@@ -48,8 +47,13 @@ _OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
     Mentionable: OptionType.MENTIONABLE,
 }
 
+_Parameter = namedtuple(
+    "_Parameter",
+    ("name", "annotation", "empty", "default")
+)
 
-def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
+
+def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     name = param.name
     typehint = param.annotation
 
@@ -111,27 +115,21 @@ def command(
             description=description
         )
 
-    if version_info.minor >= 10:
-        sig = signature(callback, eval_str=True).parameters.values()
-    else:
-        sig = signature(callback).parameters.values()
-        type_hints = get_type_hints(callback)
-        _Parameter = namedtuple(
-            "_Parameter",
-            ("name", "annotation", "empty", "default")
+    # NOTE: If python 3.10 becomes the minimum supported version, this section
+    # can be replaced with `signature(callback, eval_str=True)`
+
+    type_hints = get_type_hints(callback)
+
+    def convert_signiture(param: Parameter) -> _Parameter:
+        annotation = type_hints.get(param.name, None)
+        return _Parameter(
+            name=param.name,
+            annotation=annotation or param.annotation,
+            empty=param.empty,
+            default=param.default,
         )
 
-        def convert_signiture(param: Parameter):
-            if annotation := type_hints.get(param.name, None):
-                return _Parameter(
-                    name=param.name,
-                    annotation=annotation,
-                    empty=param.empty,
-                    default=param.default,
-                )
-            return param
-
-        sig = map(convert_signiture, sig)
+    sig = map(convert_signiture, signature(callback).parameters.values())
 
     options: Sequence[CommandOption] = tuple(
         param for param in
