@@ -6,6 +6,7 @@ from typing import Any, Dict, Optional, Sequence, Tuple, Type, TypeVar, Union, o
 from hikari import (
     UNDEFINED,
     ChannelType,
+    CommandChoice,
     CommandOption,
     DMChannel,
     GroupDMChannel,
@@ -22,11 +23,9 @@ from hikari import (
     UndefinedNoneOr,
     UndefinedOr,
     User,
-    CommandChoice,
 )
 
 from crescent.mentionable import Mentionable
-
 
 __all__ = (
     "OPTIONS_TYPE_MAP",
@@ -217,7 +216,9 @@ def option(  # type: ignore
         type=OPTIONS_TYPE_MAP[ctype],
         description=description,
         default=default,
-        choices=[CommandChoice(name=n, value=v) for n, v in choices] if choices else None,
+        choices=[CommandChoice(name=n, value=v) for n, v in choices]
+        if choices
+        else None,
         channel_types=channel_types,
         min_value=min_value,
         max_value=max_value,

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, Sequence, Protocol, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Protocol, Sequence
 
 if TYPE_CHECKING:
     from .context import Context
