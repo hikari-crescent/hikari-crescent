@@ -12,7 +12,7 @@ from hikari import (
     InteractionCreateEvent,
     ProxySettings,
     ShardReadyEvent,
-    Snowflake,
+    Snowflakeish,
     StartedEvent,
 )
 
@@ -42,7 +42,8 @@ class Bot(GatewayBot):
         self,
         token: str,
         *,
-        guilds: Sequence[Snowflake] = None,
+        guilds: Sequence[Snowflakeish] = None,
+        default_guild: Optional[Snowflakeish] = None,
         allow_color: bool = True,
         banner: Optional[str] = "hikari",
         executor: Optional[Executor] = None,
@@ -61,8 +62,8 @@ class Bot(GatewayBot):
     def __init__(
         self,
         *args,
-        default_guild: Optional[Snowflake] = None,
-        guilds: Sequence[Snowflake] = None,
+        default_guild: Optional[Snowflakeish] = None,
+        guilds: Sequence[Snowflakeish] = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -74,7 +75,7 @@ class Bot(GatewayBot):
             guilds = tuple(chain(guilds, (default_guild,)))
 
         self._command_handler: CommandHandler = CommandHandler(self, guilds)
-        self.default_guild: Optional[Snowflake] = default_guild
+        self.default_guild: Optional[Snowflakeish] = default_guild
         self.plugins: Dict[str, Plugin] = {}
 
         async def shard_ready(event: ShardReadyEvent):
