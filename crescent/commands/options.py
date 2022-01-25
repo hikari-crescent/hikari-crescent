@@ -29,6 +29,7 @@ from crescent.mentionable import Mentionable
 
 __all__ = (
     "OPTIONS_TYPE_MAP",
+    "get_channel_types",
     "option",
     "ClassCommandOption",
 )
@@ -66,13 +67,13 @@ _CHANNEL_TYPE_MAP: Dict[Type[_VALID_CHANNEL_TYPES], ChannelType] = {
 }
 
 
-def _get_channel_t(t: Type[PartialChannel]) -> list[ChannelType]:
-    valid: list[ChannelType] = []
+def get_channel_types(*channels: Type[PartialChannel]) -> set[ChannelType] | None:
+    types: set[ChannelType] = set()
     for k, v in _CHANNEL_TYPE_MAP.items():
-        if issubclass(k, t):
-            valid.append(v)
+        if isinstance(k, channels):
+            types.add(v)
 
-    return valid
+    return types
 
 
 @dataclass
@@ -105,7 +106,7 @@ ROMB = TypeVar("ROMB", User, Role, Mentionable, bool)
 
 @overload
 def option(
-    type: Union[Type[PartialChannel], Sequence[PartialChannel]],
+    option_type: Union[Type[PartialChannel], Sequence[PartialChannel]],
     description: str = ...,
 ) -> InteractionChannel:
     ...
@@ -113,7 +114,7 @@ def option(
 
 @overload
 def option(
-    type: Union[Type[PartialChannel], Sequence[PartialChannel]],
+    option_type: Union[Type[PartialChannel], Sequence[PartialChannel]],
     description: str = ...,
     *,
     default: D,
@@ -123,7 +124,7 @@ def option(
 
 @overload
 def option(
-    type: Type[ROMB],
+    option_type: Type[ROMB],
     description: str = ...,
 ) -> ROMB:
     ...
@@ -131,7 +132,7 @@ def option(
 
 @overload
 def option(
-    type: Type[ROMB],
+    option_type: Type[ROMB],
     description: str = ...,
     *,
     default: D,
@@ -141,7 +142,7 @@ def option(
 
 @overload
 def option(
-    type: Type[IF],
+    option_type: Type[IF],
     description: str = ...,
     *,
     choices: Optional[Sequence[Tuple[str, IF]]] = ...,
@@ -153,7 +154,7 @@ def option(
 
 @overload
 def option(
-    type: Type[IF],
+    option_type: Type[IF],
     description: str = ...,
     *,
     default: D,
@@ -166,7 +167,7 @@ def option(
 
 @overload
 def option(
-    type: Type[str],
+    option_type: Type[str],
     description: str = ...,
     *,
     choices: Optional[Sequence[Tuple[str, str]]] = ...,
@@ -178,7 +179,7 @@ def option(
 
 @overload
 def option(
-    type: Type[str],
+    option_type: Type[str],
     description: str = ...,
     *,
     default: D,
@@ -190,7 +191,7 @@ def option(
 
 
 def option(  # type: ignore
-    ctype: Union[Type[_VALID_TYPES], Sequence[Type[_VALID_CHANNEL_TYPES]]],
+    option_type: Union[Type[_VALID_TYPES], Sequence[Type[_VALID_CHANNEL_TYPES]]],
     description: str = "\u200B",
     *,
     default: UndefinedOr[Any] = UNDEFINED,
@@ -198,28 +199,23 @@ def option(  # type: ignore
     min_value: Optional[Union[int, float]] = None,
     max_value: Optional[Union[int, float]] = None,
 ) -> Any:
-    if isinstance(ctype, type) and issubclass(ctype, PartialChannel):
-        if ctype is PartialChannel:
-            channel_types = None
-        else:
-            channel_types = _get_channel_t(ctype)
-        ctype = PartialChannel
-    elif isinstance(ctype, Sequence):
-        channel_types = []
-        for t in ctype:
-            channel_types.extend(_get_channel_t(t))
-        ctype = PartialChannel
+    if isinstance(option_type, type) and issubclass(option_type, PartialChannel):
+        channel_types = get_channel_types(option_type)
+        option_type = PartialChannel
+    elif isinstance(option_type, Sequence):
+        channel_types = get_channel_types(*option_type)
+        option_type = PartialChannel
     else:
         channel_types = None
 
     return ClassCommandOption(
-        type=OPTIONS_TYPE_MAP[ctype],
+        type=OPTIONS_TYPE_MAP[option_type],
         description=description,
         default=default,
         choices=[CommandChoice(name=n, value=v) for n, v in choices]
         if choices
         else None,
-        channel_types=channel_types,
+        channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,
     )
