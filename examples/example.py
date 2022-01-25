@@ -3,8 +3,6 @@ Example of the public API.
 Does do much right now.
 """
 
-from typing import Union
-
 import hikari
 from typing_extensions import Annotated
 
