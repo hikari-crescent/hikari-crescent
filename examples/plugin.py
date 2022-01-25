@@ -14,4 +14,4 @@ async def plugin_command(ctx):
 @plugin.include
 @crescent.event
 async def plugin_event(event: hikari.MessageCreateEvent):
-    print("even triggered")
+    print("plugin event triggered")
