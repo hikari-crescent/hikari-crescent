@@ -82,14 +82,14 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
 
 def _class_command_callback(
-    cls: Type[ClassCommandProto], dd: Dict[str, Any]
+    cls: Type[ClassCommandProto], defaults: Dict[str, Any]
 ) -> CommandCallback:
     async def callback(ctx: Context, **kwargs) -> Any:
         cmd = cls()
         for k, v in kwargs.items():
             setattr(cmd, k, v)
 
-        for k, v in dd.items():
+        for k, v in defaults.items():
             if k not in kwargs:
                 setattr(cmd, k, v)
 
