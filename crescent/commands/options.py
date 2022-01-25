@@ -99,9 +99,11 @@ class ClassCommandOption:
         )
 
 
-D = TypeVar("D")
-IF = TypeVar("IF", int, float)
-ROMB = TypeVar("ROMB", User, Role, Mentionable, bool)
+DEFAULT = TypeVar("DEFAULT")
+INT_OR_FLOAT = TypeVar("INT_OR_FLOAT", int, float)
+USER_ROLE_MENTION_OR_BOOL = TypeVar(
+    "USER_ROLE_MENTION_OR_BOOL", User, Role, Mentionable, bool
+)
 
 
 @overload
@@ -117,51 +119,51 @@ def option(
     option_type: Union[Type[PartialChannel], Sequence[PartialChannel]],
     description: str = ...,
     *,
-    default: D,
-) -> Union[InteractionChannel, D]:
+    default: DEFAULT,
+) -> Union[InteractionChannel, DEFAULT]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[ROMB],
+    option_type: Type[USER_ROLE_MENTION_OR_BOOL],
     description: str = ...,
-) -> ROMB:
+) -> USER_ROLE_MENTION_OR_BOOL:
     ...
 
 
 @overload
 def option(
-    option_type: Type[ROMB],
-    description: str = ...,
-    *,
-    default: D,
-) -> Union[ROMB, D]:
-    ...
-
-
-@overload
-def option(
-    option_type: Type[IF],
+    option_type: Type[USER_ROLE_MENTION_OR_BOOL],
     description: str = ...,
     *,
-    choices: Optional[Sequence[Tuple[str, IF]]] = ...,
-    min_value: Optional[IF] = ...,
-    max_value: Optional[IF] = ...,
-) -> IF:
+    default: DEFAULT,
+) -> Union[USER_ROLE_MENTION_OR_BOOL, DEFAULT]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[IF],
+    option_type: Type[INT_OR_FLOAT],
     description: str = ...,
     *,
-    default: D,
-    choices: Optional[Sequence[Tuple[str, IF]]] = ...,
-    min_value: Optional[IF] = ...,
-    max_value: Optional[IF] = ...,
-) -> Union[IF, D]:
+    choices: Optional[Sequence[Tuple[str, INT_OR_FLOAT]]] = ...,
+    min_value: Optional[INT_OR_FLOAT] = ...,
+    max_value: Optional[INT_OR_FLOAT] = ...,
+) -> INT_OR_FLOAT:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[INT_OR_FLOAT],
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    choices: Optional[Sequence[Tuple[str, INT_OR_FLOAT]]] = ...,
+    min_value: Optional[INT_OR_FLOAT] = ...,
+    max_value: Optional[INT_OR_FLOAT] = ...,
+) -> Union[INT_OR_FLOAT, DEFAULT]:
     ...
 
 
@@ -182,11 +184,11 @@ def option(
     option_type: Type[str],
     description: str = ...,
     *,
-    default: D,
+    default: DEFAULT,
     choices: Optional[Sequence[Tuple[str, str]]] = ...,
     min_value: Optional[str] = ...,
     max_value: Optional[str] = ...,
-) -> Union[str, D]:
+) -> Union[str, DEFAULT]:
     ...
 
 
