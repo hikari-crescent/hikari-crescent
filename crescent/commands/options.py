@@ -199,7 +199,7 @@ def option(  # type: ignore
     max_value: Optional[Union[int, float]] = None,
 ) -> Any:
     if isinstance(ctype, type) and issubclass(ctype, PartialChannel):
-        if type(ctype) == PartialChannel:
+        if ctype is PartialChannel:
             channel_types = None
         else:
             channel_types = _get_channel_t(ctype)
