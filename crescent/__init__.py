@@ -22,6 +22,7 @@ __all__: Sequence[str] = (
     "MaxValue",
     "MinValue",
     "command",
+    "option",
     "Group",
     "SubGroup",
     "Bot",
@@ -30,4 +31,5 @@ __all__: Sequence[str] = (
     "Mentionable",
     "CommandCallback",
     "Plugin",
+    "ClassCommandOption",
 )

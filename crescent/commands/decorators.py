@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import signature
-from typing import TYPE_CHECKING, NamedTuple, get_type_hints
+from typing import TYPE_CHECKING, Dict, NamedTuple, Type, cast, get_type_hints
 
-from hikari import CommandOption, OptionType, PartialChannel, Role, Snowflakeish, User
+from hikari import CommandOption, Snowflakeish
 
 from crescent.commands.args import (
     Arg,
@@ -15,29 +15,18 @@ from crescent.commands.args import (
     MinValue,
     Name,
 )
+from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption
 from crescent.context import Context
 from crescent.internal.registry import register_command
-from crescent.mentionable import Mentionable
-from crescent.typedefs import CommandCallback
+from crescent.typedefs import ClassCommandProto, CommandCallback
 
 if TYPE_CHECKING:
     from inspect import Parameter, _empty
-    from typing import Any, Dict, Optional, Sequence, Type, TypeVar
+    from typing import Any, Optional, Sequence, TypeVar
 
     T = TypeVar("T")
 
 __all__: Sequence[str] = ("command",)
-
-_OPTIONS_TYPE_MAP: Dict[Type, OptionType] = {
-    str: OptionType.STRING,
-    bool: OptionType.BOOLEAN,
-    int: OptionType.INTEGER,
-    float: OptionType.FLOAT,
-    PartialChannel: OptionType.CHANNEL,
-    Role: OptionType.ROLE,
-    User: OptionType.USER,
-    Mentionable: OptionType.MENTIONABLE,
-}
 
 
 class _Parameter(NamedTuple):
@@ -61,7 +50,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     if origin is Context or origin is param.empty:
         return None
 
-    _type = _OPTIONS_TYPE_MAP[origin]
+    _type = OPTIONS_TYPE_MAP[origin]
 
     def get_arg(t: Type[Arg] | Type[Any]) -> Optional[T]:
         data: T
@@ -92,8 +81,25 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     )
 
 
+def _class_command_callback(
+    cls: Type[ClassCommandProto], defaults: Dict[str, Any]
+) -> CommandCallback:
+    async def callback(ctx: Context, **kwargs) -> Any:
+        cmd = cls()
+        for k, v in kwargs.items():
+            setattr(cmd, k, v)
+
+        for k, v in defaults.items():
+            if k not in kwargs:
+                setattr(cmd, k, v)
+
+        return await cmd.callback(ctx)
+
+    return callback
+
+
 def command(
-    callback: CommandCallback = None,
+    callback: CommandCallback | ClassCommandProto | None = None,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     group: Optional[str] = None,
@@ -110,30 +116,50 @@ def command(
             description=description,
         )
 
-    # NOTE: If python 3.10 becomes the minimum supported version, this section
-    # can be replaced with `signature(callback, eval_str=True)`
+    if isinstance(callback, type) and issubclass(callback, object):
+        if name is None:
+            raise TypeError("Please specify a command name for class commands.")
+        defaults: Dict[str, Any] = {}
 
-    type_hints = get_type_hints(callback)
+        options: list[CommandOption] = []
+        for n, v in callback.__dict__.items():
+            if not isinstance(v, ClassCommandOption):
+                continue
+            options.append(v._gen_option(n))
+            defaults[n] = v.default
 
-    def convert_signiture(param: Parameter) -> _Parameter:
-        annotation = type_hints.get(param.name, None)
-        return _Parameter(
-            name=param.name,
-            annotation=annotation or param.annotation,
-            empty=param.empty,
-            default=param.default,
+        callback_func = _class_command_callback(
+            cast(Type[ClassCommandProto], callback),
+            defaults,
         )
 
-    sig = map(convert_signiture, signature(callback).parameters.values())
+    else:
+        callback_func = cast(CommandCallback, callback)
 
-    options: Sequence[CommandOption] = tuple(
-        param
-        for param in (_gen_command_option(param) for param in sig)
-        if param is not None
-    )
+        # NOTE: If python 3.10 becomes the minimum supported version, this section
+        # can be replaced with `signature(callback, eval_str=True)`
+
+        type_hints = get_type_hints(callback)
+
+        def convert_signiture(param: Parameter) -> _Parameter:
+            annotation = type_hints.get(param.name, None)
+            return _Parameter(
+                name=param.name,
+                annotation=annotation or param.annotation,
+                empty=param.empty,
+                default=param.default,
+            )
+
+        sig = map(convert_signiture, signature(callback_func).parameters.values())
+
+        options = [
+            param
+            for param in (_gen_command_option(param) for param in sig)
+            if param is not None
+        ]
 
     return register_command(
-        callback=callback,
+        callback=callback_func,
         guild=guild,
         name=name,
         group=group,

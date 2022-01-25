@@ -24,11 +24,11 @@ class MyBot(crescent.Bot):
     # Special event decorator that makes subclassing possible, although it will not be
     # required.
     @crescent.event
-    def on_event(self, event: hikari.ShardReadyEvent):
+    async def on_event(self, event: hikari.ShardReadyEvent):
         pass
 
     @crescent.command
-    def say(
+    async def say(
         self,
         ctx: crescent.Context,
         word: typing.Annotated[
@@ -45,20 +45,20 @@ class MyBot(crescent.Bot):
 # Read signiture to pass self and context
 @bot.include
 @crescent.command
-def mycommand(self, ctx: crescent.Context):
+async def mycommand(self, ctx: crescent.Context):
     pass
 
 
 # Once Hikari adds support
 @bot.include
 @crescent.user_command
-def user_command(self, ctx, user):
+async def user_command(self, ctx, user):
     pass
 
 
 @bot.include
 @crescent.message_command
-def message_command(self, ctx, user):
+async def message_command(self, ctx, user):
     pass
 
 
@@ -66,8 +66,8 @@ def message_command(self, ctx, user):
 @bot.include
 @crescent.command
 class Command:
-    option_one = crescent.field(str, description="Hello world")
-    option_one = crescent.field(int)
+    option_one = crescent.option(str, description="Hello world")
+    option_two = crescent.option(int)
 
-    def callback(self, ctx):
+    async def callback(self, ctx):
         pass

@@ -72,9 +72,9 @@ class CommandHandler:
         "application_id",
     )
 
-    def __init__(self, bot: Bot, guilds: Sequence[Snowflake]) -> None:
+    def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
         self.bot: Bot = bot
-        self.guilds: Sequence[Snowflake] = guilds
+        self.guilds: Sequence[Snowflakeish] = guilds
         self.application_id: Optional[Snowflake] = None
 
         self.registry: WeakValueDictionary[
