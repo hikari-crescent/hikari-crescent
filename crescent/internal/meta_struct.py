@@ -1,6 +1,6 @@
 from __future__ import annotations
-from functools import partial
 
+from functools import partial
 from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from attr import define, field
