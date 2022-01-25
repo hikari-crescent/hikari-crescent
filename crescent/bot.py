@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from concurrent.futures import Executor
 from itertools import chain
-from typing import TYPE_CHECKING, Sequence, overload
+from typing import TYPE_CHECKING, Sequence
 
 from hikari import (
     CacheSettings,
@@ -37,44 +37,62 @@ class Bot(GatewayBot):
         "default_guild",
     )
 
-    @overload  # type: ignore
     def __init__(
         self,
         token: str,
         *,
-        guilds: Sequence[Snowflakeish] = None,
+        tracked_guilds: Sequence[Snowflakeish] = None,
         default_guild: Optional[Snowflakeish] = None,
         allow_color: bool = True,
-        banner: Optional[str] = "hikari",
+        banner: Optional[str] = "crescent",
         executor: Optional[Executor] = None,
         force_color: bool = False,
         cache_settings: Optional[CacheSettings] = None,
         http_settings: Optional[HTTPSettings] = None,
-        intents: Intents = ...,
+        intents: Intents = Intents.ALL_UNPRIVILEGED,
         logs: Union[None, int, str, Dict[str, Any]] = "INFO",
         max_rate_limit: float = 300,
         max_retries: int = 3,
         proxy_settings: Optional[ProxySettings] = None,
         rest_url: Optional[str] = None,
     ):
-        ...
+        """
+        Crescent adds two parameters to Hikari's Gateway Bot. `tracked_guilds`
+        and `default_guild`.
 
-    def __init__(
-        self,
-        *args,
-        default_guild: Optional[Snowflakeish] = None,
-        guilds: Sequence[Snowflakeish] = None,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+        Parameters
+        ----------
+        default_guild : Optional[List[hikari.Snowflakeish]]
+            The guild to post application commands to by default. If this is None,
+            slash commands will be posted globall.
+        tracked_guilds : Optional[List[hikari.Snowflakeish]]
+            The guilds to compare posted commands to. Commands will not be
+            automatically removed from guilds that aren't in this list. This should
+            be kept to as little guilds as possible to prevent rate limits.
+        """
+        super().__init__(
+            token=token,
+            allow_color=allow_color,
+            banner=banner,
+            executor=executor,
+            force_color=force_color,
+            cache_settings=cache_settings,
+            http_settings=http_settings,
+            intents=intents,
+            logs=logs,
+            max_rate_limit=max_rate_limit,
+            max_retries=max_retries,
+            proxy_settings=proxy_settings,
+            rest_url=rest_url,
+        )
 
-        if guilds is None:
-            guilds = ()
+        if tracked_guilds is None:
+            tracked_guilds = ()
 
-        if default_guild and default_guild not in guilds:
-            guilds = tuple(chain(guilds, (default_guild,)))
+        if default_guild and default_guild not in tracked_guilds:
+            tracked_guilds = tuple(chain(tracked_guilds, (default_guild,)))
 
-        self._command_handler: CommandHandler = CommandHandler(self, guilds)
+        self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self.default_guild: Optional[Snowflakeish] = default_guild
         self.plugins: Dict[str, Plugin] = {}
 
