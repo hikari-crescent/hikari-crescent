@@ -28,9 +28,6 @@ def event(callback: Optional[CallbackT] = None, event_type: Optional[Type[Any]] 
         )
 
     def hook(self: MetaStruct[CallbackT, None]):
-        if self.is_method:
-            self.callback = partial(self.callback, self.manager)
-
         self.app.subscribe(
             event_type=unwrap(event_type),
             callback=self.callback,

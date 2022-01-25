@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from importlib import import_module
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
+from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
     from typing import TypeVar
 
     from .bot import Bot
-    from .internal.meta_struct import MetaStruct
 
     T = TypeVar("T", bound="MetaStruct")
 
@@ -15,15 +15,19 @@ if TYPE_CHECKING:
 class Plugin:
     def __init__(self, name: str) -> None:
         self.name = name
-        self._children: list[MetaStruct] = []
+        self._children: list[Tuple[MetaStruct, bool]] = []
+
+        for value in vars(self.__class__).values():
+            if isinstance(value, MetaStruct):
+                self._children.append((value, True))
 
     def include(self, obj: T) -> T:
-        self._children.append(obj)
+        self._children.append((obj, False))
         return obj
 
     def _setup(self, bot: Bot) -> None:
-        for item in self._children:
-            bot.include(item)
+        for item, is_method in self._children:
+            item.register_to_app(bot, self if is_method else None)
 
     @classmethod
     def _from_module(cls, path: str) -> Plugin:
