@@ -4,16 +4,13 @@ Does do much right now.
 """
 
 from typing import Union
-from typing_extensions import Annotated
 
 import hikari
+from typing_extensions import Annotated
 
 import crescent
 
-bot = crescent.Bot(
-    token="TOKEN",
-    default_guild=778289112381784115
-)
+bot = crescent.Bot(token="TOKEN", default_guild=778289112381784115)
 
 bot.load_module("plugin")
 
@@ -55,7 +52,9 @@ async def event(event: hikari.ShardReadyEvent):
 @crescent.command(name="echo")
 class Say:
     to_say = crescent.option(str, "Make the bot say something", default="...")
-    channel = crescent.option(hikari.GuildTextChannel, "The channel to send in", default=None)
+    channel = crescent.option(
+        hikari.GuildTextChannel, "The channel to send in", default=None
+    )
 
     x: Union[hikari.GuildTextChannel, hikari.GuildVoiceChannel]
 

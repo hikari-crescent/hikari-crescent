@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import signature
-from typing import TYPE_CHECKING, Dict, NamedTuple, cast, get_type_hints, Type
+from typing import TYPE_CHECKING, Dict, NamedTuple, Type, cast, get_type_hints
 
 from hikari import CommandOption, Snowflakeish
 
@@ -15,11 +15,10 @@ from crescent.commands.args import (
     MinValue,
     Name,
 )
-from crescent.commands.options import ClassCommandOption
-from crescent.commands.options import OPTIONS_TYPE_MAP
+from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption
 from crescent.context import Context
 from crescent.internal.registry import register_command
-from crescent.typedefs import CommandCallback, ClassCommandProto
+from crescent.typedefs import ClassCommandProto, CommandCallback
 
 if TYPE_CHECKING:
     from inspect import Parameter, _empty
@@ -82,7 +81,9 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     )
 
 
-def _class_command_callback(cls: Type[ClassCommandProto], dd: Dict[str, Any]) -> CommandCallback:
+def _class_command_callback(
+    cls: Type[ClassCommandProto], dd: Dict[str, Any]
+) -> CommandCallback:
     async def callback(ctx: Context, **kwargs) -> Any:
         cmd = cls()
         for k, v in kwargs.items():

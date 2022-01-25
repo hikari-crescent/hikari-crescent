@@ -1,4 +1,5 @@
 import hikari
+
 import crescent
 
 plugin = crescent.Plugin("example")
