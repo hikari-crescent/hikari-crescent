@@ -91,17 +91,13 @@ class Bot(GatewayBot):
 
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, MetaStruct):
-                value.register_to_app(self, self, True)
+                value.register_to_app(self, self)
 
     def include(self, command: MetaStruct[Any, Any] = None):
         if command is None:
             return self.include
 
-        command.register_to_app(
-            self,
-            self,
-            False,
-        )
+        command.register_to_app(app=self)
 
         return command
 

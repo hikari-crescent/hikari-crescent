@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 
 from hikari import CommandInteraction, CommandInteractionOption, OptionType
 
@@ -59,11 +59,7 @@ async def handle_resp(event: InteractionCreateEvent):
     ctx = Context._from_command_interaction(interaction)
     callback_params = _options_to_kwargs(interaction, options)
 
-    args: List[Any] = [ctx]
-    if command.is_method:
-        args.insert(0, command.manager)
-
-    await command.callback(*args, **callback_params)
+    await command.callback(ctx, **callback_params)
 
 
 _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {

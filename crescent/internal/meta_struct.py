@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from functools import partial
+from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from attr import define, field
 
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, List, Optional, Sequence
+    from typing import Any, Awaitable, Callable, List, Optional, Sequence
 
     from crescent.bot import Bot
 
-T = TypeVar("T")
+T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 U = TypeVar("U")
 
 __all__: Sequence[str] = ("MetaStruct",)
@@ -27,7 +28,6 @@ class MetaStruct(Generic[T, U]):
     _app: Optional[Bot] = None
 
     app_set_hooks: List[Callable[[MetaStruct[T, U]], None]] = field(factory=list)
-    is_method: bool = False
 
     @property
     def app(self) -> Bot:
@@ -43,9 +43,8 @@ class MetaStruct(Generic[T, U]):
     def register_to_app(
         self,
         app: Bot,
-        manager: Any,
-        is_method: bool,
+        manager: Optional[Any] = None,
     ):
-        self.is_method = is_method
-        self.manager = manager
+        if manager:
+            self.callback = cast(T, partial(self.callback, manager))
         self.app = app
