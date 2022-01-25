@@ -118,6 +118,8 @@ def command(
 
     callback_func: CommandCallback
     if isinstance(callback, type) and issubclass(callback, object):
+        if name is None:
+            raise TypeError("Please specify a command name for class commands.")
         defaults: Dict[str, Any] = {}
 
         options: list[CommandOption] = []
