@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from asyncio import gather
+from inspect import iscoroutinefunction
 from itertools import chain
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
@@ -36,6 +37,11 @@ def register_command(
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
 ) -> MetaStruct[CommandCallback, AppCommandMeta]:
+
+    if not iscoroutinefunction(callback):
+        raise ValueError(
+            f"`{callback.__name__}` must be an async function."
+        )
 
     name = name or callback.__name__
     description = description or "\u200B"
