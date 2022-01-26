@@ -12,19 +12,19 @@ from hikari import (
 )
 
 from crescent.context import Context
+from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
 from crescent.typedefs import CommandCallback
 from crescent.utils.options import unwrap
-from crescent.exceptions import CommandNotFoundError
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Sequence, cast
 
     from hikari import InteractionCreateEvent
 
-    from crescent.internal import AppCommandMeta, MetaStruct
     from crescent.bot import Bot
+    from crescent.internal import AppCommandMeta, MetaStruct
 
 
 __all__: Sequence = ("handle_resp",)

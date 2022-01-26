@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from hikari import (
         CommandInteraction,
         Embed,
+        Message,
         PartialRole,
         PartialUser,
         Resourceish,
@@ -122,7 +123,7 @@ class Context:
         role_mentions: UndefinedOr[
             SnowflakeishSequence[PartialRole] | bool
         ] = UNDEFINED,
-    ) -> None:
+    ) -> Optional[Message]:
 
         if ephemeral:
             if flags is UNDEFINED:
@@ -191,7 +192,7 @@ class Context:
         role_mentions: UndefinedOr[
             SnowflakeishSequence[PartialRole] | bool
         ] = UNDEFINED,
-    ):
+    ) -> Message:
         return await self.app.rest.edit_interaction_response(
             application=self.application_id,
             token=self.token,
@@ -225,7 +226,7 @@ class Context:
         role_mentions: UndefinedOr[
             SnowflakeishSequence[PartialRole] | bool
         ] = UNDEFINED,
-    ):
+    ) -> Message:
         return await self.app.rest.execute_webhook(
             webhook=self.application_id,
             token=self.token,

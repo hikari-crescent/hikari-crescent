@@ -23,6 +23,15 @@ black = "^21.12b0"
 pre-commit = "^2.17.0"
 codespell = "^2.1.0"
 
+[tool.mypy]
+python_version = 3.8
+warn_unused_configs = true
+warn_return_any = true
+warn_redundant_casts = true
+
+[tool.isort]
+profile="black"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
