@@ -39,9 +39,7 @@ def register_command(
 ) -> MetaStruct[CommandCallback, AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
-        raise ValueError(
-            f"`{callback.__name__}` must be an async function."
-        )
+        raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     name = name or callback.__name__
     description = description or "\u200B"

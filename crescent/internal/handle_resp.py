@@ -1,9 +1,15 @@
 from __future__ import annotations
-from contextlib import suppress
 
+from contextlib import suppress
 from typing import TYPE_CHECKING, Optional
 
-from hikari import UNDEFINED, CommandInteraction, CommandInteractionOption, OptionType, Snowflake
+from hikari import (
+    UNDEFINED,
+    CommandInteraction,
+    CommandInteractionOption,
+    OptionType,
+    Snowflake,
+)
 
 from crescent.context import Context
 from crescent.internal.app_command import AppCommandType, Unique
@@ -60,7 +66,7 @@ def _get_command(
     name: str,
     guild_id: Optional[Snowflake],
     group: Optional[str],
-    sub_group: Optional[str]
+    sub_group: Optional[str],
 ) -> CommandCallback:
     with suppress(KeyError):
         return bot._command_handler.registry[
