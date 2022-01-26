@@ -101,9 +101,7 @@ class ClassCommandOption:
 
 DEFAULT = TypeVar("DEFAULT")
 INT_OR_FLOAT = TypeVar("INT_OR_FLOAT", int, float)
-USER_ROLE_MENTION_OR_BOOL = TypeVar(
-    "USER_ROLE_MENTION_OR_BOOL", User, Role, Mentionable, bool
-)
+USER_ROLE_MENTION_OR_BOOL = TypeVar("USER_ROLE_MENTION_OR_BOOL", User, Role, Mentionable, bool)
 
 
 @overload
@@ -214,9 +212,7 @@ def option(  # type: ignore
         type=OPTIONS_TYPE_MAP[option_type],
         description=description,
         default=default,
-        choices=[CommandChoice(name=n, value=v) for n, v in choices]
-        if choices
-        else None,
+        choices=[CommandChoice(name=n, value=v) for n, v in choices] if choices else None,
         channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,

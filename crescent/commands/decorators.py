@@ -193,9 +193,7 @@ def command(
         sig = map(convert_signiture, signature(callback_func).parameters.values())
 
         options = [
-            param
-            for param in (_gen_command_option(param) for param in sig)
-            if param is not None
+            param for param in (_gen_command_option(param) for param in sig) if param is not None
         ]
 
     return register_command(

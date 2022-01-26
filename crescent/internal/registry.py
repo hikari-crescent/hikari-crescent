@@ -88,9 +88,7 @@ class CommandHandler:
     def register(
         self, command: MetaStruct[CommandCallback, AppCommandMeta]
     ) -> MetaStruct[CommandCallback, AppCommandMeta]:
-        command.metadata.app.guild_id = (
-            command.metadata.app.guild_id or self.bot.default_guild
-        )
+        command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
         self.registry[command.metadata.unique] = command
         return command
 
@@ -102,9 +100,7 @@ class CommandHandler:
         )
 
         guild_commands = await gather_iter(
-            self.bot.rest.fetch_application_commands(
-                unwrap(self.application_id), guild=guild
-            )
+            self.bot.rest.fetch_application_commands(unwrap(self.application_id), guild=guild)
             for guild in self.guilds
         )
 
@@ -129,9 +125,7 @@ class CommandHandler:
         built_commands: Dict[Unique, AppCommand] = {}
 
         for command in self.registry.values():
-            command.metadata.app.guild_id = (
-                command.metadata.app.guild_id or self.bot.default_guild
-            )
+            command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
 
             if command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
@@ -186,8 +180,7 @@ class CommandHandler:
                     if all(
                         (
                             cmd_in_children.name == sub_command_group.name,
-                            cmd_in_children.description
-                            == sub_command_group.description,
+                            cmd_in_children.description == sub_command_group.description,
                             cmd_in_children.type == sub_command_group.type,
                         )
                     ):

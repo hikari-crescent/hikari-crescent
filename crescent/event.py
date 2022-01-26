@@ -41,9 +41,7 @@ def event(
         event_type = next(iter(get_type_hints(callback).values()))
 
     if not event_type:
-        raise ValueError(
-            "`event_type` must be provided in the decorator or as a typehint"
-        )
+        raise ValueError("`event_type` must be provided in the decorator or as a typehint")
 
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")

@@ -18,9 +18,7 @@ class Mentionable:
     role: Optional[Role]
 
     @classmethod
-    def _from_interaction(
-        cls: Type[Mentionable], interaction: CommandInteraction
-    ) -> Mentionable:
+    def _from_interaction(cls: Type[Mentionable], interaction: CommandInteraction) -> Mentionable:
         if not interaction.resolved:
             raise ValueError("Interaction.resolved should not be None")
 

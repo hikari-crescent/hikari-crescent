@@ -102,9 +102,7 @@ def _options_to_kwargs(
     return {option.name: _extract_value(option, interaction) for option in options}
 
 
-def _extract_value(
-    option: CommandInteractionOption, interaction: CommandInteraction
-) -> Any:
+def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 

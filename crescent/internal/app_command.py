@@ -98,9 +98,7 @@ class AppCommand:
         return True
 
     def is_same_command(self, o: AppCommand):
-        return all(
-            (self.guild_id == o.guild_id, self.name == o.name, self.type == o.type)
-        )
+        return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
 
 
 @define
