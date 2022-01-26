@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
     from hikari import InteractionCreateEvent
 
+    from crescent.internal import AppCommandMeta, MetaStruct
     from crescent.bot import Bot
 
 
@@ -59,7 +60,7 @@ async def handle_resp(event: InteractionCreateEvent):
     ctx = Context._from_command_interaction(interaction)
     callback_params = _options_to_kwargs(interaction, options)
 
-    await command(ctx, **callback_params)
+    await command.callback(ctx, **callback_params)
 
 
 def _get_command(
@@ -68,7 +69,7 @@ def _get_command(
     guild_id: Optional[Snowflake],
     group: Optional[str],
     sub_group: Optional[str],
-) -> CommandCallback:
+) -> MetaStruct[CommandCallback, AppCommandMeta]:
 
     kwargs = dict(
         name=name,
@@ -78,9 +79,9 @@ def _get_command(
     )
 
     with suppress(KeyError):
-        return bot._command_handler.registry[Unique(**kwargs, guild_id=guild_id)]
+        return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]  # type: ignore
     with suppress(KeyError):
-        return bot._command_handler.register[Unique(**kwargs, guild_id=UNDEFINED)]
+        return bot._command_handler.registry[Unique(guild_id=UNDEFINED, **kwargs)]  # type: ignore
     raise CommandNotFoundError(f"Handler for command `{name}` does not exist locally.")
 
 
