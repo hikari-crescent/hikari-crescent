@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from concurrent.futures import Executor
 from itertools import chain
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Callable, Sequence, overload
 
 from hikari import (
     CacheSettings,
@@ -23,7 +23,9 @@ from crescent.plugin import Plugin
 from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union
+    from typing import Any, Dict, Optional, TypeVar, Union
+
+    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct)
 
 
 __all___: Sequence[str] = "Bot"
@@ -109,17 +111,21 @@ class Bot(GatewayBot):
 
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, MetaStruct):
-                value.register_to_app(self, self, True)
+                value.register_to_app(self, self)
 
-    def include(self, command: MetaStruct[Any, Any] = None):
+    @overload
+    def include(self, command: META_STRUCT) -> META_STRUCT:
+        ...
+
+    @overload
+    def include(self, command: None = ...) -> Callable[[META_STRUCT], META_STRUCT]:
+        ...
+
+    def include(self, command: META_STRUCT | None = None):
         if command is None:
             return self.include
 
-        command.register_to_app(
-            self,
-            self,
-            False,
-        )
+        command.register_to_app(app=self)
 
         return command
 

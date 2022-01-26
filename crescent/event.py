@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, get_type_hints
+from typing import TYPE_CHECKING, Awaitable, Callable, get_type_hints, overload
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils.options import unwrap
@@ -16,7 +16,24 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("event",)
 
 
-def event(callback: Optional[CallbackT] = None, event_type: Optional[Type[Any]] = None):
+@overload
+def event(callback: Callable[..., Awaitable[None]], /) -> MetaStruct[CallbackT, None]:
+    ...
+
+
+@overload
+def event(
+    *, event_type: Optional[Type[Any]]
+) -> Callable[[CallbackT], MetaStruct[CallbackT, None]]:
+    ...
+
+
+def event(
+    callback: Callable[..., Awaitable[None]] | None = None,
+    /,
+    *,
+    event_type: Optional[Type[Any]] = None,
+):
     if callback is None:
         return partial(event, event_type=event_type)
 
@@ -32,9 +49,6 @@ def event(callback: Optional[CallbackT] = None, event_type: Optional[Type[Any]] 
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(self: MetaStruct[CallbackT, None]):
-        if self.is_method:
-            self.callback = partial(self.callback, self.manager)
-
         self.app.subscribe(
             event_type=unwrap(event_type),
             callback=self.callback,
