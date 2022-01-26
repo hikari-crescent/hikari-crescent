@@ -24,7 +24,7 @@ class Group:
     def sub_group(self, name: str) -> SubGroup:
         return SubGroup(name, self.name)
 
-    def __call__(
+    def child(
         self, meta: MetaStruct[CommandCallback, AppCommandMeta]
     ) -> MetaStruct[CommandCallback, AppCommandMeta]:
         meta.metadata.group = self.name
@@ -36,7 +36,7 @@ class SubGroup:
     name: str
     parent: str
 
-    def __call__(
+    def child(
         self, meta: MetaStruct[CommandCallback, AppCommandMeta]
     ) -> MetaStruct[CommandCallback, AppCommandMeta]:
         meta.metadata.group = self.parent

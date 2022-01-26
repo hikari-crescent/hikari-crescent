@@ -8,7 +8,26 @@ from typing_extensions import Annotated
 
 import crescent
 
-bot = crescent.Bot(token="TOKEN", default_guild=778289112381784115)
+
+class Bot(crescent.Bot):
+    @crescent.command
+    async def subclassed_func_command(self, ctx: crescent.Context):
+        await ctx.respond("This is fine.")
+
+    @crescent.command(name="subclassed_class_command")
+    class SubclassedClassCommand:
+        async def callback(self, ctx: crescent.Context):
+            await ctx.respond("This is fine too.")
+
+    @crescent.event
+    async def subclass_event(self, event: hikari.MessageCreateEvent):
+        print("subclassed event triggered")
+
+
+bot = Bot(
+    token="TOKEN",
+    default_guild=778289112381784115,
+)
 
 bot.load_module("plugin")
 
@@ -27,14 +46,14 @@ async def app_command(
 
 
 @bot.include
-@group
+@group.child
 @crescent.command
 async def sub_command(ctx):
     pass
 
 
 @bot.include
-@sub_group
+@sub_group.child
 @crescent.command
 async def sub_sub_command(ctx):
     pass

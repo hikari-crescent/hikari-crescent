@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from concurrent.futures import Executor
 from itertools import chain
-from typing import TYPE_CHECKING, Sequence, overload
+from typing import TYPE_CHECKING, Callable, Sequence, overload
 
 from hikari import (
     CacheSettings,
@@ -23,7 +23,9 @@ from crescent.plugin import Plugin
 from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union
+    from typing import Any, Dict, Optional, TypeVar, Union
+
+    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct)
 
 
 __all___: Sequence[str] = "Bot"
@@ -42,7 +44,7 @@ class Bot(GatewayBot):
         self,
         token: str,
         *,
-        guilds: Sequence[Snowflakeish] = None,
+        tracked_guilds: Sequence[Snowflakeish] = None,
         default_guild: Optional[Snowflakeish] = None,
         allow_color: bool = True,
         banner: Optional[str] = "hikari",
@@ -62,19 +64,19 @@ class Bot(GatewayBot):
     def __init__(
         self,
         *args,
+        tracked_guilds: Sequence[Snowflakeish] = None,
         default_guild: Optional[Snowflakeish] = None,
-        guilds: Sequence[Snowflakeish] = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
 
-        if guilds is None:
-            guilds = ()
+        if tracked_guilds is None:
+            tracked_guilds = ()
 
-        if default_guild and default_guild not in guilds:
-            guilds = tuple(chain(guilds, (default_guild,)))
+        if default_guild and default_guild not in tracked_guilds:
+            tracked_guilds = tuple(chain(tracked_guilds, (default_guild,)))
 
-        self._command_handler: CommandHandler = CommandHandler(self, guilds)
+        self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self.default_guild: Optional[Snowflakeish] = default_guild
         self.plugins: Dict[str, Plugin] = {}
 
@@ -93,7 +95,15 @@ class Bot(GatewayBot):
             if isinstance(value, MetaStruct):
                 value.register_to_app(self, self)
 
-    def include(self, command: MetaStruct[Any, Any] = None):
+    @overload
+    def include(self, command: META_STRUCT) -> META_STRUCT:
+        ...
+
+    @overload
+    def include(self, command: None = ...) -> Callable[[META_STRUCT], META_STRUCT]:
+        ...
+
+    def include(self, command: META_STRUCT | None = None):
         if command is None:
             return self.include
 

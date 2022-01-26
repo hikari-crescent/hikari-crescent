@@ -2,10 +2,20 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import signature
-from typing import TYPE_CHECKING, Dict, NamedTuple, Type, cast, get_type_hints
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    NamedTuple,
+    Type,
+    cast,
+    get_type_hints,
+    overload,
+)
 
 from hikari import CommandOption, Snowflakeish
 
+from crescent.bot import Bot
 from crescent.commands.args import (
     Arg,
     ChannelTypes,
@@ -23,6 +33,9 @@ from crescent.typedefs import ClassCommandProto, CommandCallback
 if TYPE_CHECKING:
     from inspect import Parameter, _empty
     from typing import Any, Optional, Sequence, TypeVar
+
+    from crescent.internal.app_command import AppCommandMeta
+    from crescent.internal.meta_struct import MetaStruct
 
     T = TypeVar("T")
 
@@ -84,7 +97,10 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 def _class_command_callback(
     cls: Type[ClassCommandProto], defaults: Dict[str, Any]
 ) -> CommandCallback:
-    async def callback(ctx: Context, **kwargs) -> Any:
+    async def callback(*args, **kwargs) -> Any:
+        if isinstance(args[0], Bot):
+            args = args[1:]
+
         cmd = cls()
         for k, v in kwargs.items():
             setattr(cmd, k, v)
@@ -93,13 +109,38 @@ def _class_command_callback(
             if k not in kwargs:
                 setattr(cmd, k, v)
 
-        return await cmd.callback(ctx)
+        return await cmd.callback(*args)
 
     return callback
 
 
+@overload
 def command(
-    callback: CommandCallback | ClassCommandProto | None = None,
+    callback: CommandCallback | Type[ClassCommandProto],
+    /,
+) -> MetaStruct[CommandCallback, AppCommandMeta]:
+    ...
+
+
+@overload
+def command(
+    *,
+    guild: Optional[Snowflakeish] = None,
+    name: Optional[str] = None,
+    group: Optional[str] = None,
+    sub_group: Optional[str] = None,
+    description: Optional[str] = None,
+) -> Callable[
+    [CommandCallback | Type[ClassCommandProto]],
+    MetaStruct[CommandCallback, AppCommandMeta],
+]:
+    ...
+
+
+def command(
+    callback: CommandCallback | Type[ClassCommandProto] | None = None,
+    /,
+    *,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     group: Optional[str] = None,
