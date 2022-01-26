@@ -44,7 +44,7 @@ class Bot(GatewayBot):
         self,
         token: str,
         *,
-        guilds: Sequence[Snowflakeish] = None,
+        tracked_guilds: Sequence[Snowflakeish] = None,
         default_guild: Optional[Snowflakeish] = None,
         allow_color: bool = True,
         banner: Optional[str] = "hikari",
@@ -64,19 +64,19 @@ class Bot(GatewayBot):
     def __init__(
         self,
         *args,
+        tracked_guilds: Sequence[Snowflakeish] = None,
         default_guild: Optional[Snowflakeish] = None,
-        guilds: Sequence[Snowflakeish] = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
 
-        if guilds is None:
-            guilds = ()
+        if tracked_guilds is None:
+            tracked_guilds = ()
 
-        if default_guild and default_guild not in guilds:
-            guilds = tuple(chain(guilds, (default_guild,)))
+        if default_guild and default_guild not in tracked_guilds:
+            tracked_guilds = tuple(chain(tracked_guilds, (default_guild,)))
 
-        self._command_handler: CommandHandler = CommandHandler(self, guilds)
+        self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self.default_guild: Optional[Snowflakeish] = default_guild
         self.plugins: Dict[str, Plugin] = {}
 
