@@ -97,6 +97,11 @@ def _class_command_callback(
     cls: Type[ClassCommandProto], defaults: Dict[str, Any]
 ) -> CommandCallback:
     async def callback(*args, **kwargs) -> Any:
+        if len(args) == 2:
+            ctx = args[-1]
+        else:
+            ctx = args[0]
+
         cmd = cls()
         for k, v in kwargs.items():
             setattr(cmd, k, v)
@@ -105,7 +110,7 @@ def _class_command_callback(
             if k not in kwargs:
                 setattr(cmd, k, v)
 
-        return await cmd.callback(*args)
+        return await cmd.callback(ctx)
 
     return callback
 
