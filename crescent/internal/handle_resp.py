@@ -12,19 +12,19 @@ from hikari import (
 )
 
 from crescent.context import Context
+from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
 from crescent.typedefs import CommandCallback
 from crescent.utils.options import unwrap
-from crescent.exceptions import CommandNotFoundError
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Sequence, cast
 
     from hikari import InteractionCreateEvent
 
-    from crescent.internal import AppCommandMeta, MetaStruct
     from crescent.bot import Bot
+    from crescent.internal import AppCommandMeta, MetaStruct
 
 
 __all__: Sequence = ("handle_resp",)
@@ -102,9 +102,7 @@ def _options_to_kwargs(
     return {option.name: _extract_value(option, interaction) for option in options}
 
 
-def _extract_value(
-    option: CommandInteractionOption, interaction: CommandInteraction
-) -> Any:
+def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 

@@ -8,7 +8,6 @@ from typing import (
     Dict,
     NamedTuple,
     Type,
-    cast,
     get_type_hints,
     overload,
 )
@@ -170,12 +169,12 @@ def command(
             defaults[n] = v.default
 
         callback_func = _class_command_callback(
-            cast(Type[ClassCommandProto], callback),
+            callback,
             defaults,
         )
 
     else:
-        callback_func = cast(CommandCallback, callback)
+        callback_func = callback
 
         # NOTE: If python 3.10 becomes the minimum supported version, this section
         # can be replaced with `signature(callback, eval_str=True)`
@@ -194,9 +193,7 @@ def command(
         sig = map(convert_signiture, signature(callback_func).parameters.values())
 
         options = [
-            param
-            for param in (_gen_command_option(param) for param in sig)
-            if param is not None
+            param for param in (_gen_command_option(param) for param in sig) if param is not None
         ]
 
     return register_command(

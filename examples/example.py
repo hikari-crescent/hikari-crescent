@@ -69,9 +69,7 @@ async def event(event: hikari.ShardReadyEvent):
 @crescent.command(name="echo")
 class Say:
     to_say = crescent.option(str, "Make the bot say something", default="...")
-    channel = crescent.option(
-        hikari.GuildTextChannel, "The channel to send in", default=None
-    )
+    channel = crescent.option(hikari.GuildTextChannel, "The channel to send in", default=None)
 
     async def callback(self, ctx: crescent.Context) -> None:
         if self.channel is None:

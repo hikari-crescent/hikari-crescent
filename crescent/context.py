@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from hikari import (
         CommandInteraction,
         Embed,
+        Message,
         PartialRole,
         PartialUser,
         Resourceish,
@@ -62,9 +63,7 @@ class Context:
     _used_first_resp: bool = False
 
     @classmethod
-    def _from_command_interaction(
-        cls: Type[Context], interaction: CommandInteraction
-    ) -> Context:
+    def _from_command_interaction(cls: Type[Context], interaction: CommandInteraction) -> Context:
         return cls(
             app=cast(RestAndCacheAware, interaction.app),
             application_id=interaction.application_id,
@@ -116,13 +115,9 @@ class Context:
         embed: UndefinedOr[Embed] = UNDEFINED,
         embeds: UndefinedOr[Sequence[Embed]] = UNDEFINED,
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
-        user_mentions: UndefinedOr[
-            SnowflakeishSequence[PartialUser] | bool
-        ] = UNDEFINED,
-        role_mentions: UndefinedOr[
-            SnowflakeishSequence[PartialRole] | bool
-        ] = UNDEFINED,
-    ) -> None:
+        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
+        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+    ) -> Optional[Message]:
 
         if ephemeral:
             if flags is UNDEFINED:
@@ -185,13 +180,9 @@ class Context:
         embeds: UndefinedNoneOr[Sequence[Embed]] = UNDEFINED,
         replace_attachments: bool = False,
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
-        user_mentions: UndefinedOr[
-            SnowflakeishSequence[PartialUser] | bool
-        ] = UNDEFINED,
-        role_mentions: UndefinedOr[
-            SnowflakeishSequence[PartialRole] | bool
-        ] = UNDEFINED,
-    ):
+        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
+        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+    ) -> Message:
         return await self.app.rest.edit_interaction_response(
             application=self.application_id,
             token=self.token,
@@ -219,13 +210,9 @@ class Context:
         embed: UndefinedOr[Embed] = UNDEFINED,
         embeds: UndefinedOr[Sequence[Embed]] = UNDEFINED,
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
-        user_mentions: UndefinedOr[
-            SnowflakeishSequence[PartialUser] | bool
-        ] = UNDEFINED,
-        role_mentions: UndefinedOr[
-            SnowflakeishSequence[PartialRole] | bool
-        ] = UNDEFINED,
-    ):
+        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
+        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+    ) -> Message:
         return await self.app.rest.execute_webhook(
             webhook=self.application_id,
             token=self.token,
