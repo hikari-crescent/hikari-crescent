@@ -71,7 +71,7 @@ def _get_command(
     sub_group: Optional[str],
 ) -> MetaStruct[CommandCallback, AppCommandMeta]:
 
-    kwargs = dict(
+    kwargs: Dict[str, Any] = dict(
         name=name,
         type=AppCommandType.CHAT_INPUT,
         group=group,
@@ -79,9 +79,9 @@ def _get_command(
     )
 
     with suppress(KeyError):
-        return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]  # type: ignore
+        return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]
     with suppress(KeyError):
-        return bot._command_handler.registry[Unique(guild_id=UNDEFINED, **kwargs)]  # type: ignore
+        return bot._command_handler.registry[Unique(guild_id=UNDEFINED, **kwargs)]
     raise CommandNotFoundError(f"Handler for command `{name}` does not exist locally.")
 
 
