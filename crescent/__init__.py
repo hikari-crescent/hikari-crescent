@@ -28,6 +28,8 @@ __all__: Sequence[str] = (
     "Bot",
     "Context",
     "event",
+    "CrescentException",
+    "CommandNotFoundError",
     "Mentionable",
     "CommandCallback",
     "Plugin",

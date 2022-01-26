@@ -16,6 +16,7 @@ from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
 from crescent.typedefs import CommandCallback
 from crescent.utils.options import unwrap
+from crescent.exceptions import CommandNotFoundError
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Sequence, cast
@@ -68,26 +69,19 @@ def _get_command(
     group: Optional[str],
     sub_group: Optional[str],
 ) -> CommandCallback:
-    with suppress(KeyError):
-        return bot._command_handler.registry[
-            Unique(
-                name=name,
-                type=AppCommandType.CHAT_INPUT,
-                guild_id=guild_id,
-                group=group,
-                sub_group=sub_group,
-            )
-        ].callback
 
-    return bot._command_handler.registry[
-        Unique(
-            name=name,
-            type=AppCommandType.CHAT_INPUT,
-            guild_id=UNDEFINED,
-            group=group,
-            sub_group=sub_group,
-        )
-    ].callback
+    kwargs = dict(
+        name=name,
+        type=AppCommandType.CHAT_INPUT,
+        group=group,
+        sub_group=sub_group,
+    )
+
+    with suppress(KeyError):
+        return bot._command_handler.registry[Unique(**kwargs, guild_id=guild_id)]
+    with suppress(KeyError):
+        return bot._command_handler.register[Unique(**kwargs, guild_id=UNDEFINED)]
+    raise CommandNotFoundError(f"Handler for command `{name}` does not exist locally.")
 
 
 _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
