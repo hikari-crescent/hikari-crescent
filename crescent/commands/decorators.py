@@ -97,10 +97,8 @@ def _class_command_callback(
     cls: Type[ClassCommandProto], defaults: Dict[str, Any]
 ) -> CommandCallback:
     async def callback(*args, **kwargs) -> Any:
-        if len(args) == 2:
-            ctx = args[-1]
-        else:
-            ctx = args[0]
+        ctx = args[-1]  # ctx will either be the only or the second arg
+        assert 0 < len(args) <= 2  # debugging
 
         cmd = cls()
         for k, v in kwargs.items():
