@@ -15,6 +15,7 @@ from typing import (
 
 from hikari import CommandOption, Snowflakeish
 
+from crescent.bot import Bot
 from crescent.commands.args import (
     Arg,
     ChannelTypes,
@@ -97,8 +98,8 @@ def _class_command_callback(
     cls: Type[ClassCommandProto], defaults: Dict[str, Any]
 ) -> CommandCallback:
     async def callback(*args, **kwargs) -> Any:
-        ctx = args[-1]  # ctx will either be the only or the second arg
-        assert 0 < len(args) <= 2  # debugging
+        if isinstance(args[0], Bot):
+            args = args[1:]
 
         cmd = cls()
         for k, v in kwargs.items():
@@ -108,7 +109,7 @@ def _class_command_callback(
             if k not in kwargs:
                 setattr(cmd, k, v)
 
-        return await cmd.callback(ctx)
+        return await cmd.callback(*args)
 
     return callback
 
