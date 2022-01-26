@@ -16,7 +16,7 @@ class Bot(crescent.Bot):
 
     @crescent.command(name="subclassed_class_command")
     class SubclassedClassCommand:
-        async def callback(self, bot: "Bot", ctx: crescent.Context):
+        async def callback(self, ctx: crescent.Context):
             await ctx.respond("This is fine too.")
 
 
