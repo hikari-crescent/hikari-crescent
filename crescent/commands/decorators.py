@@ -8,7 +8,6 @@ from typing import (
     Dict,
     NamedTuple,
     Type,
-    cast,
     get_type_hints,
     overload,
 )
