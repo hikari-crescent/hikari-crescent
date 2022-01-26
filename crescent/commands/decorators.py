@@ -170,12 +170,12 @@ def command(
             defaults[n] = v.default
 
         callback_func = _class_command_callback(
-            cast(Type[ClassCommandProto], callback),
+            callback,
             defaults,
         )
 
     else:
-        callback_func = cast(CommandCallback, callback)
+        callback_func = callback
 
         # NOTE: If python 3.10 becomes the minimum supported version, this section
         # can be replaced with `signature(callback, eval_str=True)`
