@@ -46,14 +46,14 @@ async def app_command(
 
 
 @bot.include
-@group
+@group.child
 @crescent.command
 async def sub_command(ctx):
     pass
 
 
 @bot.include
-@sub_group
+@sub_group.child
 @crescent.command
 async def sub_sub_command(ctx):
     pass
