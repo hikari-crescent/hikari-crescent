@@ -24,7 +24,7 @@ class Unique:
     group: UndefinedNoneOr[str]
     sub_group: UndefinedNoneOr[str]
 
-    def __post_init__(self):
+    def __attrs_post_init__(self):
         if self.guild_id is UNDEFINED:
             self.guild_id = None
         if self.group is UNDEFINED:
