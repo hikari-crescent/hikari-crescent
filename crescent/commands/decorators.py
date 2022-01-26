@@ -96,7 +96,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 def _class_command_callback(
     cls: Type[ClassCommandProto], defaults: Dict[str, Any]
 ) -> CommandCallback:
-    async def callback(ctx: Context, **kwargs) -> Any:
+    async def callback(*args, **kwargs) -> Any:
         cmd = cls()
         for k, v in kwargs.items():
             setattr(cmd, k, v)
@@ -105,7 +105,7 @@ def _class_command_callback(
             if k not in kwargs:
                 setattr(cmd, k, v)
 
-        return await cmd.callback(ctx)
+        return await cmd.callback(*args)
 
     return callback
 

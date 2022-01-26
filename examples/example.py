@@ -8,7 +8,22 @@ from typing_extensions import Annotated
 
 import crescent
 
-bot = crescent.Bot(token="TOKEN", default_guild=778289112381784115)
+
+class Bot(crescent.Bot):
+    @crescent.command
+    async def subclassed_func_command(self, ctx: crescent.Context):
+        await ctx.respond("This is fine.")
+
+    @crescent.command(name="subclassed_class_command")
+    class SubclassedClassCommand:
+        async def callback(self, bot: "Bot", ctx: crescent.Context):
+            await ctx.respond("This is fine too.")
+
+
+bot = Bot(
+    token="TOKEN",
+    default_guild=778289112381784115,
+)
 
 bot.load_module("plugin")
 
