@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, get_type_hints
+from typing import TYPE_CHECKING, Awaitable, Callable, get_type_hints, overload
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils.options import unwrap
@@ -15,7 +15,24 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("event",)
 
 
-def event(callback: Optional[CallbackT] = None, event_type: Optional[Type[Any]] = None):
+@overload
+def event(callback: Callable[..., Awaitable[None]], /) -> MetaStruct[CallbackT, None]:
+    ...
+
+
+@overload
+def event(
+    *, event_type: Optional[Type[Any]]
+) -> Callable[[CallbackT], MetaStruct[CallbackT, None]]:
+    ...
+
+
+def event(
+    callback: Callable[..., Awaitable[None]] | None = None,
+    /,
+    *,
+    event_type: Optional[Type[Any]] = None,
+):
     if callback is None:
         return partial(event, event_type=event_type)
 

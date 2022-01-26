@@ -19,6 +19,10 @@ class Bot(crescent.Bot):
         async def callback(self, ctx: crescent.Context):
             await ctx.respond("This is fine too.")
 
+    @crescent.event
+    async def subclass_event(self, event: hikari.MessageCreateEvent):
+        print("subclassed event triggered")
+
 
 bot = Bot(
     token="TOKEN",
