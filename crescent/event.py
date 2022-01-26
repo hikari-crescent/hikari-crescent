@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
+from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Awaitable, Callable, get_type_hints, overload
 
 from crescent.internal.meta_struct import MetaStruct
@@ -43,6 +44,9 @@ def event(
         raise ValueError(
             "`event_type` must be provided in the decorator or as a typehint"
         )
+
+    if not iscoroutinefunction(callback):
+        raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(self: MetaStruct[CallbackT, None]):
         self.app.subscribe(

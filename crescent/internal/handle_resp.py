@@ -1,19 +1,29 @@
 from __future__ import annotations
 
+from contextlib import suppress
 from typing import TYPE_CHECKING, Optional
 
-from hikari import CommandInteraction, CommandInteractionOption, OptionType
+from hikari import (
+    UNDEFINED,
+    CommandInteraction,
+    CommandInteractionOption,
+    OptionType,
+    Snowflake,
+)
 
 from crescent.context import Context
 from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
+from crescent.typedefs import CommandCallback
 from crescent.utils.options import unwrap
+from crescent.exceptions import CommandNotFoundError
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Sequence, cast
 
     from hikari import InteractionCreateEvent
 
+    from crescent.internal import AppCommandMeta, MetaStruct
     from crescent.bot import Bot
 
 
@@ -46,20 +56,33 @@ async def handle_resp(event: InteractionCreateEvent):
             name = unwrap(option.options)[0].name
             options = unwrap(option.options)[0].options
 
-    command = bot._command_handler.registry[
-        Unique(
-            name=name,
-            type=AppCommandType.CHAT_INPUT,
-            guild_id=interaction.guild_id,
-            group=group,
-            sub_group=sub_group,
-        )
-    ]
-
+    command = _get_command(bot, name, interaction.guild_id, group, sub_group)
     ctx = Context._from_command_interaction(interaction)
     callback_params = _options_to_kwargs(interaction, options)
 
     await command.callback(ctx, **callback_params)
+
+
+def _get_command(
+    bot: Bot,
+    name: str,
+    guild_id: Optional[Snowflake],
+    group: Optional[str],
+    sub_group: Optional[str],
+) -> MetaStruct[CommandCallback, AppCommandMeta]:
+
+    kwargs: Dict[str, Any] = dict(
+        name=name,
+        type=AppCommandType.CHAT_INPUT,
+        group=group,
+        sub_group=sub_group,
+    )
+
+    with suppress(KeyError):
+        return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]
+    with suppress(KeyError):
+        return bot._command_handler.registry[Unique(guild_id=UNDEFINED, **kwargs)]
+    raise CommandNotFoundError(f"Handler for command `{name}` does not exist locally.")
 
 
 _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
