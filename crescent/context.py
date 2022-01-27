@@ -125,39 +125,7 @@ class Context:
             else:
                 flags |= MessageFlag.EPHEMERAL
 
-        if not self._has_replied:
-            self._has_replied = True
-            self._used_first_resp = True
-            return await self.app.rest.create_interaction_response(
-                interaction=self.id,
-                token=self.token,
-                content=content,
-                response_type=ResponseType.MESSAGE_CREATE,
-                flags=flags,
-                tts=tts,
-                component=component,
-                components=components,
-                embed=embed,
-                embeds=embeds,
-                mentions_everyone=mentions_everyone,
-                user_mentions=user_mentions,
-                role_mentions=role_mentions,
-            )
-
-        if not self._used_first_resp:
-            self._used_first_resp = True
-            return await self.edit(
-                content=content,
-                component=component,
-                components=components,
-                embed=embed,
-                embeds=embeds,
-                mentions_everyone=mentions_everyone,
-                user_mentions=user_mentions,
-                role_mentions=role_mentions,
-            )
-
-        return await self.followup(
+        kwargs: dict[str, Any] = dict(
             content=content,
             component=component,
             components=components,
@@ -167,6 +135,24 @@ class Context:
             user_mentions=user_mentions,
             role_mentions=role_mentions,
         )
+
+        if not self._has_replied:
+            self._has_replied = True
+            self._used_first_resp = True
+            return await self.app.rest.create_interaction_response(
+                **kwargs,
+                interaction=self.id,
+                token=self.token,
+                response_type=ResponseType.MESSAGE_CREATE,
+                flags=flags,
+                tts=tts,
+            )
+
+        if not self._used_first_resp:
+            self._used_first_resp = True
+            return await self.edit(**kwargs)
+
+        return await self.followup(**kwargs)
 
     async def edit(
         self,
