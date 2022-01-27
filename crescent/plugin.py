@@ -33,10 +33,12 @@ class Plugin:
     @classmethod
     def _from_module(cls, path: str) -> Plugin:
         parents = path.split(".")
-        module = import_module(
-            parents.pop(0),
-            ".".join(parents),
-        )
+
+        name = parents.pop(-1)
+        package = ".".join(parents)
+        if package:
+            name = "." + name
+        module = import_module(name, package)
         plugin = getattr(module, "plugin", None)
         if not isinstance(plugin, Plugin):
             raise ValueError(

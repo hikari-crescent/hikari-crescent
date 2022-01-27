@@ -30,6 +30,7 @@ bot = Bot(
 )
 
 bot.load_module("plugin")
+bot.load_module("folder.another_plugin")
 
 group = crescent.Group("my_group")
 sub_group = group.sub_group("my_sub_group")
