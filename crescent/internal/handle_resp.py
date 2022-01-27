@@ -61,9 +61,11 @@ async def handle_resp(event: InteractionCreateEvent):
     callback_params = _options_to_kwargs(interaction, options)
 
     for func in command.extensions:
-        await func(ctx)
-
-    await command.callback(ctx, **callback_params)
+        ext_res = await func(ctx)
+        if ext_res and ext_res.exit:
+            break
+    else:
+        await command.callback(ctx, **callback_params)
 
 
 def _get_command(

@@ -25,7 +25,7 @@ __all__: Sequence[str] = (
 
 @define
 class HookResult:
-    pass
+    exit: bool = False
 
 
 class _PartialFunction:
@@ -42,8 +42,8 @@ class _PartialFunction:
         return self.func(*args, *self.args, **kwargs, **self.kwargs)
 
 
-# This function is compatible with pep 612 (https://www.python.org/dev/peps/pep-0612/)
-# but mypy doesn't understand it.
+# This function signature is compatible with pep 612
+# (https://www.python.org/dev/peps/pep-0612/) but mypy doesn't understand it.
 def interaction_hook(
     callback: Callable[Concatenate[Context, P], Awaitable[HookResult]]  # type: ignore
 ) -> Callable[P, T]:
@@ -54,10 +54,10 @@ def interaction_hook(
         if not args or (args and not isinstance(args[-1], MetaStruct)):
             return partial(decorator, *args, **kwargs)
 
-        command = args[-1]
+        command: MetaStruct = args[-1]
         args = args[:-1]
 
-        command.extensions.append(_PartialFunction(callback, *args, **kwargs))
+        command.extensions.insert(0, _PartialFunction(callback, *args, **kwargs))
         return command
 
     return decorator
