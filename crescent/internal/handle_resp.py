@@ -60,7 +60,7 @@ async def handle_resp(event: InteractionCreateEvent):
     ctx = Context._from_command_interaction(interaction)
     callback_params = _options_to_kwargs(interaction, options)
 
-    for func in command.extensions:
+    for func in command.interaction_hooks:
         ext_res = await func(ctx)
         if ext_res and ext_res.exit:
             break

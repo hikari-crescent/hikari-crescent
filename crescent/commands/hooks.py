@@ -57,7 +57,7 @@ def interaction_hook(
         command: MetaStruct = args[-1]
         args = args[:-1]
 
-        command.extensions.insert(0, _PartialFunction(callback, *args, **kwargs))
+        command.interaction_hooks.insert(0, _PartialFunction(callback, *args, **kwargs))
         return command
 
     return decorator

@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.context import Context
-    from crescent.commands.extensions import HookResult
+    from crescent.commands.hooks import HookResult
 
 T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 U = TypeVar("U")
@@ -30,7 +30,8 @@ class MetaStruct(Generic[T, U]):
     _app: Optional[Bot] = None
 
     app_set_hooks: List[Callable[[MetaStruct[T, U]], None]] = field(factory=list)
-    extensions: List[Callable[[Context], Awaitable[Optional[HookResult]]]] = field(factory=list)
+    interaction_hooks: List[Callable[[Context],
+                                     Awaitable[Optional[HookResult]]]] = field(factory=list)
 
     @property
     def app(self) -> Bot:
