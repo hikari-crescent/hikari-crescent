@@ -18,13 +18,13 @@ if TYPE_CHECKING:
     T = TypeVar("T", bound="MetaStruct[Callable[..., Awaitable[Any]], Any]")
 
 __all__: Sequence[str] = (
-    "ExtensionResult",
-    "interaction_extension",
+    "HookResult",
+    "interaction_hook",
 )
 
 
 @define
-class ExtensionResult:
+class HookResult:
     pass
 
 
@@ -42,14 +42,15 @@ class _PartialFunction:
         return self.func(*args, *self.args, **kwargs, **self.kwargs)
 
 
-def interaction_extension(
-    callback: Callable[Concatenate[Context, P], Awaitable[ExtensionResult]]
+# This function is compatible with pep 612 (https://www.python.org/dev/peps/pep-0612/)
+# but mypy doesn't understand it.
+def interaction_hook(
+    callback: Callable[Concatenate[Context, P], Awaitable[HookResult]]  # type: ignore
 ) -> Callable[P, T]:
     if not iscoroutinefunction(callback):
         raise ValueError(f"Function `{callback.__name__}` must be async.")
 
-    def decorator(*args: P.args, **kwargs: P.kwargs):
-
+    def decorator(*args: Any, **kwargs: Any):
         if not args or (args and not isinstance(args[-1], MetaStruct)):
             return partial(decorator, *args, **kwargs)
 
