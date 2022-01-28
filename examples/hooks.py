@@ -1,10 +1,10 @@
 from typing import Optional
+
 import crescent
 
 
 async def first_hook(
-    ctx: crescent.Context,
-    options: crescent.CommandOptionsT
+    ctx: crescent.Context, options: crescent.CommandOptionsT
 ) -> Optional[crescent.HookResult]:
     print("Here first.")
     # Setting exit to true prevents any following hooks and the callback from
@@ -15,12 +15,12 @@ async def first_hook(
 
 def second_hook(number: int) -> crescent.HookCallbackT:
     async def inner(
-        ctx: crescent.Context,
-        options: crescent.CommandOptionsT
+        ctx: crescent.Context, options: crescent.CommandOptionsT
     ) -> Optional[crescent.HookResult]:
         print(f"Here second. Number is {number}")
         options["number"] = number
         return crescent.HookResult(options=options)
+
     return inner
 
 
@@ -34,5 +34,6 @@ bot = crescent.Bot(token="...")
 async def test_command(ctx: crescent.Context, number: int):
     # This code will never be reached due to `second_hook`
     await ctx.respond("Done!")
+
 
 bot.run()
