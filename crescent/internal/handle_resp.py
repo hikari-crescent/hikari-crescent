@@ -83,10 +83,6 @@ async def handle_resp(event: InteractionCreateEvent):
         await command.callback(ctx, **callback_params)
 
 
-def _try_copy_callback_options(hook_res: HookResult, old: CommandOptionsT) -> CommandOptionsT:
-    pass
-
-
 def _get_command(
     bot: Bot,
     name: str,
