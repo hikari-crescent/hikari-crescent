@@ -66,6 +66,9 @@ async def handle_resp(event: InteractionCreateEvent):
         params_copy = copy(callback_params)
 
     for func in command.interaction_hooks:
+        if params_copy != callback_params:
+            params_copy = copy(callback_params)
+
         hook_res = await func(ctx, params_copy)
 
         if hook_res:
@@ -75,9 +78,6 @@ async def handle_resp(event: InteractionCreateEvent):
 
             if hook_res.exit:
                 break
-
-        if params_copy != callback_params:
-            params_copy = copy(callback_params)
 
     else:
         await command.callback(ctx, **callback_params)
