@@ -25,7 +25,8 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
-    from crescent.typedefs import CommandCallback
+    from crescent.commands.hooks import HookResult
+    from crescent.typedefs import CommandCallback, CommandOptionsT
 
 
 __all__: Sequence = ("handle_resp",)
@@ -67,9 +68,6 @@ async def handle_resp(event: InteractionCreateEvent):
     for func in command.interaction_hooks:
         hook_res = await func(ctx, params_copy)
 
-        if params_copy != callback_params:
-            params_copy = copy(callback_params)
-
         if hook_res:
             if hook_res.options:
                 callback_params = hook_res.options
@@ -77,8 +75,16 @@ async def handle_resp(event: InteractionCreateEvent):
 
             if hook_res.exit:
                 break
+
+        if params_copy != callback_params:
+            params_copy = copy(callback_params)
+
     else:
         await command.callback(ctx, **callback_params)
+
+
+def _try_copy_callback_options(hook_res: HookResult, old: CommandOptionsT) -> CommandOptionsT:
+    pass
 
 
 def _get_command(
