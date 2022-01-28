@@ -24,8 +24,8 @@ if TYPE_CHECKING:
     from hikari import InteractionCreateEvent
 
     from crescent.bot import Bot
-    from crescent.internal import AppCommandMeta, MetaStruct
     from crescent.commands.hooks import HookResult
+    from crescent.internal import AppCommandMeta, MetaStruct
     from crescent.typedefs import CommandCallback, CommandOptionsT
 
 
