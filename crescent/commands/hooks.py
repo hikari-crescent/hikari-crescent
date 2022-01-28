@@ -1,8 +1,8 @@
 from __future__ import annotations
+from functools import partial
 from inspect import iscoroutinefunction
 
-from typing import TYPE_CHECKING, Sequence
-from functools import partial
+from typing import TYPE_CHECKING, Sequence, overload
 
 from attrs import define
 
@@ -11,15 +11,14 @@ from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
     from typing import TypeVar, Any, Awaitable, Callable
-    from typing_extensions import ParamSpec, Concatenate
     from crescent.context import Context
+    from crescent.typedefs import HookCallbackT
 
-    P = ParamSpec("P")
     T = TypeVar("T", bound="MetaStruct[Callable[..., Awaitable[Any]], Any]")
 
 __all__: Sequence[str] = (
     "HookResult",
-    "interaction_hook",
+    "hook",
 )
 
 
@@ -28,36 +27,24 @@ class HookResult:
     exit: bool = False
 
 
-class _PartialFunction:
-    """Works similarly to functools.partial but added arguments are prepended instead
-    of appended.
-    """
-
-    def __init__(self, func, *args, **kwargs) -> None:
-        self.func = func
-        self.args = args
-        self.kwargs = kwargs
-
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        return self.func(*args, *self.args, **kwargs, **self.kwargs)
+@overload
+def hook(callback: HookCallbackT, /) -> Callable[..., T]:
+    ...
 
 
-# This function signature is compatible with pep 612
-# (https://www.python.org/dev/peps/pep-0612/) but mypy doesn't understand it.
-def interaction_hook(
-    callback: Callable[Concatenate[Context, P], Awaitable[HookResult]]  # type: ignore
-) -> Callable[P, T]:
+@overload
+def hook(callback: HookCallbackT, command: T) -> T:
+    ...
+
+
+def hook(callback, command=None):
+
+    if command is None:
+        return partial(hook, callback)
+
     if not iscoroutinefunction(callback):
         raise ValueError(f"Function `{callback.__name__}` must be async.")
 
-    def decorator(*args: Any, **kwargs: Any):
-        if not args or (args and not isinstance(args[-1], MetaStruct)):
-            return partial(decorator, *args, **kwargs)
+    command.interaction_hooks.insert(0, callback)
 
-        command: MetaStruct = args[-1]
-        args = args[:-1]
-
-        command.interaction_hooks.insert(0, _PartialFunction(callback, *args, **kwargs))
-        return command
-
-    return decorator
+    return command

@@ -23,7 +23,7 @@ __all__: Sequence[str] = (
     "MinValue",
     "command",
     "option",
-    "interaction_hook",
+    "hook",
     "HookResult",
     "Group",
     "SubGroup",

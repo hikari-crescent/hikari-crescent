@@ -15,7 +15,6 @@ from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
-from crescent.typedefs import CommandCallback
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
@@ -23,6 +22,7 @@ if TYPE_CHECKING:
 
     from hikari import InteractionCreateEvent
 
+    from crescent.typedefs import CommandCallback
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
 
