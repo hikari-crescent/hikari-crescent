@@ -1,18 +1,17 @@
 from __future__ import annotations
+
 from functools import partial
 from inspect import iscoroutinefunction
-
 from typing import TYPE_CHECKING, Sequence, overload
 
 from attrs import define
 
 from crescent.internal.meta_struct import MetaStruct
 
-
 if TYPE_CHECKING:
-    from typing import TypeVar, Any, Awaitable, Callable
-    from crescent.context import Context
+    from typing import Any, Awaitable, Callable, TypeVar, Optional
     from crescent.typedefs import HookCallbackT
+    from crescent.typedefs import CommandOptionsT
 
     T = TypeVar("T", bound="MetaStruct[Callable[..., Awaitable[Any]], Any]")
 
@@ -25,6 +24,7 @@ __all__: Sequence[str] = (
 @define
 class HookResult:
     exit: bool = False
+    options: Optional[CommandOptionsT] = None
 
 
 @overload

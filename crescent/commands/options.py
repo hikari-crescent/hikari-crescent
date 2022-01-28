@@ -1,7 +1,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Sequence, Tuple, Type, TypeVar, Union, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
 
 from hikari import (
     UNDEFINED,
@@ -27,6 +38,9 @@ from hikari import (
 
 from crescent.mentionable import Mentionable
 
+if TYPE_CHECKING:
+    from crescent.typedefs import OptionTypesT
+
 __all__ = (
     "OPTIONS_TYPE_MAP",
     "get_channel_types",
@@ -34,8 +48,7 @@ __all__ = (
     "ClassCommandOption",
 )
 
-_VALID_TYPES = Union[str, bool, int, float, PartialChannel, Role, User, Mentionable]
-OPTIONS_TYPE_MAP: Dict[Type[_VALID_TYPES], OptionType] = {
+OPTIONS_TYPE_MAP: Dict[Type[OptionTypesT], OptionType] = {
     str: OptionType.STRING,
     bool: OptionType.BOOLEAN,
     int: OptionType.INTEGER,
@@ -191,7 +204,7 @@ def option(
 
 
 def option(  # type: ignore
-    option_type: Union[Type[_VALID_TYPES], Sequence[Type[_VALID_CHANNEL_TYPES]]],
+    option_type: Union[Type[OptionTypesT], Sequence[Type[_VALID_CHANNEL_TYPES]]],
     description: str = "\u200B",
     *,
     default: UndefinedOr[Any] = UNDEFINED,

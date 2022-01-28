@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
+from copy import copy
 from typing import TYPE_CHECKING, Optional
 
 from hikari import (
@@ -22,9 +23,9 @@ if TYPE_CHECKING:
 
     from hikari import InteractionCreateEvent
 
-    from crescent.typedefs import CommandCallback
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
+    from crescent.typedefs import CommandCallback
 
 
 __all__: Sequence = ("handle_resp",)
@@ -60,10 +61,22 @@ async def handle_resp(event: InteractionCreateEvent):
     ctx = Context._from_command_interaction(interaction)
     callback_params = _options_to_kwargs(interaction, options)
 
+    if command.interaction_hooks:
+        params_copy = copy(callback_params)
+
     for func in command.interaction_hooks:
-        ext_res = await func(ctx)
-        if ext_res and ext_res.exit:
-            break
+        hook_res = await func(ctx, params_copy)
+
+        if params_copy != callback_params:
+            params_copy = copy(callback_params)
+
+        if hook_res:
+            if hook_res.options:
+                callback_params = hook_res.options
+                params_copy = copy(callback_params)
+
+            if hook_res.exit:
+                break
     else:
         await command.callback(ctx, **callback_params)
 
