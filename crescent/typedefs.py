@@ -10,8 +10,9 @@ from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (
     "CommandCallback",
-    "HookCallbackT",
+    "CommandOptionsT",
     "ClassCommandProto",
+    "HookCallbackT",
 )
 
 CommandCallback = Callable[..., Awaitable[Any]]

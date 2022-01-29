@@ -34,6 +34,10 @@ __all__: Sequence[str] = (
     "CommandNotFoundError",
     "Mentionable",
     "CommandCallback",
+    "CommandOptionsT",
+    "OptionTypesT",
+    "HookCallbackT",
+    "ClassCommandProto",
     "Plugin",
     "ClassCommandOption",
 )
