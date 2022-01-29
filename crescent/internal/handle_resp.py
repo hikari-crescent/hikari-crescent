@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
+from copy import copy
 from typing import TYPE_CHECKING, Optional
 
 from hikari import (
@@ -67,11 +68,37 @@ async def handle_resp(event: InteractionCreateEvent):
     ctx = Context._from_command_interaction(interaction)
 
     if interaction.command_type is CommandType.SLASH:
-        callback_params = _options_to_kwargs(interaction, options)
+        callback_options = _options_to_kwargs(interaction, options)
     else:
-        callback_params = _resolved_data_to_args(command.callback, interaction)
+        callback_options = _resolved_data_to_args(command.callback, interaction)
 
-    await command.callback(ctx, **callback_params)
+    # ---------------
+    # Note on Copying
+    # ---------------
+    # To prevent the user accidentally mutating callback_options, shallow copies are
+    # passed to the user. Copies are only made when:
+    # 1. There is at least one interaction hook
+    # 2. The previous hook mutated the copy of callback_options
+
+    if command.interaction_hooks:
+        options_copy = copy(callback_options)
+
+    for hook in command.interaction_hooks:
+        if options_copy != callback_options:
+            options_copy = copy(callback_options)
+
+        hook_res = await hook(ctx, options_copy)
+
+        if hook_res:
+            if hook_res.options:
+                callback_options = hook_res.options
+                options_copy = copy(callback_options)
+
+            if hook_res.exit:
+                break
+
+    else:
+        await command.callback(ctx, **callback_options)
 
 
 def _get_command(
