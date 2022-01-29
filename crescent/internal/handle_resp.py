@@ -61,27 +61,12 @@ async def handle_resp(event: InteractionCreateEvent):
     ctx = Context._from_command_interaction(interaction)
     callback_options = _options_to_kwargs(interaction, options)
 
-    # ---------------
-    # Note on Copying
-    # ---------------
-    # To prevent the user accidentally mutating callback_options, shallow copies are
-    # passed to the user. Copies are only made when:
-    # 1. There is at least one interaction hook
-    # 2. The previous hook mutated the copy of callback_options
-
-    if command.interaction_hooks:
-        options_copy = copy(callback_options)
-
     for hook in command.interaction_hooks:
-        if options_copy != callback_options:
-            options_copy = copy(callback_options)
-
-        hook_res = await hook(ctx, options_copy)
+        hook_res = await hook(ctx, copy(callback_options))
 
         if hook_res:
             if hook_res.options:
                 callback_options = hook_res.options
-                options_copy = copy(callback_options)
 
             if hook_res.exit:
                 break
