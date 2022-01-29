@@ -33,7 +33,7 @@ def hook(callback: HookCallbackT, /) -> Callable[..., T]:
 
 
 @overload
-def hook(callback: HookCallbackT, command: T) -> T:
+def hook(callback: HookCallbackT, command: T, /) -> T:
     ...
 
 
