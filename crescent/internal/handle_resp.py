@@ -70,18 +70,18 @@ async def handle_resp(event: InteractionCreateEvent):
     # 2. The previous hook mutated the copy of callback_options
 
     if command.interaction_hooks:
-        params_copy = copy(callback_options)
+        options_copy = copy(callback_options)
 
     for hook in command.interaction_hooks:
-        if params_copy != callback_options:
-            params_copy = copy(callback_options)
+        if options_copy != callback_options:
+            options_copy = copy(callback_options)
 
-        hook_res = await hook(ctx, params_copy)
+        hook_res = await hook(ctx, options_copy)
 
         if hook_res:
             if hook_res.options:
                 callback_options = hook_res.options
-                params_copy = copy(callback_options)
+                options_copy = copy(callback_options)
 
             if hook_res.exit:
                 break
