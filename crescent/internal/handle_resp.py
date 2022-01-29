@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import OrderedDict
 
 from contextlib import suppress
 from copy import copy
@@ -25,7 +26,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
-    from crescent.typedefs import CommandCallback
+    from crescent.typedefs import CommandCallback, OptionTypesT
 
 
 __all__: Sequence = ("handle_resp",)
@@ -67,10 +68,11 @@ async def handle_resp(event: InteractionCreateEvent):
     )
     ctx = Context._from_command_interaction(interaction)
 
+    callback_options: Dict[str, OptionTypesT]
     if interaction.command_type is CommandType.SLASH:
         callback_options = _options_to_kwargs(interaction, options)
     else:
-        callback_options = _resolved_data_to_args(command.callback, interaction)
+        callback_options = _resolved_data_to_kwargs(interaction)
 
     # ---------------
     # Note on Copying
@@ -98,13 +100,13 @@ async def handle_resp(event: InteractionCreateEvent):
                 break
 
     else:
-        await command.callback(ctx, **callback_options)
+        await command.callback(ctx, *callback_options.values())
 
 
 def _get_command(
     bot: Bot,
     name: str,
-    type: CommandType,
+    type: int,
     guild_id: Optional[Snowflake],
     group: Optional[str],
     sub_group: Optional[str],
@@ -134,11 +136,11 @@ _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
 def _options_to_kwargs(
     interaction: CommandInteraction,
     options: Optional[Sequence[CommandInteractionOption]],
-) -> Dict[str, Any]:
+) -> OrderedDict[str, Any]:
     if not options:
-        return {}
+        return OrderedDict()
 
-    return {option.name: _extract_value(option, interaction) for option in options}
+    return OrderedDict((option.name, _extract_value(option, interaction)) for option in options)
 
 
 def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:
@@ -154,5 +156,25 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     return next(iter(resolved.values()))
 
 
-def _resolved_data_to_args(callback: CommandCallback, interaction: CommandInteraction):
-    pass
+def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, OptionTypesT]:
+    if not interaction.resolved:
+        raise ValueError(
+            "interaction.resoved should be defined when running this function"
+        )
+
+    if interaction.resolved.messages:
+        return {
+            "message": next(iter(interaction.resolved.messages))
+        }
+    if interaction.resolved.members:
+        return {
+            "user": next(iter(interaction.resolved.members))
+        }
+    if interaction.resolved.users:
+        return {
+            "user": next(iter(interaction.resolved.users))
+        }
+
+    raise AttributeError(
+        "interaction.resolved did not have property `messages`, `members`, or `users`"
+    )

@@ -10,6 +10,7 @@ from hikari import (
     UNDEFINED,
     CommandOption,
     OptionType,
+    SlashCommand,
     Snowflake,
     Snowflakeish,
     CommandType,
@@ -115,12 +116,20 @@ class CommandHandler:
             res_commands.extend(commands)
 
         def hikari_to_crescent_command(command: PartialCommand) -> AppCommand:
+            if isinstance(command, SlashCommand):
+                return AppCommand(
+                    type=command.type,
+                    name=command.name,
+                    description=command.description,
+                    guild_id=command.guild_id,
+                    options=command.options,
+                    default_permission=command.default_permission,
+                    id=command.id,
+                )
             return AppCommand(
                 type=command.type,
                 name=command.name,
-                description=command.description,
                 guild_id=command.guild_id,
-                options=command.options,
                 default_permission=command.default_permission,
                 id=command.id,
             )
@@ -199,7 +208,7 @@ class CommandHandler:
                 cast(list, sub_command_group.options).append(
                     CommandOption(
                         name=command.metadata.app.name,
-                        description=command.metadata.app.description,
+                        description=unwrap(command.metadata.app.description),
                         type=OptionType.SUB_COMMAND,
                         options=command.metadata.app.options,
                         is_required=None,  # type: ignore
@@ -242,7 +251,7 @@ class CommandHandler:
                 cast(list, built_commands[key].options).append(
                     CommandOption(
                         name=command.metadata.app.name,
-                        description=command.metadata.app.description,
+                        description=unwrap(command.metadata.app.description),
                         type=command.metadata.app.type,
                         options=command.metadata.app.options,
                         is_required=None,  # type: ignore
@@ -256,21 +265,21 @@ class CommandHandler:
         return tuple(built_commands.values())
 
     async def create_application_command(self, command: AppCommand):
-        if command.type is CommandType.SLASH:
-            await self.bot.rest.create_slash_command(
+        if command.type in {CommandType.MESSAGE, CommandType.USER}:
+            await self.bot.rest.create_context_menu_command(
                 application=unwrap(self.application_id),
+                type=command.type,  # type: ignore
                 name=command.name,
-                description=command.description,
                 guild=command.guild_id or UNDEFINED,
-                options=command.options or UNDEFINED,
                 default_permission=command.default_permission,
             )
-
-        await self.bot.rest.create_context_menu_command(
+            return
+        await self.bot.rest.create_slash_command(
             application=unwrap(self.application_id),
-            type=command.type,
             name=command.name,
+            description=unwrap(command.description),
             guild=command.guild_id or UNDEFINED,
+            options=command.options or UNDEFINED,
             default_permission=command.default_permission,
         )
 

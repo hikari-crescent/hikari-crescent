@@ -25,14 +25,19 @@ from crescent.commands.args import (
     Name,
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption
-from crescent.context import Context
 from crescent.internal.registry import register_command
-from crescent.typedefs import ClassCommandProto, CommandCallback
+from crescent.context import Context
 
 if TYPE_CHECKING:
     from inspect import Parameter, _empty
     from typing import Any, Optional, Sequence, TypeVar
 
+    from crescent.typedefs import (
+        ClassCommandProto,
+        CommandCallback,
+        MessageCommandCallbackT,
+        UserCommandCallbackT,
+    )
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
 
@@ -213,7 +218,7 @@ def command(
 
 
 def user_command(
-    callback: CommandCallback | Type[ClassCommandProto] | None = None,
+    callback: UserCommandCallbackT | None = None,
     /,
     *,
     guild: Optional[Snowflakeish] = None,
@@ -235,7 +240,7 @@ def user_command(
 
 
 def message_command(
-    callback: CommandCallback | Type[ClassCommandProto] | None = None,
+    callback: MessageCommandCallbackT | None = None,
     /,
     *,
     guild: Optional[Snowflakeish] = None,

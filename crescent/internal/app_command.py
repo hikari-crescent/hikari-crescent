@@ -66,11 +66,11 @@ class AppCommand:
 
     type: CommandType
     name: str
-    description: str
     guild_id: Optional[Snowflakeish]
-    options: Optional[Sequence[CommandOption]]
     default_permission: UndefinedOr[bool]
 
+    description: Optional[str] = None
+    options: Optional[Sequence[CommandOption]] = None
     id: Optional[Snowflake] = None
 
     __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
