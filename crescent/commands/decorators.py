@@ -12,7 +12,7 @@ from typing import (
     overload,
 )
 
-from hikari import CommandOption, Snowflakeish
+from hikari import CommandOption, Snowflakeish, CommandType
 
 from crescent.bot import Bot
 from crescent.commands.args import (
@@ -38,7 +38,11 @@ if TYPE_CHECKING:
 
     T = TypeVar("T")
 
-__all__: Sequence[str] = ("command",)
+__all__: Sequence[str] = (
+    "command",
+    "user_command",
+    "message_command",
+)
 
 
 class _Parameter(NamedTuple):
@@ -198,10 +202,55 @@ def command(
 
     return register_command(
         callback=callback_func,
+        command_type=CommandType.SLASH,
         guild=guild,
         name=name,
         group=group,
         sub_group=sub_group,
         description=description,
         options=options,
+    )
+
+
+def user_command(
+    callback: CommandCallback | Type[ClassCommandProto] | None = None,
+    /,
+    *,
+    guild: Optional[Snowflakeish] = None,
+    name: Optional[str] = None,
+):
+    if not callback:
+        return partial(
+            user_command,
+            guild=guild,
+            name=name
+        )
+
+    return register_command(
+        callback=callback,
+        command_type=CommandType.USER,
+        guild=guild,
+        name=name,
+    )
+
+
+def message_command(
+    callback: CommandCallback | Type[ClassCommandProto] | None = None,
+    /,
+    *,
+    guild: Optional[Snowflakeish] = None,
+    name: Optional[str] = None,
+):
+    if not callback:
+        return partial(
+            message_command,
+            guild=guild,
+            name=name
+        )
+
+    return register_command(
+        callback=callback,
+        command_type=CommandType.MESSAGE,
+        guild=guild,
+        name=name,
     )

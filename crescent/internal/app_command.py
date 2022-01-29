@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from enum import IntEnum
 from typing import TYPE_CHECKING
 
 from attr import define
@@ -11,7 +10,7 @@ from crescent.internal.meta_struct import MetaStruct
 if TYPE_CHECKING:
     from typing import Optional, Sequence, Type
 
-    from hikari import Snowflake, UndefinedNoneOr, UndefinedOr
+    from hikari import Snowflake, UndefinedNoneOr, UndefinedOr, CommandType
 
     from crescent.typedefs import CommandCallback
 
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
 @define(hash=True)
 class Unique:
     name: str
-    type: AppCommandType
+    type: CommandType
     guild_id: UndefinedNoneOr[Snowflakeish]
     group: UndefinedNoneOr[str]
     sub_group: UndefinedNoneOr[str]
@@ -61,17 +60,11 @@ __all__: Sequence[str] = (
 )
 
 
-class AppCommandType(IntEnum):
-    CHAT_INPUT = 1
-    USER = 2
-    MESSAGE = 3
-
-
 @define
 class AppCommand:
     """Local representation of an Application Command"""
 
-    type: AppCommandType
+    type: CommandType
     name: str
     description: str
     guild_id: Optional[Snowflakeish]

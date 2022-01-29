@@ -6,12 +6,18 @@ from itertools import chain
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
-from hikari import UNDEFINED, CommandOption, OptionType, Snowflake, Snowflakeish
+from hikari import (
+    UNDEFINED,
+    CommandOption,
+    OptionType,
+    Snowflake,
+    Snowflakeish,
+    CommandType,
+)
 
 from crescent.internal.app_command import (
     AppCommand,
     AppCommandMeta,
-    AppCommandType,
     Unique,
 )
 from crescent.internal.meta_struct import MetaStruct
@@ -21,7 +27,7 @@ from crescent.utils.options import unwrap
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, Optional, Sequence
 
-    from hikari import Command, UndefinedOr
+    from hikari import PartialCommand, UndefinedOr
 
     from crescent.bot import Bot
     from crescent.typedefs import CommandCallback
@@ -29,6 +35,7 @@ if TYPE_CHECKING:
 
 def register_command(
     callback: Callable[..., Awaitable[Any]],
+    command_type: CommandType,
     guild: Optional[Snowflakeish] = None,
     group: Optional[str] = None,
     sub_group: Optional[str] = None,
@@ -54,7 +61,7 @@ def register_command(
             group=group,
             sub_group=sub_group,
             app=AppCommand(
-                type=AppCommandType.CHAT_INPUT,
+                type=command_type,
                 description=description,
                 guild_id=guild,
                 name=name,
@@ -107,9 +114,9 @@ class CommandHandler:
         for commands in guild_commands:
             res_commands.extend(commands)
 
-        def hikari_to_crescent_command(command: Command) -> AppCommand:
+        def hikari_to_crescent_command(command: PartialCommand) -> AppCommand:
             return AppCommand(
-                type=AppCommandType.CHAT_INPUT,
+                type=command.type,
                 name=command.name,
                 description=command.description,
                 guild_id=command.guild_id,
@@ -155,7 +162,7 @@ class CommandHandler:
                     built_commands[key] = AppCommand(
                         name=unwrap(command.metadata.group),
                         description="HIDDEN",
-                        type=AppCommandType.CHAT_INPUT,
+                        type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
                         default_permission=command.metadata.app.default_permission,
@@ -249,12 +256,21 @@ class CommandHandler:
         return tuple(built_commands.values())
 
     async def create_application_command(self, command: AppCommand):
-        await self.bot.rest.create_application_command(
+        if command.type is CommandType.SLASH:
+            await self.bot.rest.create_slash_command(
+                application=unwrap(self.application_id),
+                name=command.name,
+                description=command.description,
+                guild=command.guild_id or UNDEFINED,
+                options=command.options or UNDEFINED,
+                default_permission=command.default_permission,
+            )
+
+        await self.bot.rest.create_context_menu_command(
             application=unwrap(self.application_id),
+            type=command.type,
             name=command.name,
-            description=command.description,
             guild=command.guild_id or UNDEFINED,
-            options=command.options or UNDEFINED,
             default_permission=command.default_permission,
         )
 

@@ -5,17 +5,16 @@ from typing import TYPE_CHECKING, Optional
 
 from hikari import (
     UNDEFINED,
+    CommandType,
     CommandInteraction,
     CommandInteractionOption,
     OptionType,
     Snowflake,
 )
-
 from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
-from crescent.internal.app_command import AppCommandType, Unique
+from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
-from crescent.typedefs import CommandCallback
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
@@ -25,6 +24,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
+    from crescent.typedefs import CommandCallback
 
 
 __all__: Sequence = ("handle_resp",)
@@ -56,9 +56,20 @@ async def handle_resp(event: InteractionCreateEvent):
             name = unwrap(option.options)[0].name
             options = unwrap(option.options)[0].options
 
-    command = _get_command(bot, name, interaction.guild_id, group, sub_group)
+    command = _get_command(
+        bot,
+        name,
+        interaction.command_type,
+        interaction.guild_id,
+        group,
+        sub_group
+    )
     ctx = Context._from_command_interaction(interaction)
-    callback_params = _options_to_kwargs(interaction, options)
+
+    if interaction.command_type is CommandType.SLASH:
+        callback_params = _options_to_kwargs(interaction, options)
+    else:
+        callback_params = _resolved_data_to_args(command.callback, interaction)
 
     await command.callback(ctx, **callback_params)
 
@@ -66,6 +77,7 @@ async def handle_resp(event: InteractionCreateEvent):
 def _get_command(
     bot: Bot,
     name: str,
+    type: CommandType,
     guild_id: Optional[Snowflake],
     group: Optional[str],
     sub_group: Optional[str],
@@ -73,7 +85,7 @@ def _get_command(
 
     kwargs: Dict[str, Any] = dict(
         name=name,
-        type=AppCommandType.CHAT_INPUT,
+        type=type,
         group=group,
         sub_group=sub_group,
     )
@@ -113,3 +125,7 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
 
     resolved = getattr(interaction.resolved, resolved_type)
     return next(iter(resolved.values()))
+
+
+def _resolved_data_to_args(callback: CommandCallback, interaction: CommandInteraction):
+    pass

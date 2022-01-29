@@ -13,6 +13,8 @@ __all__: Sequence[str] = (
     "MaxValue",
     "MinValue",
     "command",
+    "user_command",
+    "message_command",
     "Group",
     "SubGroup",
     "ClassCommandOption",
