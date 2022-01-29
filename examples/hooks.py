@@ -4,7 +4,9 @@ import crescent
 
 
 async def first_hook(
-    ctx: crescent.Context, options: crescent.CommandOptionsT
+    ctx: crescent.Context,
+    # options is a shallow copy of the options from the interaction
+    options: crescent.CommandOptionsT
 ) -> Optional[crescent.HookResult]:
     print("Here first.")
     # Setting exit to true prevents any following hooks and the callback from
