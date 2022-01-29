@@ -64,7 +64,7 @@ async def handle_resp(event: InteractionCreateEvent):
     # ---------------
     # Note on Copying
     # ---------------
-    # To prevent the user accidently mutating callback_options, shallow copies are
+    # To prevent the user accidentally mutating callback_options, shallow copies are
     # passed to the user. Copies are only made when:
     # 1. There is at least one interaction hook
     # 2. The previous hook mutated the copy of callback_options
