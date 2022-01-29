@@ -20,9 +20,9 @@ from crescent.mentionable import Mentionable
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Sequence, cast
+    from typing import Any, Dict, Sequence, cast, Mapping
 
-    from hikari import InteractionCreateEvent
+    from hikari import InteractionCreateEvent, Message, User
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
@@ -68,7 +68,7 @@ async def handle_resp(event: InteractionCreateEvent):
     )
     ctx = Context._from_command_interaction(interaction)
 
-    callback_options: Dict[str, OptionTypesT]
+    callback_options: Mapping[str, OptionTypesT | Message | User]
     if interaction.command_type is CommandType.SLASH:
         callback_options = _options_to_kwargs(interaction, options)
     else:
@@ -156,7 +156,7 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     return next(iter(resolved.values()))
 
 
-def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, OptionTypesT]:
+def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, Message | User]:
     if not interaction.resolved:
         raise ValueError(
             "interaction.resoved should be defined when running this function"
@@ -164,15 +164,15 @@ def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, Optio
 
     if interaction.resolved.messages:
         return {
-            "message": next(iter(interaction.resolved.messages))
+            "message": next(iter(interaction.resolved.messages.values()))
         }
     if interaction.resolved.members:
         return {
-            "user": next(iter(interaction.resolved.members))
+            "user": next(iter(interaction.resolved.members.values()))
         }
     if interaction.resolved.users:
         return {
-            "user": next(iter(interaction.resolved.users))
+            "user": next(iter(interaction.resolved.users.values()))
         }
 
     raise AttributeError(
