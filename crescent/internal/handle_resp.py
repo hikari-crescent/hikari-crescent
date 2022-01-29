@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
+from copy import copy
 from typing import TYPE_CHECKING, Optional
 
 from hikari import (
@@ -15,7 +16,6 @@ from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
-from crescent.typedefs import CommandCallback
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
+    from crescent.typedefs import CommandCallback
 
 
 __all__: Sequence = ("handle_resp",)
@@ -58,9 +59,20 @@ async def handle_resp(event: InteractionCreateEvent):
 
     command = _get_command(bot, name, interaction.guild_id, group, sub_group)
     ctx = Context._from_command_interaction(interaction)
-    callback_params = _options_to_kwargs(interaction, options)
+    callback_options = _options_to_kwargs(interaction, options)
 
-    await command.callback(ctx, **callback_params)
+    for hook in command.interaction_hooks:
+        hook_res = await hook(ctx, copy(callback_options))
+
+        if hook_res:
+            if hook_res.options:
+                callback_options = hook_res.options
+
+            if hook_res.exit:
+                break
+
+    else:
+        await command.callback(ctx, **callback_options)
 
 
 def _get_command(
