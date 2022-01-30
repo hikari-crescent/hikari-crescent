@@ -85,7 +85,7 @@ async def handle_resp(event: InteractionCreateEvent):
                 break
 
     else:
-        await command.callback(ctx, **callback_options)
+        await command.callback(ctx, *callback_options.values())
 
 
 def _get_command(
