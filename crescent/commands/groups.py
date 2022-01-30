@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attr import define
 
 if TYPE_CHECKING:
-    from typing import Optional, Sequence, List
+    from typing import List, Optional, Sequence
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
