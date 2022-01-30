@@ -32,7 +32,7 @@ class Group:
         meta.metadata.group = self
 
         if self.hooks:
-            meta.interaction_hooks.insert(0, self.hooks)
+            meta.interaction_hooks = self.hooks + meta.interaction_hooks
 
         return meta
 
@@ -51,9 +51,9 @@ class SubGroup:
         meta.metadata.sub_group = self
 
         if self.hooks:
-            meta.interaction_hooks.insert(0, self.hooks)
+            meta.interaction_hooks = self.hooks + meta.interaction_hooks
 
         if self.parent.hooks:
-            meta.interaction_hooks.insert(0, self.parent.hooks)
+            meta.interaction_hooks = self.parent.hooks + meta.interaction_hooks
 
         return meta
