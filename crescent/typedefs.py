@@ -12,7 +12,7 @@ from typing import (
     Union,
 )
 
-from hikari import PartialChannel, Role, User
+from hikari import PartialChannel, Role, User, Message
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
@@ -28,6 +28,8 @@ __all__: Sequence[str] = (
 
 CommandCallback = Callable[..., Awaitable[Any]]
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable"]
+UserCommandCallbackT = Callable[["Context", User], Awaitable[None]]
+MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]
 CommandOptionsT = Dict[str, OptionTypesT]
 HookCallbackT = Callable[["Context", CommandOptionsT], Awaitable[Optional["HookResult"]]]
 

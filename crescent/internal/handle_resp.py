@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import OrderedDict
 
 from contextlib import suppress
 from copy import copy
@@ -6,26 +7,26 @@ from typing import TYPE_CHECKING, Optional
 
 from hikari import (
     UNDEFINED,
+    CommandType,
     CommandInteraction,
     CommandInteractionOption,
     OptionType,
     Snowflake,
 )
-
 from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
-from crescent.internal.app_command import AppCommandType, Unique
+from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Sequence, cast
+    from typing import Any, Dict, Sequence, cast, Mapping
 
-    from hikari import InteractionCreateEvent
+    from hikari import InteractionCreateEvent, Message, User
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
-    from crescent.typedefs import CommandCallback
+    from crescent.typedefs import CommandCallback, OptionTypesT
 
 
 __all__: Sequence = ("handle_resp",)
@@ -57,9 +58,21 @@ async def handle_resp(event: InteractionCreateEvent):
             name = unwrap(option.options)[0].name
             options = unwrap(option.options)[0].options
 
-    command = _get_command(bot, name, interaction.guild_id, group, sub_group)
+    command = _get_command(
+        bot,
+        name,
+        interaction.command_type,
+        interaction.guild_id,
+        group,
+        sub_group
+    )
     ctx = Context._from_command_interaction(interaction)
-    callback_options = _options_to_kwargs(interaction, options)
+
+    callback_options: Mapping[str, OptionTypesT | Message | User]
+    if interaction.command_type is CommandType.SLASH:
+        callback_options = _options_to_kwargs(interaction, options)
+    else:
+        callback_options = _resolved_data_to_kwargs(interaction)
 
     for hook in command.interaction_hooks:
         hook_res = await hook(ctx, copy(callback_options))
@@ -78,6 +91,7 @@ async def handle_resp(event: InteractionCreateEvent):
 def _get_command(
     bot: Bot,
     name: str,
+    type: int,
     guild_id: Optional[Snowflake],
     group: Optional[str],
     sub_group: Optional[str],
@@ -85,7 +99,7 @@ def _get_command(
 
     kwargs: Dict[str, Any] = dict(
         name=name,
-        type=AppCommandType.CHAT_INPUT,
+        type=type,
         group=group,
         sub_group=sub_group,
     )
@@ -107,11 +121,11 @@ _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
 def _options_to_kwargs(
     interaction: CommandInteraction,
     options: Optional[Sequence[CommandInteractionOption]],
-) -> Dict[str, Any]:
+) -> OrderedDict[str, Any]:
     if not options:
-        return {}
+        return OrderedDict()
 
-    return {option.name: _extract_value(option, interaction) for option in options}
+    return OrderedDict((option.name, _extract_value(option, interaction)) for option in options)
 
 
 def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:
@@ -125,3 +139,27 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
 
     resolved = getattr(interaction.resolved, resolved_type)
     return next(iter(resolved.values()))
+
+
+def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, Message | User]:
+    if not interaction.resolved:
+        raise ValueError(
+            "interaction.resoved should be defined when running this function"
+        )
+
+    if interaction.resolved.messages:
+        return {
+            "message": next(iter(interaction.resolved.messages.values()))
+        }
+    if interaction.resolved.members:
+        return {
+            "user": next(iter(interaction.resolved.members.values()))
+        }
+    if interaction.resolved.users:
+        return {
+            "user": next(iter(interaction.resolved.users.values()))
+        }
+
+    raise AttributeError(
+        "interaction.resolved did not have property `messages`, `members`, or `users`"
+    )

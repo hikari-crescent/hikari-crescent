@@ -11,7 +11,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
-hikari = "^2.0.0.dev105"
+hikari = { git = "https://github.com/hikari-py/hikari" }
 attr = "^0.3.1"
 
 [tool.poetry.dev-dependencies]
