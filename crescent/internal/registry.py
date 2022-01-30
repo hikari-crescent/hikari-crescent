@@ -7,7 +7,15 @@ from logging import getLogger
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
-from hikari import UNDEFINED, CommandOption, ForbiddenError, OptionType, Snowflake, Snowflakeish
+from hikari import (
+    UNDEFINED,
+    CommandOption,
+    ForbiddenError,
+    OptionType,
+    Snowflake,
+    Snowflakeish,
+)
+
 from crescent.internal.app_command import (
     AppCommand,
     AppCommandMeta,
@@ -112,13 +120,10 @@ class CommandHandler:
                     "Cannot access application commands for guild %s. Consider "
                     " removing this guild from the bot's `tracked_guilds` or inviting"
                     " the bot with the `application.commands` scope.",
-                    guild
+                    guild,
                 )
 
-        guild_commands = await gather_iter(
-            fetch_guild_app_command(guild)
-            for guild in self.guilds
-        )
+        guild_commands = await gather_iter(fetch_guild_app_command(guild) for guild in self.guilds)
 
         for commands in guild_commands:
             if commands is None:
