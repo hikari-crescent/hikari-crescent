@@ -41,8 +41,6 @@ _log = getLogger(__name__)
 def register_command(
     callback: Callable[..., Awaitable[Any]],
     guild: Optional[Snowflakeish] = None,
-    group: Optional[str] = None,
-    sub_group: Optional[str] = None,
     name: Optional[str] = None,
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
@@ -62,8 +60,6 @@ def register_command(
         callback=callback,
         app_set_hooks=[hook],
         metadata=AppCommandMeta(
-            group=group,
-            sub_group=sub_group,
             app=AppCommand(
                 type=AppCommandType.CHAT_INPUT,
                 description=description,
@@ -167,7 +163,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=unwrap(command.metadata.group),
+                    name=unwrap(command.metadata.group).name,
                     type=command.metadata.app.type,
                     guild_id=command.metadata.app.guild_id,
                     group=None,
@@ -176,8 +172,8 @@ class CommandHandler:
 
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
-                        name=unwrap(command.metadata.group),
-                        description="HIDDEN",
+                        name=unwrap(command.metadata.group).name,
+                        description=unwrap(command.metadata.group).description or "\u200B",
                         type=AppCommandType.CHAT_INPUT,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
@@ -190,8 +186,8 @@ class CommandHandler:
                 children = unwrap(built_commands[key].options)
 
                 sub_command_group = CommandOption(
-                    name=command.metadata.sub_group,
-                    description="HIDDEN",
+                    name=unwrap(command.metadata.sub_group).name,
+                    description=unwrap(command.metadata.sub_group).description or "\u200B",
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
                     is_required=None,  # type: ignore
@@ -236,7 +232,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=command.metadata.group,
+                    name=command.metadata.group.name,
                     type=command.metadata.app.type,
                     guild_id=command.metadata.app.guild_id,
                     group=None,
@@ -245,7 +241,7 @@ class CommandHandler:
 
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
-                        name=command.metadata.group,
+                        name=command.metadata.group.name,
                         description="HIDDEN",
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,

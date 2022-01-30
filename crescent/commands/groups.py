@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attr import define
 
 if TYPE_CHECKING:
-    from typing import Sequence
+    from typing import Optional, Sequence
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
@@ -20,25 +20,27 @@ __all__: Sequence[str] = (
 @define
 class Group:
     name: str
+    description: Optional[str] = None
 
-    def sub_group(self, name: str) -> SubGroup:
-        return SubGroup(name, self.name)
+    def sub_group(self, name: str, description: Optional[str] = None) -> SubGroup:
+        return SubGroup(name=name, parent=self, description=description)
 
     def child(
         self, meta: MetaStruct[CommandCallback, AppCommandMeta]
     ) -> MetaStruct[CommandCallback, AppCommandMeta]:
-        meta.metadata.group = self.name
+        meta.metadata.group = self
         return meta
 
 
 @define
 class SubGroup:
     name: str
-    parent: str
+    parent: Group
+    description: Optional[str] = None
 
     def child(
         self, meta: MetaStruct[CommandCallback, AppCommandMeta]
     ) -> MetaStruct[CommandCallback, AppCommandMeta]:
         meta.metadata.group = self.parent
-        meta.metadata.sub_group = self.name
+        meta.metadata.sub_group = self
         return meta

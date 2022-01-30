@@ -126,8 +126,6 @@ def command(
     *,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
-    group: Optional[str] = None,
-    sub_group: Optional[str] = None,
     description: Optional[str] = None,
 ) -> Callable[
     [CommandCallback | Type[ClassCommandProto]],
@@ -142,8 +140,6 @@ def command(
     *,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
-    group: Optional[str] = None,
-    sub_group: Optional[str] = None,
     description: Optional[str] = None,
 ):
     if not callback:
@@ -151,8 +147,6 @@ def command(
             command,
             guild=guild,
             name=name,
-            group=group,
-            sub_group=sub_group,
             description=description,
         )
 
@@ -200,8 +194,6 @@ def command(
         callback=callback_func,
         guild=guild,
         name=name,
-        group=group,
-        sub_group=sub_group,
         description=description,
         options=options,
     )
