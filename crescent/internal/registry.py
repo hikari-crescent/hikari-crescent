@@ -3,10 +3,18 @@ from __future__ import annotations
 from asyncio import gather
 from inspect import iscoroutinefunction
 from itertools import chain
+from logging import getLogger
 from typing import TYPE_CHECKING, Dict, cast
 from weakref import WeakValueDictionary
 
-from hikari import UNDEFINED, CommandOption, OptionType, Snowflake, Snowflakeish
+from hikari import (
+    UNDEFINED,
+    CommandOption,
+    ForbiddenError,
+    OptionType,
+    Snowflake,
+    Snowflakeish,
+)
 
 from crescent.internal.app_command import (
     AppCommand,
@@ -25,6 +33,9 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.typedefs import CommandCallback
+
+
+_log = getLogger(__name__)
 
 
 def register_command(
@@ -99,12 +110,24 @@ class CommandHandler:
             await self.bot.rest.fetch_application_commands(unwrap(self.application_id))
         )
 
-        guild_commands = await gather_iter(
-            self.bot.rest.fetch_application_commands(unwrap(self.application_id), guild=guild)
-            for guild in self.guilds
-        )
+        async def fetch_guild_app_command(guild: Snowflakeish):
+            try:
+                return await self.bot.rest.fetch_application_commands(
+                    unwrap(self.application_id), guild=guild
+                )
+            except ForbiddenError:
+                _log.warning(
+                    "Cannot access application commands for guild %s. Consider "
+                    " removing this guild from the bot's `tracked_guilds` or inviting"
+                    " the bot with the `application.commands` scope.",
+                    guild,
+                )
+
+        guild_commands = await gather_iter(fetch_guild_app_command(guild) for guild in self.guilds)
 
         for commands in guild_commands:
+            if commands is None:
+                continue
             res_commands.extend(commands)
 
         def hikari_to_crescent_command(command: Command) -> AppCommand:
@@ -249,14 +272,30 @@ class CommandHandler:
         return tuple(built_commands.values())
 
     async def create_application_command(self, command: AppCommand):
-        await self.bot.rest.create_application_command(
-            application=unwrap(self.application_id),
-            name=command.name,
-            description=command.description,
-            guild=command.guild_id or UNDEFINED,
-            options=command.options or UNDEFINED,
-            default_permission=command.default_permission,
-        )
+        try:
+            await self.bot.rest.create_application_command(
+                application=unwrap(self.application_id),
+                name=command.name,
+                description=command.description,
+                guild=command.guild_id or UNDEFINED,
+                options=command.options or UNDEFINED,
+                default_permission=command.default_permission,
+            )
+        except ForbiddenError:
+            if command.guild_id in self.bot.cache.get_guilds_view().keys():
+                _log.warning(
+                    "Cannot post application command `%s` to guild %s. Consider removing this"
+                    " guild from the bot's `tracked_guilds` or inviting the bot with the"
+                    " `application.commands` scope",
+                    command.name,
+                    command.guild_id,
+                )
+                return
+            _log.warning(
+                "Cannot post application command `%s` to guild %s. Bot is not part of the guild.",
+                command.name,
+                command.guild_id,
+            )
 
     async def delete_application_command(self, command: AppCommand):
         await self.bot.rest.delete_application_command(
