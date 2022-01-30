@@ -21,6 +21,9 @@ if TYPE_CHECKING:
 
 __all__: Sequence[str] = (
     "CommandCallback",
+    "OptionTypesT",
+    "UserCommandCallbackT",
+    "MessageCommandCallbackT",
     "CommandOptionsT",
     "ClassCommandProto",
     "HookCallbackT",
