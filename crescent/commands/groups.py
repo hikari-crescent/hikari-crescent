@@ -1,4 +1,5 @@
 from __future__ import annotations
+from cgitb import Hook
 
 from typing import TYPE_CHECKING
 
@@ -23,8 +24,18 @@ class Group:
     description: Optional[str] = None
     hooks: Optional[List[HookCallbackT]] = None
 
-    def sub_group(self, name: str, description: Optional[str] = None) -> SubGroup:
-        return SubGroup(name=name, parent=self, description=description)
+    def sub_group(
+        self,
+        name: str,
+        description: Optional[str] = None,
+        hooks: Optional[List[HookCallbackT]] = None,
+    ) -> SubGroup:
+        return SubGroup(
+            name=name,
+            parent=self,
+            description=description,
+            hooks=hooks,
+        )
 
     def child(
         self, meta: MetaStruct[CommandCallback, AppCommandMeta]
