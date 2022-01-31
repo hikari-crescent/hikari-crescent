@@ -39,9 +39,9 @@ class Name(Arg):
         return self.name
 
 
-@define
 class Choices(Arg):
-    choices: Sequence[CommandChoice]
+    def __init__(self, *choices: CommandChoice) -> None:
+        self.choices = choices
 
     @property
     def payload(self) -> Sequence[CommandChoice]:
@@ -50,7 +50,8 @@ class Choices(Arg):
 
 @define
 class ChannelTypes(Arg):
-    channel_types: Sequence[ChannelType]
+    def __init__(self, *channel_types: ChannelType) -> None:
+        self.channel_types = channel_types
 
     @property
     def payload(self) -> Sequence[ChannelType]:
