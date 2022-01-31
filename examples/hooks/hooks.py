@@ -29,9 +29,9 @@ def second_hook(number: int) -> crescent.HookCallbackT:
 bot = crescent.Bot(token="...")
 
 
+@bot.include
 @crescent.hook(first_hook)
 @crescent.hook(second_hook(5))
-@bot.include
 @crescent.command
 async def test_command(ctx: crescent.Context, number: int):
     # This code will never be reached due to `second_hook`
