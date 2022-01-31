@@ -48,7 +48,6 @@ class Choices(Arg):
         return self.choices
 
 
-@define
 class ChannelTypes(Arg):
     def __init__(self, *channel_types: ChannelType) -> None:
         self.channel_types = channel_types
