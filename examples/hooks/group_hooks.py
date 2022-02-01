@@ -18,6 +18,7 @@ async def second_hook(ctx: crescent.Context, options: crescent.CommandOptionsT):
 async def third_hook(ctx: crescent.Context, options: crescent.CommandOptionsT):
     print("Here third.")
 
+
 group = crescent.Group("my_group", hooks=[first_hook])
 sub_group = group.sub_group("my_sub_group", hooks=[second_hook])
 
@@ -26,6 +27,7 @@ sub_group = group.sub_group("my_sub_group", hooks=[second_hook])
 # first_hook
 # second_hook
 # third_hook
+
 
 @bot.include
 @sub_group.child

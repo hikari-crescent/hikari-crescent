@@ -1,9 +1,9 @@
 from typing import Annotated  # Python 3.9+
-from typing_extensions import Annotated  # Python 3.8
 
 import hikari
-import crescent
+from typing_extensions import Annotated  # Python 3.8
 
+import crescent
 
 bot = crescent.Bot(
     token="TOKEN",
@@ -38,8 +38,8 @@ async def add(
             hikari.CommandChoice(name="Choice", value=123),
             hikari.CommandChoice(name="Choice2", value=456),
             hikari.CommandChoice(name="Choice3", value=789),
-        )
-    ]
+        ),
+    ],
 ):
     await ctx.respond(f"{first_number} + {second_number} = {first_number+second_number}")
 
@@ -48,5 +48,6 @@ async def add(
 @crescent.event
 async def event(event: hikari.ShardReadyEvent):
     print(event)
+
 
 bot.run()
