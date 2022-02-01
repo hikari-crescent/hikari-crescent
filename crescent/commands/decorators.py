@@ -156,9 +156,9 @@ def command(
         if name is None:
             raise TypeError("Please specify a command name for class commands.")
         defaults: Dict[str, Any] = {}
-
         options: list[CommandOption] = []
         name_map: dict[str, str] = {}
+
         for n, v in callback.__dict__.items():
             if not isinstance(v, ClassCommandOption):
                 continue
