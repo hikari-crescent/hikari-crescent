@@ -73,8 +73,18 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
         args = get_args(origin)
         if len(args) == 2 and NoneType in args:
             origin = args[0] if args[1] is NoneType else args[1]
+        else:
+            raise ValueError(
+                "Typehint must be `T`, `Optional[T]`, or `Union[T, None]`"
+            )
 
-    _type = OPTIONS_TYPE_MAP[origin]
+    _type = OPTIONS_TYPE_MAP.get(origin)
+    if _type is None:
+        raise ValueError(
+            f"`{origin.__name__}` is not a valid typehint."
+            " Must be `str`, `bool`, `int`, `float`, `hikari.PartialChannel`,"
+            " `hikari.Role`, `hikari.User`, or `crescent.Mentionable`."
+        )
 
     def get_arg(t: Type[Arg] | Type[Any]) -> Optional[T]:
         data: T
