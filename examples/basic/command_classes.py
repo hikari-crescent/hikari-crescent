@@ -3,6 +3,7 @@
 # will work exactly the same as any other command.
 
 import hikari
+
 import crescent
 
 bot = crescent.Bot(token="...")
