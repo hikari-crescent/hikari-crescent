@@ -8,6 +8,9 @@ from typing import (
     Dict,
     NamedTuple,
     Type,
+    Union,
+    get_args,
+    get_origin,
     get_type_hints,
     overload,
 )
@@ -61,6 +64,10 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
     if origin is Context or origin is param.empty:
         return None
+
+    # Support for `Optional` typehint
+    if get_origin(origin) is Union:
+        origin = get_args(origin)[0]
 
     _type = OPTIONS_TYPE_MAP[origin]
 
