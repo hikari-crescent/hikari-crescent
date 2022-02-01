@@ -44,6 +44,9 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("command",)
 
 
+NoneType = type(None)
+
+
 class _Parameter(NamedTuple):
     name: str
     annotation: Type[Any]
@@ -67,7 +70,9 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
     # Support for `Optional` typehint
     if get_origin(origin) is Union:
-        origin = get_args(origin)[0]
+        args = get_args(origin)
+        if len(args) == 2 and NoneType in args:
+            origin = args[0] if args[1] is NoneType else args[1]
 
     _type = OPTIONS_TYPE_MAP[origin]
 
