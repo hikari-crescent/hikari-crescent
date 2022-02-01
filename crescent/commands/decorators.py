@@ -74,9 +74,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
         if len(args) == 2 and NoneType in args:
             origin = args[0] if args[1] is NoneType else args[1]
         else:
-            raise ValueError(
-                "Typehint must be `T`, `Optional[T]`, or `Union[T, None]`"
-            )
+            raise ValueError("Typehint must be `T`, `Optional[T]`, or `Union[T, None]`")
 
     _type = OPTIONS_TYPE_MAP.get(origin)
     if _type is None:
