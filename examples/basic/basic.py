@@ -1,7 +1,8 @@
 from typing import Annotated  # Python 3.9+
-from typing_extensions import Annotated  # Python 3.8
 
 import hikari
+from typing_extensions import Annotated  # Python 3.8
+
 import crescent
 
 bot = crescent.Bot(
