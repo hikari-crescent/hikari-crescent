@@ -94,7 +94,9 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
 
 def _class_command_callback(
-    cls: Type[ClassCommandProto], defaults: Dict[str, Any], name_map: dict[str, str],
+    cls: Type[ClassCommandProto],
+    defaults: Dict[str, Any],
+    name_map: dict[str, str],
 ) -> CommandCallback:
     async def callback(*args, **kwargs) -> Any:
         values = defaults.copy()
