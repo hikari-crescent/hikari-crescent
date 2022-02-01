@@ -162,9 +162,12 @@ def command(
         for n, v in callback.__dict__.items():
             if not isinstance(v, ClassCommandOption):
                 continue
-            options.append(generated := v._gen_option(n))
+            generated = v._gen_option(n)
+            options.append(generated)
+
             if generated.name != n:
                 name_map[generated.name] = n
+
             defaults[generated.name] = v.default
 
         callback_func = _class_command_callback(
