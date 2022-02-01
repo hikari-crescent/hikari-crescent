@@ -94,19 +94,20 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
 
 def _class_command_callback(
-    cls: Type[ClassCommandProto], defaults: Dict[str, Any]
+    cls: Type[ClassCommandProto], defaults: Dict[str, Any], name_map: dict[str, str],
 ) -> CommandCallback:
     async def callback(*args, **kwargs) -> Any:
+        values = defaults.copy()
+        values.update(kwargs)
+
         if isinstance(args[0], Bot):
             args = args[1:]
 
         cmd = cls()
-        for k, v in kwargs.items():
+        for k, v in values.items():
+            if k in name_map:
+                k = name_map[k]
             setattr(cmd, k, v)
-
-        for k, v in defaults.items():
-            if k not in kwargs:
-                setattr(cmd, k, v)
 
         return await cmd.callback(*args)
 
@@ -156,15 +157,19 @@ def command(
         defaults: Dict[str, Any] = {}
 
         options: list[CommandOption] = []
+        name_map: dict[str, str] = {}
         for n, v in callback.__dict__.items():
             if not isinstance(v, ClassCommandOption):
                 continue
-            options.append(v._gen_option(n))
-            defaults[n] = v.default
+            options.append(generated := v._gen_option(n))
+            if generated.name != n:
+                name_map[generated.name] = n
+            defaults[generated.name] = v.default
 
         callback_func = _class_command_callback(
             callback,
             defaults,
+            name_map,
         )
 
     else:
