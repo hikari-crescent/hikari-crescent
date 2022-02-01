@@ -107,8 +107,7 @@ def _class_command_callback(
 
         cmd = cls()
         for k, v in values.items():
-            if k in name_map:
-                k = name_map[k]
+            k = name_map.get(k, k)
             setattr(cmd, k, v)
 
         return await cmd.callback(*args)
