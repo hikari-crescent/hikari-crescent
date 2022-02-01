@@ -11,7 +11,7 @@ bot = crescent.Bot(token="...")
 @bot.include
 @crescent.command(name="echo")
 class Say:
-    to_say = crescent.option(str, "Make the bot say something", default="...")
+    to_say = crescent.option(str, "Make the bot say something", default="...", name="to-say")
     channel = crescent.option(hikari.GuildTextChannel, "The channel to send in", default=None)
 
     async def callback(self, ctx: crescent.Context) -> None:
