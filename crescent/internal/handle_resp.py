@@ -78,7 +78,7 @@ async def handle_resp(event: InteractionCreateEvent):
             if hdlrs := command.app._error_handler.registry.get(e.__class__, None):
                 for func in hdlrs:
                     await func.callback(
-                        e,
+                        exc=e,
                         ctx=ctx,
                         command=command,
                         options=callback_options,
