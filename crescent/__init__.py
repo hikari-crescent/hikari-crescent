@@ -40,4 +40,7 @@ __all__: Sequence[str] = (
     "ClassCommandProto",
     "Plugin",
     "ClassCommandOption",
+    "ErrorHandlerProto",
+    "ErrorHandlerMeta",
+    "catch",
 )

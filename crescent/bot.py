@@ -18,7 +18,7 @@ from hikari import (
 
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
-from crescent.internal.registry import CommandHandler
+from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import Plugin
 from crescent.utils import iterate_vars
 
@@ -95,6 +95,7 @@ class Bot(GatewayBot):
             tracked_guilds = tuple(chain(tracked_guilds, (default_guild,)))
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
+        self._error_handler = ErrorHandler(self)
         self.default_guild: Optional[Snowflakeish] = default_guild
         self.plugins: Dict[str, Plugin] = {}
 

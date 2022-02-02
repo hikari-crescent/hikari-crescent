@@ -25,7 +25,7 @@ class Bot(crescent.Bot):
 
 
 bot = Bot(
-    token="TOKEN",
+    token="Nzc4Mjg5NjE4ODc3MTUzMjgw.X7P0sQ.6TjD4gZMihSMGk9yLS1nt17atxU",
     default_guild=778289112381784115,
 )
 
@@ -34,6 +34,27 @@ bot.load_module("folder.another_plugin")
 
 group = crescent.Group("my_group")
 sub_group = group.sub_group("my_sub_group")
+
+
+class RandomError(Exception):
+    pass
+
+
+@bot.include
+@crescent.catch(RandomError)
+async def on_random_error(
+    exc: RandomError,
+    ctx: crescent.Context,
+    command,
+    options,
+) -> None:
+    await ctx.respond(f"{exc} raised in {command.callback.__name__}")
+
+
+@bot.include
+@crescent.command
+async def raise_error(ctx: crescent.Context):
+    raise RandomError("Lol")
 
 
 @bot.include

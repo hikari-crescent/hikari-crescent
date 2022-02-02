@@ -4,7 +4,7 @@ from asyncio import gather
 from inspect import iscoroutinefunction
 from itertools import chain
 from logging import getLogger
-from typing import TYPE_CHECKING, Dict, cast
+from typing import TYPE_CHECKING, Dict, List, Type, cast
 from weakref import WeakValueDictionary
 
 from hikari import (
@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from hikari import Command, UndefinedOr
 
     from crescent.bot import Bot
+    from crescent.commands.errors import ErrorHandlerMeta, ErrorHandlerProto
     from crescent.typedefs import CommandCallback
 
 
@@ -72,6 +73,20 @@ def register_command(
     )
 
     return meta
+
+
+class ErrorHandler:
+    __slots__ = (
+        "bot",
+        "registry",
+    )
+
+    def __init__(self, bot: Bot):
+        self.bot = bot
+        self.registry: dict[
+            Type[Exception],
+            List[MetaStruct[ErrorHandlerProto[Any], ErrorHandlerMeta]],
+        ] = dict()
 
 
 class CommandHandler:

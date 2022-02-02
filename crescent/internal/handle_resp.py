@@ -72,7 +72,19 @@ async def handle_resp(event: InteractionCreateEvent):
                 break
 
     else:
-        await command.callback(ctx, **callback_options)
+        try:
+            await command.callback(ctx, **callback_options)
+        except Exception as e:
+            if hdlrs := command.app._error_handler.registry.get(e.__class__, None):
+                for func in hdlrs:
+                    await func.callback(
+                        e,
+                        ctx=ctx,
+                        command=command,
+                        options=callback_options,
+                    )
+            else:
+                raise
 
 
 def _get_command(

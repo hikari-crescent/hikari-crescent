@@ -6,12 +6,11 @@ from typing import TYPE_CHECKING, Sequence, overload
 
 from attrs import define
 
-from crescent.internal.meta_struct import MetaStruct
-
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, Optional, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
+    from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import CommandOptionsT, HookCallbackT
 
     T = TypeVar("T", bound="MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]")

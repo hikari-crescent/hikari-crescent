@@ -6,14 +6,13 @@ from typing import TYPE_CHECKING, List
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 
-from crescent.internal.meta_struct import MetaStruct
-
 if TYPE_CHECKING:
     from typing import Optional, Sequence, Type
 
     from hikari import Snowflake, UndefinedNoneOr, UndefinedOr
 
     from crescent.commands.groups import Group, SubGroup
+    from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import CommandCallback, HookCallbackT
 
 
