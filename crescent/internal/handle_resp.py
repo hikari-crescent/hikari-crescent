@@ -61,7 +61,7 @@ async def handle_resp(event: InteractionCreateEvent):
     ctx = Context._from_command_interaction(interaction)
     callback_options = _options_to_kwargs(interaction, options)
 
-    for hook in command.interaction_hooks:
+    for hook in command.metadata.hooks:
         hook_res = await hook(ctx, copy(callback_options))
 
         if hook_res:
