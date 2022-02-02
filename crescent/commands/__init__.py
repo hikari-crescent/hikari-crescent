@@ -22,6 +22,5 @@ __all__: Sequence[str] = (
     "ClassCommandOption",
     "option",
     "ErrorHandlerProto",
-    "ErrorHandlerMeta",
     "catch",
 )

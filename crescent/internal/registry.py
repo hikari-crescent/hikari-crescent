@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from hikari import Command, UndefinedOr
 
     from crescent.bot import Bot
-    from crescent.commands.errors import ErrorHandlerMeta, ErrorHandlerProto
+    from crescent.commands.errors import ErrorHandlerProto
     from crescent.typedefs import CommandCallback
 
 
@@ -85,7 +85,7 @@ class ErrorHandler:
         self.bot = bot
         self.registry: dict[
             Type[Exception],
-            List[MetaStruct[ErrorHandlerProto[Any], ErrorHandlerMeta]],
+            List[MetaStruct[ErrorHandlerProto[Any], Any]],
         ] = dict()
 
 
