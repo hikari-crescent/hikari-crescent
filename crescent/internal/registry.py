@@ -4,7 +4,7 @@ from asyncio import gather
 from inspect import iscoroutinefunction
 from itertools import chain
 from logging import getLogger
-from typing import TYPE_CHECKING, Dict, List, Type, cast
+from typing import TYPE_CHECKING, cast
 from weakref import WeakValueDictionary
 
 from hikari import (
@@ -27,7 +27,7 @@ from crescent.utils import gather_iter
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, Optional, Sequence
+    from typing import Any, Awaitable, Callable, Optional, Sequence, Dict, List, Type
 
     from hikari import Command, UndefinedOr
 

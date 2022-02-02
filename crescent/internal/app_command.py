@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 
 if TYPE_CHECKING:
-    from typing import Optional, Sequence, Type
+    from typing import Optional, Sequence, Type, List
 
     from hikari import Snowflake, UndefinedNoneOr, UndefinedOr
 
