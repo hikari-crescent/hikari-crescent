@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, Generic, Protocol, Type, TypeVar
 
-from attrs import define
-
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
@@ -26,11 +24,6 @@ class ErrorHandlerProto(Protocol, Generic[ERROR]):
         options: CommandOptionsT,
     ) -> None:
         ...
-
-
-@define
-class ErrorHandlerMeta:
-    pass
 
 
 def catch(
