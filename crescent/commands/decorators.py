@@ -15,7 +15,7 @@ from typing import (
     overload,
 )
 
-from hikari import CommandOption, Snowflakeish
+from hikari import CommandOption, OptionType, Snowflakeish
 
 from crescent.bot import Bot
 from crescent.commands.args import (
@@ -27,7 +27,7 @@ from crescent.commands.args import (
     MinValue,
     Name,
 )
-from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption
+from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption, get_channel_types
 from crescent.context import Context
 from crescent.internal.registry import register_command
 from crescent.typedefs import ClassCommandProto, CommandCallback
@@ -79,6 +79,11 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
             )
 
     _type = OPTIONS_TYPE_MAP.get(origin)
+
+    channel_types = get_channel_types(origin)
+    if channel_types:
+        _type = OptionType.CHANNEL
+
     if _type is None:
         raise ValueError(
             f"`{origin.__name__}` is not a valid typehint."
@@ -96,7 +101,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     name = get_arg(Name) or name
     description = get_arg(Description) or get_arg(str) or "\u200B"
     choices = get_arg(Choices)
-    channel_types = get_arg(ChannelTypes)
+    channel_types = channel_types or get_arg(ChannelTypes)
     min_value = get_arg(MinValue)
     max_value = get_arg(MaxValue)
 
