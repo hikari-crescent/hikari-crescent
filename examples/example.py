@@ -25,7 +25,7 @@ class Bot(crescent.Bot):
 
 
 bot = Bot(
-    token="Nzc4Mjg5NjE4ODc3MTUzMjgw.X7P0sQ.6TjD4gZMihSMGk9yLS1nt17atxU",
+    token="TOKEN",
     default_guild=778289112381784115,
 )
 
