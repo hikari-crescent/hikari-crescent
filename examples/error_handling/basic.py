@@ -1,6 +1,5 @@
 import crescent
 
-
 bot = crescent.Bot("...")
 
 

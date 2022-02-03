@@ -27,7 +27,7 @@ from crescent.utils import gather_iter
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, Optional, Sequence, Dict, List, Type
+    from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Type
 
     from hikari import Command, UndefinedOr
 
