@@ -86,7 +86,7 @@ class ErrorHandler:
         self.registry: dict[
             Type[Exception],
             List[MetaStruct[ErrorHandlerProto[Any], Any]],
-        ] = dict()
+        ] = {}
 
 
 class CommandHandler:
