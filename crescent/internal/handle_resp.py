@@ -16,6 +16,7 @@ from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import AppCommandType, Unique
 from crescent.mentionable import Mentionable
+from crescent.utils.gather_iter import gather_iter
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
@@ -76,13 +77,15 @@ async def handle_resp(event: InteractionCreateEvent):
             await command.callback(ctx, **callback_options)
         except Exception as e:
             if hdlrs := command.app._error_handler.registry.get(e.__class__):
-                for func in hdlrs:
-                    await func.callback(
+                await gather_iter(
+                    func.callback(
                         exc=e,
                         ctx=ctx,
                         command=command,
                         options=callback_options,
                     )
+                    for func in hdlrs
+                )
             else:
                 raise
 
