@@ -76,7 +76,7 @@ def register_command(
 
 
 class ErrorHandler:
-    __slots__ = (
+    __slots__: Sequence[str] = (
         "bot",
         "registry",
     )
