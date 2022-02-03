@@ -1,3 +1,6 @@
+# OS Specific
+.DS_Store
+
 # IDE Specific
 .idea
 .vs

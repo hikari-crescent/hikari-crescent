@@ -8,6 +8,9 @@ from typing import (
     Dict,
     NamedTuple,
     Type,
+    Union,
+    get_args,
+    get_origin,
     get_type_hints,
     overload,
 )
@@ -50,6 +53,9 @@ __all__: Sequence[str] = (
 )
 
 
+NoneType = type(None)
+
+
 class _Parameter(NamedTuple):
     name: str
     annotation: Type[Any]
@@ -71,7 +77,21 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     if origin is Context or origin is param.empty:
         return None
 
-    _type = OPTIONS_TYPE_MAP[origin]
+    # Support for `Optional` typehint
+    if get_origin(origin) is Union:
+        args = get_args(origin)
+        if len(args) == 2 and NoneType in args:
+            origin = args[0] if args[1] is NoneType else args[1]
+        else:
+            raise ValueError("Typehint must be `T`, `Optional[T]`, or `Union[T, None]`")
+
+    _type = OPTIONS_TYPE_MAP.get(origin)
+    if _type is None:
+        raise ValueError(
+            f"`{origin.__name__}` is not a valid typehint."
+            " Must be `str`, `bool`, `int`, `float`, `hikari.PartialChannel`,"
+            " `hikari.Role`, `hikari.User`, or `crescent.Mentionable`."
+        )
 
     def get_arg(t: Type[Arg] | Type[Any]) -> Optional[T]:
         data: T
@@ -103,19 +123,21 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
 
 def _class_command_callback(
-    cls: Type[ClassCommandProto], defaults: Dict[str, Any]
+    cls: Type[ClassCommandProto],
+    defaults: Dict[str, Any],
+    name_map: dict[str, str],
 ) -> CommandCallback:
     async def callback(*args, **kwargs) -> Any:
+        values = defaults.copy()
+        values.update(kwargs)
+
         if isinstance(args[0], Bot):
             args = args[1:]
 
         cmd = cls()
-        for k, v in kwargs.items():
+        for k, v in values.items():
+            k = name_map.get(k, k)
             setattr(cmd, k, v)
-
-        for k, v in defaults.items():
-            if k not in kwargs:
-                setattr(cmd, k, v)
 
         return await cmd.callback(*args)
 
@@ -135,8 +157,6 @@ def command(
     *,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
-    group: Optional[str] = None,
-    sub_group: Optional[str] = None,
     description: Optional[str] = None,
 ) -> Callable[
     [CommandCallback | Type[ClassCommandProto]],
@@ -151,8 +171,6 @@ def command(
     *,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
-    group: Optional[str] = None,
-    sub_group: Optional[str] = None,
     description: Optional[str] = None,
 ):
     if not callback:
@@ -160,8 +178,6 @@ def command(
             command,
             guild=guild,
             name=name,
-            group=group,
-            sub_group=sub_group,
             description=description,
         )
 
@@ -169,17 +185,24 @@ def command(
         if name is None:
             raise TypeError("Please specify a command name for class commands.")
         defaults: Dict[str, Any] = {}
-
         options: list[CommandOption] = []
+        name_map: dict[str, str] = {}
+
         for n, v in callback.__dict__.items():
             if not isinstance(v, ClassCommandOption):
                 continue
-            options.append(v._gen_option(n))
-            defaults[n] = v.default
+            generated = v._gen_option(n)
+            options.append(generated)
+
+            if generated.name != n:
+                name_map[generated.name] = n
+
+            defaults[generated.name] = v.default
 
         callback_func = _class_command_callback(
             callback,
             defaults,
+            name_map,
         )
 
     else:
@@ -210,8 +233,6 @@ def command(
         command_type=CommandType.SLASH,
         guild=guild,
         name=name,
-        group=group,
-        sub_group=sub_group,
         description=description,
         options=options,
     )

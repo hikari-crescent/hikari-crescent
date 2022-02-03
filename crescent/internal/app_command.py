@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
     from hikari import Snowflake, UndefinedNoneOr, UndefinedOr, CommandType
 
+    from crescent.commands.groups import Group, SubGroup
     from crescent.typedefs import CommandCallback
 
 
@@ -39,8 +40,8 @@ class Unique:
             name=command.metadata.app.name,
             type=command.metadata.app.type,
             guild_id=command.metadata.app.guild_id,
-            group=command.metadata.group,
-            sub_group=command.metadata.sub_group,
+            group=command.metadata.group.name if command.metadata.group else None,
+            sub_group=command.metadata.sub_group.name if command.metadata.sub_group else None,
         )
 
     @classmethod
@@ -49,8 +50,8 @@ class Unique:
             name=command.app.name,
             type=command.app.type,
             guild_id=command.app.guild_id,
-            group=command.group,
-            sub_group=command.sub_group,
+            group=command.group.name if command.group else None,
+            sub_group=command.sub_group.name if command.sub_group else None,
         )
 
 
@@ -97,8 +98,8 @@ class AppCommand:
 @define
 class AppCommandMeta:
     app: AppCommand
-    group: Optional[str] = None
-    sub_group: Optional[str] = None
+    group: Optional[Group] = None
+    sub_group: Optional[SubGroup] = None
 
     @property
     def unique(self) -> Unique:
@@ -106,6 +107,6 @@ class AppCommandMeta:
             self.app.name,
             self.app.type,
             self.app.guild_id,
-            self.group,
-            self.sub_group,
+            self.group.name if self.group else None,
+            self.sub_group.name if self.sub_group else None,
         )

@@ -91,6 +91,7 @@ def get_channel_types(*channels: Type[PartialChannel]) -> set[ChannelType] | Non
 
 @dataclass
 class ClassCommandOption:
+    name: Optional[str]
     type: OptionType
     description: str
     default: UndefinedNoneOr[Any]
@@ -102,7 +103,7 @@ class ClassCommandOption:
     def _gen_option(self, name: str) -> CommandOption:
         return CommandOption(
             type=self.type,
-            name=name,
+            name=self.name or name,
             description=self.description,
             is_required=self.default is UNDEFINED,
             choices=self.choices,
@@ -121,6 +122,8 @@ USER_ROLE_MENTION_OR_BOOL = TypeVar("USER_ROLE_MENTION_OR_BOOL", User, Role, Men
 def option(
     option_type: Union[Type[PartialChannel], Sequence[PartialChannel]],
     description: str = ...,
+    *,
+    name: Optional[str] = ...,
 ) -> InteractionChannel:
     ...
 
@@ -131,6 +134,7 @@ def option(
     description: str = ...,
     *,
     default: DEFAULT,
+    name: Optional[str] = ...,
 ) -> Union[InteractionChannel, DEFAULT]:
     ...
 
@@ -139,6 +143,8 @@ def option(
 def option(
     option_type: Type[USER_ROLE_MENTION_OR_BOOL],
     description: str = ...,
+    *,
+    name: Optional[str] = ...,
 ) -> USER_ROLE_MENTION_OR_BOOL:
     ...
 
@@ -149,6 +155,7 @@ def option(
     description: str = ...,
     *,
     default: DEFAULT,
+    name: Optional[str] = ...,
 ) -> Union[USER_ROLE_MENTION_OR_BOOL, DEFAULT]:
     ...
 
@@ -161,6 +168,7 @@ def option(
     choices: Optional[Sequence[Tuple[str, INT_OR_FLOAT]]] = ...,
     min_value: Optional[INT_OR_FLOAT] = ...,
     max_value: Optional[INT_OR_FLOAT] = ...,
+    name: Optional[str] = ...,
 ) -> INT_OR_FLOAT:
     ...
 
@@ -174,6 +182,7 @@ def option(
     choices: Optional[Sequence[Tuple[str, INT_OR_FLOAT]]] = ...,
     min_value: Optional[INT_OR_FLOAT] = ...,
     max_value: Optional[INT_OR_FLOAT] = ...,
+    name: Optional[str] = ...,
 ) -> Union[INT_OR_FLOAT, DEFAULT]:
     ...
 
@@ -186,6 +195,7 @@ def option(
     choices: Optional[Sequence[Tuple[str, str]]] = ...,
     min_value: Optional[str] = ...,
     max_value: Optional[str] = ...,
+    name: Optional[str] = ...,
 ) -> str:
     ...
 
@@ -199,6 +209,7 @@ def option(
     choices: Optional[Sequence[Tuple[str, str]]] = ...,
     min_value: Optional[str] = ...,
     max_value: Optional[str] = ...,
+    name: Optional[str] = ...,
 ) -> Union[str, DEFAULT]:
     ...
 
@@ -211,6 +222,7 @@ def option(  # type: ignore
     choices: Sequence[Tuple[str, Union[str, int, float]]] | None = None,
     min_value: Optional[Union[int, float]] = None,
     max_value: Optional[Union[int, float]] = None,
+    name: Optional[str] = None,
 ) -> Any:
     if isinstance(option_type, type) and issubclass(option_type, PartialChannel):
         channel_types = get_channel_types(option_type)
@@ -229,4 +241,5 @@ def option(  # type: ignore
         channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,
+        name=name,
     )

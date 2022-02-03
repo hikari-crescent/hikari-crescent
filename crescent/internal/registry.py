@@ -15,7 +15,7 @@ from hikari import (
     Snowflake,
     Snowflakeish,
     CommandType,
-    ForbiddenError
+    ForbiddenError,
 )
 
 from crescent.internal.app_command import (
@@ -43,8 +43,6 @@ def register_command(
     callback: Callable[..., Awaitable[Any]],
     command_type: CommandType,
     guild: Optional[Snowflakeish] = None,
-    group: Optional[str] = None,
-    sub_group: Optional[str] = None,
     name: Optional[str] = None,
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
@@ -64,8 +62,6 @@ def register_command(
         callback=callback,
         app_set_hooks=[hook],
         metadata=AppCommandMeta(
-            group=group,
-            sub_group=sub_group,
             app=AppCommand(
                 type=command_type,
                 description=description,
@@ -122,6 +118,7 @@ class CommandHandler:
                     "Cannot access application commands for guild %s. Consider "
                     " removing this guild from the bot's `tracked_guilds` or inviting"
                     " the bot with the `application.commands` scope.",
+<<<<<<< HEAD
                     guild
                 )
 
@@ -129,6 +126,12 @@ class CommandHandler:
             fetch_guild_app_command(guild)
             for guild in self.guilds
         )
+=======
+                    guild,
+                )
+
+        guild_commands = await gather_iter(fetch_guild_app_command(guild) for guild in self.guilds)
+>>>>>>> upstream/main
 
         for commands in guild_commands:
             if commands is None:
@@ -180,7 +183,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=unwrap(command.metadata.group),
+                    name=unwrap(command.metadata.group).name,
                     type=command.metadata.app.type,
                     guild_id=command.metadata.app.guild_id,
                     group=None,
@@ -189,9 +192,15 @@ class CommandHandler:
 
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
+<<<<<<< HEAD
                         name=unwrap(command.metadata.group),
                         description="HIDDEN",
                         type=command.metadata.app.type,
+=======
+                        name=unwrap(command.metadata.group).name,
+                        description=unwrap(command.metadata.group).description or "\u200B",
+                        type=AppCommandType.CHAT_INPUT,
+>>>>>>> upstream/main
                         guild_id=command.metadata.app.guild_id,
                         options=[],
                         default_permission=command.metadata.app.default_permission,
@@ -203,8 +212,8 @@ class CommandHandler:
                 children = unwrap(built_commands[key].options)
 
                 sub_command_group = CommandOption(
-                    name=command.metadata.sub_group,
-                    description="HIDDEN",
+                    name=unwrap(command.metadata.sub_group).name,
+                    description=unwrap(command.metadata.sub_group).description or "\u200B",
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
                     is_required=None,  # type: ignore
@@ -249,7 +258,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=command.metadata.group,
+                    name=command.metadata.group.name,
                     type=command.metadata.app.type,
                     guild_id=command.metadata.app.guild_id,
                     group=None,
@@ -258,7 +267,7 @@ class CommandHandler:
 
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
-                        name=command.metadata.group,
+                        name=command.metadata.group.name,
                         description="HIDDEN",
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
@@ -286,6 +295,7 @@ class CommandHandler:
 
     async def create_application_command(self, command: AppCommand):
         try:
+<<<<<<< HEAD
             if command.type in {CommandType.MESSAGE, CommandType.USER}:
                 await self.bot.rest.create_context_menu_command(
                     application=unwrap(self.application_id),
@@ -299,6 +309,12 @@ class CommandHandler:
                 application=unwrap(self.application_id),
                 name=command.name,
                 description=unwrap(command.description),
+=======
+            await self.bot.rest.create_application_command(
+                application=unwrap(self.application_id),
+                name=command.name,
+                description=command.description,
+>>>>>>> upstream/main
                 guild=command.guild_id or UNDEFINED,
                 options=command.options or UNDEFINED,
                 default_permission=command.default_permission,
