@@ -8,4 +8,4 @@ ignore =
     # Allow line break before binary operator
     W503,
 exclude =
-    examples
+    examples/*
