@@ -10,7 +10,7 @@ from crescent.internal.meta_struct import MetaStruct
 if TYPE_CHECKING:
     from typing import Optional, Sequence, Type
 
-    from hikari import Snowflake, UndefinedNoneOr, UndefinedOr, CommandType
+    from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.typedefs import CommandCallback

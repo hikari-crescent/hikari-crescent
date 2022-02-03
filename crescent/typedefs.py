@@ -12,7 +12,7 @@ from typing import (
     Union,
 )
 
-from hikari import PartialChannel, Role, User, Message
+from hikari import Message, PartialChannel, Role, User
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
