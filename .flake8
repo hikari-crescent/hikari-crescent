@@ -6,4 +6,4 @@ ignore =
     F403,
     F405,
 exclude =
-    examples
+    examples/*
