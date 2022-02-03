@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Generic, Protocol, Type, TypeVar, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Generic,
+    Protocol,
+    Type,
+    TypeVar,
+    overload,
+)
 
 from crescent.internal.meta_struct import MetaStruct
 
@@ -28,7 +37,8 @@ class ErrorHandlerProto(Protocol, Generic[ERROR]):
 
 @overload
 def catch(
-    exception: Type[ERROR], /,
+    exception: Type[ERROR],
+    /,
 ) -> Callable[
     [ErrorHandlerProto[ERROR] | MetaStruct[ErrorHandlerProto[ERROR], Any]],
     MetaStruct[ErrorHandlerProto[ERROR], Any],
@@ -38,7 +48,7 @@ def catch(
 
 @overload
 def catch(
-    *exceptions: Type[Exception]
+    *exceptions: Type[Exception],
 ) -> Callable[
     [ErrorHandlerProto[Any] | MetaStruct[ErrorHandlerProto[Any], Any]],
     MetaStruct[ErrorHandlerProto[Any], Any],

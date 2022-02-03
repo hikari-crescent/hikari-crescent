@@ -7,7 +7,7 @@ from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 
 if TYPE_CHECKING:
-    from typing import Optional, Sequence, Type, List
+    from typing import List, Optional, Sequence, Type
 
     from hikari import Snowflake, UndefinedNoneOr, UndefinedOr
 
