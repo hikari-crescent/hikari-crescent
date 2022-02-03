@@ -82,8 +82,8 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
     _type = OPTIONS_TYPE_MAP.get(origin)
 
-    channel_types = get_channel_types(origin)
-    if channel_types:
+    _channel_types = get_channel_types(origin)
+    if _channel_types:
         _type = OptionType.CHANNEL
 
     if _type is None:
@@ -103,7 +103,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     name = get_arg(Name) or name
     description = get_arg(Description) or get_arg(str) or "\u200B"
     choices = get_arg(Choices)
-    channel_types = channel_types or get_arg(ChannelTypes)
+    channel_types = _channel_types or get_arg(ChannelTypes)
     min_value = get_arg(MinValue)
     max_value = get_arg(MaxValue)
 
@@ -115,7 +115,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
         description=description,
         choices=choices,
         options=None,
-        channel_types=channel_types,
+        channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,
         is_required=required,

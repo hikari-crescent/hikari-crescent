@@ -6,7 +6,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
-    List,
     Optional,
     Sequence,
     Tuple,
@@ -85,13 +84,14 @@ CHANNEL_TYPE_MAP: Dict[Type[VALID_CHANNEL_TYPES], ChannelType] = {
 }
 
 
-def get_channel_types(*channels: Type[VALID_CHANNEL_TYPES]) -> List[ChannelType] | None:
-    types: List[ChannelType] = []
-    for channel in channels:
-        if channel is PartialChannel:
-            continue
-        if channel in CHANNEL_TYPE_MAP:
-            types.append(CHANNEL_TYPE_MAP[channel])
+def get_channel_types(*channels: Type[PartialChannel]) -> set[ChannelType]:
+    if len(channels) == 1 and channels[0] is PartialChannel:
+        return set()
+
+    types: set[ChannelType] = set()
+    for k, v in CHANNEL_TYPE_MAP.items():
+        if issubclass(k, channels):
+            types.add(v)
 
     return types
 
