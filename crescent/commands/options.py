@@ -46,6 +46,8 @@ if TYPE_CHECKING:
 
 __all__ = (
     "OPTIONS_TYPE_MAP",
+    "VALID_CHANNEL_TYPES",
+    "CHANNEL_TYPE_MAP",
     "get_channel_types",
     "option",
     "ClassCommandOption",
