@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from inspect import isclass
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -229,7 +230,7 @@ def option(  # type: ignore
     name: Optional[str] = None,
 ) -> Any:
     if (
-        isinstance(option_type, type)
+        isclass(option_type)
         and issubclass(option_type, PartialChannel)
         and option_type is not PartialChannel
     ):
