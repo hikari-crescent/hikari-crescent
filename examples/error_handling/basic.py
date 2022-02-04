@@ -20,10 +20,9 @@ class RandomError3(Exception):
 async def on_random_error(
     exc: RandomError,
     ctx: crescent.Context,
-    command,
     options: crescent.CommandOptionsT,
 ) -> None:
-    await ctx.respond(f"{exc} raised in {command.callback.__name__}")
+    await ctx.respond(f"{exc} raised!")
 
 
 @bot.include
@@ -31,13 +30,15 @@ async def on_random_error(
 async def on_random_error_2(
     exc: Exception,
     ctx: crescent.Context,
-    command,
     options: crescent.CommandOptionsT,
 ) -> None:
-    await ctx.respond(f"{exc} raised in {command.callback.__name__}")
+    await ctx.respond(f"{exc} raised!")
 
 
 @bot.include
 @crescent.command
 async def raise_error(ctx: crescent.Context):
     raise RandomError("Lol")
+
+
+bot.run()

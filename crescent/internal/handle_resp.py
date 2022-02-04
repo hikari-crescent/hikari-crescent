@@ -81,7 +81,6 @@ async def handle_resp(event: InteractionCreateEvent):
                     func.callback(
                         exc=e,
                         ctx=ctx,
-                        command=command,
                         options=callback_options,
                     )
                     for func in hdlrs
