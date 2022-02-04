@@ -11,10 +11,7 @@ if TYPE_CHECKING:
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import CommandCallbackT, HookCallbackT
 
-__all__: Sequence[str] = (
-    "Group",
-    "SubGroup",
-)
+__all__: Sequence[str] = ("Group", "SubGroup")
 
 
 @define
@@ -29,12 +26,7 @@ class Group:
         description: Optional[str] = None,
         hooks: Optional[List[HookCallbackT]] = None,
     ) -> SubGroup:
-        return SubGroup(
-            name=name,
-            parent=self,
-            description=description,
-            hooks=hooks,
-        )
+        return SubGroup(name=name, parent=self, description=description, hooks=hooks)
 
     def child(
         self, meta: MetaStruct[CommandCallbackT, AppCommandMeta]

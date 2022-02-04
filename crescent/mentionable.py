@@ -23,15 +23,9 @@ class Mentionable:
             raise ValueError("Interaction.resolved should not be None")
 
         if interaction.resolved.users:
-            return cls(
-                user=next(iter(interaction.resolved.users.values())),
-                role=None,
-            )
+            return cls(user=next(iter(interaction.resolved.users.values())), role=None)
 
-        return cls(
-            user=None,
-            role=next(iter(interaction.resolved.roles.values())),
-        )
+        return cls(user=None, role=next(iter(interaction.resolved.roles.values())))
 
     @property
     def is_user(self) -> bool:

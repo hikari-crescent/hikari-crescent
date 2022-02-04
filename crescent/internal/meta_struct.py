@@ -40,11 +40,7 @@ class MetaStruct(Generic[T, U]):
         for hook in self.app_set_hooks:
             hook(self)
 
-    def register_to_app(
-        self,
-        app: Bot,
-        manager: Optional[Any] = None,
-    ):
+    def register_to_app(self, app: Bot, manager: Optional[Any] = None):
         if manager:
             self.callback = cast(T, partial(self.callback, manager))
         self.app = app
