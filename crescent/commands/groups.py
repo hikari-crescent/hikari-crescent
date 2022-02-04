@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
-    from crescent.typedefs import CommandCallback, HookCallbackT
+    from crescent.typedefs import CommandCallbackT, HookCallbackT
 
 __all__: Sequence[str] = (
     "Group",
@@ -37,8 +37,8 @@ class Group:
         )
 
     def child(
-        self, meta: MetaStruct[CommandCallback, AppCommandMeta]
-    ) -> MetaStruct[CommandCallback, AppCommandMeta]:
+        self, meta: MetaStruct[CommandCallbackT, AppCommandMeta]
+    ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
         meta.metadata.group = self
 
         if self.hooks:
@@ -55,8 +55,8 @@ class SubGroup:
     hooks: Optional[List[HookCallbackT]] = None
 
     def child(
-        self, meta: MetaStruct[CommandCallback, AppCommandMeta]
-    ) -> MetaStruct[CommandCallback, AppCommandMeta]:
+        self, meta: MetaStruct[CommandCallbackT, AppCommandMeta]
+    ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
         meta.metadata.group = self.parent
         meta.metadata.sub_group = self
 

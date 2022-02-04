@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
-    from crescent.typedefs import CommandCallback, OptionTypesT
+    from crescent.typedefs import CommandCallbackT, OptionTypesT
 
 
 __all__: Sequence = ("handle_resp",)
@@ -104,7 +104,7 @@ def _get_command(
     guild_id: Optional[Snowflake],
     group: Optional[str],
     sub_group: Optional[str],
-) -> MetaStruct[CommandCallback, AppCommandMeta]:
+) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
 
     kwargs: Dict[str, Any] = dict(
         name=name,
