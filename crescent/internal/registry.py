@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.commands.errors import ErrorHandlerProto
-    from crescent.typedefs import CommandCallback
+    from crescent.typedefs import CommandCallbackT
 
 
 _log = getLogger(__name__)
@@ -44,17 +44,17 @@ def register_command(
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
-) -> MetaStruct[CommandCallback, AppCommandMeta]:
+) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     description = description or "\u200B"
 
-    def hook(self: MetaStruct[CommandCallback, AppCommandMeta]) -> None:
+    def hook(self: MetaStruct[CommandCallbackT, AppCommandMeta]) -> None:
         self.app._command_handler.register(self)
 
-    meta: MetaStruct[CommandCallback, AppCommandMeta] = MetaStruct(
+    meta: MetaStruct[CommandCallbackT, AppCommandMeta] = MetaStruct(
         callback=callback,
         app_set_hooks=[hook],
         metadata=AppCommandMeta(
@@ -101,12 +101,12 @@ class CommandHandler:
         self.application_id: Optional[Snowflake] = None
 
         self.registry: WeakValueDictionary[
-            Unique, MetaStruct[CommandCallback, AppCommandMeta]
+            Unique, MetaStruct[CommandCallbackT, AppCommandMeta]
         ] = WeakValueDictionary()
 
     def register(
-        self, command: MetaStruct[CommandCallback, AppCommandMeta]
-    ) -> MetaStruct[CommandCallback, AppCommandMeta]:
+        self, command: MetaStruct[CommandCallbackT, AppCommandMeta]
+    ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
         self.registry[command.metadata.unique] = command
         return command

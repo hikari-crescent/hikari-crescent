@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.meta_struct import MetaStruct
-    from crescent.typedefs import CommandCallback, HookCallbackT
+    from crescent.typedefs import CommandCallbackT, HookCallbackT
 
 
 @define(hash=True)
@@ -33,7 +33,7 @@ class Unique:
 
     @classmethod
     def from_meta_struct(
-        cls: Type[Unique], command: MetaStruct[CommandCallback, AppCommandMeta]
+        cls: Type[Unique], command: MetaStruct[CommandCallbackT, AppCommandMeta]
     ) -> Unique:
         return cls(
             name=command.metadata.app.name,

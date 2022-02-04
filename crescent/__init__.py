@@ -35,7 +35,7 @@ __all__: Sequence[str] = (
     "CrescentException",
     "CommandNotFoundError",
     "Mentionable",
-    "CommandCallback",
+    "CommandCallbackT",
     "CommandOptionsT",
     "OptionTypesT",
     "HookCallbackT",

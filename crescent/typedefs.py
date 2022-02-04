@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (
-    "CommandCallback",
+    "CommandCallbackT",
     "OptionTypesT",
     "UserCommandCallbackT",
     "MessageCommandCallbackT",
@@ -29,7 +29,7 @@ __all__: Sequence[str] = (
     "HookCallbackT",
 )
 
-CommandCallback = Callable[..., Awaitable[Any]]
+CommandCallbackT = Callable[..., Awaitable[Any]]
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable"]
 UserCommandCallbackT = Callable[["Context", User], Awaitable[None]]
 MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]

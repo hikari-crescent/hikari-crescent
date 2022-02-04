@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import (
         ClassCommandProto,
-        CommandCallback,
+        CommandCallbackT,
         MessageCommandCallbackT,
         UserCommandCallbackT,
     )
@@ -136,7 +136,7 @@ def _class_command_callback(
     cls: Type[ClassCommandProto],
     defaults: Dict[str, Any],
     name_map: dict[str, str],
-) -> CommandCallback:
+) -> CommandCallbackT:
     async def callback(*args, **kwargs) -> Any:
         values = defaults.copy()
         values.update(kwargs)
@@ -156,9 +156,9 @@ def _class_command_callback(
 
 @overload
 def command(
-    callback: CommandCallback | Type[ClassCommandProto],
+    callback: CommandCallbackT | Type[ClassCommandProto],
     /,
-) -> MetaStruct[CommandCallback, AppCommandMeta]:
+) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
     ...
 
 
@@ -169,14 +169,14 @@ def command(
     name: Optional[str] = None,
     description: Optional[str] = None,
 ) -> Callable[
-    [CommandCallback | Type[ClassCommandProto]],
-    MetaStruct[CommandCallback, AppCommandMeta],
+    [CommandCallbackT | Type[ClassCommandProto]],
+    MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
     ...
 
 
 def command(
-    callback: CommandCallback | Type[ClassCommandProto] | None = None,
+    callback: CommandCallbackT | Type[ClassCommandProto] | None = None,
     /,
     *,
     guild: Optional[Snowflakeish] = None,
