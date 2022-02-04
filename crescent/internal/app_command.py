@@ -3,18 +3,17 @@ from __future__ import annotations
 from enum import IntEnum
 from typing import TYPE_CHECKING
 
-from attr import define
+from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 
-from crescent.internal.meta_struct import MetaStruct
-
 if TYPE_CHECKING:
-    from typing import Optional, Sequence, Type
+    from typing import List, Optional, Sequence, Type
 
     from hikari import Snowflake, UndefinedNoneOr, UndefinedOr
 
     from crescent.commands.groups import Group, SubGroup
-    from crescent.typedefs import CommandCallback
+    from crescent.internal.meta_struct import MetaStruct
+    from crescent.typedefs import CommandCallback, HookCallbackT
 
 
 @define(hash=True)
@@ -107,6 +106,7 @@ class AppCommandMeta:
     app: AppCommand
     group: Optional[Group] = None
     sub_group: Optional[SubGroup] = None
+    hooks: List[HookCallbackT] = field(factory=list)
 
     @property
     def unique(self) -> Unique:

@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, List, Optional, Sequence
 
     from crescent.bot import Bot
-    from crescent.typedefs import HookCallbackT
 
 T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 U = TypeVar("U")
@@ -29,7 +28,6 @@ class MetaStruct(Generic[T, U]):
     _app: Optional[Bot] = None
 
     app_set_hooks: List[Callable[[MetaStruct[T, U]], None]] = field(factory=list)
-    interaction_hooks: List[HookCallbackT] = field(factory=list)
 
     @property
     def app(self) -> Bot:

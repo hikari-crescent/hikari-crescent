@@ -5,5 +5,7 @@ ignore =
     # Allow * imports to be used in the module level
     F403,
     F405,
+    # Allow line break before binary operator
+    W503,
 exclude =
     examples/*
