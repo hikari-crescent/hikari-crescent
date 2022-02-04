@@ -34,7 +34,6 @@ from crescent.commands.options import (
 )
 from crescent.context import Context
 from crescent.internal.registry import register_command
-from crescent.typedefs import ClassCommandProto, CommandCallback
 
 if TYPE_CHECKING:
     from inspect import Parameter, _empty
@@ -42,6 +41,7 @@ if TYPE_CHECKING:
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
+    from crescent.typedefs import ClassCommandProto, CommandCallback
 
     T = TypeVar("T")
 

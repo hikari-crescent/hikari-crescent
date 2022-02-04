@@ -2,6 +2,7 @@ from typing import Sequence
 
 from crescent.commands.args import *
 from crescent.commands.decorators import *
+from crescent.commands.errors import *
 from crescent.commands.groups import *
 from crescent.commands.hooks import *
 from crescent.commands.options import *
@@ -20,4 +21,6 @@ __all__: Sequence[str] = (
     "SubGroup",
     "ClassCommandOption",
     "option",
+    "ErrorHandlerProto",
+    "catch",
 )
