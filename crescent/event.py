@@ -47,9 +47,6 @@ def event(
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(self: MetaStruct[CallbackT, None]):
-        self.app.subscribe(
-            event_type=unwrap(event_type),
-            callback=self.callback,
-        )
+        self.app.subscribe(event_type=unwrap(event_type), callback=self.callback)
 
     return MetaStruct(callback=callback, metadata=None, app_set_hooks=[hook])

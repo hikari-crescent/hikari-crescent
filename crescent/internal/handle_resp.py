@@ -73,12 +73,7 @@ def _get_command(
     sub_group: Optional[str],
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
 
-    kwargs: Dict[str, Any] = dict(
-        name=name,
-        type=type,
-        group=group,
-        sub_group=sub_group,
-    )
+    kwargs: Dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
 
     with suppress(KeyError):
         return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]

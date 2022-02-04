@@ -1,7 +1,7 @@
 [flake8]
 max-line-length = 99
-extend_ignore = E203
-ignore = 
+extend_ignore = 
+    E203,
     # Allow * imports to be used in the module level
     F403,
     F405,

@@ -29,11 +29,7 @@ async def say(ctx: crescent.Context, word: str):
 @crescent.command
 async def add(
     ctx: crescent.Context,
-    first_number: Annotated[
-        int,
-        "This is a description",
-        crescent.MaxValue(50),
-    ],
+    first_number: Annotated[int, "This is a description", crescent.MaxValue(50),],
     second_number: Annotated[
         int,
         crescent.Choices(
