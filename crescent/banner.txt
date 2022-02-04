@@ -1,7 +1,7 @@
 ${yellow}                                                 
 ${yellow}     ,gggg,                                                                
 ${yellow}   ,88"""Y8b,                                                I8    ${reset}${bold_white} 光 ${hikari_version} ${thin_white}[${hikari_git_sha1}]${reset}
-${yellow}  d8"     `Y8                                                I8    ${reset}${bold_white} ☾ Unreleased${reset}
+${yellow}  d8"     `Y8                                                I8    ${reset}${bold_white} ☾ 0.1.0-beta.1${reset}
 ${yellow} d8'   8b  d8                                              888888   ${reset}${bold_white}${hikari_copyright}${thin_white} - ${hikari_license} license${reset}
 ${yellow},8I    "Y88P'                                                I8     ${reset}${bold_white}interpreter:   ${thin_white}${python_implementation} ${python_version}${reset}
 ${yellow}I8'        ,gggggf ,ggg,    ,g,     ,ggg,   ,ggg,   ,gg,,gg, I8     ${reset}${bold_white}running on:    ${thin_white}${system_description}${reset}
