@@ -77,7 +77,7 @@ class ErrorHandler:
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: dict[Type[Exception], List[MetaStruct[ErrorHandlerProto[Any], Any]],] = {}
+        self.registry: dict[Type[Exception], List[MetaStruct[ErrorHandlerProto[Any], Any]]] = {}
 
 
 class CommandHandler:

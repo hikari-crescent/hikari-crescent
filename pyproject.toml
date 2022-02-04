@@ -38,6 +38,7 @@ warn_redundant_casts = true
 [tool.isort]
 profile="black"
 skip = "examples/basic/basic.py"
+line_length=99
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
