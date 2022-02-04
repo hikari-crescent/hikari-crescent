@@ -24,7 +24,7 @@ from crescent.mentionable import Mentionable
 from crescent.utils import map_or, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Sequence, Type, Dict, Mapping
+    from typing import Any, Dict, Mapping, Optional, Sequence, Type
 
     from hikari import (
         CommandInteraction,
