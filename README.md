@@ -15,7 +15,6 @@ pip install hikari-crescent
 ````
 
 
-
 ## Usage
 Crescent uses signature parsing to generate your commands. Creating commands is as easy as adding typehints!
 
