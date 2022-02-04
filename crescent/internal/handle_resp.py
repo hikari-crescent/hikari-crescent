@@ -124,4 +124,4 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
         return option.value
 
     resolved = getattr(interaction.resolved, resolved_type)
-    return next(iter(resolved.values()))
+    return resolved[option.value]
