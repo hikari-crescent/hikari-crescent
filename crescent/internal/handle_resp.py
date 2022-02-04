@@ -3,11 +3,7 @@ from __future__ import annotations
 from contextlib import suppress
 from typing import TYPE_CHECKING, Optional
 
-from hikari import (
-    UNDEFINED,
-    CommandInteraction,
-    Snowflake,
-)
+from hikari import UNDEFINED, CommandInteraction, Snowflake
 
 from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError

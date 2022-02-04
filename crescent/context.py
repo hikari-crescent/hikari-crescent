@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, Mapping, cast
 
+import hikari
 from attr import define
 from hikari import (
     UNDEFINED,
@@ -18,10 +19,9 @@ from hikari import (
     Snowflake,
     User,
 )
-import hikari
 
-from crescent.utils import map_or, unwrap
 from crescent.mentionable import Mentionable
+from crescent.utils import map_or, unwrap
 
 if TYPE_CHECKING:
     from typing import Any, Optional, Sequence, Type
