@@ -45,6 +45,17 @@ async def add(
 
 
 @bot.include
+@crescent.user_command
+async def my_user_command(ctx: crescent.Context, user: hikari.User | hikari.Member):
+    await ctx.respond(f"Hello {user.username}")
+
+@bot.include
+@crescent.message_command
+async def my_message_command(ctx: crescent.Context, message: hikari.Message):
+    await ctx.respond(f"The message said \"{message.content}\"")
+
+
+@bot.include
 @crescent.event
 async def event(event: hikari.ShardReadyEvent):
     print(event)

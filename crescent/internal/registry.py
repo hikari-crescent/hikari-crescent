@@ -42,8 +42,8 @@ _log = getLogger(__name__)
 def register_command(
     callback: Callable[..., Awaitable[Any]],
     command_type: CommandType,
+    name: str,
     guild: Optional[Snowflakeish] = None,
-    name: Optional[str] = None,
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
@@ -52,7 +52,6 @@ def register_command(
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
-    name = name or callback.__name__
     description = description or "\u200B"
 
     def hook(self: MetaStruct[CommandCallback, AppCommandMeta]) -> None:
@@ -118,7 +117,6 @@ class CommandHandler:
                     "Cannot access application commands for guild %s. Consider "
                     " removing this guild from the bot's `tracked_guilds` or inviting"
                     " the bot with the `application.commands` scope.",
-<<<<<<< HEAD
                     guild
                 )
 
@@ -126,12 +124,6 @@ class CommandHandler:
             fetch_guild_app_command(guild)
             for guild in self.guilds
         )
-=======
-                    guild,
-                )
-
-        guild_commands = await gather_iter(fetch_guild_app_command(guild) for guild in self.guilds)
->>>>>>> upstream/main
 
         for commands in guild_commands:
             if commands is None:
@@ -192,15 +184,9 @@ class CommandHandler:
 
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
-<<<<<<< HEAD
-                        name=unwrap(command.metadata.group),
-                        description="HIDDEN",
-                        type=command.metadata.app.type,
-=======
                         name=unwrap(command.metadata.group).name,
                         description=unwrap(command.metadata.group).description or "\u200B",
-                        type=AppCommandType.CHAT_INPUT,
->>>>>>> upstream/main
+                        type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
                         default_permission=command.metadata.app.default_permission,
@@ -295,7 +281,6 @@ class CommandHandler:
 
     async def create_application_command(self, command: AppCommand):
         try:
-<<<<<<< HEAD
             if command.type in {CommandType.MESSAGE, CommandType.USER}:
                 await self.bot.rest.create_context_menu_command(
                     application=unwrap(self.application_id),
@@ -309,12 +294,6 @@ class CommandHandler:
                 application=unwrap(self.application_id),
                 name=command.name,
                 description=unwrap(command.description),
-=======
-            await self.bot.rest.create_application_command(
-                application=unwrap(self.application_id),
-                name=command.name,
-                description=command.description,
->>>>>>> upstream/main
                 guild=command.guild_id or UNDEFINED,
                 options=command.options or UNDEFINED,
                 default_permission=command.default_permission,
