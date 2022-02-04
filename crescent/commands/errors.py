@@ -15,7 +15,6 @@ from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
     from crescent.context import Context
-    from crescent.typedefs import CommandOptionsT
 
 
 ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
@@ -28,7 +27,6 @@ class ErrorHandlerProto(Protocol, Generic[ERROR]):
         *,
         exc: ERROR,
         ctx: Context,
-        options: CommandOptionsT,
     ) -> None:
         ...
 

@@ -34,7 +34,7 @@ OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mention
 UserCommandCallbackT = Callable[["Context", User], Awaitable[None]]
 MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
-HookCallbackT = Callable[["Context", CommandOptionsT], Awaitable[Optional["HookResult"]]]
+HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
 
 
 class ClassCommandProto(Protocol):
