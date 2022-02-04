@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal, cast, overload
+from typing import TYPE_CHECKING, cast, overload
 
 from attr import define
 from hikari import (
@@ -19,7 +19,7 @@ from hikari import (
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Sequence, Type
+    from typing import Any, Optional, Sequence, Type, Literal
 
     from hikari import (
         CommandInteraction,
