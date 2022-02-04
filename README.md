@@ -8,6 +8,14 @@ A simple command handler for [Hikari](https://github.com/hikari-py/hikari).
  - Slash, user, and message commands.
  - Error handling.
 
+## Installation
+Crescent is supported in python3.8+.
+```
+pip install hikari-crescent
+````
+
+
+
 ## Usage
 Crescent uses signature parsing to generate your commands. Creating commands is as easy as adding typehints!
 
@@ -26,14 +34,42 @@ async def say(ctx: crescent.Context, word: str):
 bot.run()
 ```
 
+Information for arguments can be provided using the `Annotated` type hint.
+See [this example](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/basic/basic.py) for more information.
+
 ```python
 # python 3.9 +
 from typing import Annotated as Atd
 
 # python 3.8
-from typing_extensions import Annotated
+from typing_extensions import Annotated as Atd
 
 @bot.include
 @crescent.command
 async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]):
     await ctx.respond(word)
+```
+
+Commands can also be inside of a sublcassed `crescent.Bot` object for an object-oriented workflow.
+
+```python
+
+import crescent
+
+class Bot(crescent.Bot):
+
+    # bot.include isn't needed in subclasses!
+    @crescent.command
+    async def say(self, ctx: crescent.Context, word: str):
+        await ctx.respond(word)
+
+```
+
+
+# Support
+
+Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!
+
+# Contributing
+
+Create a issue for your feature. There aren't any guildlines right now so just don't be rude.
