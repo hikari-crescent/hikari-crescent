@@ -1,9 +1,11 @@
+from typing_extensions import Annotated  # Python 3.8
 from typing import Annotated  # Python 3.9+
 
-import hikari
-from typing_extensions import Annotated  # Python 3.8
+import typing
 
+import hikari
 import crescent
+
 
 bot = crescent.Bot(
     token="TOKEN",
@@ -42,6 +44,18 @@ async def add(
     ],
 ):
     await ctx.respond(f"{first_number} + {second_number} = {first_number+second_number}")
+
+
+@bot.include
+@crescent.user_command
+async def my_user_command(ctx: crescent.Context, user: typing.Union[hikari.User, hikari.Member]):
+    await ctx.respond(f"Hello {user.username}")
+
+
+@bot.include
+@crescent.message_command
+async def my_message_command(ctx: crescent.Context, message: hikari.Message):
+    await ctx.respond(f'The message said "{message.content}"')
 
 
 @bot.include

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from enum import IntEnum
 from typing import TYPE_CHECKING
 
 from attr import define, field
@@ -9,7 +8,7 @@ from hikari import UNDEFINED, CommandOption, Snowflakeish
 if TYPE_CHECKING:
     from typing import List, Optional, Sequence, Type
 
-    from hikari import Snowflake, UndefinedNoneOr, UndefinedOr
+    from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.meta_struct import MetaStruct
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
 @define(hash=True)
 class Unique:
     name: str
-    type: AppCommandType
+    type: CommandType
     guild_id: UndefinedNoneOr[Snowflakeish]
     group: UndefinedNoneOr[str]
     sub_group: UndefinedNoneOr[str]
@@ -61,23 +60,17 @@ __all__: Sequence[str] = (
 )
 
 
-class AppCommandType(IntEnum):
-    CHAT_INPUT = 1
-    USER = 2
-    MESSAGE = 3
-
-
 @define
 class AppCommand:
     """Local representation of an Application Command"""
 
-    type: AppCommandType
+    type: CommandType
     name: str
-    description: str
     guild_id: Optional[Snowflakeish]
-    options: Optional[Sequence[CommandOption]]
     default_permission: UndefinedOr[bool]
 
+    description: Optional[str] = None
+    options: Optional[Sequence[CommandOption]] = None
     id: Optional[Snowflake] = None
 
     __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")

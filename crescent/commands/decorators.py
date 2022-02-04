@@ -4,6 +4,7 @@ from functools import partial
 from inspect import signature
 from typing import (
     TYPE_CHECKING,
+    Awaitable,
     Callable,
     Dict,
     NamedTuple,
@@ -15,7 +16,7 @@ from typing import (
     overload,
 )
 
-from hikari import CommandOption, OptionType, Snowflakeish
+from hikari import CommandOption, CommandType, OptionType, Snowflakeish
 
 from crescent.bot import Bot
 from crescent.commands.args import (
@@ -41,11 +42,20 @@ if TYPE_CHECKING:
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
-    from crescent.typedefs import ClassCommandProto, CommandCallback
+    from crescent.typedefs import (
+        ClassCommandProto,
+        CommandCallback,
+        MessageCommandCallbackT,
+        UserCommandCallbackT,
+    )
 
     T = TypeVar("T")
 
-__all__: Sequence[str] = ("command",)
+__all__: Sequence[str] = (
+    "command",
+    "user_command",
+    "message_command",
+)
 
 
 NoneType = type(None)
@@ -181,9 +191,7 @@ def command(
             description=description,
         )
 
-    if isinstance(callback, type) and issubclass(callback, object):
-        if name is None:
-            raise TypeError("Please specify a command name for class commands.")
+    if isinstance(callback, type) and isinstance(callback, object):
         defaults: Dict[str, Any] = {}
         options: list[CommandOption] = []
         name_map: dict[str, str] = {}
@@ -230,8 +238,52 @@ def command(
 
     return register_command(
         callback=callback_func,
+        command_type=CommandType.SLASH,
+        name=name or callback.__name__,
         guild=guild,
-        name=name,
         description=description,
         options=options,
+    )
+
+
+def _kwargs_to_args_callback(callback: Callable[..., Awaitable[Any]]):
+    async def inner(ctx: Context, **kwargs):
+        return await callback(ctx, *kwargs.values())
+
+    return inner
+
+
+def user_command(
+    callback: UserCommandCallbackT | None = None,
+    /,
+    *,
+    guild: Optional[Snowflakeish] = None,
+    name: Optional[str] = None,
+):
+    if not callback:
+        return partial(user_command, guild=guild, name=name)
+
+    return register_command(
+        callback=_kwargs_to_args_callback(callback),
+        command_type=CommandType.USER,
+        name=name or callback.__name__,
+        guild=guild,
+    )
+
+
+def message_command(
+    callback: MessageCommandCallbackT | None = None,
+    /,
+    *,
+    guild: Optional[Snowflakeish] = None,
+    name: Optional[str] = None,
+):
+    if not callback:
+        return partial(message_command, guild=guild, name=name)
+
+    return register_command(
+        callback=_kwargs_to_args_callback(callback),
+        command_type=CommandType.MESSAGE,
+        name=name or callback.__name__,
+        guild=guild,
     )
