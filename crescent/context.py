@@ -216,6 +216,5 @@ class Context:
 
     async def delete(self):
         await self.app.rest.delete_interaction_response(
-            application=self.application_id,
-            token=self.token,
+            application=self.application_id, token=self.token
         )

@@ -6,10 +6,7 @@ T = TypeVar("T")
 U = TypeVar("U")
 V = TypeVar("V")
 
-__all__: Sequence[str] = (
-    "unwrap",
-    "map_or",
-)
+__all__: Sequence[str] = ("unwrap", "map_or")
 
 
 def unwrap(o: Optional[T]) -> T:

@@ -65,7 +65,7 @@ def register_command(
                 name=name,
                 options=options,
                 default_permission=default_permission,
-            ),
+            )
         ),
     )
 
@@ -73,27 +73,16 @@ def register_command(
 
 
 class ErrorHandler:
-    __slots__: Sequence[str] = (
-        "bot",
-        "registry",
-    )
+    __slots__: Sequence[str] = ("bot", "registry")
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: dict[
-            Type[Exception],
-            List[MetaStruct[ErrorHandlerProto[Any], Any]],
-        ] = {}
+        self.registry: dict[Type[Exception], List[MetaStruct[ErrorHandlerProto[Any], Any]]] = {}
 
 
 class CommandHandler:
 
-    __slots__: Sequence[str] = (
-        "registry",
-        "bot",
-        "guilds",
-        "application_id",
-    )
+    __slots__: Sequence[str] = ("registry", "bot", "guilds", "application_id")
 
     def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
         self.bot: Bot = bot
@@ -336,8 +325,7 @@ class CommandHandler:
         local_commands = self.build_commands()
 
         to_delete = filter(
-            lambda dc: not any(dc.is_same_command(lc) for lc in local_commands),
-            discord_commands,
+            lambda dc: not any(dc.is_same_command(lc) for lc in local_commands), discord_commands
         )
         to_post = list(filter(lambda lc: lc not in discord_commands, local_commands))
 

@@ -86,12 +86,7 @@ async def handle_resp(event: InteractionCreateEvent):
         except Exception as e:
             if hdlrs := command.app._error_handler.registry.get(e.__class__):
                 await gather_iter(
-                    func.callback(
-                        exc=e,
-                        ctx=ctx,
-                        options=callback_options,
-                    )
-                    for func in hdlrs
+                    func.callback(exc=e, ctx=ctx, options=callback_options) for func in hdlrs
                 )
             else:
                 raise
@@ -106,12 +101,7 @@ def _get_command(
     sub_group: Optional[str],
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
 
-    kwargs: Dict[str, Any] = dict(
-        name=name,
-        type=type,
-        group=group,
-        sub_group=sub_group,
-    )
+    kwargs: Dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
 
     with suppress(KeyError):
         return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]
@@ -128,8 +118,7 @@ _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
 
 
 def _options_to_kwargs(
-    interaction: CommandInteraction,
-    options: Optional[Sequence[CommandInteractionOption]],
+    interaction: CommandInteraction, options: Optional[Sequence[CommandInteractionOption]]
 ) -> Dict[str, Any]:
     if not options:
         return {}

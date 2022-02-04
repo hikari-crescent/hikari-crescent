@@ -28,11 +28,7 @@ from crescent.commands.args import (
     MinValue,
     Name,
 )
-from crescent.commands.options import (
-    OPTIONS_TYPE_MAP,
-    ClassCommandOption,
-    get_channel_types,
-)
+from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption, get_channel_types
 from crescent.context import Context
 from crescent.internal.registry import register_command
 
@@ -51,11 +47,7 @@ if TYPE_CHECKING:
 
     T = TypeVar("T")
 
-__all__: Sequence[str] = (
-    "command",
-    "user_command",
-    "message_command",
-)
+__all__: Sequence[str] = ("command", "user_command", "message_command")
 
 
 NoneType = type(None)
@@ -133,9 +125,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
 
 
 def _class_command_callback(
-    cls: Type[ClassCommandProto],
-    defaults: Dict[str, Any],
-    name_map: dict[str, str],
+    cls: Type[ClassCommandProto], defaults: Dict[str, Any], name_map: dict[str, str]
 ) -> CommandCallbackT:
     async def callback(*args, **kwargs) -> Any:
         values = defaults.copy()
@@ -156,8 +146,7 @@ def _class_command_callback(
 
 @overload
 def command(
-    callback: CommandCallbackT | Type[ClassCommandProto],
-    /,
+    callback: CommandCallbackT | Type[ClassCommandProto], /
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
     ...
 
@@ -169,8 +158,7 @@ def command(
     name: Optional[str] = None,
     description: Optional[str] = None,
 ) -> Callable[
-    [CommandCallbackT | Type[ClassCommandProto]],
-    MetaStruct[CommandCallbackT, AppCommandMeta],
+    [CommandCallbackT | Type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
     ...
 
@@ -184,12 +172,7 @@ def command(
     description: Optional[str] = None,
 ):
     if not callback:
-        return partial(
-            command,
-            guild=guild,
-            name=name,
-            description=description,
-        )
+        return partial(command, guild=guild, name=name, description=description)
 
     if isinstance(callback, type) and isinstance(callback, object):
         defaults: Dict[str, Any] = {}
@@ -207,11 +190,7 @@ def command(
 
             defaults[generated.name] = v.default
 
-        callback_func = _class_command_callback(
-            callback,
-            defaults,
-            name_map,
-        )
+        callback_func = _class_command_callback(callback, defaults, name_map)
 
     else:
         callback_func = callback

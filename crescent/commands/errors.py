@@ -1,15 +1,6 @@
 from __future__ import annotations
 
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Generic,
-    Protocol,
-    Type,
-    TypeVar,
-    overload,
-)
+from typing import TYPE_CHECKING, Any, Callable, Generic, Protocol, Type, TypeVar, overload
 
 from crescent.internal.meta_struct import MetaStruct
 
@@ -22,21 +13,13 @@ ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
 
 
 class ErrorHandlerProto(Protocol, Generic[ERROR]):
-    async def __call__(
-        self,
-        /,
-        *,
-        exc: ERROR,
-        ctx: Context,
-        options: CommandOptionsT,
-    ) -> None:
+    async def __call__(self, /, *, exc: ERROR, ctx: Context, options: CommandOptionsT) -> None:
         ...
 
 
 @overload
 def catch(
-    exception: Type[ERROR],
-    /,
+    exception: Type[ERROR], /
 ) -> Callable[
     [ErrorHandlerProto[ERROR] | MetaStruct[ErrorHandlerProto[ERROR], Any]],
     MetaStruct[ErrorHandlerProto[ERROR], Any],
@@ -66,10 +49,7 @@ def catch(
         if isinstance(callback, MetaStruct):
             meta = callback
         else:
-            meta = MetaStruct(
-                callback,
-                None,
-            )
+            meta = MetaStruct(callback, None)
 
         def app_set_hook(meta: MetaStruct[ErrorHandlerProto[ERROR], Any]) -> None:
             for exc in exceptions:

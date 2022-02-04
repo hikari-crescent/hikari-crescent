@@ -1,9 +1,6 @@
 from typing import Sequence
 
-__all__: Sequence[str] = (
-    "CrescentException",
-    "CommandNotFoundError",
-)
+__all__: Sequence[str] = ("CrescentException", "CommandNotFoundError")
 
 
 class CrescentException(Exception):

@@ -15,10 +15,7 @@ if TYPE_CHECKING:
 
     T = TypeVar("T", bound="MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]")
 
-__all__: Sequence[str] = (
-    "HookResult",
-    "hook",
-)
+__all__: Sequence[str] = ("HookResult", "hook")
 
 
 @define

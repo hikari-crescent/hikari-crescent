@@ -54,10 +54,7 @@ class Unique:
         )
 
 
-__all__: Sequence[str] = (
-    "AppCommandMeta",
-    "AppCommand",
-)
+__all__: Sequence[str] = ("AppCommandMeta", "AppCommand")
 
 
 @define
