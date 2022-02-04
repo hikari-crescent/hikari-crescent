@@ -10,19 +10,15 @@ from weakref import WeakValueDictionary
 from hikari import (
     UNDEFINED,
     CommandOption,
+    CommandType,
+    ForbiddenError,
     OptionType,
     SlashCommand,
     Snowflake,
     Snowflakeish,
-    CommandType,
-    ForbiddenError,
 )
 
-from crescent.internal.app_command import (
-    AppCommand,
-    AppCommandMeta,
-    Unique,
-)
+from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter
 from crescent.utils.options import unwrap

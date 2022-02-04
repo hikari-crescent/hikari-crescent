@@ -1,18 +1,19 @@
 from __future__ import annotations
-from collections import OrderedDict
 
+from collections import OrderedDict
 from contextlib import suppress
 from copy import copy
 from typing import TYPE_CHECKING, Optional
 
 from hikari import (
     UNDEFINED,
-    CommandType,
     CommandInteraction,
     CommandInteractionOption,
+    CommandType,
     OptionType,
     Snowflake,
 )
+
 from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import Unique
@@ -20,7 +21,7 @@ from crescent.mentionable import Mentionable
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Sequence, cast, Mapping
+    from typing import Any, Dict, Mapping, Sequence, cast
 
     from hikari import InteractionCreateEvent, Message, User
 
@@ -59,12 +60,7 @@ async def handle_resp(event: InteractionCreateEvent):
             options = unwrap(option.options)[0].options
 
     command = _get_command(
-        bot,
-        name,
-        interaction.command_type,
-        interaction.guild_id,
-        group,
-        sub_group
+        bot, name, interaction.command_type, interaction.guild_id, group, sub_group
     )
     ctx = Context._from_command_interaction(interaction)
 
@@ -143,22 +139,14 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
 
 def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, Message | User]:
     if not interaction.resolved:
-        raise ValueError(
-            "interaction.resoved should be defined when running this function"
-        )
+        raise ValueError("interaction.resoved should be defined when running this function")
 
     if interaction.resolved.messages:
-        return {
-            "message": next(iter(interaction.resolved.messages.values()))
-        }
+        return {"message": next(iter(interaction.resolved.messages.values()))}
     if interaction.resolved.members:
-        return {
-            "user": next(iter(interaction.resolved.members.values()))
-        }
+        return {"user": next(iter(interaction.resolved.members.values()))}
     if interaction.resolved.users:
-        return {
-            "user": next(iter(interaction.resolved.users.values()))
-        }
+        return {"user": next(iter(interaction.resolved.users.values()))}
 
     raise AttributeError(
         "interaction.resolved did not have property `messages`, `members`, or `users`"

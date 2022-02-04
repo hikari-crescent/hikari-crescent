@@ -16,7 +16,7 @@ from typing import (
     overload,
 )
 
-from hikari import CommandOption, Snowflakeish, CommandType
+from hikari import CommandOption, CommandType, Snowflakeish
 
 from crescent.bot import Bot
 from crescent.commands.args import (
@@ -35,15 +35,15 @@ if TYPE_CHECKING:
     from inspect import Parameter, _empty
     from typing import Any, Optional, Sequence, TypeVar
 
+    from crescent.internal.app_command import AppCommandMeta
+    from crescent.context import Context
+    from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import (
         ClassCommandProto,
         CommandCallback,
         MessageCommandCallbackT,
         UserCommandCallbackT,
     )
-    from crescent.internal.app_command import AppCommandMeta
-    from crescent.context import Context
-    from crescent.internal.meta_struct import MetaStruct
 
     T = TypeVar("T")
 
@@ -251,11 +251,7 @@ def user_command(
     name: Optional[str] = None,
 ):
     if not callback:
-        return partial(
-            user_command,
-            guild=guild,
-            name=name
-        )
+        return partial(user_command, guild=guild, name=name)
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
@@ -273,11 +269,7 @@ def message_command(
     name: Optional[str] = None,
 ):
     if not callback:
-        return partial(
-            message_command,
-            guild=guild,
-            name=name
-        )
+        return partial(message_command, guild=guild, name=name)
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
