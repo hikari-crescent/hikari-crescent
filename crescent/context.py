@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Literal, cast, overload
 
 from attr import define
 from hikari import (
@@ -103,6 +103,26 @@ class Context:
             response_type=ResponseType.DEFERRED_MESSAGE_UPDATE,
         )
 
+    @overload
+    async def respond(
+        self,
+        content: UndefinedOr[Any] = UNDEFINED,
+        *,
+        ensure_message: Literal[True],
+        ephemeral: bool = False,
+        flags: int | MessageFlag | UndefinedType = UNDEFINED,
+        tts: UndefinedOr[bool] = UNDEFINED,
+        component: UndefinedOr[ComponentBuilder] = UNDEFINED,
+        components: UndefinedOr[Sequence[ComponentBuilder]] = UNDEFINED,
+        embed: UndefinedOr[Embed] = UNDEFINED,
+        embeds: UndefinedOr[Sequence[Embed]] = UNDEFINED,
+        mentions_everyone: UndefinedOr[bool] = UNDEFINED,
+        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
+        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+    ) -> Message:
+        ...
+
+    @overload
     async def respond(
         self,
         content: UndefinedOr[Any] = UNDEFINED,
@@ -117,6 +137,25 @@ class Context:
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
         user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+        ensure_message: Literal[False] = ...,
+    ) -> Optional[Message]:
+        ...
+
+    async def respond(
+        self,
+        content: UndefinedOr[Any] = UNDEFINED,
+        *,
+        ephemeral: bool = False,
+        flags: int | MessageFlag | UndefinedType = UNDEFINED,
+        tts: UndefinedOr[bool] = UNDEFINED,
+        component: UndefinedOr[ComponentBuilder] = UNDEFINED,
+        components: UndefinedOr[Sequence[ComponentBuilder]] = UNDEFINED,
+        embed: UndefinedOr[Embed] = UNDEFINED,
+        embeds: UndefinedOr[Sequence[Embed]] = UNDEFINED,
+        mentions_everyone: UndefinedOr[bool] = UNDEFINED,
+        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
+        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+        ensure_message: bool = False,
     ) -> Optional[Message]:
 
         if ephemeral:
@@ -139,7 +178,7 @@ class Context:
         if not self._has_replied:
             self._has_replied = True
             self._used_first_resp = True
-            return await self.app.rest.create_interaction_response(
+            await self.app.rest.create_interaction_response(
                 **kwargs,
                 interaction=self.id,
                 token=self.token,
@@ -147,6 +186,11 @@ class Context:
                 flags=flags,
                 tts=tts,
             )
+
+            if not ensure_message:
+                return None
+
+            return await self.app.rest.fetch_interaction_response(self.application_id, self.token)
 
         if not self._used_first_resp:
             self._used_first_resp = True
