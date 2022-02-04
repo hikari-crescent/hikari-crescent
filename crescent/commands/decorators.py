@@ -35,8 +35,8 @@ if TYPE_CHECKING:
     from inspect import Parameter, _empty
     from typing import Any, Optional, Sequence, TypeVar
 
-    from crescent.internal.app_command import AppCommandMeta
     from crescent.context import Context
+    from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import (
         ClassCommandProto,
@@ -240,6 +240,7 @@ def command(
 def _kwargs_to_args_callback(callback: Callable[..., Awaitable[Any]]):
     async def inner(ctx: Context, **kwargs):
         return await callback(ctx, *kwargs.values())
+
     return inner
 
 
