@@ -17,7 +17,7 @@ def second_hook(number: int) -> crescent.HookCallbackT:
     return inner
 
 
-bot = crescent.Bot(token="...")
+bot = crescent.Bot(token="Nzc4Mjg5NjE4ODc3MTUzMjgw.X7P0sQ.i0bxYnOttFSyHHqN6pyPOYNZi0g")
 
 
 @bot.include
