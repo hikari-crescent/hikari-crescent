@@ -34,12 +34,7 @@ async def handle_resp(event: InteractionCreateEvent):
 
     ctx = Context._from_command_interaction(interaction)
     command = _get_command(
-        bot,
-        ctx.command,
-        int(ctx.command_type),
-        ctx.guild_id,
-        ctx.group,
-        ctx.sub_group,
+        bot, ctx.command, int(ctx.command_type), ctx.guild_id, ctx.group, ctx.sub_group
     )
 
     for hook in command.metadata.hooks:
@@ -53,13 +48,7 @@ async def handle_resp(event: InteractionCreateEvent):
             await command.callback(ctx, **ctx.options)
         except Exception as e:
             if hdlrs := command.app._error_handler.registry.get(e.__class__):
-                await gather_iter(
-                    func.callback(
-                        exc=e,
-                        ctx=ctx,
-                    )
-                    for func in hdlrs
-                )
+                await gather_iter(func.callback(exc=e, ctx=ctx) for func in hdlrs)
             else:
                 raise
 

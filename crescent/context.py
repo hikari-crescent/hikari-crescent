@@ -58,8 +58,7 @@ _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
 
 
 def _options_to_kwargs(
-    interaction: CommandInteraction,
-    options: Optional[Sequence[CommandInteractionOption]],
+    interaction: CommandInteraction, options: Optional[Sequence[CommandInteractionOption]]
 ) -> Dict[str, Any]:
     if not options:
         return {}

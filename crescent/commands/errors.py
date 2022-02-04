@@ -12,13 +12,7 @@ ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
 
 
 class ErrorHandlerProto(Protocol, Generic[ERROR]):
-    async def __call__(
-        self,
-        /,
-        *,
-        exc: ERROR,
-        ctx: Context,
-    ) -> None:
+    async def __call__(self, /, *, exc: ERROR, ctx: Context) -> None:
         ...
 
 
