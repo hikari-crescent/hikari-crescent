@@ -36,14 +36,10 @@ def hook(callback: HookCallbackT, command: T, /) -> T:
     ...
 
 
-def hook(callback, command=None):
-
+def hook(callback: HookCallbackT, command: T | None = None) -> T | Callable[..., T]:
     if command is None:
-        return partial(hook, callback)
-
+        return partial(hook, callback)  # type: ignore
     if not iscoroutinefunction(callback):
         raise ValueError(f"Function `{callback.__name__}` must be async.")
-
-    command.interaction_hooks.insert(0, callback)
-
+    command.metadata.hooks.insert(0, callback)
     return command
