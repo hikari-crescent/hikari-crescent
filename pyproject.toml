@@ -2,6 +2,7 @@
 name = "hikari-crescent"
 version = "0.0.1"
 description = "🌕 A dead simple command handler for Hikari"
+readme = "README.md"
 authors = ["Lunarmagpie <Bambolambo0@gmail.com>"]
 license = "MPL-2.0"
 include = ["crescent/banner.txt"]
@@ -12,7 +13,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
 hikari = ">=2.0.0.dev106"
-attr = "^0.3.1"
+attrs = "^21.4.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
