@@ -19,7 +19,7 @@ from hikari import (
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Sequence, Type, Literal
+    from typing import Any, Literal, Optional, Sequence, Type
 
     from hikari import (
         CommandInteraction,
