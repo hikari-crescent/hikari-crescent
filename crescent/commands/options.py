@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from inspect import isclass
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -11,6 +12,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
     overload,
 )
 
@@ -43,6 +45,8 @@ if TYPE_CHECKING:
 
 __all__ = (
     "OPTIONS_TYPE_MAP",
+    "VALID_CHANNEL_TYPES",
+    "CHANNEL_TYPE_MAP",
     "get_channel_types",
     "option",
     "ClassCommandOption",
@@ -58,7 +62,7 @@ OPTIONS_TYPE_MAP: Dict[Type[OptionTypesT], OptionType] = {
     User: OptionType.USER,
     Mentionable: OptionType.MENTIONABLE,
 }
-_VALID_CHANNEL_TYPES = Union[
+VALID_CHANNEL_TYPES = Union[
     GuildTextChannel,
     DMChannel,
     GroupDMChannel,
@@ -68,7 +72,7 @@ _VALID_CHANNEL_TYPES = Union[
     GuildStoreChannel,
     GuildStageChannel,
 ]
-_CHANNEL_TYPE_MAP: Dict[Type[_VALID_CHANNEL_TYPES], ChannelType] = {
+CHANNEL_TYPE_MAP: Dict[Type[VALID_CHANNEL_TYPES], ChannelType] = {
     GuildTextChannel: ChannelType.GUILD_TEXT,
     DMChannel: ChannelType.DM,
     GuildVoiceChannel: ChannelType.GUILD_VOICE,
@@ -80,10 +84,13 @@ _CHANNEL_TYPE_MAP: Dict[Type[_VALID_CHANNEL_TYPES], ChannelType] = {
 }
 
 
-def get_channel_types(*channels: Type[PartialChannel]) -> set[ChannelType] | None:
+def get_channel_types(*channels: Type[PartialChannel]) -> set[ChannelType]:
+    if len(channels) == 1 and channels[0] is PartialChannel:
+        return set()
+
     types: set[ChannelType] = set()
-    for k, v in _CHANNEL_TYPE_MAP.items():
-        if isinstance(k, channels):
+    for k, v in CHANNEL_TYPE_MAP.items():
+        if issubclass(k, channels):
             types.add(v)
 
     return types
@@ -215,7 +222,7 @@ def option(
 
 
 def option(  # type: ignore
-    option_type: Union[Type[OptionTypesT], Sequence[Type[_VALID_CHANNEL_TYPES]]],
+    option_type: Union[Type[OptionTypesT], Sequence[Type[VALID_CHANNEL_TYPES]]],
     description: str = "\u200B",
     *,
     default: UndefinedOr[Any] = UNDEFINED,
@@ -224,7 +231,12 @@ def option(  # type: ignore
     max_value: Optional[Union[int, float]] = None,
     name: Optional[str] = None,
 ) -> Any:
-    if isinstance(option_type, type) and issubclass(option_type, PartialChannel):
+    if (
+        isclass(option_type)
+        and issubclass(option_type, PartialChannel)
+        and option_type is not PartialChannel
+    ):
+        option_type = cast(Type[VALID_CHANNEL_TYPES], option_type)
         channel_types = get_channel_types(option_type)
         option_type = PartialChannel
     elif isinstance(option_type, Sequence):

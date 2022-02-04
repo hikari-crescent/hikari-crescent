@@ -17,6 +17,7 @@ from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
+from crescent.utils.gather_iter import gather_iter
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
@@ -69,7 +70,7 @@ async def handle_resp(event: InteractionCreateEvent):
     else:
         callback_options = _resolved_data_to_kwargs(interaction)
 
-    for hook in command.interaction_hooks:
+    for hook in command.metadata.hooks:
         hook_res = await hook(ctx, copy(callback_options))
 
         if hook_res:
@@ -80,7 +81,20 @@ async def handle_resp(event: InteractionCreateEvent):
                 break
 
     else:
-        await command.callback(ctx, **callback_options)
+        try:
+            await command.callback(ctx, **callback_options)
+        except Exception as e:
+            if hdlrs := command.app._error_handler.registry.get(e.__class__):
+                await gather_iter(
+                    func.callback(
+                        exc=e,
+                        ctx=ctx,
+                        options=callback_options,
+                    )
+                    for func in hdlrs
+                )
+            else:
+                raise
 
 
 def _get_command(
@@ -133,7 +147,7 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
         return option.value
 
     resolved = getattr(interaction.resolved, resolved_type)
-    return next(iter(resolved.values()))
+    return resolved[option.value]
 
 
 def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, Message | User]:
