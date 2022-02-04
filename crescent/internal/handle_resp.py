@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import OrderedDict
 from contextlib import suppress
 from copy import copy
 from typing import TYPE_CHECKING, Optional
@@ -117,11 +116,11 @@ _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
 def _options_to_kwargs(
     interaction: CommandInteraction,
     options: Optional[Sequence[CommandInteractionOption]],
-) -> OrderedDict[str, Any]:
+) -> Dict[str, Any]:
     if not options:
-        return OrderedDict()
+        return {}
 
-    return OrderedDict((option.name, _extract_value(option, interaction)) for option in options)
+    return {option.name: _extract_value(option, interaction) for option in options}
 
 
 def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:

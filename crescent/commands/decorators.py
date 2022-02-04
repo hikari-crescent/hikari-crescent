@@ -29,6 +29,7 @@ from crescent.commands.args import (
     Name,
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption
+from crescent.context import Context
 from crescent.internal.registry import register_command
 
 if TYPE_CHECKING:
@@ -36,7 +37,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional, Sequence, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
-    from crescent.context import Context
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import (
         ClassCommandProto,
