@@ -33,7 +33,7 @@ __all___: Sequence[str] = "Bot"
 
 class Bot(GatewayBot):
 
-    __slots__ = ("__dict__", "_command_handler", "default_guild")
+    __slots__: Sequence[str] = ("__dict__", "_command_handler", "default_guild")
 
     def __init__(
         self,
