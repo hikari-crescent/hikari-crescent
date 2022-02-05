@@ -14,6 +14,8 @@ from typing import (
 
 from hikari import Message, PartialChannel, Role, User
 
+
+
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
     from crescent.context import Context
@@ -30,9 +32,16 @@ __all__: Sequence[str] = (
 )
 
 CommandCallbackT = Callable[..., Awaitable[Any]]
+UserCommandCallbackT = Union[
+    Callable[["Context", User], Awaitable[None]],
+    Callable[[Any, "Context", User], Awaitable[None]],
+]
+MessageCommandCallbackT = Union[
+    Callable[["Context", Message], Awaitable[None]],
+    Callable[[Any, "Context", Message], Awaitable[None]],
+]
+
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable"]
-UserCommandCallbackT = Callable[["Context", User], Awaitable[None]]
-MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[["Context", CommandOptionsT], Awaitable[Optional["HookResult"]]]
 
