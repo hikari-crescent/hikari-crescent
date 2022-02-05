@@ -17,18 +17,14 @@ class RandomError3(Exception):
 
 @bot.include
 @crescent.catch(RandomError)
-async def on_random_error(
-    exc: RandomError, ctx: crescent.Context, options: crescent.CommandOptionsT
-) -> None:
-    await ctx.respond(f"{exc} raised!")
+async def on_random_error(exc: RandomError, ctx: crescent.Context) -> None:
+    await ctx.respond(f"{exc} raised in {ctx.command}!")
 
 
 @bot.include
 @crescent.catch(RandomError2, RandomError3)
-async def on_random_error_2(
-    exc: Exception, ctx: crescent.Context, options: crescent.CommandOptionsT
-) -> None:
-    await ctx.respond(f"{exc} raised!")
+async def on_random_error_2(exc: Exception, ctx: crescent.Context) -> None:
+    await ctx.respond(f"{exc} raised in {ctx.command}!")
 
 
 @bot.include

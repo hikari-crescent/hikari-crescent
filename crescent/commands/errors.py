@@ -6,14 +6,13 @@ from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
     from crescent.context import Context
-    from crescent.typedefs import CommandOptionsT
 
 
 ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
 
 
 class ErrorHandlerProto(Protocol, Generic[ERROR]):
-    async def __call__(self, /, *, exc: ERROR, ctx: Context, options: CommandOptionsT) -> None:
+    async def __call__(self, /, *, exc: ERROR, ctx: Context) -> None:
         ...
 
 

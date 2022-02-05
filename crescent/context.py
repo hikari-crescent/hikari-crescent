@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast, overload
+from typing import TYPE_CHECKING, overload
 
+import hikari
 from attr import define
 from hikari import (
     UNDEFINED,
@@ -19,10 +20,9 @@ from hikari import (
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Optional, Sequence, Type
+    from typing import Any, Dict, Literal, Optional, Sequence
 
     from hikari import (
-        CommandInteraction,
         Embed,
         Message,
         PartialRole,
@@ -59,23 +59,14 @@ class Context:
     user: User
     member: Optional[Member]
 
+    command: str
+    command_type: hikari.CommandType
+    group: Optional[str]
+    sub_group: Optional[str]
+    options: Dict[str, Any]
+
     _has_replied: bool = False
     _used_first_resp: bool = False
-
-    @classmethod
-    def _from_command_interaction(cls: Type[Context], interaction: CommandInteraction) -> Context:
-        return cls(
-            app=cast(RestAndCacheAware, interaction.app),
-            application_id=interaction.application_id,
-            type=interaction.type,
-            token=interaction.token,
-            id=interaction.id,
-            version=interaction.version,
-            channel_id=interaction.channel_id,
-            guild_id=interaction.guild_id,
-            user=interaction.user,
-            member=interaction.member,
-        )
 
     @property
     def channel(self) -> Optional[GuildChannel]:
