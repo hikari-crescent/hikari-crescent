@@ -15,7 +15,6 @@ from typing import (
 from hikari import Message, PartialChannel, Role, User
 
 
-
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
     from crescent.context import Context
