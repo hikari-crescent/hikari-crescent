@@ -3,35 +3,30 @@ from __future__ import annotations
 from contextlib import suppress
 from typing import TYPE_CHECKING, Mapping, Optional, cast
 
-from hikari import (
-    UNDEFINED,
-    CommandType,
-    OptionType,
-)
+from hikari import UNDEFINED, CommandType, OptionType
 
 from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import Unique
-from crescent.utils import gather_iter, unwrap
 from crescent.mentionable import Mentionable
+from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Sequence
 
     from hikari import (
-        InteractionCreateEvent,
         CommandInteraction,
         CommandInteractionOption,
+        InteractionCreateEvent,
         Message,
         Snowflake,
         User,
     )
 
     from crescent.bot import Bot
-    from crescent.internal import AppCommandMeta, MetaStruct
-    from crescent.typedefs import CommandCallbackT
     from crescent.context import RestAndCacheAware
-    from crescent.typedefs import OptionTypesT
+    from crescent.internal import AppCommandMeta, MetaStruct
+    from crescent.typedefs import CommandCallbackT, OptionTypesT
 
 
 __all__: Sequence = ("handle_resp",)
@@ -48,12 +43,7 @@ async def handle_resp(event: InteractionCreateEvent):
 
     ctx = _context_from_interaction_resp(interaction)
     command = _get_command(
-        bot,
-        ctx.command,
-        int(ctx.command_type),
-        ctx.guild_id,
-        ctx.group,
-        ctx.sub_group,
+        bot, ctx.command, int(ctx.command_type), ctx.guild_id, ctx.group, ctx.sub_group
     )
 
     for hook in command.metadata.hooks:
@@ -67,9 +57,7 @@ async def handle_resp(event: InteractionCreateEvent):
             await command.callback(ctx, **ctx.options)
         except Exception as e:
             if hdlrs := command.app._error_handler.registry.get(e.__class__):
-                await gather_iter(
-                    func.callback(exc=e, ctx=ctx) for func in hdlrs
-                )
+                await gather_iter(func.callback(exc=e, ctx=ctx) for func in hdlrs)
             else:
                 raise
 
@@ -83,21 +71,13 @@ def _get_command(
     sub_group: Optional[str],
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
 
-    kwargs: Dict[str, Any] = dict(
-        name=name, type=type, group=group, sub_group=sub_group
-    )
+    kwargs: Dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
 
     with suppress(KeyError):
-        return bot._command_handler.registry[
-            Unique(guild_id=guild_id, **kwargs)
-        ]
+        return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]
     with suppress(KeyError):
-        return bot._command_handler.registry[
-            Unique(guild_id=UNDEFINED, **kwargs)
-        ]
-    raise CommandNotFoundError(
-        f"Handler for command `{name}` does not exist locally."
-    )
+        return bot._command_handler.registry[Unique(guild_id=UNDEFINED, **kwargs)]
+    raise CommandNotFoundError(f"Handler for command `{name}` does not exist locally.")
 
 
 _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
@@ -150,20 +130,15 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
 
 
 def _options_to_kwargs(
-    interaction: CommandInteraction,
-    options: Optional[Sequence[CommandInteractionOption]],
+    interaction: CommandInteraction, options: Optional[Sequence[CommandInteractionOption]]
 ) -> Dict[str, Any]:
     if not options:
         return {}
 
-    return {
-        option.name: _extract_value(option, interaction) for option in options
-    }
+    return {option.name: _extract_value(option, interaction) for option in options}
 
 
-def _extract_value(
-    option: CommandInteractionOption, interaction: CommandInteraction
-) -> Any:
+def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 
@@ -176,13 +151,9 @@ def _extract_value(
     return resolved[option.value]
 
 
-def _resolved_data_to_kwargs(
-    interaction: CommandInteraction,
-) -> Dict[str, Message | User]:
+def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, Message | User]:
     if not interaction.resolved:
-        raise ValueError(
-            "interaction.resoved should be defined when running this function"
-        )
+        raise ValueError("interaction.resoved should be defined when running this function")
 
     if interaction.resolved.messages:
         return {"message": next(iter(interaction.resolved.messages.values()))}
