@@ -20,7 +20,7 @@ from hikari import (
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Sequence, Literal
+    from typing import Any, Dict, Literal, Optional, Sequence
 
     from hikari import (
         Embed,
