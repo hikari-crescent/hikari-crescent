@@ -7,15 +7,15 @@ import crescent
 bot = crescent.Bot(token="...")
 
 
-async def first_hook(ctx: crescent.Context, options: crescent.CommandOptionsT):
+async def first_hook(ctx: crescent.Context):
     print("Here first.")
 
 
-async def second_hook(ctx: crescent.Context, options: crescent.CommandOptionsT):
+async def second_hook(ctx: crescent.Context):
     print("Here second.")
 
 
-async def third_hook(ctx: crescent.Context, options: crescent.CommandOptionsT):
+async def third_hook(ctx: crescent.Context):
     print("Here third.")
 
 

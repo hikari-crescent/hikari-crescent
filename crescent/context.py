@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, overload
 
+import hikari
 from attr import define
 from hikari import (
     UNDEFINED,
@@ -19,10 +20,9 @@ from hikari import (
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Sequence, Type
+    from typing import Any, Dict, Literal, Optional, Sequence
 
     from hikari import (
-        CommandInteraction,
         Embed,
         Message,
         PartialRole,
@@ -59,23 +59,14 @@ class Context:
     user: User
     member: Optional[Member]
 
+    command: str
+    command_type: hikari.CommandType
+    group: Optional[str]
+    sub_group: Optional[str]
+    options: Dict[str, Any]
+
     _has_replied: bool = False
     _used_first_resp: bool = False
-
-    @classmethod
-    def _from_command_interaction(cls: Type[Context], interaction: CommandInteraction) -> Context:
-        return cls(
-            app=cast(RestAndCacheAware, interaction.app),
-            application_id=interaction.application_id,
-            type=interaction.type,
-            token=interaction.token,
-            id=interaction.id,
-            version=interaction.version,
-            channel_id=interaction.channel_id,
-            guild_id=interaction.guild_id,
-            user=interaction.user,
-            member=interaction.member,
-        )
 
     @property
     def channel(self) -> Optional[GuildChannel]:
@@ -103,6 +94,26 @@ class Context:
             response_type=ResponseType.DEFERRED_MESSAGE_UPDATE,
         )
 
+    @overload
+    async def respond(
+        self,
+        content: UndefinedOr[Any] = UNDEFINED,
+        *,
+        ensure_message: Literal[True],
+        ephemeral: bool = False,
+        flags: int | MessageFlag | UndefinedType = UNDEFINED,
+        tts: UndefinedOr[bool] = UNDEFINED,
+        component: UndefinedOr[ComponentBuilder] = UNDEFINED,
+        components: UndefinedOr[Sequence[ComponentBuilder]] = UNDEFINED,
+        embed: UndefinedOr[Embed] = UNDEFINED,
+        embeds: UndefinedOr[Sequence[Embed]] = UNDEFINED,
+        mentions_everyone: UndefinedOr[bool] = UNDEFINED,
+        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
+        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+    ) -> Message:
+        ...
+
+    @overload
     async def respond(
         self,
         content: UndefinedOr[Any] = UNDEFINED,
@@ -117,6 +128,25 @@ class Context:
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
         user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+        ensure_message: Literal[False] = ...,
+    ) -> Optional[Message]:
+        ...
+
+    async def respond(
+        self,
+        content: UndefinedOr[Any] = UNDEFINED,
+        *,
+        ephemeral: bool = False,
+        flags: int | MessageFlag | UndefinedType = UNDEFINED,
+        tts: UndefinedOr[bool] = UNDEFINED,
+        component: UndefinedOr[ComponentBuilder] = UNDEFINED,
+        components: UndefinedOr[Sequence[ComponentBuilder]] = UNDEFINED,
+        embed: UndefinedOr[Embed] = UNDEFINED,
+        embeds: UndefinedOr[Sequence[Embed]] = UNDEFINED,
+        mentions_everyone: UndefinedOr[bool] = UNDEFINED,
+        user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
+        role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
+        ensure_message: bool = False,
     ) -> Optional[Message]:
 
         if ephemeral:
@@ -139,7 +169,7 @@ class Context:
         if not self._has_replied:
             self._has_replied = True
             self._used_first_resp = True
-            return await self.app.rest.create_interaction_response(
+            await self.app.rest.create_interaction_response(
                 **kwargs,
                 interaction=self.id,
                 token=self.token,
@@ -147,6 +177,11 @@ class Context:
                 flags=flags,
                 tts=tts,
             )
+
+            if not ensure_message:
+                return None
+
+            return await self.app.rest.fetch_interaction_response(self.application_id, self.token)
 
         if not self._used_first_resp:
             self._used_first_resp = True

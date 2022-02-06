@@ -1,20 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Generic, Protocol, Type, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Callable, Type, TypeVar, overload
 
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
-    from crescent.context import Context
-    from crescent.typedefs import CommandOptionsT
+    from crescent.typedefs import ErrorHandlerProto
 
 
 ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
-
-
-class ErrorHandlerProto(Protocol, Generic[ERROR]):
-    async def __call__(self, /, *, exc: ERROR, ctx: Context, options: CommandOptionsT) -> None:
-        ...
 
 
 @overload
