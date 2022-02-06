@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from hikari import PartialCommand, UndefinedOr
 
     from crescent.bot import Bot
-    from crescent.typedefs import CommandCallbackT, ERROR
+    from crescent.typedefs import CommandCallbackT
     from crescent.commands.errors import _ErrorHandlerCallback
 
 
