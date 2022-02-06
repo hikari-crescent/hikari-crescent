@@ -29,8 +29,8 @@ if TYPE_CHECKING:
     from hikari import PartialCommand, UndefinedOr
 
     from crescent.bot import Bot
-    from crescent.commands.errors import ErrorHandlerProto
-    from crescent.typedefs import CommandCallbackT
+    from crescent.typedefs import CommandCallbackT, ERROR
+    from crescent.commands.errors import _ErrorHandlerCallback
 
 
 _log = getLogger(__name__)
@@ -77,7 +77,7 @@ class ErrorHandler:
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: dict[Type[Exception], List[MetaStruct[ErrorHandlerProto[Any], Any]]] = {}
+        self.registry: Dict[Type[Exception], List[MetaStruct[_ErrorHandlerCallback, Any]]] = {}
 
 
 class CommandHandler:
