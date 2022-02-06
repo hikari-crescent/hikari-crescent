@@ -9,15 +9,15 @@ if TYPE_CHECKING:
     from crescent.typedefs import ERROR, ErrorHandlerCallbackT
 
 
-_ErrorHandlerCallback = Callable[["ERROR", "Context"], Awaitable[None]]
+_InternalErrorHandlerCallbackT = Callable[["ERROR", "Context"], Awaitable[None]]
 
 
 @overload
 def catch(
     exception: Type[ERROR], /
 ) -> Callable[
-    [ErrorHandlerCallbackT | MetaStruct[_ErrorHandlerCallback, Any]],
-    MetaStruct[_ErrorHandlerCallback, Any],
+    [ErrorHandlerCallbackT | MetaStruct[_InternalErrorHandlerCallbackT, Any]],
+    MetaStruct[_InternalErrorHandlerCallbackT, Any],
 ]:
     ...
 
@@ -26,8 +26,8 @@ def catch(
 def catch(
     *exceptions: Type[Exception],
 ) -> Callable[
-    [ErrorHandlerCallbackT | MetaStruct[_ErrorHandlerCallback, Any]],
-    MetaStruct[_ErrorHandlerCallback, Any],
+    [ErrorHandlerCallbackT | MetaStruct[_InternalErrorHandlerCallbackT, Any]],
+    MetaStruct[_InternalErrorHandlerCallbackT, Any],
 ]:
     ...
 
@@ -35,19 +35,19 @@ def catch(
 def catch(
     *exceptions: Type[Exception],
 ) -> Callable[
-    [ErrorHandlerCallbackT | MetaStruct[_ErrorHandlerCallback, Any]],
-    MetaStruct[_ErrorHandlerCallback, Any],
+    [ErrorHandlerCallbackT | MetaStruct[_InternalErrorHandlerCallbackT, Any]],
+    MetaStruct[_InternalErrorHandlerCallbackT, Any],
 ]:
     def decorator(
-        callback: ErrorHandlerCallbackT | MetaStruct[_ErrorHandlerCallback, Any]
-    ) -> MetaStruct[_ErrorHandlerCallback, Any]:
+        callback: ErrorHandlerCallbackT | MetaStruct[_InternalErrorHandlerCallbackT, Any]
+    ) -> MetaStruct[_InternalErrorHandlerCallbackT, Any]:
         if isinstance(callback, MetaStruct):
             meta = callback
         else:
-            callback = cast(_ErrorHandlerCallback, callback)
+            callback = cast(_InternalErrorHandlerCallbackT, callback)
             meta = MetaStruct(callback, None)
 
-        def app_set_hook(meta: MetaStruct[_ErrorHandlerCallback, Any]) -> None:
+        def app_set_hook(meta: MetaStruct[_InternalErrorHandlerCallbackT, Any]) -> None:
             for exc in exceptions:
                 meta.app._error_handler.registry.setdefault(exc, []).append(meta)
 
