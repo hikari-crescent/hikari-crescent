@@ -9,6 +9,7 @@ from typing import (
     Optional,
     Protocol,
     Sequence,
+    TypeVar,
     Union,
 )
 
@@ -27,6 +28,7 @@ __all__: Sequence[str] = (
     "CommandOptionsT",
     "ClassCommandProto",
     "HookCallbackT",
+    "ErrorHandlerCallbackT",
 )
 
 CommandCallbackT = Callable[..., Awaitable[Any]]
@@ -40,3 +42,11 @@ HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
 class ClassCommandProto(Protocol):
     async def callback(self, ctx: Context) -> Any:
         ...
+
+
+ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
+
+ErrorHandlerCallbackT = Union[
+    Callable[[ERROR, "Context"], Awaitable[None]],
+    Callable[[Any, ERROR, "Context"], Awaitable[None]],
+]
