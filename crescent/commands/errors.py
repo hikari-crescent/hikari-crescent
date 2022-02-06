@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Type, cast, overload
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
-    from crescent.typedefs import ERROR, ErrorHandlerCallbackT
     from crescent.context import Context
+    from crescent.typedefs import ERROR, ErrorHandlerCallbackT
 
 
 _ErrorHandlerCallback = Callable[["ERROR", "Context"], Awaitable[None]]
