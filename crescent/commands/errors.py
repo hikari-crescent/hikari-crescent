@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Type, cast
 
+from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
@@ -29,7 +30,15 @@ def catch(
 
         def app_set_hook(meta: MetaStruct[_InternalErrorHandlerCallbackT, Any]) -> None:
             for exc in exceptions:
-                meta.app._error_handler.registry.setdefault(exc, []).append(meta)
+                registry = meta.app._error_handler.registry
+                if reg_meta := registry.get(exc):
+                    raise AlreadyRegisteredError(
+                        f"`{getattr(callback, '__name__')}` can not catch `{exc.__name__}`."
+                        f"`{exc.__name__}` is already registered to"
+                        f" `{reg_meta.callback.__name__}`."
+                    )
+
+                registry[exc] = meta
 
         meta.app_set_hooks.append(app_set_hook)
         return meta

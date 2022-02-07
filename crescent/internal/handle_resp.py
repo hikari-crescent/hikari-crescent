@@ -9,7 +9,7 @@ from crescent.context import Context
 from crescent.exceptions import CommandNotFoundError
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
-from crescent.utils import gather_iter, unwrap
+from crescent.utils import unwrap
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Sequence
@@ -56,8 +56,8 @@ async def handle_resp(event: InteractionCreateEvent):
         try:
             await command.callback(ctx, **ctx.options)
         except Exception as e:
-            if hdlrs := command.app._error_handler.registry.get(e.__class__):
-                await gather_iter(func.callback(e, ctx) for func in hdlrs)
+            if func := command.app._error_handler.registry.get(e.__class__):
+                await func.callback(e, ctx)
             else:
                 raise
 

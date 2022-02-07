@@ -24,7 +24,7 @@ from crescent.utils import gather_iter
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Type
+    from typing import Any, Awaitable, Callable, Dict, Optional, Sequence, Type
 
     from hikari import PartialCommand, UndefinedOr
 
@@ -77,9 +77,9 @@ class ErrorHandler:
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: Dict[
-            Type[Exception], List[MetaStruct[_InternalErrorHandlerCallbackT, Any]]
-        ] = {}
+        self.registry: WeakValueDictionary[
+            Type[Exception], MetaStruct[_InternalErrorHandlerCallbackT, Any]
+        ] = WeakValueDictionary()
 
 
 class CommandHandler:
