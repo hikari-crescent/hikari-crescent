@@ -57,7 +57,7 @@ async def handle_resp(event: InteractionCreateEvent):
             await command.callback(ctx, **ctx.options)
         except Exception as e:
             if hdlrs := command.app._error_handler.registry.get(e.__class__):
-                await gather_iter(func.callback(exc=e, ctx=ctx) for func in hdlrs)
+                await gather_iter(func.callback(e, ctx) for func in hdlrs)
             else:
                 raise
 
