@@ -9,3 +9,7 @@ class CrescentException(Exception):
 
 class CommandNotFoundError(CrescentException):
     """Command was not registered locally"""
+
+
+class AlreadyRegisteredError(CrescentException):
+    """Command or exception catch function was already registered"""
