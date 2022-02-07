@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Type, cast, overload
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Type, cast
 
 from crescent.internal.meta_struct import MetaStruct
 
@@ -10,26 +10,6 @@ if TYPE_CHECKING:
 
 
 _InternalErrorHandlerCallbackT = Callable[["ERROR", "Context"], Awaitable[None]]
-
-
-@overload
-def catch(
-    exception: Type[ERROR], /
-) -> Callable[
-    [ErrorHandlerCallbackT | MetaStruct[_InternalErrorHandlerCallbackT, Any]],
-    MetaStruct[_InternalErrorHandlerCallbackT, Any],
-]:
-    ...
-
-
-@overload
-def catch(
-    *exceptions: Type[Exception],
-) -> Callable[
-    [ErrorHandlerCallbackT | MetaStruct[_InternalErrorHandlerCallbackT, Any]],
-    MetaStruct[_InternalErrorHandlerCallbackT, Any],
-]:
-    ...
 
 
 def catch(
