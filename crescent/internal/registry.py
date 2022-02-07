@@ -77,9 +77,9 @@ class ErrorHandler:
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: Dict[
+        self.registry: WeakValueDictionary[
             Type[Exception], MetaStruct[_InternalErrorHandlerCallbackT, Any]
-        ] = {}
+        ] = WeakValueDictionary()
 
 
 class CommandHandler:
