@@ -57,7 +57,7 @@ async def handle_resp(event: InteractionCreateEvent):
             await command.callback(ctx, **ctx.options)
         except Exception as e:
             if func := command.app._error_handler.registry.get(e.__class__):
-                await func.callback(exc=e, ctx=ctx)
+                await func.callback(e, ctx)
             else:
                 raise
 

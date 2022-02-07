@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from hikari import PartialCommand, UndefinedOr
 
     from crescent.bot import Bot
-    from crescent.commands.errors import ErrorHandlerProto
+    from crescent.commands.errors import _InternalErrorHandlerCallbackT
     from crescent.typedefs import CommandCallbackT
 
 
@@ -77,9 +77,9 @@ class ErrorHandler:
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: WeakValueDictionary[
-            Type[Exception], MetaStruct[ErrorHandlerProto[Any], Any]
-        ] = WeakValueDictionary()
+        self.registry: Dict[
+            Type[Exception], MetaStruct[_InternalErrorHandlerCallbackT, Any]
+        ] = {}
 
 
 class CommandHandler:
