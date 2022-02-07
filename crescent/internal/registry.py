@@ -78,8 +78,7 @@ class ErrorHandler:
     def __init__(self, bot: Bot):
         self.bot = bot
         self.registry: WeakValueDictionary[
-            Type[Exception],
-            MetaStruct[ErrorHandlerProto[Any], Any]
+            Type[Exception], MetaStruct[ErrorHandlerProto[Any], Any]
         ] = WeakValueDictionary()
 
 
