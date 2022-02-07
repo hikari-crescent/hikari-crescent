@@ -33,6 +33,7 @@ __all__: Sequence[str] = (
     "Context",
     "event",
     "CrescentException",
+    "AlreadyRegisteredError",
     "CommandNotFoundError",
     "Mentionable",
     "CommandCallbackT",
