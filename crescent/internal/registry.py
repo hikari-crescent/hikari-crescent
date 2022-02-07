@@ -77,9 +77,7 @@ class ErrorHandler:
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: Dict[
-            Type[Exception], MetaStruct[_InternalErrorHandlerCallbackT, Any]
-        ] = {}
+        self.registry: Dict[Type[Exception], MetaStruct[_InternalErrorHandlerCallbackT, Any]] = {}
 
 
 class CommandHandler:
