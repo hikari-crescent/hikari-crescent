@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, Generic, Protocol, Type, TypeVar, overload
 
-from crescent.internal.meta_struct import MetaStruct
 from crescent.exceptions import AlreadyRegisteredError
+from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
     from crescent.context import Context
