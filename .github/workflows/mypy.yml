@@ -16,4 +16,4 @@ jobs:
       - name: run Mypy
         run: |
           poetry install
-          mypy crescent
+          poetry run mypy crescent
