@@ -202,6 +202,9 @@
                         <li>
                                 <a class="function" href="#Bot.load_module">load_module</a>
                         </li>
+                        <li>
+                                <a class="function" href="#Bot.on_crescent_error">on_crescent_error</a>
+                        </li>
                 </ul>
 
             </li>
@@ -1526,6 +1529,16 @@ inheritance.</p>
         <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">plugin</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_crescent_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">was_handled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">was_handled</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">respond</span><span class="p">(</span><span class="s2">&quot;An unexpected error occurred.&quot;</span><span class="p">,</span> <span class="n">ephemeral</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhandled exception occurred in the command </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">command</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+        <span class="n">print_exception</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -1865,6 +1878,37 @@ tracked_guilds : Optional[List[hikari.Snowflakeish]]
         <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">plugin</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="Bot.on_crescent_error" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Bot.on_crescent_error">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">async def</span>
+            <span class="name">on_crescent_error</span><span class="signature">(
+    self,
+    exc: Exception,
+    ctx: <a href="#context.Context">crescent.context.Context</a>,
+    was_handled: bool
+) -&gt; None</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_crescent_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">was_handled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">was_handled</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">respond</span><span class="p">(</span><span class="s2">&quot;An unexpected error occurred.&quot;</span><span class="p">,</span> <span class="n">ephemeral</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhandled exception occurred in the command </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">command</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+        <span class="n">print_exception</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
 </pre></div>
 
         </details>
