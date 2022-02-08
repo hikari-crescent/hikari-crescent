@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import traceback
+from traceback import print_exception
 from concurrent.futures import Executor
 from itertools import chain
 from typing import TYPE_CHECKING, Callable, Sequence, overload
