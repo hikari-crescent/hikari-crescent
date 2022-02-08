@@ -8,7 +8,7 @@ from hikari.api import CommandBuilder, EntityFactory
 from hikari.internal.data_binding import JSONObject
 
 if TYPE_CHECKING:
-    from typing import List, Optional, Sequence, Type, Any, Dict
+    from typing import Any, Dict, List, Optional, Sequence, Type
 
     from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
 
@@ -93,10 +93,7 @@ class AppCommand(CommandBuilder):
         return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
 
     def build(self, encoder: EntityFactory) -> JSONObject:
-        out: Dict[str, Any] = {
-            "name": self.name,
-            "type": self.type,
-        }
+        out: Dict[str, Any] = {"name": self.name, "type": self.type}
 
         if self.description:
             out["description"] = self.description

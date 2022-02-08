@@ -14,7 +14,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import unwrap, gather_iter
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, Dict, Optional, Sequence, Type, List
+    from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Type
 
     from hikari import UndefinedOr, Snowflakeish
 
