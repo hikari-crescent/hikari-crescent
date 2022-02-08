@@ -219,11 +219,7 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def post_guild_command(
-        self,
-        commands: List[CommandBuilder],
-        guild: Snowflakeish,
-    ):
+    async def post_guild_command(self, commands: List[CommandBuilder], guild: Snowflakeish):
         if not self.application_id:
             raise AttributeError("Client `application_id` is not definied")
         await self.bot.rest.set_application_commands(
