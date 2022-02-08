@@ -147,5 +147,5 @@ class Bot(GatewayBot):
             await ctx.respond("An unexpected error occurred.", ephemeral=True)
         except Exception:
             pass
-        print(f"Unhandled exception occured in the command {ctx.command}:")
+        print(f"Unhandled exception occurred in the command {ctx.command}:")
         traceback.print_exception(exc.__class__, exc, exc.__traceback__)
