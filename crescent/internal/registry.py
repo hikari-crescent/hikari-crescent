@@ -1,6 +1,6 @@
 from __future__ import annotations
-from asyncio import gather
 
+from asyncio import gather
 from inspect import iscoroutinefunction
 from logging import getLogger
 from typing import TYPE_CHECKING, cast
@@ -11,12 +11,12 @@ from hikari.api import CommandBuilder
 
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.meta_struct import MetaStruct
-from crescent.utils import unwrap, gather_iter
+from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Type
 
-    from hikari import UndefinedOr, Snowflakeish
+    from hikari import Snowflakeish, UndefinedOr
 
     from crescent.bot import Bot
     from crescent.commands.errors import _InternalErrorHandlerCallbackT
@@ -219,10 +219,7 @@ class CommandHandler:
         return tuple(built_commands.values())
 
     async def post_guild_command(
-        self,
-        commands: List[CommandBuilder],
-        guild: Snowflakeish,
-        all_guilds: List[Snowflakeish],
+        self, commands: List[CommandBuilder], guild: Snowflakeish, all_guilds: List[Snowflakeish]
     ):
         if not self.application_id:
             raise AttributeError("Client `application_id` is not definied")
@@ -250,16 +247,13 @@ class CommandHandler:
                 application=self.application_id, commands=global_commands
             ),
             gather_iter(
-                self.post_guild_command(
-                    commands=commands,
-                    guild=guild,
-                    all_guilds=guilds,
-                )
+                self.post_guild_command(commands=commands, guild=guild, all_guilds=guilds)
                 for guild, commands in command_guilds.items()
             ),
             gather_iter(
                 self.bot.rest.set_application_commands(
                     application=self.application_id, commands=[], guild=guild
-                ) for guild in guilds
-            )
+                )
+                for guild in guilds
+            ),
         )
