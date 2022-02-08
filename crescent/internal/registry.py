@@ -1,20 +1,22 @@
 from __future__ import annotations
+from asyncio import gather
 
 from inspect import iscoroutinefunction
 from logging import getLogger
 from typing import TYPE_CHECKING, cast
 from weakref import WeakValueDictionary
 
-from hikari import UNDEFINED, CommandOption, CommandType, OptionType, Snowflake, Snowflakeish
+from hikari import UNDEFINED, CommandOption, CommandType, OptionType, Snowflake
+from hikari.api import CommandBuilder
 
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.meta_struct import MetaStruct
-from crescent.utils.options import unwrap
+from crescent.utils import unwrap, gather_iter
 
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, Dict, Optional, Sequence, Type, List
 
-    from hikari import UndefinedOr
+    from hikari import UndefinedOr, Snowflakeish
 
     from crescent.bot import Bot
     from crescent.commands.errors import _InternalErrorHandlerCallbackT
@@ -216,28 +218,48 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
+    async def post_guild_command(
+        self,
+        commands: List[CommandBuilder],
+        guild: Snowflakeish,
+        all_guilds: List[Snowflakeish],
+    ):
+        if not self.application_id:
+            raise AttributeError("Client `application_id` is not definied")
+        await self.bot.rest.set_application_commands(
+            application=self.application_id, commands=commands, guild=guild
+        )
+        all_guilds.remove(guild)
+
     async def register_commands(self):
         guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
 
         commands = self.build_commands()
 
         command_guilds: Dict[Snowflakeish, List[AppCommand]] = {}
+        global_commands: List[AppCommand] = []
 
         for command in commands:
-            command_guilds.setdefault(command.guild_id, []).append(command)
-
-        for guild, guild_commands in command_guilds.items():
-            if guild:
-                await self.bot.rest.set_application_commands(
-                    application=self.application_id, commands=guild_commands, guild=guild
-                )
-                guilds.remove(guild)
+            if command.guild_id:
+                command_guilds.setdefault(command.guild_id, []).append(command)
             else:
-                await self.bot.rest.set_application_commands(
-                    application=self.application_id, commands=guild_commands
-                )
+                global_commands.append(command)
 
-        for guild in guilds:
-            await self.bot.rest.set_application_commands(
-                application=self.application_id, commands=[], guild=guild
+        await gather(
+            self.bot.rest.set_application_commands(
+                application=self.application_id, commands=global_commands
+            ),
+            gather_iter(
+                self.post_guild_command(
+                    commands=commands,
+                    guild=guild,
+                    all_guilds=guilds,
+                )
+                for guild, commands in command_guilds.items()
+            ),
+            gather_iter(
+                self.bot.rest.set_application_commands(
+                    application=self.application_id, commands=[], guild=guild
+                ) for guild in guilds
             )
+        )
