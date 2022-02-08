@@ -14,5 +14,6 @@ jobs:
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.3
       - name: run Mypy
-        run: poetry install
-        run: mypy crescent
+        run: |
+          poetry install
+          mypy crescent
