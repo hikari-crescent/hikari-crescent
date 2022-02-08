@@ -228,11 +228,10 @@ class CommandHandler:
 
         for guild, guild_commands in command_guilds.items():
             if guild:
-                guilds.remove(guild)
-            if guild:
                 await self.bot.rest.set_application_commands(
                     application=self.application_id, commands=guild_commands, guild=guild
                 )
+                guilds.remove(guild)
             else:
                 await self.bot.rest.set_application_commands(
                     application=self.application_id, commands=guild_commands
