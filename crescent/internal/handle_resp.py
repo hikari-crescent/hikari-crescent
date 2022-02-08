@@ -58,8 +58,11 @@ async def handle_resp(event: InteractionCreateEvent):
         except Exception as e:
             if func := command.app._error_handler.registry.get(e.__class__):
                 await func.callback(e, ctx)
+                handled = True
             else:
-                raise
+                handled = False
+
+            await bot.on_crescent_error(e, ctx, handled)
 
 
 def _get_command(

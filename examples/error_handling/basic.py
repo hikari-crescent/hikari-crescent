@@ -15,6 +15,10 @@ class RandomError3(Exception):
     pass
 
 
+class UnhandledError(Exception):
+    pass
+
+
 @bot.include
 @crescent.catch(RandomError)
 async def on_random_error(exc: RandomError, ctx: crescent.Context) -> None:
@@ -31,6 +35,12 @@ async def on_random_error_2(exc: Exception, ctx: crescent.Context) -> None:
 @crescent.command
 async def raise_error(ctx: crescent.Context):
     raise RandomError("Lol")
+
+
+@bot.include
+@crescent.command
+async def raise_unhandled_error(ctx: crescent.Context):
+    raise UnhandledError("oops...")
 
 
 bot.run()
