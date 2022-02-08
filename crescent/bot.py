@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from concurrent.futures import Executor
 from itertools import chain
+from traceback import print_exception
 from typing import TYPE_CHECKING, Callable, Sequence, overload
 
 from hikari import (
@@ -24,6 +25,8 @@ from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, TypeVar, Union
+
+    from crescent.context import Context
 
     META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct)
 
@@ -136,3 +139,13 @@ class Bot(GatewayBot):
         plugin = Plugin._from_module(path)
         self.add_plugin(plugin)
         return plugin
+
+    async def on_crescent_error(self, exc: Exception, ctx: Context, was_handled: bool) -> None:
+        if was_handled:
+            return
+        try:
+            await ctx.respond("An unexpected error occurred.", ephemeral=True)
+        except Exception:
+            pass
+        print(f"Unhandled exception occurred in the command {ctx.command}:")
+        print_exception(exc.__class__, exc, exc.__traceback__)
