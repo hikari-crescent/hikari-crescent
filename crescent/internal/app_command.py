@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 @define(hash=True)
 class Unique:
-    name: str
+    name: int
     type: CommandType
     guild_id: UndefinedNoneOr[Snowflakeish]
     group: UndefinedNoneOr[str]
