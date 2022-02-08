@@ -225,7 +225,7 @@ class CommandHandler:
         guild: Snowflakeish,
     ):
         if not self.application_id:
-            raise AttributeError("Client `application_id` is not definied")
+            raise AttributeError("Client `application_id` is not defined")
         await self.bot.rest.set_application_commands(
             application=self.application_id, commands=commands, guild=guild
         )
