@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING
 
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
@@ -8,7 +8,7 @@ from hikari.api import CommandBuilder, EntityFactory
 from hikari.internal.data_binding import JSONObject
 
 if TYPE_CHECKING:
-    from typing import List, Optional, Sequence, Type
+    from typing import List, Optional, Sequence, Type, Any, Dict
 
     from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
 
@@ -95,7 +95,6 @@ class AppCommand(CommandBuilder):
     def build(self, encoder: EntityFactory) -> JSONObject:
         out: Dict[str, Any] = {
             "name": self.name,
-            "default_permission": self.default_permission or None,
             "type": self.type,
         }
 
@@ -103,6 +102,8 @@ class AppCommand(CommandBuilder):
             out["description"] = self.description
         if self.options:
             out["options"] = [encoder.serialize_command_option(option) for option in self.options]
+        if self.default_permission:
+            out["default_permission"] = self.default_permission
 
         return out
 

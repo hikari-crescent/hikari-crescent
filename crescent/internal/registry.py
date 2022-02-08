@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from inspect import iscoroutinefunction
 from logging import getLogger
-from typing import TYPE_CHECKING, List, cast
+from typing import TYPE_CHECKING, cast
 from weakref import WeakValueDictionary
 
 from hikari import (
@@ -19,7 +19,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, Dict, Optional, Sequence, Type
+    from typing import Any, Awaitable, Callable, Dict, Optional, Sequence, Type, List
 
     from hikari import UndefinedOr
 
