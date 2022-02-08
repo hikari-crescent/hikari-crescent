@@ -191,7 +191,7 @@ class CommandHandler:
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
                         name=command.metadata.group.name,
-                        description="HIDDEN",
+                        description=unwrap(command.metadata.group).description or "\u200B",
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
