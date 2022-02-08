@@ -220,7 +220,7 @@ def command(
         command_type=CommandType.SLASH,
         name=name or callback.__name__,
         guild=guild,
-        description=description,
+        description=description or '\u200b',
         options=options,
     )
 
