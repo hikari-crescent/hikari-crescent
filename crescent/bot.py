@@ -148,4 +148,4 @@ class Bot(GatewayBot):
         except Exception:
             pass
         print(f"Unhandled exception occurred in the command {ctx.command}:")
-        traceback.print_exception(exc.__class__, exc, exc.__traceback__)
+        print_exception(exc.__class__, exc, exc.__traceback__)
