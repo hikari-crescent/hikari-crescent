@@ -5,14 +5,7 @@ from logging import getLogger
 from typing import TYPE_CHECKING, cast
 from weakref import WeakValueDictionary
 
-from hikari import (
-    UNDEFINED,
-    CommandOption,
-    CommandType,
-    OptionType,
-    Snowflake,
-    Snowflakeish,
-)
+from hikari import UNDEFINED, CommandOption, CommandType, OptionType, Snowflake, Snowflakeish
 
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.meta_struct import MetaStruct
@@ -238,19 +231,14 @@ class CommandHandler:
                 guilds.remove(guild)
             if guild:
                 await self.bot.rest.set_application_commands(
-                    application=self.application_id,
-                    commands=guild_commands,
-                    guild=guild,
+                    application=self.application_id, commands=guild_commands, guild=guild
                 )
             else:
                 await self.bot.rest.set_application_commands(
-                    application=self.application_id,
-                    commands=guild_commands,
+                    application=self.application_id, commands=guild_commands
                 )
 
         for guild in guilds:
             await self.bot.rest.set_application_commands(
-                application=self.application_id,
-                commands=[],
-                guild=guild,
+                application=self.application_id, commands=[], guild=guild
             )
