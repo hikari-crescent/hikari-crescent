@@ -1,8 +1,7 @@
 from __future__ import annotations
-from asyncio import gather
-from contextlib import suppress
 
 from asyncio import gather
+from contextlib import suppress
 from inspect import iscoroutinefunction
 from logging import getLogger
 from typing import TYPE_CHECKING, cast
