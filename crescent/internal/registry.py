@@ -1,5 +1,6 @@
 from __future__ import annotations
 from asyncio import gather
+from contextlib import suppress
 
 from inspect import iscoroutinefunction
 from logging import getLogger
@@ -222,14 +223,12 @@ class CommandHandler:
         self,
         commands: List[CommandBuilder],
         guild: Snowflakeish,
-        all_guilds: List[Snowflakeish],
     ):
         if not self.application_id:
             raise AttributeError("Client `application_id` is not definied")
         await self.bot.rest.set_application_commands(
             application=self.application_id, commands=commands, guild=guild
         )
-        all_guilds.remove(guild)
 
     async def register_commands(self):
         guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
@@ -242,6 +241,8 @@ class CommandHandler:
         for command in commands:
             if command.guild_id:
                 command_guilds.setdefault(command.guild_id, []).append(command)
+                with suppress(ValueError):
+                    guilds.remove(command.guild_id)
             else:
                 global_commands.append(command)
 
@@ -250,11 +251,7 @@ class CommandHandler:
                 application=self.application_id, commands=global_commands
             ),
             gather_iter(
-                self.post_guild_command(
-                    commands=commands,
-                    guild=guild,
-                    all_guilds=guilds,
-                )
+                self.post_guild_command(commands, guild)
                 for guild, commands in command_guilds.items()
             ),
             gather_iter(
