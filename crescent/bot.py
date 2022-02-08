@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import traceback
 from concurrent.futures import Executor
 from itertools import chain
-import traceback
 from typing import TYPE_CHECKING, Callable, Sequence, overload
 
 from hikari import (
