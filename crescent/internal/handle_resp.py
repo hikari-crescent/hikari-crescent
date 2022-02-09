@@ -106,6 +106,7 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
             group = interaction.command_name
             sub_group = option.name
             name = unwrap(option.options)[0].name
+            options = unwrap(option.options)[0].options
 
     callback_options: Mapping[str, OptionTypesT | Message | User]
     if interaction.command_type is CommandType.SLASH:
