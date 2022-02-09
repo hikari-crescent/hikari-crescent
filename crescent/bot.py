@@ -1,6 +1,6 @@
 from __future__ import annotations
-from asyncio import create_task
 
+from asyncio import create_task
 from concurrent.futures import Executor
 from itertools import chain
 from traceback import print_exception
