@@ -32,9 +32,7 @@ class Bot(crescent.Bot):
     async def on_crescent_error(
         self, exc: Exception, ctx: crescent.Context, was_handled: bool
     ) -> None:
-        await ctx.respond(
-            f"default err handler called. was_handled={was_handled}"
-        )
+        await ctx.respond(f"default err handler called. was_handled={was_handled}")
         return await super().on_crescent_error(exc, ctx, was_handled)
 
 

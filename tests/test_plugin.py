@@ -1,6 +1,5 @@
 import crescent
 
-
 plugin = crescent.Plugin("plugin")
 
 
