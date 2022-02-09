@@ -88,26 +88,32 @@ async def msg_command(ctx: crescent.Context, msg: hikari.Message) -> None:
     await ctx.respond(str(msg))
 
 
-class Err(Exception):
-    pass
+class HandledErr(Exception):
+    def __call__(self) -> None:
+        super().__init__("Handled Exception")
+
+
+class UnhandledErr(Exception):
+    def __call__(self) -> None:
+        super().__init__("Unhandled Exception")
 
 
 @bot.include
-@crescent.catch(Err)
-async def handle_err(exc: Err, ctx: crescent.Context) -> None:
-    await ctx.respond(str(exc))
+@crescent.catch(HandledErr)
+async def handle_err(exc: HandledErr, ctx: crescent.Context) -> None:
+    await ctx.respond(f"HandledErr raised in {ctx.command}: {exc!r}")
 
 
 @bot.include
 @crescent.command
 async def raise_err(ctx: crescent.Context) -> None:
-    raise Err("test")
+    raise HandledErr()
 
 
 @bot.include
 @crescent.command
 async def raise_unhandled_err(ctx: crescent.Context) -> None:
-    raise Exception("test")
+    raise UnhandledErr()
 
 
 bot.run()
