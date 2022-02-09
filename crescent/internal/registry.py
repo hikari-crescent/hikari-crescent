@@ -230,11 +230,11 @@ class CommandHandler:
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
-                    " `application.commands` scope",
+                    " `application.commands` scope"
                 )
                 return
             _log.warning(
-                "Cannot post application commands to guild %s. Bot is not part of the guild.",
+                "Cannot post application commands to guild %s. Bot is not part of the guild."
             )
 
     async def register_commands(self):
