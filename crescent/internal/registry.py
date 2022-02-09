@@ -6,7 +6,7 @@ from logging import getLogger
 from typing import TYPE_CHECKING, cast
 from weakref import WeakValueDictionary
 
-from hikari import UNDEFINED, CommandOption, CommandType, OptionType, Snowflake
+from hikari import UNDEFINED, CommandOption, CommandType, ForbiddenError, OptionType, Snowflake
 from hikari.api import CommandBuilder
 
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
@@ -219,11 +219,23 @@ class CommandHandler:
         return tuple(built_commands.values())
 
     async def post_guild_command(self, commands: List[CommandBuilder], guild: Snowflakeish):
-        if not self.application_id:
-            raise AttributeError("Client `application_id` is not defined")
-        await self.bot.rest.set_application_commands(
-            application=self.application_id, commands=commands, guild=guild
-        )
+        try:
+            if not self.application_id:
+                raise AttributeError("Client `application_id` is not defined")
+            await self.bot.rest.set_application_commands(
+                application=self.application_id, commands=commands, guild=guild
+            )
+        except ForbiddenError:
+            if guild in self.bot.cache.get_guilds_view().keys():
+                _log.warning(
+                    "Cannot post application commands to guild %s. Consider removing this"
+                    " guild from the bot's `tracked_guilds` or inviting the bot with the"
+                    " `application.commands` scope",
+                )
+                return
+            _log.warning(
+                "Cannot post application commands to guild %s. Bot is not part of the guild.",
+            )
 
     async def register_commands(self):
         guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
