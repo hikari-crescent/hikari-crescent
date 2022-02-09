@@ -1,13 +1,12 @@
 # hikari-crescent
 
 <div align="center">
- 
+
 ![code-style-black](https://img.shields.io/badge/code%20style-black-black)
 ![mypy-checked](https://img.shields.io/badge/mypy-checked-blue)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/magpie-dev/hikari-crescent/main.svg)](https://results.pre-commit.ci/latest/github/magpie-dev/hikari-crescent/main)
 ![Pypi](https://img.shields.io/pypi/v/hikari-crescent)
 
- 
  </div>
  
 A simple command handler for [Hikari](https://github.com/hikari-py/hikari).
