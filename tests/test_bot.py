@@ -1,15 +1,13 @@
 import os
 
 import dotenv
+
 import crescent
 
 dotenv.load_dotenv()
 
 
-bot = crescent.Bot(
-    os.getenv("TOKEN"),
-    default_guild=int(os.getenv("GUILD")),
-)
+bot = crescent.Bot(os.getenv("TOKEN"), default_guild=int(os.getenv("GUILD")))
 
 
 group = crescent.Group("group")
