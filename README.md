@@ -1,6 +1,8 @@
 # hikari-crescent
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/magpie-dev/hikari-crescent/main.svg)](https://results.pre-commit.ci/latest/github/magpie-dev/hikari-crescent/main)
 
+A simple command handler for [Hikari](https://github.com/hikari-py/hikari).
+
 ## Features
  - Simple and intuitive API.
  - Slash, user, and message commands.
