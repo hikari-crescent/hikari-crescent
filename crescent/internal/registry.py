@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from asyncio import gather
+from collections import defaultdict
 from inspect import iscoroutinefunction
 from logging import getLogger
 from typing import TYPE_CHECKING, cast
@@ -14,7 +15,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Type
+    from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Type, DefaultDict
 
     from hikari import Snowflakeish, UndefinedOr
 
@@ -242,12 +243,12 @@ class CommandHandler:
 
         commands = self.build_commands()
 
-        command_guilds: Dict[Snowflakeish, List[AppCommand]] = {}
+        command_guilds: DefaultDict[Snowflakeish, List[AppCommand]] = defaultdict()
         global_commands: List[AppCommand] = []
 
         for command in commands:
             if command.guild_id:
-                command_guilds.setdefault(command.guild_id, []).append(command)
+                command_guilds[command.guild_id].append(command)
                 if command.guild_id in guilds:
                     guilds.remove(command.guild_id)
             else:
