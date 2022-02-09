@@ -8,6 +8,10 @@ A simple command handler for [Hikari](https://github.com/hikari-py/hikari).
  - Slash, user, and message commands.
  - Error handling.
 
+### Links
+> 📝 | [Docs](https://magpie-dev.github.io/hikari-crescent/crescent.html)<br>
+> 📦 | [Pypi](https://pypi.org/project/hikari-crescent/)
+
 ## Installation
 Crescent is supported in python3.8+.
 ```
