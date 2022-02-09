@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from asyncio import gather
-from contextlib import suppress
 from inspect import iscoroutinefunction
 from logging import getLogger
 from typing import TYPE_CHECKING, cast
@@ -237,7 +236,7 @@ class CommandHandler:
         for command in commands:
             if command.guild_id:
                 command_guilds.setdefault(command.guild_id, []).append(command)
-                with suppress(ValueError):
+                if command.guild_id in guilds:
                     guilds.remove(command.guild_id)
             else:
                 global_commands.append(command)
