@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 
     T = TypeVar("T")
 
-__all__: Sequence[str] = ("command", "user_command", "message_command")
+__all__: Sequence[str] = ("command", "user_command", "message_command", "deprecated")
 
 
 NoneType = type(None)
@@ -266,3 +266,7 @@ def message_command(
         name=name or callback.__name__,
         guild=guild,
     )
+
+
+def deprecated(command: MetaStruct[CommandCallbackT, AppCommandMeta]):
+    command.metadata.deprecated = True

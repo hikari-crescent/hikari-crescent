@@ -98,6 +98,9 @@ class CommandHandler:
         for command in self.registry.values():
             command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
 
+            if command.metadata.deprecated:
+                continue
+
             if command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
                 #
