@@ -200,8 +200,6 @@ def option(
     description: str = ...,
     *,
     choices: Optional[Sequence[Tuple[str, str]]] = ...,
-    min_value: Optional[str] = ...,
-    max_value: Optional[str] = ...,
     name: Optional[str] = ...,
 ) -> str:
     ...
@@ -214,8 +212,6 @@ def option(
     *,
     default: DEFAULT,
     choices: Optional[Sequence[Tuple[str, str]]] = ...,
-    min_value: Optional[str] = ...,
-    max_value: Optional[str] = ...,
     name: Optional[str] = ...,
 ) -> Union[str, DEFAULT]:
     ...
