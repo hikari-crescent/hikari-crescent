@@ -243,7 +243,7 @@ class CommandHandler:
 
         commands = self.build_commands()
 
-        command_guilds: DefaultDict[Snowflakeish, List[AppCommand]] = defaultdict()
+        command_guilds: DefaultDict[Snowflakeish, List[AppCommand]] = defaultdict(list)
         global_commands: List[AppCommand] = []
 
         for command in commands:
