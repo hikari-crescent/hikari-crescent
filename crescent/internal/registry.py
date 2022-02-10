@@ -1,32 +1,23 @@
 from __future__ import annotations
 
 from asyncio import gather
+from collections import defaultdict
 from inspect import iscoroutinefunction
-from itertools import chain
 from logging import getLogger
 from typing import TYPE_CHECKING, cast
 from weakref import WeakValueDictionary
 
-from hikari import (
-    UNDEFINED,
-    CommandOption,
-    CommandType,
-    ForbiddenError,
-    OptionType,
-    SlashCommand,
-    Snowflake,
-    Snowflakeish,
-)
+from hikari import UNDEFINED, CommandOption, CommandType, ForbiddenError, OptionType, Snowflake
+from hikari.api import CommandBuilder
 
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.meta_struct import MetaStruct
-from crescent.utils import gather_iter
-from crescent.utils.options import unwrap
+from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, Dict, Optional, Sequence, Type
+    from typing import Any, Awaitable, Callable, DefaultDict, Dict, List, Optional, Sequence, Type
 
-    from hikari import PartialCommand, UndefinedOr
+    from hikari import Snowflakeish, UndefinedOr
 
     from crescent.bot import Bot
     from crescent.commands.errors import _InternalErrorHandlerCallbackT
@@ -48,8 +39,6 @@ def register_command(
 
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
-
-    description = description or "\u200B"
 
     def hook(self: MetaStruct[CommandCallbackT, AppCommandMeta]) -> None:
         self.app._command_handler.register(self)
@@ -101,54 +90,6 @@ class CommandHandler:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
         self.registry[command.metadata.unique] = command
         return command
-
-    async def get_discord_commands(self) -> Sequence[AppCommand]:
-        """Fetches commands from Discord"""
-
-        res_commands = list(
-            await self.bot.rest.fetch_application_commands(unwrap(self.application_id))
-        )
-
-        async def fetch_guild_app_command(guild: Snowflakeish):
-            try:
-                return await self.bot.rest.fetch_application_commands(
-                    unwrap(self.application_id), guild=guild
-                )
-            except ForbiddenError:
-                _log.warning(
-                    "Cannot access application commands for guild %s. Consider "
-                    " removing this guild from the bot's `tracked_guilds` or inviting"
-                    " the bot with the `application.commands` scope.",
-                    guild,
-                )
-
-        guild_commands = await gather_iter(fetch_guild_app_command(guild) for guild in self.guilds)
-
-        for commands in guild_commands:
-            if commands is None:
-                continue
-            res_commands.extend(commands)
-
-        def hikari_to_crescent_command(command: PartialCommand) -> AppCommand:
-            if isinstance(command, SlashCommand):
-                return AppCommand(
-                    type=command.type,
-                    name=command.name,
-                    description=command.description,
-                    guild_id=command.guild_id,
-                    options=command.options,
-                    default_permission=command.default_permission,
-                    id=command.id,
-                )
-            return AppCommand(
-                type=command.type,
-                name=command.name,
-                guild_id=command.guild_id,
-                default_permission=command.default_permission,
-                id=command.id,
-            )
-
-        return [hikari_to_crescent_command(command) for command in res_commands]
 
     def build_commands(self) -> Sequence[AppCommand]:
 
@@ -253,7 +194,7 @@ class CommandHandler:
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
                         name=command.metadata.group.name,
-                        description="HIDDEN",
+                        description=unwrap(command.metadata.group).description or "\u200B",
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
@@ -278,62 +219,53 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def create_application_command(self, command: AppCommand):
+    async def post_guild_command(self, commands: List[CommandBuilder], guild: Snowflakeish):
         try:
-            if command.type in {CommandType.MESSAGE, CommandType.USER}:
-                await self.bot.rest.create_context_menu_command(
-                    application=unwrap(self.application_id),
-                    type=command.type,  # type: ignore
-                    name=command.name,
-                    guild=command.guild_id or UNDEFINED,
-                    default_permission=command.default_permission,
-                )
-                return
-            await self.bot.rest.create_slash_command(
-                application=unwrap(self.application_id),
-                name=command.name,
-                description=unwrap(command.description),
-                guild=command.guild_id or UNDEFINED,
-                options=command.options or UNDEFINED,
-                default_permission=command.default_permission,
+            if not self.application_id:
+                raise AttributeError("Client `application_id` is not defined")
+            await self.bot.rest.set_application_commands(
+                application=self.application_id, commands=commands, guild=guild
             )
         except ForbiddenError:
-            if command.guild_id in self.bot.cache.get_guilds_view().keys():
+            if guild in self.bot.cache.get_guilds_view().keys():
                 _log.warning(
-                    "Cannot post application command `%s` to guild %s. Consider removing this"
+                    "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
-                    " `application.commands` scope",
-                    command.name,
-                    command.guild_id,
+                    " `application.commands` scope"
                 )
                 return
             _log.warning(
-                "Cannot post application command `%s` to guild %s. Bot is not part of the guild.",
-                command.name,
-                command.guild_id,
+                "Cannot post application commands to guild %s. Bot is not part of the guild."
             )
-
-    async def delete_application_command(self, command: AppCommand):
-        await self.bot.rest.delete_application_command(
-            application=unwrap(self.application_id),
-            command=unwrap(command.id),
-            guild=command.guild_id or UNDEFINED,
-        )
 
     async def register_commands(self):
-        self.guilds = self.guilds or tuple(self.bot.cache.get_guilds_view().keys())
+        guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
 
-        discord_commands = await self.get_discord_commands()
-        local_commands = self.build_commands()
+        commands = self.build_commands()
 
-        to_delete = filter(
-            lambda dc: not any(dc.is_same_command(lc) for lc in local_commands), discord_commands
-        )
-        to_post = list(filter(lambda lc: lc not in discord_commands, local_commands))
+        command_guilds: DefaultDict[Snowflakeish, List[AppCommand]] = defaultdict()
+        global_commands: List[AppCommand] = []
+
+        for command in commands:
+            if command.guild_id:
+                command_guilds[command.guild_id].append(command)
+                if command.guild_id in guilds:
+                    guilds.remove(command.guild_id)
+            else:
+                global_commands.append(command)
 
         await gather(
-            *chain(
-                map(self.delete_application_command, to_delete),
-                map(self.create_application_command, to_post),
-            )
+            self.bot.rest.set_application_commands(
+                application=self.application_id, commands=global_commands
+            ),
+            gather_iter(
+                self.post_guild_command(commands, guild)
+                for guild, commands in command_guilds.items()
+            ),
+            gather_iter(
+                self.bot.rest.set_application_commands(
+                    application=self.application_id, commands=[], guild=guild
+                )
+                for guild in guilds
+            ),
         )

@@ -4,9 +4,11 @@ from typing import TYPE_CHECKING
 
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
+from hikari.api import CommandBuilder, EntityFactory
+from hikari.internal.data_binding import JSONObject
 
 if TYPE_CHECKING:
-    from typing import List, Optional, Sequence, Type
+    from typing import Any, Dict, List, Optional, Sequence, Type
 
     from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
 
@@ -58,7 +60,7 @@ __all__: Sequence[str] = ("AppCommandMeta", "AppCommand")
 
 
 @define
-class AppCommand:
+class AppCommand(CommandBuilder):
     """Local representation of an Application Command"""
 
     type: CommandType
@@ -68,7 +70,7 @@ class AppCommand:
 
     description: Optional[str] = None
     options: Optional[Sequence[CommandOption]] = None
-    id: Optional[Snowflake] = None
+    id: UndefinedOr[Snowflake] = UNDEFINED
 
     __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
 
@@ -89,6 +91,28 @@ class AppCommand:
 
     def is_same_command(self, o: AppCommand):
         return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
+
+    def build(self, encoder: EntityFactory) -> JSONObject:
+        out: Dict[str, Any] = {"name": self.name, "type": self.type}
+
+        if self.description:
+            out["description"] = self.description
+        if self.options:
+            out["options"] = [encoder.serialize_command_option(option) for option in self.options]
+        if self.default_permission:
+            out["default_permission"] = self.default_permission
+
+        return out
+
+    def set_default_permission(self, state: UndefinedOr[bool]) -> AppCommand:
+        self.default_permission = state
+        return self
+
+    def set_id(self, _id: UndefinedOr[Snowflakeish]) -> AppCommand:
+        if isinstance(_id, int):
+            _id = Snowflake(_id)
+        self.id = _id
+        return self
 
 
 @define

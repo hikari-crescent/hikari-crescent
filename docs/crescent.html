@@ -904,7 +904,7 @@ inheritance.</p>
         <span class="n">command_type</span><span class="o">=</span><span class="n">CommandType</span><span class="o">.</span><span class="n">SLASH</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\u200b</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
@@ -1492,7 +1492,7 @@ inheritance.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">application_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">application_id</span>
 
         <span class="k">async</span> <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="n">_</span><span class="p">:</span> <span class="n">StartedEvent</span><span class="p">):</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">register_commands</span><span class="p">()</span>
+            <span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">register_commands</span><span class="p">())</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">ShardReadyEvent</span><span class="p">,</span> <span class="n">shard_ready</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">StartedEvent</span><span class="p">,</span> <span class="n">started</span><span class="p">)</span>
@@ -1779,7 +1779,7 @@ rest_url : typing.Optional[builtins.str]
             <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">application_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">application_id</span>
 
         <span class="k">async</span> <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="n">_</span><span class="p">:</span> <span class="n">StartedEvent</span><span class="p">):</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">register_commands</span><span class="p">()</span>
+            <span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">register_commands</span><span class="p">())</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">ShardReadyEvent</span><span class="p">,</span> <span class="n">shard_ready</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">StartedEvent</span><span class="p">,</span> <span class="n">started</span><span class="p">)</span>

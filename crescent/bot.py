@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from asyncio import create_task
 from concurrent.futures import Executor
 from itertools import chain
 from traceback import print_exception
@@ -102,7 +103,7 @@ class Bot(GatewayBot):
             self._command_handler.application_id = event.application_id
 
         async def started(_: StartedEvent):
-            await self._command_handler.register_commands()
+            create_task(self._command_handler.register_commands())
 
         self.subscribe(ShardReadyEvent, shard_ready)
         self.subscribe(StartedEvent, started)
