@@ -24,6 +24,7 @@ black = "^21.12b0"
 pre-commit = "^2.17.0"
 codespell = "^2.1.0"
 pdoc = "^9.0.1"
+python-dotenv = "^0.19.2"
 
 [tool.black]
 line-length = 99
