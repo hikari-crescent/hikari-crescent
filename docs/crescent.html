@@ -998,7 +998,7 @@ inheritance.</p>
         
             <span class="def">def</span>
             <span class="name">option</span><span class="signature">(
-    option_type: Union[type[Union[str, bool, int, float, hikari.channels.PartialChannel, hikari.guilds.Role, hikari.users.User, <a href="#mentionable.Mentionable">crescent.mentionable.Mentionable</a>]], Sequence[Type[Union[hikari.channels.GuildTextChannel, hikari.channels.DMChannel, hikari.channels.GroupDMChannel, hikari.channels.GuildVoiceChannel, hikari.channels.GuildCategory, hikari.channels.GuildNewsChannel, hikari.channels.GuildStoreChannel, hikari.channels.GuildStageChannel]]]],
+    option_type: Union[type[Union[str, bool, int, float, hikari.channels.PartialChannel, hikari.guilds.Role, hikari.users.User, <a href="#mentionable.Mentionable">crescent.mentionable.Mentionable</a>]], Sequence[Type[hikari.channels.PartialChannel]]],
     description: str = &#39;No Description&#39;,
     *,
     default: Union[Any, hikari.undefined.UndefinedType] = UNDEFINED,
@@ -1006,13 +1006,13 @@ inheritance.</p>
     min_value: Union[int, float, NoneType] = None,
     max_value: Union[int, float, NoneType] = None,
     name: Union[str, NoneType] = None
-) -&gt; Any</span>:
+) -&gt; <a href="#commands.options.ClassCommandOption">crescent.commands.options.ClassCommandOption</a>[typing.Any]</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">option</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
-    <span class="n">option_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">OptionTypesT</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">VALID_CHANNEL_TYPES</span><span class="p">]]],</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">option</span><span class="p">(</span>
+    <span class="n">option_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">OptionTypesT</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">PartialChannel</span><span class="p">]]],</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;No Description&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">default</span><span class="p">:</span> <span class="n">UndefinedOr</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">UNDEFINED</span><span class="p">,</span>
@@ -1020,7 +1020,7 @@ inheritance.</p>
     <span class="n">min_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassCommandOption</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">isclass</span><span class="p">(</span><span class="n">option_type</span><span class="p">)</span>
         <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">option_type</span><span class="p">,</span> <span class="n">PartialChannel</span><span class="p">)</span>
@@ -3099,12 +3099,12 @@ Protocol classes can be generic, they are defined as::</p>
 
         
         <span class="def">class</span>
-        <span class="name">ClassCommandOption</span>:
+        <span class="name">ClassCommandOption</span><wbr>(<span class="base">typing.Generic[~T]</span>):
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ClassCommandOption</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ClassCommandOption</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="nb">type</span><span class="p">:</span> <span class="n">OptionType</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
@@ -3125,11 +3125,26 @@ Protocol classes can be generic, they are defined as::</p>
             <span class="n">min_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_value</span><span class="p">,</span>
             <span class="n">max_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_value</span><span class="p">,</span>
         <span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Self</span><span class="p">,</span> <span class="n">inst</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Self</span><span class="p">,</span> <span class="n">inst</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inst</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="c1"># we should never reach this point</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>ClassCommandOption(name: 'Optional[str]', type: 'OptionType', description: 'str', default: 'UndefinedNoneOr[Any]', choices: 'Optional[Sequence[CommandChoice]]', channel_types: 'Optional[Sequence[ChannelType]]', min_value: 'Optional[Union[int, float]]', max_value: 'Optional[Union[int, float]]')</p>
+            <div class="docstring"><p>ClassCommandOption(<em>args, *</em>kwds)</p>
 </div>
 
 
