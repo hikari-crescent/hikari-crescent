@@ -7,7 +7,6 @@ from typing import (
     Any,
     Dict,
     Generic,
-    Literal,
     Optional,
     Sequence,
     Tuple,
