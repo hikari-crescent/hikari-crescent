@@ -114,4 +114,10 @@ async def raise_unhandled_err(ctx: crescent.Context) -> None:
     raise UnhandledErr()
 
 
+@bot.include
+@crescent.deprecated
+@crescent.command
+async def deprecated_command(ctx: crescent.Context) -> None:
+    pass
+
 bot.run()

@@ -29,7 +29,7 @@ async def say(ctx: crescent.Context, word: str):
 @crescent.command
 async def add(
     ctx: crescent.Context,
-    first_number: Annotated[int, "This is a description", crescent.MaxValue(50),],
+    first_number: Annotated[int, "This is a description", crescent.MaxValue(50), ],
     second_number: Annotated[
         int,
         crescent.Choices(
@@ -58,6 +58,15 @@ async def my_message_command(ctx: crescent.Context, message: hikari.Message):
 @crescent.event
 async def event(event: hikari.ShardReadyEvent):
     print(event)
+
+
+# Deprecated commands will not be posted to Discord but are still used respond to interactions.
+# This can be used to have a function for an old version of a guild command that has been updated.
+@bot.include
+@crescent.deprecated
+@crescent.command
+async def deprecated_command(ctx: crescent.Context):
+    pass
 
 
 bot.run()
