@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from contextlib import suppress
-from typing import TYPE_CHECKING, Mapping, Optional, cast
 from logging import getLogger
+from typing import TYPE_CHECKING, Mapping, Optional, cast
 
 from hikari import UNDEFINED, CommandType, InteractionType, OptionType
 
@@ -39,10 +39,7 @@ async def handle_resp(event: InteractionCreateEvent):
     interaction = event.interaction
     bot = event.app
 
-    if interaction.type in (
-        InteractionType.MESSAGE_COMPONENT,
-        InteractionType.AUTOCOMPLETE,
-    ):
+    if interaction.type in (InteractionType.MESSAGE_COMPONENT, InteractionType.AUTOCOMPLETE):
         return
 
     if TYPE_CHECKING:
