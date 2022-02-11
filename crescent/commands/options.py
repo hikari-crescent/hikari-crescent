@@ -167,52 +167,35 @@ def option(
 
 @overload
 def option(
-    option_type: Type[User],
-    description: str = ...,
-    *,
-    name: Optional[str] = ...,
+    option_type: Type[User], description: str = ..., *, name: Optional[str] = ...
 ) -> ClassCommandOption[User]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[User],
-    description: str = ...,
-    *,
-    default: DEFAULT,
-    name: Optional[str] = ...,
+    option_type: Type[User], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
 ) -> ClassCommandOption[Union[User, DEFAULT]]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[Role],
-    description: str = ...,
-    *,
-    name: Optional[str] = ...,
+    option_type: Type[Role], description: str = ..., *, name: Optional[str] = ...
 ) -> ClassCommandOption[Role]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[Role],
-    description: str = ...,
-    *,
-    default: DEFAULT,
-    name: Optional[str] = ...,
+    option_type: Type[Role], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
 ) -> ClassCommandOption[Union[Role, DEFAULT]]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[Mentionable],
-    description: str = ...,
-    *,
-    name: Optional[str] = ...,
+    option_type: Type[Mentionable], description: str = ..., *, name: Optional[str] = ...
 ) -> ClassCommandOption[Mentionable]:
     ...
 
@@ -230,21 +213,14 @@ def option(
 
 @overload
 def option(  # type: ignore
-    option_type: Type[bool],
-    description: str = ...,
-    *,
-    name: Optional[str] = ...,
+    option_type: Type[bool], description: str = ..., *, name: Optional[str] = ...
 ) -> ClassCommandOption[bool]:
     ...
 
 
 @overload
 def option(  # type: ignore
-    option_type: Type[bool],
-    description: str = ...,
-    *,
-    default: DEFAULT,
-    name: Optional[str] = ...,
+    option_type: Type[bool], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
 ) -> ClassCommandOption[Union[bool, DEFAULT]]:
     ...
 
