@@ -219,7 +219,7 @@ def option(
 
 def option(  # type: ignore
     option_type: Union[Type[OptionTypesT], Sequence[Type[VALID_CHANNEL_TYPES]]],
-    description: str = "\u200B",
+    description: str = "No Description",
     *,
     default: UndefinedOr[Any] = UNDEFINED,
     choices: Sequence[Tuple[str, Union[str, int, float]]] | None = None,

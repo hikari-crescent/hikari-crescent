@@ -103,7 +103,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
         return None
 
     name = get_arg(Name) or name
-    description = get_arg(Description) or get_arg(str) or "\u200B"
+    description = get_arg(Description) or get_arg(str) or "No Description"
     choices = get_arg(Choices)
     channel_types = _channel_types or get_arg(ChannelTypes)
     min_value = get_arg(MinValue)
@@ -220,7 +220,7 @@ def command(
         command_type=CommandType.SLASH,
         name=name or callback.__name__,
         guild=guild,
-        description=description or "\u200b",
+        description=description or "No Description",
         options=options,
     )
 

@@ -125,7 +125,7 @@ class CommandHandler:
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
                         name=unwrap(command.metadata.group).name,
-                        description=unwrap(command.metadata.group).description or "\u200B",
+                        description=unwrap(command.metadata.group).description or "No Description",
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
@@ -139,7 +139,7 @@ class CommandHandler:
 
                 sub_command_group = CommandOption(
                     name=unwrap(command.metadata.sub_group).name,
-                    description=unwrap(command.metadata.sub_group).description or "\u200B",
+                    description=unwrap(command.metadata.sub_group).description or "No Description",
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
                     is_required=None,  # type: ignore
@@ -194,7 +194,7 @@ class CommandHandler:
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
                         name=command.metadata.group.name,
-                        description=unwrap(command.metadata.group).description or "\u200B",
+                        description=unwrap(command.metadata.group).description or "No Description",
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
