@@ -904,7 +904,7 @@ inheritance.</p>
         <span class="n">command_type</span><span class="o">=</span><span class="n">CommandType</span><span class="o">.</span><span class="n">SLASH</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\u200b</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">&quot;No Description&quot;</span><span class="p">,</span>
         <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
@@ -999,7 +999,7 @@ inheritance.</p>
             <span class="def">def</span>
             <span class="name">option</span><span class="signature">(
     option_type: Union[type[Union[str, bool, int, float, hikari.channels.PartialChannel, hikari.guilds.Role, hikari.users.User, <a href="#mentionable.Mentionable">crescent.mentionable.Mentionable</a>]], Sequence[Type[Union[hikari.channels.GuildTextChannel, hikari.channels.DMChannel, hikari.channels.GroupDMChannel, hikari.channels.GuildVoiceChannel, hikari.channels.GuildCategory, hikari.channels.GuildNewsChannel, hikari.channels.GuildStoreChannel, hikari.channels.GuildStageChannel]]]],
-    description: str = &#39;\u200b&#39;,
+    description: str = &#39;No Description&#39;,
     *,
     default: Union[Any, hikari.undefined.UndefinedType] = UNDEFINED,
     choices: &#39;Sequence[Tuple[str, Union[str, int, float]]] | None&#39; = None,
@@ -1013,7 +1013,7 @@ inheritance.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">option</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
     <span class="n">option_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">OptionTypesT</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">VALID_CHANNEL_TYPES</span><span class="p">]]],</span>
-    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u200B</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;No Description&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">default</span><span class="p">:</span> <span class="n">UndefinedOr</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">UNDEFINED</span><span class="p">,</span>
     <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
