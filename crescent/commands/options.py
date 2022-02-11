@@ -229,7 +229,7 @@ def option(
 
 
 @overload
-def option(
+def option(  # type: ignore
     option_type: Type[bool],
     description: str = ...,
     *,
@@ -239,7 +239,7 @@ def option(
 
 
 @overload
-def option(
+def option(  # type: ignore
     option_type: Type[bool],
     description: str = ...,
     *,
