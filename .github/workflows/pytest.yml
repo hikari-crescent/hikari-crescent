@@ -1,4 +1,4 @@
-name: Mypy
+name: Pytest
 on: [push, pull_request]
 jobs:
   mypy:
@@ -13,8 +13,7 @@ jobs:
           architecture: 'x64'
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.3
-      - name: run Mypy
+      - name: run Pytest
         run: |
           poetry install
-          poetry run mypy crescent
-          poetry run mypy tests
+          poetry run pytest tests/crescent

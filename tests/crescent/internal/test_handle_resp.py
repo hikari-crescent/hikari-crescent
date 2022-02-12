@@ -39,7 +39,7 @@ async def test_handle_resp():
             command_type=CommandType.SLASH,
             resolved=None,
             options=None,
-        )
+        ),
     )
 
     await handle_resp(event)

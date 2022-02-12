@@ -60,7 +60,7 @@ class _Parameter(NamedTuple):
     default: Any
 
 
-def _unwrap_optional(origin: Type) -> Type:
+def _unwrap_optional(origin: Type) -> Any:
     # Support for `Optional` typehint
     if get_origin(origin) is Union:
         args = get_args(origin)
