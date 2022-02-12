@@ -12,5 +12,5 @@ class MockBot(Bot):
 
         self._command_handler = CommandHandler(self, [])
 
-    def run():
+    def run(self):
         raise Exception("`run` method of `MockBot` should never be used")
