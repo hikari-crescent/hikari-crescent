@@ -23,7 +23,7 @@ jobs:
         run: |
           poetry install
           poetry run pytest tests/crescent
-          poetry run pytest tests/crescent --cov
+          poetry run pytest tests/crescent --cov=crescent/
       - uses: actions/upload-artifact@v2
         with:
           name: coverage.${{ matrix.python-version }}.${{ matrix.os }})
