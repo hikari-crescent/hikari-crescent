@@ -21,12 +21,13 @@ def convert_signiture(param: Parameter, type_hints: Dict[str, Type]) -> Paramete
 
 
 def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
+    # NOTE: type: ignore is used because mypy is on python version 3.8
+
     if version_info >= (3, 10):
-        # Mypy is on python version 3.8 but this is only valid in 3.10+
         return signature(func, eval_str=True).parameters.values()  # type: ignore
 
     if version_info >= (3, 9):
-        type_hints = get_type_hints(func, include_extras=True)
+        type_hints = get_type_hints(func, include_extras=True)  # type: ignore
     else:
         type_hints = get_type_hints(func)
 
