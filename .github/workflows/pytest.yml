@@ -8,7 +8,7 @@ jobs:
         python-version: [ '3.8', '3.9', '3.10' ]
         os: [ ubuntu, windows, macos-11 ]
 
-    name: pytest (${{ matrix.python-version }} ${{ matrix.os }})
+    name: ${{ matrix.python-version }} ${{ matrix.os }})
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
