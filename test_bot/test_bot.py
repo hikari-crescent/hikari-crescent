@@ -36,7 +36,7 @@ class Bot(crescent.Bot):
         return await super().on_crescent_error(exc, ctx, was_handled)
 
 
-bot = Bot(os.getenv("TOKEN"), default_guild=int(os.getenv("GUILD")))
+bot = Bot(os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]))
 
 
 group = crescent.Group("group", hooks=[myhook])

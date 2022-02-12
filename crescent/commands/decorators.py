@@ -60,27 +60,30 @@ class _Parameter(NamedTuple):
     default: Any
 
 
+def _unwrap_optional(origin: Type) -> Type:
+    # Support for `Optional` typehint
+    if get_origin(origin) is Union:
+        args = get_args(origin)
+        if len(args) == 2 and NoneType in args:
+            return args[0] if args[1] is NoneType else args[1]
+        raise ValueError("Typehint must be `T`, `Optional[T]`, or `Union[T, None]`")
+    return origin
+
+
 def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     name = param.name
     typehint = param.annotation
 
     metadata = ()
 
-    origin = typehint
-    if hasattr(typehint, "__metadata__"):
-        metadata = typehint.__metadata__
-        origin = typehint.__origin__
+    origin = _unwrap_optional(typehint)
+
+    if hasattr(origin, "__metadata__"):
+        metadata = origin.__metadata__
+        origin = _unwrap_optional(origin.__origin__)
 
     if origin is Context or origin is param.empty:
         return None
-
-    # Support for `Optional` typehint
-    if get_origin(origin) is Union:
-        args = get_args(origin)
-        if len(args) == 2 and NoneType in args:
-            origin = args[0] if args[1] is NoneType else args[1]
-        else:
-            raise ValueError("Typehint must be `T`, `Optional[T]`, or `Union[T, None]`")
 
     _type = OPTIONS_TYPE_MAP.get(origin)
 
