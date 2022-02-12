@@ -1,8 +1,8 @@
 name: Pytest
 on: [push, pull_request]
 jobs:
-  mypy:
-    name: mypy
+  pytest:
+    name: pytest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
