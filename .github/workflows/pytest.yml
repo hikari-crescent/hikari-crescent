@@ -41,11 +41,11 @@ jobs:
           architecture: 'x64'
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.3
-      - name: Download cov
-        uses: actions/download-artifact@v1
-        with:
-          name: coverage
       - name: Download Coverage
+        uses: actions/download-artifact@v2
+        with:
+          path: .coverage
+      - name: Combine Coverage
         run: |
           poetry run coverage combine
           poetry run coverage xml
