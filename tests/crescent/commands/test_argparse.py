@@ -21,7 +21,7 @@ from hikari import (
 )
 from typing_extensions import Annotated
 
-from crescent import Name, Choices, ChannelTypes, MaxValue, MinValue, Description
+from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
 from crescent.commands.decorators import _gen_command_option, _Parameter
 
 

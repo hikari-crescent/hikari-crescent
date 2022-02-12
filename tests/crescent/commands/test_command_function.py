@@ -1,8 +1,9 @@
 from typing import Optional
-from typing_extensions import Annotated as Atd
 
 from hikari import UNDEFINED, CommandOption, CommandType, Message, OptionType, User
-from crescent import command, message_command, user_command, Context
+from typing_extensions import Annotated as Atd
+
+from crescent import Context, command, message_command, user_command
 from crescent.internal.app_command import AppCommand, AppCommandMeta
 
 

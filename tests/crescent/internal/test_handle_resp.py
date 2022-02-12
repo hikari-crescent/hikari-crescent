@@ -1,10 +1,9 @@
+from hikari import CommandInteraction, CommandType, InteractionCreateEvent, InteractionType
 from pytest import mark
 
-from hikari import CommandInteraction, CommandType, InteractionCreateEvent, InteractionType
-from tests.utils import MockBot
-
-from crescent import command, Context
+from crescent import Context, command
 from crescent.internal.handle_resp import handle_resp
+from tests.utils import MockBot
 
 
 @mark.asyncio
