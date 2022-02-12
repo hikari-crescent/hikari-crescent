@@ -1,16 +1,13 @@
 from __future__ import annotations
 
-from sys import version_info
-
-from typing import get_type_hints, TYPE_CHECKING
 from inspect import Parameter, signature
+from sys import version_info
+from typing import TYPE_CHECKING, get_type_hints
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence
 
-__all__: Sequence[str] = (
-    "get_parameters",
-)
+__all__: Sequence[str] = ("get_parameters",)
 
 
 def convert_signiture(param: Parameter, type_hints) -> Parameter:
@@ -31,6 +28,4 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
     type_hints = get_type_hints(func)
     sig = signature(func)
 
-    return [
-        convert_signiture(param, type_hints) for param in sig.parameters.values()
-    ]
+    return [convert_signiture(param, type_hints) for param in sig.parameters.values()]
