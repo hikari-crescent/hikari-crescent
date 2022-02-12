@@ -5,12 +5,12 @@ from sys import version_info
 from typing import TYPE_CHECKING, get_type_hints
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Sequence
+    from typing import Any, Callable, Sequence, Dict, Type
 
 __all__: Sequence[str] = ("get_parameters",)
 
 
-def convert_signiture(param: Parameter, type_hints) -> Parameter:
+def convert_signiture(param: Parameter, type_hints: Dict[str, Type]) -> Parameter:
     annotation = type_hints.get(param.name, None)
     return Parameter(
         name=param.name,
@@ -25,7 +25,11 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
         # Mypy is on python version 3.8 but this is only valid in 3.10+
         return signature(func, eval_str=True).parameters.values()  # type: ignore
 
-    type_hints = get_type_hints(func)
+    if version_info >= (3, 9):
+        type_hints = get_type_hints(func, include_extras=True)
+    else:
+        type_hints = get_type_hints(func)
+
     sig = signature(func)
 
     return [convert_signiture(param, type_hints) for param in sig.parameters.values()]
