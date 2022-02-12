@@ -1,4 +1,6 @@
-from inspect import _empty
+from dataclasses import dataclass
+from inspect import _empty, _ParameterKind
+from typing import Any, Type
 
 from hikari import (
     ChannelType,
@@ -22,23 +24,43 @@ from hikari import (
 from typing_extensions import Annotated
 
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
-from crescent.commands.decorators import _gen_command_option, _Parameter
+from crescent.commands.decorators import _gen_command_option
+
+
+@dataclass
+class Parameter:
+    name: str
+    annotation: Type
+    default: Any
+    kind: _ParameterKind
+
+    empty: Type[_empty] = _empty
+
+
+POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD
 
 
 def test_gen_command_option():
     assert (
-        _gen_command_option(_Parameter(name="self", annotation=_empty, empty=_empty, default=None))
+        _gen_command_option(
+            Parameter(
+                name="self",
+                annotation=_empty,
+                default=None,
+                kind=POSITIONAL_OR_KEYWORD
+            )
+        )
         is None
     )
 
     assert _gen_command_option(
-        _Parameter(name="1234", annotation=str, empty=_empty, default=_empty)
+        Parameter(name="1234", annotation=str, default=_empty, kind=POSITIONAL_OR_KEYWORD)
     ) == CommandOption(
         name="1234", type=OptionType.STRING, description="No Description", is_required=True
     )
 
     assert _gen_command_option(
-        _Parameter(name="1234", annotation=str, empty=_empty, default=12345)
+        Parameter(name="1234", annotation=str, default=12345, kind=POSITIONAL_OR_KEYWORD)
     ) == CommandOption(
         name="1234", type=OptionType.STRING, description="No Description", is_required=False
     )
@@ -83,7 +105,12 @@ def test_annotations():
         kwargs.update(params)
 
         assert _gen_command_option(
-            _Parameter(name="1234", annotation=annotation, empty=_empty, default=None)
+            Parameter(
+                name="1234",
+                annotation=annotation,
+                default=None,
+                kind=POSITIONAL_OR_KEYWORD
+            )
         ) == CommandOption(**kwargs)
 
 
@@ -116,7 +143,12 @@ def test_gen_channel_options():
 
     for channel_in, channel_types in channels:
         assert _gen_command_option(
-            _Parameter(name="1234", annotation=channel_in, empty=_empty, default=12345)
+            Parameter(
+                name="1234",
+                annotation=channel_in,
+                default=12345,
+                kind=POSITIONAL_OR_KEYWORD,
+            )
         ) == CommandOption(
             name="1234",
             type=OptionType.CHANNEL,
