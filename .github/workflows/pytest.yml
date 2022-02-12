@@ -47,6 +47,7 @@ jobs:
           path: .coverage
       - name: Combine Coverage
         run: |
+          poetry install
           poetry run coverage combine .coverage/
           poetry run coverage xml -i
       - name: Upload coverage to codeclimate
