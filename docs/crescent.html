@@ -1434,6 +1434,7 @@ inheritance.</p>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">tracked_guilds</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_unknown_interactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;crescent&quot;</span><span class="p">,</span>
         <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Executor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1482,6 +1483,8 @@ inheritance.</p>
 
         <span class="k">if</span> <span class="n">default_guild</span> <span class="ow">and</span> <span class="n">default_guild</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tracked_guilds</span><span class="p">:</span>
             <span class="n">tracked_guilds</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">tracked_guilds</span><span class="p">,</span> <span class="p">(</span><span class="n">default_guild</span><span class="p">,)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_unknown_interactions</span> <span class="o">=</span> <span class="n">allow_unknown_interactions</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="p">:</span> <span class="n">CommandHandler</span> <span class="o">=</span> <span class="n">CommandHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracked_guilds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_error_handler</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1698,6 +1701,7 @@ rest_url : typing.Optional[builtins.str]
     *,
     tracked_guilds: Sequence[Union[hikari.snowflakes.Snowflake, int]] = None,
     default_guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
+    allow_unknown_interactions: bool = False,
     allow_color: bool = True,
     banner: Union[str, NoneType] = &#39;crescent&#39;,
     executor: Union[concurrent.futures._base.Executor, NoneType] = None,
@@ -1721,6 +1725,7 @@ rest_url : typing.Optional[builtins.str]
         <span class="o">*</span><span class="p">,</span>
         <span class="n">tracked_guilds</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_unknown_interactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;crescent&quot;</span><span class="p">,</span>
         <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Executor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1769,6 +1774,8 @@ rest_url : typing.Optional[builtins.str]
 
         <span class="k">if</span> <span class="n">default_guild</span> <span class="ow">and</span> <span class="n">default_guild</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tracked_guilds</span><span class="p">:</span>
             <span class="n">tracked_guilds</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">tracked_guilds</span><span class="p">,</span> <span class="p">(</span><span class="n">default_guild</span><span class="p">,)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_unknown_interactions</span> <span class="o">=</span> <span class="n">allow_unknown_interactions</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="p">:</span> <span class="n">CommandHandler</span> <span class="o">=</span> <span class="n">CommandHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracked_guilds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_error_handler</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
