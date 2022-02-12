@@ -1,7 +1,4 @@
-from typing import Any
-
 from crescent import Bot
-from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler
 
 
@@ -15,6 +12,7 @@ class MockBot(Bot):
 
         self._command_handler = CommandHandler(self, [])
 
-    def include(self, command: MetaStruct[Any, Any]):  # type: ignore
-        self._command_handler.register(command)
-        return command
+    def run():
+        raise Exception(
+            "`run` method of `MockBot` should never be used"
+        )
