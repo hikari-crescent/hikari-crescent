@@ -45,4 +45,5 @@ dmypy.json
 
 # coverage-py
 .coverage
+.coverage.*
 coverage.xml
