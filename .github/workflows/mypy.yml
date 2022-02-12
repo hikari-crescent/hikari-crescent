@@ -17,4 +17,3 @@ jobs:
         run: |
           poetry install
           poetry run mypy crescent
-          poetry run mypy tests
