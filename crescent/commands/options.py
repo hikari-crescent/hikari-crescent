@@ -6,6 +6,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     Optional,
     Sequence,
     Tuple,
@@ -96,8 +97,12 @@ def get_channel_types(*channels: Type[PartialChannel]) -> set[ChannelType]:
     return types
 
 
+T = TypeVar("T")
+Self = TypeVar("Self")
+
+
 @dataclass
-class ClassCommandOption:
+class ClassCommandOption(Generic[T]):
     name: Optional[str]
     type: OptionType
     description: str
@@ -119,106 +124,185 @@ class ClassCommandOption:
             max_value=self.max_value,
         )
 
+    @overload
+    def __get__(self: Self, inst: None, cls: Any) -> Self:
+        ...
+
+    @overload
+    def __get__(self: Self, inst: object, cls: Any) -> T:
+        ...
+
+    def __get__(self, inst: Any | None, cls: Any) -> Any:
+        if inst is None:
+            return self
+
+        # we should never reach this point
+        raise NotImplementedError
+
 
 DEFAULT = TypeVar("DEFAULT")
-INT_OR_FLOAT = TypeVar("INT_OR_FLOAT", int, float)
-USER_ROLE_MENTION_OR_BOOL = TypeVar("USER_ROLE_MENTION_OR_BOOL", User, Role, Mentionable, bool)
 
 
 @overload
 def option(
-    option_type: Union[Type[PartialChannel], Sequence[PartialChannel]],
+    option_type: Union[Type[PartialChannel], Sequence[Type[PartialChannel]]],
     description: str = ...,
     *,
     name: Optional[str] = ...,
-) -> InteractionChannel:
+) -> ClassCommandOption[InteractionChannel]:
     ...
 
 
 @overload
 def option(
-    option_type: Union[Type[PartialChannel], Sequence[PartialChannel]],
-    description: str = ...,
-    *,
-    default: DEFAULT,
-    name: Optional[str] = ...,
-) -> Union[InteractionChannel, DEFAULT]:
-    ...
-
-
-@overload
-def option(
-    option_type: Type[USER_ROLE_MENTION_OR_BOOL],
-    description: str = ...,
-    *,
-    name: Optional[str] = ...,
-) -> USER_ROLE_MENTION_OR_BOOL:
-    ...
-
-
-@overload
-def option(
-    option_type: Type[USER_ROLE_MENTION_OR_BOOL],
+    option_type: Union[Type[PartialChannel], Sequence[Type[PartialChannel]]],
     description: str = ...,
     *,
     default: DEFAULT,
     name: Optional[str] = ...,
-) -> Union[USER_ROLE_MENTION_OR_BOOL, DEFAULT]:
+) -> ClassCommandOption[Union[InteractionChannel, DEFAULT]]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[INT_OR_FLOAT],
-    description: str = ...,
-    *,
-    choices: Optional[Sequence[Tuple[str, INT_OR_FLOAT]]] = ...,
-    min_value: Optional[INT_OR_FLOAT] = ...,
-    max_value: Optional[INT_OR_FLOAT] = ...,
-    name: Optional[str] = ...,
-) -> INT_OR_FLOAT:
+    option_type: Type[User], description: str = ..., *, name: Optional[str] = ...
+) -> ClassCommandOption[User]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[INT_OR_FLOAT],
-    description: str = ...,
-    *,
-    default: DEFAULT,
-    choices: Optional[Sequence[Tuple[str, INT_OR_FLOAT]]] = ...,
-    min_value: Optional[INT_OR_FLOAT] = ...,
-    max_value: Optional[INT_OR_FLOAT] = ...,
-    name: Optional[str] = ...,
-) -> Union[INT_OR_FLOAT, DEFAULT]:
+    option_type: Type[User], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
+) -> ClassCommandOption[Union[User, DEFAULT]]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[str],
-    description: str = ...,
-    *,
-    choices: Optional[Sequence[Tuple[str, str]]] = ...,
-    name: Optional[str] = ...,
-) -> str:
+    option_type: Type[Role], description: str = ..., *, name: Optional[str] = ...
+) -> ClassCommandOption[Role]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[str],
+    option_type: Type[Role], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
+) -> ClassCommandOption[Union[Role, DEFAULT]]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[Mentionable], description: str = ..., *, name: Optional[str] = ...
+) -> ClassCommandOption[Mentionable]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[Mentionable],
     description: str = ...,
     *,
     default: DEFAULT,
-    choices: Optional[Sequence[Tuple[str, str]]] = ...,
     name: Optional[str] = ...,
-) -> Union[str, DEFAULT]:
+) -> ClassCommandOption[Union[Mentionable, DEFAULT]]:
     ...
 
 
+@overload
 def option(  # type: ignore
-    option_type: Union[Type[OptionTypesT], Sequence[Type[VALID_CHANNEL_TYPES]]],
+    option_type: Type[bool], description: str = ..., *, name: Optional[str] = ...
+) -> ClassCommandOption[bool]:
+    ...
+
+
+@overload
+def option(  # type: ignore
+    option_type: Type[bool], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
+) -> ClassCommandOption[Union[bool, DEFAULT]]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[int],
+    description: str = ...,
+    *,
+    choices: Optional[Sequence[Tuple[str, int]]] = ...,
+    min_value: Optional[int] = ...,
+    max_value: Optional[int] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[int]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[int],
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    choices: Optional[Sequence[Tuple[str, int]]] = ...,
+    min_value: Optional[int] = ...,
+    max_value: Optional[int] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[Union[int, DEFAULT]]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[float],
+    description: str = ...,
+    *,
+    choices: Optional[Sequence[Tuple[str, float]]] = ...,
+    min_value: Optional[float] = ...,
+    max_value: Optional[float] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[float]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[float],
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    choices: Optional[Sequence[Tuple[str, float]]] = ...,
+    min_value: Optional[float] = ...,
+    max_value: Optional[float] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[Union[float, DEFAULT]]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[str],
+    description: str = ...,
+    *,
+    choices: Optional[Sequence[Tuple[str, str]]] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[str]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[str],
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    choices: Optional[Sequence[Tuple[str, str]]] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[Union[str, DEFAULT]]:
+    ...
+
+
+def option(
+    option_type: Union[Type[OptionTypesT], Sequence[Type[PartialChannel]]],
     description: str = "No Description",
     *,
     default: UndefinedOr[Any] = UNDEFINED,
@@ -226,7 +310,7 @@ def option(  # type: ignore
     min_value: Optional[Union[int, float]] = None,
     max_value: Optional[Union[int, float]] = None,
     name: Optional[str] = None,
-) -> Any:
+) -> ClassCommandOption[Any]:
     if (
         isclass(option_type)
         and issubclass(option_type, PartialChannel)
