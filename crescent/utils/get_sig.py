@@ -5,7 +5,7 @@ from sys import version_info
 from typing import TYPE_CHECKING, get_type_hints
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Sequence, Dict, Type
+    from typing import Any, Callable, Dict, Sequence, Type
 
 __all__: Sequence[str] = ("get_parameters",)
 
