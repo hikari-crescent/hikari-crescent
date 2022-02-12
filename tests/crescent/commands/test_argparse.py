@@ -43,12 +43,7 @@ POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD
 def test_gen_command_option():
     assert (
         _gen_command_option(
-            Parameter(
-                name="self",
-                annotation=_empty,
-                default=None,
-                kind=POSITIONAL_OR_KEYWORD
-            )
+            Parameter(name="self", annotation=_empty, default=None, kind=POSITIONAL_OR_KEYWORD)
         )
         is None
     )
@@ -105,12 +100,7 @@ def test_annotations():
         kwargs.update(params)
 
         assert _gen_command_option(
-            Parameter(
-                name="1234",
-                annotation=annotation,
-                default=None,
-                kind=POSITIONAL_OR_KEYWORD
-            )
+            Parameter(name="1234", annotation=annotation, default=None, kind=POSITIONAL_OR_KEYWORD)
         ) == CommandOption(**kwargs)
 
 
@@ -144,10 +134,7 @@ def test_gen_channel_options():
     for channel_in, channel_types in channels:
         assert _gen_command_option(
             Parameter(
-                name="1234",
-                annotation=channel_in,
-                default=12345,
-                kind=POSITIONAL_OR_KEYWORD,
+                name="1234", annotation=channel_in, default=12345, kind=POSITIONAL_OR_KEYWORD
             )
         ) == CommandOption(
             name="1234",
