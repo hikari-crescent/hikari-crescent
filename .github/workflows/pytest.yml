@@ -44,11 +44,11 @@ jobs:
       - name: Download Coverage
         uses: actions/download-artifact@v2
         with:
-          path: .coverage
+          path: .cov
       - name: Combine Coverage
         run: |
           poetry install
-          poetry run coverage combine .coverage/
+          poetry run coverage combine .cov/
           poetry run coverage xml -i
       - name: Upload coverage to codeclimate
         uses: paambaati/codeclimate-action@v3.0.0
