@@ -1,18 +1,15 @@
 from __future__ import annotations
 
 from functools import partial
-from inspect import signature
 from typing import (
     TYPE_CHECKING,
     Awaitable,
     Callable,
     Dict,
-    NamedTuple,
     Type,
     Union,
     get_args,
     get_origin,
-    get_type_hints,
     overload,
 )
 
@@ -31,9 +28,10 @@ from crescent.commands.args import (
 from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption, get_channel_types
 from crescent.context import Context
 from crescent.internal.registry import register_command
+from crescent.utils import get_parameters
 
 if TYPE_CHECKING:
-    from inspect import Parameter, _empty
+    from inspect import Parameter
     from typing import Any, Optional, Sequence, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
@@ -53,13 +51,6 @@ __all__: Sequence[str] = ("command", "user_command", "message_command")
 NoneType = type(None)
 
 
-class _Parameter(NamedTuple):
-    name: str
-    annotation: Type[Any]
-    empty: Type[_empty]
-    default: Any
-
-
 def _unwrap_optional(origin: Type) -> Any:
     # Support for `Optional` typehint
     if get_origin(origin) is Union:
@@ -70,7 +61,7 @@ def _unwrap_optional(origin: Type) -> Any:
     return origin
 
 
-def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
+def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
     name = param.name
     typehint = param.annotation
 
@@ -101,7 +92,7 @@ def _gen_command_option(param: _Parameter) -> Optional[CommandOption]:
     def get_arg(t: Type[Arg] | Type[Any]) -> Optional[T]:
         data: T
         for data in metadata:
-            if type(data) == t:
+            if isinstance(data, t):
                 return getattr(data, "payload", data)
         return None
 
@@ -198,24 +189,10 @@ def command(
     else:
         callback_func = callback
 
-        # NOTE: If python 3.10 becomes the minimum supported version, this section
-        # can be replaced with `signature(callback, eval_str=True)`
-
-        type_hints = get_type_hints(callback)
-
-        def convert_signiture(param: Parameter) -> _Parameter:
-            annotation = type_hints.get(param.name, None)
-            return _Parameter(
-                name=param.name,
-                annotation=annotation or param.annotation,
-                empty=param.empty,
-                default=param.default,
-            )
-
-        sig = map(convert_signiture, signature(callback_func).parameters.values())
-
         options = [
-            param for param in (_gen_command_option(param) for param in sig) if param is not None
+            param
+            for param in (_gen_command_option(param) for param in get_parameters(callback_func))
+            if param is not None
         ]
 
     return register_command(
