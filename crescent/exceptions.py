@@ -1,6 +1,6 @@
 from typing import Sequence
 
-__all__: Sequence[str] = ("CrescentException", "AlreadyRegisteredError", "CommandNotFoundError")
+__all__: Sequence[str] = ("CrescentException", "AlreadyRegisteredError")
 
 
 class CrescentException(Exception):
@@ -9,7 +9,3 @@ class CrescentException(Exception):
 
 class AlreadyRegisteredError(CrescentException):
     """Command or exception catch function was already registered"""
-
-
-class CommandNotFoundError(CrescentException):
-    """Command was not registered locally"""
