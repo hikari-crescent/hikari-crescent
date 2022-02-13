@@ -55,6 +55,6 @@ jobs:
       - name: Upload Coverage
         uses: paambaati/codeclimate-action@v3.0.0
         env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          CC_TEST_REPORTER_ID: 8850708be44055b46a895acbd4e3c8aba8337e093508668eef486d7dac931e30
         with:
           coverageLocations: coverage.xml:coverage.py
