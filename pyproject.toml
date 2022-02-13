@@ -25,6 +25,9 @@ pre-commit = "^2.17.0"
 codespell = "^2.1.0"
 pdoc = "^9.0.1"
 python-dotenv = "^0.19.2"
+pytest = "^7.0.0"
+pytest-asyncio = "^0.18.1"
+pytest-cov = "^3.0.0"
 
 [tool.black]
 line-length = 99
@@ -41,6 +44,9 @@ warn_redundant_casts = true
 profile="black"
 skip = "examples/basic/basic.py"
 line_length=99
+
+[tool.pytest.ini_options]
+asyncio_mode='strict'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

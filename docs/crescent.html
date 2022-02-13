@@ -879,24 +879,10 @@ inheritance.</p>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">callback_func</span> <span class="o">=</span> <span class="n">callback</span>
 
-        <span class="c1"># NOTE: If python 3.10 becomes the minimum supported version, this section</span>
-        <span class="c1"># can be replaced with `signature(callback, eval_str=True)`</span>
-
-        <span class="n">type_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">convert_signiture</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Parameter</span><span class="p">:</span>
-            <span class="n">annotation</span> <span class="o">=</span> <span class="n">type_hints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">_Parameter</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span> <span class="ow">or</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span>
-                <span class="n">empty</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">empty</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="n">sig</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">convert_signiture</span><span class="p">,</span> <span class="n">signature</span><span class="p">(</span><span class="n">callback_func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-
         <span class="n">options</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_gen_command_option</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="p">)</span> <span class="k">if</span> <span class="n">param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">param</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_gen_command_option</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">get_parameters</span><span class="p">(</span><span class="n">callback_func</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">]</span>
 
     <span class="k">return</span> <span class="n">register_command</span><span class="p">(</span>
