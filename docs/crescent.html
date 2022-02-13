@@ -1507,7 +1507,7 @@ inheritance.</p>
 
         <span class="k">return</span> <span class="n">command</span>
 
-    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">banner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1842,12 +1842,17 @@ tracked_guilds : Optional[List[hikari.Snowflakeish]]
 
         
             <span class="def">def</span>
-            <span class="name">print_banner</span><span class="signature">(self, banner: str, allow_color: bool, force_color: bool)</span>:
+            <span class="name">print_banner</span><span class="signature">(
+    self,
+    banner: Union[str, NoneType],
+    allow_color: bool,
+    force_color: bool
+)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">banner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
 </pre></div>
 
