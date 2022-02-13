@@ -4,6 +4,7 @@ version = "0"
 description = "🌕 A dead simple command handler for Hikari"
 readme = "README.md"
 authors = ["Lunarmagpie <Bambolambo0@gmail.com>"]
+maintainers = ["Circuit <circuitsacul@icloud.com>"]
 license = "MPL-2.0"
 include = ["crescent/banner.txt"]
 packages = [

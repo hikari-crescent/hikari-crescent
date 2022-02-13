@@ -18,6 +18,7 @@ from hikari import (
     StartedEvent,
 )
 
+from crescent._ux import print_banner
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
@@ -132,6 +133,10 @@ class Bot(GatewayBot):
         command.register_to_app(app=self)
 
         return command
+
+    @staticmethod
+    def print_banner(banner: Optional[str], allow_color: bool, force_color: bool) -> None:
+        print_banner(banner, allow_color, force_color)
 
     def add_plugin(self, plugin: Plugin) -> None:
         if plugin.name in self.plugins:
