@@ -24,10 +24,11 @@ jobs:
           poetry install
           poetry run pytest tests/crescent
           poetry run pytest tests/crescent --cov=crescent/
+          mv .coverage .coverage.${{ matrix.python-version }}.${{ matrix.os }}
       - uses: actions/upload-artifact@v2
         with:
-          name: .coverage.${{ matrix.python-version }}.${{ matrix.os }}
-          path: .coverage
+          name: .coverage
+          path: .coverage.${{ matrix.python-version }}.${{ matrix.os }}
 
   upload:
     needs: [pytest]
@@ -44,6 +45,7 @@ jobs:
       - name: Download Coverage
         uses: actions/download-artifact@v2
         with:
+          name: .coverage
           path: .cov
       - name: Combine Coverage
         run: |
