@@ -52,13 +52,16 @@ NoneType = type(None)
 
 
 def _unwrap_optional(origin: Type) -> Any:
-    # Support for `Optional` typehint
-    if get_origin(origin) is Union:
-        args = get_args(origin)
-        if len(args) == 2 and NoneType in args:
-            return args[0] if args[1] is NoneType else args[1]
+    if get_origin(origin) is not Union:
+        return origin
+    args = get_args(origin)
+
+    if len(args) != 2 or NoneType not in args:
         raise ValueError("Typehint must be `T`, `Optional[T]`, or `Union[T, None]`")
-    return origin
+
+    if args[1] is NoneType:
+        return args[0]
+    return args[1]
 
 
 def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
