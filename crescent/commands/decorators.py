@@ -173,7 +173,13 @@ def command(
     deprecated: bool = False,
 ):
     if not callback:
-        return partial(command, guild=guild, name=name, description=description)
+        return partial(
+            command,
+            guild=guild,
+            name=name,
+            description=description,
+            deprecated=deprecated,
+        )
 
     if isinstance(callback, type) and isinstance(callback, object):
         defaults: Dict[str, Any] = {}
@@ -229,7 +235,7 @@ def user_command(
     deprecated: bool = False,
 ):
     if not callback:
-        return partial(user_command, guild=guild, name=name)
+        return partial(user_command, guild=guild, name=name, deprecated=deprecated)
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
@@ -249,7 +255,7 @@ def message_command(
     deprecated: bool = False,
 ):
     if not callback:
-        return partial(message_command, guild=guild, name=name)
+        return partial(message_command, guild=guild, name=name, deprecated=deprecated)
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
