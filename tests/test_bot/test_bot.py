@@ -113,5 +113,5 @@ async def raise_err(ctx: crescent.Context) -> None:
 async def raise_unhandled_err(ctx: crescent.Context) -> None:
     raise UnhandledErr()
 
-
-bot.run()
+if __name__ == '__main__':
+    bot.run()
