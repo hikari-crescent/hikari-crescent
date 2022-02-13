@@ -883,24 +883,10 @@ inheritance.</p>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">callback_func</span> <span class="o">=</span> <span class="n">callback</span>
 
-        <span class="c1"># NOTE: If python 3.10 becomes the minimum supported version, this section</span>
-        <span class="c1"># can be replaced with `signature(callback, eval_str=True)`</span>
-
-        <span class="n">type_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">convert_signiture</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Parameter</span><span class="p">:</span>
-            <span class="n">annotation</span> <span class="o">=</span> <span class="n">type_hints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">_Parameter</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span> <span class="ow">or</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span>
-                <span class="n">empty</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">empty</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="n">sig</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">convert_signiture</span><span class="p">,</span> <span class="n">signature</span><span class="p">(</span><span class="n">callback_func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-
         <span class="n">options</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_gen_command_option</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="p">)</span> <span class="k">if</span> <span class="n">param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">param</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_gen_command_option</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">get_parameters</span><span class="p">(</span><span class="n">callback_func</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">]</span>
 
     <span class="k">return</span> <span class="n">register_command</span><span class="p">(</span>
@@ -908,7 +894,7 @@ inheritance.</p>
         <span class="n">command_type</span><span class="o">=</span><span class="n">CommandType</span><span class="o">.</span><span class="n">SLASH</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\u200b</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">&quot;No Description&quot;</span><span class="p">,</span>
         <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
@@ -1023,29 +1009,29 @@ inheritance.</p>
         
             <span class="def">def</span>
             <span class="name">option</span><span class="signature">(
-    option_type: Union[type[Union[str, bool, int, float, hikari.channels.PartialChannel, hikari.guilds.Role, hikari.users.User, <a href="#mentionable.Mentionable">crescent.mentionable.Mentionable</a>]], Sequence[Type[Union[hikari.channels.GuildTextChannel, hikari.channels.DMChannel, hikari.channels.GroupDMChannel, hikari.channels.GuildVoiceChannel, hikari.channels.GuildCategory, hikari.channels.GuildNewsChannel, hikari.channels.GuildStoreChannel, hikari.channels.GuildStageChannel]]]],
-    description: str = &#39;\u200b&#39;,
+    option_type: Union[type[Union[str, bool, int, float, hikari.channels.PartialChannel, hikari.guilds.Role, hikari.users.User, <a href="#mentionable.Mentionable">crescent.mentionable.Mentionable</a>]], Sequence[Type[hikari.channels.PartialChannel]]],
+    description: str = &#39;No Description&#39;,
     *,
     default: Union[Any, hikari.undefined.UndefinedType] = UNDEFINED,
     choices: &#39;Sequence[Tuple[str, Union[str, int, float]]] | None&#39; = None,
     min_value: Union[int, float, NoneType] = None,
     max_value: Union[int, float, NoneType] = None,
     name: Union[str, NoneType] = None
-) -&gt; Any</span>:
+) -&gt; <a href="#commands.options.ClassCommandOption">crescent.commands.options.ClassCommandOption</a>[typing.Any]</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">option</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
-    <span class="n">option_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">OptionTypesT</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">VALID_CHANNEL_TYPES</span><span class="p">]]],</span>
-    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u200B</span><span class="s2">&quot;</span><span class="p">,</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">option</span><span class="p">(</span>
+    <span class="n">option_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">OptionTypesT</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">PartialChannel</span><span class="p">]]],</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;No Description&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">default</span><span class="p">:</span> <span class="n">UndefinedOr</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">UNDEFINED</span><span class="p">,</span>
     <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">min_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassCommandOption</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">isclass</span><span class="p">(</span><span class="n">option_type</span><span class="p">)</span>
         <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">option_type</span><span class="p">,</span> <span class="n">PartialChannel</span><span class="p">)</span>
@@ -1459,6 +1445,7 @@ inheritance.</p>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">tracked_guilds</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_unknown_interactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;crescent&quot;</span><span class="p">,</span>
         <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Executor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1507,6 +1494,8 @@ inheritance.</p>
 
         <span class="k">if</span> <span class="n">default_guild</span> <span class="ow">and</span> <span class="n">default_guild</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tracked_guilds</span><span class="p">:</span>
             <span class="n">tracked_guilds</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">tracked_guilds</span><span class="p">,</span> <span class="p">(</span><span class="n">default_guild</span><span class="p">,)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_unknown_interactions</span> <span class="o">=</span> <span class="n">allow_unknown_interactions</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="p">:</span> <span class="n">CommandHandler</span> <span class="o">=</span> <span class="n">CommandHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracked_guilds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_error_handler</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1723,6 +1712,7 @@ rest_url : typing.Optional[builtins.str]
     *,
     tracked_guilds: Sequence[Union[hikari.snowflakes.Snowflake, int]] = None,
     default_guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
+    allow_unknown_interactions: bool = False,
     allow_color: bool = True,
     banner: Union[str, NoneType] = &#39;crescent&#39;,
     executor: Union[concurrent.futures._base.Executor, NoneType] = None,
@@ -1746,6 +1736,7 @@ rest_url : typing.Optional[builtins.str]
         <span class="o">*</span><span class="p">,</span>
         <span class="n">tracked_guilds</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_unknown_interactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;crescent&quot;</span><span class="p">,</span>
         <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Executor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1794,6 +1785,8 @@ rest_url : typing.Optional[builtins.str]
 
         <span class="k">if</span> <span class="n">default_guild</span> <span class="ow">and</span> <span class="n">default_guild</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tracked_guilds</span><span class="p">:</span>
             <span class="n">tracked_guilds</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">tracked_guilds</span><span class="p">,</span> <span class="p">(</span><span class="n">default_guild</span><span class="p">,)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_unknown_interactions</span> <span class="o">=</span> <span class="n">allow_unknown_interactions</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="p">:</span> <span class="n">CommandHandler</span> <span class="o">=</span> <span class="n">CommandHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracked_guilds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_error_handler</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -3124,12 +3117,12 @@ Protocol classes can be generic, they are defined as::</p>
 
         
         <span class="def">class</span>
-        <span class="name">ClassCommandOption</span>:
+        <span class="name">ClassCommandOption</span><wbr>(<span class="base">typing.Generic[~T]</span>):
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ClassCommandOption</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ClassCommandOption</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="nb">type</span><span class="p">:</span> <span class="n">OptionType</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
@@ -3150,11 +3143,26 @@ Protocol classes can be generic, they are defined as::</p>
             <span class="n">min_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_value</span><span class="p">,</span>
             <span class="n">max_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_value</span><span class="p">,</span>
         <span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Self</span><span class="p">,</span> <span class="n">inst</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Self</span><span class="p">,</span> <span class="n">inst</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inst</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="c1"># we should never reach this point</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>ClassCommandOption(name: 'Optional[str]', type: 'OptionType', description: 'str', default: 'UndefinedNoneOr[Any]', choices: 'Optional[Sequence[CommandChoice]]', channel_types: 'Optional[Sequence[ChannelType]]', min_value: 'Optional[Union[int, float]]', max_value: 'Optional[Union[int, float]]')</p>
+            <div class="docstring"><p>ClassCommandOption(<em>args, *</em>kwds)</p>
 </div>
 
 

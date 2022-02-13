@@ -45,6 +45,7 @@ class Bot(GatewayBot):
         *,
         tracked_guilds: Sequence[Snowflakeish] = None,
         default_guild: Optional[Snowflakeish] = None,
+        allow_unknown_interactions: bool = False,
         allow_color: bool = True,
         banner: Optional[str] = "crescent",
         executor: Optional[Executor] = None,
@@ -93,6 +94,8 @@ class Bot(GatewayBot):
 
         if default_guild and default_guild not in tracked_guilds:
             tracked_guilds = tuple(chain(tracked_guilds, (default_guild,)))
+
+        self.allow_unknown_interactions = allow_unknown_interactions
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self._error_handler = ErrorHandler(self)

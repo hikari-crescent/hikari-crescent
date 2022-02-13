@@ -42,3 +42,8 @@ MANIFEST
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# coverage-py
+.coverage
+.coverage.*
+coverage.xml
