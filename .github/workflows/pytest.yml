@@ -54,7 +54,7 @@ jobs:
           poetry run coverage xml -i
       - name: Upload Coverage
         uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          env:
-            CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
           coverageLocations: coverage.xml:coverage.py
