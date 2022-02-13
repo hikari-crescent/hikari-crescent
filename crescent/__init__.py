@@ -1,6 +1,5 @@
+from importlib.metadata import version
 from typing import Sequence
-
-from hikari import _about
 
 from crescent.bot import *
 from crescent.commands import *
@@ -10,9 +9,7 @@ from crescent.mentionable import *
 from crescent.plugin import *
 from crescent.typedefs import *
 
-_about.__maintainer__ = "Lunarmagpie"  # type: ignore
-_about.__copyright__ = "© 2021 Lunarmagpie"  # type: ignore
-_about.__license__ = "MPL 2.0"  # type: ignore
+__version__: str = version("hikari-crescent")
 
 __all__: Sequence[str] = (
     "Description",
