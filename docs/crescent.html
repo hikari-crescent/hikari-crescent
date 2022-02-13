@@ -197,6 +197,9 @@
                                 <a class="function" href="#Bot.include">include</a>
                         </li>
                         <li>
+                                <a class="function" href="#Bot.print_banner">print_banner</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Bot.add_plugin">add_plugin</a>
                         </li>
                         <li>
@@ -397,8 +400,6 @@ crescent    </h1>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 
-<span class="kn">from</span> <span class="nn">hikari</span> <span class="kn">import</span> <span class="n">_about</span>
-
 <span class="kn">from</span> <span class="nn">crescent.bot</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">crescent.commands</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">crescent.context</span> <span class="kn">import</span> <span class="o">*</span>
@@ -407,9 +408,7 @@ crescent    </h1>
 <span class="kn">from</span> <span class="nn">crescent.plugin</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">crescent.typedefs</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">_about</span><span class="o">.</span><span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Lunarmagpie&quot;</span>  <span class="c1"># type: ignore</span>
-<span class="n">_about</span><span class="o">.</span><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;© 2021 Lunarmagpie&quot;</span>  <span class="c1"># type: ignore</span>
-<span class="n">_about</span><span class="o">.</span><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MPL 2.0&quot;</span>  <span class="c1"># type: ignore</span>
+<span class="n">__version__</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0.1.0-beta.1&quot;</span>
 
 <span class="n">__all__</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;Description&quot;</span><span class="p">,</span>
@@ -1508,6 +1507,9 @@ inheritance.</p>
 
         <span class="k">return</span> <span class="n">command</span>
 
+    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">banner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
@@ -1835,6 +1837,50 @@ tracked_guilds : Optional[List[hikari.Snowflakeish]]
     
 
                             </div>
+                            <div id="Bot.print_banner" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Bot.print_banner">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">print_banner</span><span class="signature">(self, banner: str, allow_color: bool, force_color: bool)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">banner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Print the banner.</p>
+
+<p>This allows library vendors to override this behaviour, or choose to
+inject their own "branding" on top of what hikari provides by default.</p>
+
+<p>Normal users should not need to invoke this function, and can simply
+change the <code>banner</code> argument passed to the constructor to manipulate
+what is displayed.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>banner : typing.Optional[builtins.str]
+    The package to find a <code>banner.txt</code> in.
+allow_color : builtins.bool
+    A flag that allows advising whether to allow color if supported or
+    not. Can be overridden by setting a <code>"CLICOLOR"</code> environment
+    variable to a non-<code>"0"</code> string.
+force_color : builtins.bool
+    A flag that allows forcing color to always be output, even if the
+    terminal device may not support it. Setting the <code>"CLICOLOR_FORCE"</code>
+    environment variable to a non-<code>"0"</code> string will override this.</p>
+
+<p>!!! note
+    <code>force_color</code> will always take precedence over <code>allow_color</code>.</p>
+</div>
+
+
+                            </div>
                             <div id="Bot.add_plugin" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#Bot.add_plugin">#&nbsp;&nbsp</a>
 
@@ -1934,7 +1980,6 @@ tracked_guilds : Optional[List[hikari.Snowflakeish]]
                 <dd id="Bot.get_listeners" class="function">get_listeners</dd>
                 <dd id="Bot.join" class="function">join</dd>
                 <dd id="Bot.listen" class="function">listen</dd>
-                <dd id="Bot.print_banner" class="function">print_banner</dd>
                 <dd id="Bot.run" class="function">run</dd>
                 <dd id="Bot.start" class="function">start</dd>
                 <dd id="Bot.stream" class="function">stream</dd>
