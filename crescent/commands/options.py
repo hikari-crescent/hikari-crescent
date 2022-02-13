@@ -141,6 +141,8 @@ class ClassCommandOption(Generic[T]):
 
 
 DEFAULT = TypeVar("DEFAULT")
+USER = TypeVar("USER", bound=Type[User])
+ROLE = TypeVar("ROLE", bound=Type[Role])
 
 
 @overload
@@ -166,28 +168,28 @@ def option(
 
 @overload
 def option(
-    option_type: Type[User], description: str = ..., *, name: Optional[str] = ...
+    option_type: USER, description: str = ..., *, name: Optional[str] = ...
 ) -> ClassCommandOption[User]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[User], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
+    option_type: USER, description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
 ) -> ClassCommandOption[Union[User, DEFAULT]]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[Role], description: str = ..., *, name: Optional[str] = ...
+    option_type: ROLE, description: str = ..., *, name: Optional[str] = ...
 ) -> ClassCommandOption[Role]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[Role], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
+    option_type: ROLE, description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
 ) -> ClassCommandOption[Union[Role, DEFAULT]]:
     ...
 
