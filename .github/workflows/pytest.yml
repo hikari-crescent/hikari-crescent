@@ -47,10 +47,12 @@ jobs:
           path: .cov
       - name: Combine Coverage
         run: |
+          ls
+          ls .cov
           poetry install
           poetry run coverage combine .cov/
           poetry run coverage xml -i
-      - name: Upload coverage to codeclimate
+      - name: Upload Coverage
         uses: paambaati/codeclimate-action@v3.0.0
         with:
           coverageLocations: coverage.xml:coverage.py
