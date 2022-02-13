@@ -1,4 +1,5 @@
 from typing import Sequence
+from importlib.metadata import version
 
 from crescent.bot import *
 from crescent.commands import *
@@ -8,7 +9,7 @@ from crescent.mentionable import *
 from crescent.plugin import *
 from crescent.typedefs import *
 
-__version__: str = "0.1.0-beta.1"
+__version__: str = version("hikari-crescent")
 
 __all__: Sequence[str] = (
     "Description",
