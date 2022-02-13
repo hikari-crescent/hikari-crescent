@@ -1,7 +1,5 @@
 from typing import Sequence
 
-from hikari import _about
-
 from crescent.bot import *
 from crescent.commands import *
 from crescent.context import *
@@ -10,9 +8,7 @@ from crescent.mentionable import *
 from crescent.plugin import *
 from crescent.typedefs import *
 
-_about.__maintainer__ = "Lunarmagpie"  # type: ignore
-_about.__copyright__ = "© 2021 Lunarmagpie"  # type: ignore
-_about.__license__ = "MPL 2.0"  # type: ignore
+__version__: str = "0.1.0-beta.1"
 
 __all__: Sequence[str] = (
     "Description",

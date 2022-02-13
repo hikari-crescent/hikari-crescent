@@ -23,6 +23,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import Plugin
 from crescent.utils import iterate_vars
+from crescent._ux import print_banner
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, TypeVar, Union
@@ -132,6 +133,9 @@ class Bot(GatewayBot):
         command.register_to_app(app=self)
 
         return command
+
+    def print_banner(self, banner: str, allow_color: bool, force_color: bool):
+        print_banner(banner, allow_color, force_color)
 
     def add_plugin(self, plugin: Plugin) -> None:
         if plugin.name in self.plugins:
