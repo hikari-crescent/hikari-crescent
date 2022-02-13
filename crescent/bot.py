@@ -134,7 +134,7 @@ class Bot(GatewayBot):
 
         return command
 
-    def print_banner(self, banner: str, allow_color: bool, force_color: bool):
+    def print_banner(self, banner: Optional[str], allow_color: bool, force_color: bool):
         print_banner(banner, allow_color, force_color)
 
     def add_plugin(self, plugin: Plugin) -> None:
