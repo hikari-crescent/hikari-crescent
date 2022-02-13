@@ -35,6 +35,7 @@ def register_command(
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
+    deprecated: bool = False,
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
@@ -47,6 +48,7 @@ def register_command(
         callback=callback,
         app_set_hooks=[hook],
         metadata=AppCommandMeta(
+            deprecated=deprecated,
             app=AppCommand(
                 type=command_type,
                 description=description,
