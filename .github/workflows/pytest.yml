@@ -26,7 +26,7 @@ jobs:
           poetry run pytest tests/crescent --cov=crescent/
       - uses: actions/upload-artifact@v2
         with:
-          name: coverage.${{ matrix.python-version }}.${{ matrix.os }})
+          name: .coverage.${{ matrix.python-version }}.${{ matrix.os }}
           path: .coverage
 
   upload:
@@ -47,8 +47,6 @@ jobs:
           path: .cov
       - name: Combine Coverage
         run: |
-          ls
-          ls .cov
           poetry install
           poetry run coverage combine .cov/
           poetry run coverage xml -i
