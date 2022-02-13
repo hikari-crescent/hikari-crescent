@@ -18,12 +18,12 @@ from hikari import (
     StartedEvent,
 )
 
+from crescent._ux import print_banner
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import Plugin
 from crescent.utils import iterate_vars
-from crescent._ux import print_banner
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, TypeVar, Union
