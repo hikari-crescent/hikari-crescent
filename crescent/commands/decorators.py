@@ -206,8 +206,8 @@ def command(
 
 
 def _kwargs_to_args_callback(callback: Callable[..., Awaitable[Any]]):
-    async def inner(ctx: Context, **kwargs):
-        return await callback(ctx, *kwargs.values())
+    async def inner(*args, **kwargs):
+        return await callback(*args, *kwargs.values())
 
     return inner
 
