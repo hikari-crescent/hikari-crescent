@@ -21,12 +21,10 @@ def print_banner(banner: str, allow_color: bool, force_color: bool):
     with redirect_stdout(buffer):
         _print_banner(banner, allow_color, force_color)
 
-    out = buffer.getvalue()
-
     args: Dict[str, str] = {
         "crescent_version": __version__,
         "crescent_copyright": __copyright__,
         "crescent_license": __license__,
     }
 
-    stdout.write(Template(out).safe_substitute(args))
+    stdout.write(Template(buffer.getvalue()).safe_substitute(args))
