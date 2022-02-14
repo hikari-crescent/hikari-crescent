@@ -1,4 +1,5 @@
 from unittest.mock import AsyncMock, MagicMock
+from hikari import Message, User
 
 from hikari.impl import CacheImpl, RESTClientImpl
 from pytest import fixture, mark
@@ -35,12 +36,12 @@ class TestRegistry:
 
         @bot.include
         @_user_command
-        async def user_command(ctx: Context):
+        async def user_command(ctx: Context, user: User):
             pass
 
         @bot.include
         @_message_command
-        async def message_command(ctx: Context):
+        async def message_command(ctx: Context, message: Message):
             pass
 
         bot._command_handler.application_id = ...
@@ -64,12 +65,12 @@ class TestRegistry:
 
         @bot.include
         @_user_command(deprecated=True)
-        async def user_command_deprecated(ctx: Context):
+        async def user_command_deprecated(ctx: Context, user: User):
             pass
 
         @bot.include
         @_message_command(deprecated=True)
-        async def message_command_deprecated(ctx: Context):
+        async def message_command_deprecated(ctx: Context, message: Message):
             pass
 
         @bot.include
@@ -79,12 +80,12 @@ class TestRegistry:
 
         @bot.include
         @_user_command
-        async def user_command(ctx: Context):
+        async def user_command(ctx: Context, user: User):
             pass
 
         @bot.include
         @_message_command
-        async def message_command(ctx: Context):
+        async def message_command(ctx: Context, message: Message):
             pass
 
         await bot._command_handler.register_commands()
