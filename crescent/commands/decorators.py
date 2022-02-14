@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 
     T = TypeVar("T")
 
-__all__: Sequence[str] = ("command", "user_command", "message_command",)
+__all__: Sequence[str] = ("command", "user_command", "message_command")
 
 
 NoneType = type(None)
@@ -174,11 +174,7 @@ def command(
 ):
     if not callback:
         return partial(
-            command,
-            guild=guild,
-            name=name,
-            description=description,
-            deprecated=deprecated,
+            command, guild=guild, name=name, description=description, deprecated=deprecated
         )
 
     if isinstance(callback, type) and isinstance(callback, object):

@@ -3,10 +3,7 @@ from crescent.internal.registry import CommandHandler
 
 
 class MockBot(Bot):
-    def __init__(
-        self,
-        default_guild=None,
-    ) -> None:
+    def __init__(self, default_guild=None) -> None:
 
         super().__init__(token="")
 

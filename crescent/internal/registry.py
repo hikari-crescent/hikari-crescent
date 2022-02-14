@@ -56,7 +56,7 @@ def register_command(
                 name=name,
                 options=options,
                 default_permission=default_permission,
-            )
+            ),
         ),
     )
 

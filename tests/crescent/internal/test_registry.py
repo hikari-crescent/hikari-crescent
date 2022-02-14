@@ -1,25 +1,20 @@
-from pytest import fixture, mark
 from unittest.mock import AsyncMock, MagicMock
 
-from hikari.impl import RESTClientImpl, CacheImpl
+from hikari.impl import CacheImpl, RESTClientImpl
+from pytest import fixture, mark
+
 from crescent import Context, command
 from tests.utils import MockBot
-
 
 GUILD_ID = 123456789
 
 
 class TestRegistry:
-
     @fixture(autouse=True)
     def mock_send(self):
         self.posted_commands = {}
 
-        def set_application_commands(
-            application,
-            commands,
-            guild=None,
-        ):
+        def set_application_commands(application, commands, guild=None):
             self.posted_commands[guild] = commands
 
         RESTClientImpl.set_application_commands = AsyncMock(return_value=None)
@@ -46,7 +41,8 @@ class TestRegistry:
         await bot._command_handler.register_commands()
 
         assert self.posted_commands[GUILD_ID] == [
-            command_one.metadata.app, command_two.metadata.app
+            command_one.metadata.app,
+            command_two.metadata.app,
         ]
 
     @mark.asyncio

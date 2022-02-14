@@ -119,5 +119,6 @@ async def raise_unhandled_err(ctx: crescent.Context) -> None:
 async def deprecated_command(ctx: crescent.Context) -> None:
     pass
 
+
 if __name__ == "__main__":
     bot.run()
