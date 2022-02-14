@@ -4,6 +4,8 @@ from hikari.impl import CacheImpl, RESTClientImpl
 from pytest import fixture, mark
 
 from crescent import Context, command
+from crescent import message_command as _message_command
+from crescent import user_command as _user_command
 from tests.utils import MockBot
 
 GUILD_ID = 123456789
@@ -28,12 +30,17 @@ class TestRegistry:
 
         @bot.include
         @command
-        async def command_one(ctx: Context):
+        async def slash_command(ctx: Context):
             pass
 
         @bot.include
-        @command
-        async def command_two(ctx: Context):
+        @_user_command
+        async def user_command(ctx: Context):
+            pass
+
+        @bot.include
+        @_message_command
+        async def message_command(ctx: Context):
             pass
 
         bot._command_handler.application_id = ...
@@ -41,8 +48,9 @@ class TestRegistry:
         await bot._command_handler.register_commands()
 
         assert self.posted_commands[GUILD_ID] == [
-            command_one.metadata.app,
-            command_two.metadata.app,
+            slash_command.metadata.app,
+            user_command.metadata.app,
+            message_command.metadata.app,
         ]
 
     @mark.asyncio
@@ -51,14 +59,38 @@ class TestRegistry:
 
         @bot.include
         @command(deprecated=True)
-        async def command_one(ctx: Context):
+        async def slash_command_deprecated(ctx: Context):
+            pass
+
+        @bot.include
+        @_user_command(deprecated=True)
+        async def user_command_deprecated(ctx: Context):
+            pass
+
+        @bot.include
+        @_message_command(deprecated=True)
+        async def message_command_deprecated(ctx: Context):
             pass
 
         @bot.include
         @command
-        async def command_two(ctx: Context):
+        async def slash_command(ctx: Context):
+            pass
+
+        @bot.include
+        @_user_command
+        async def user_command(ctx: Context):
+            pass
+
+        @bot.include
+        @_message_command
+        async def message_command(ctx: Context):
             pass
 
         await bot._command_handler.register_commands()
 
-        assert self.posted_commands[GUILD_ID] == [command_two.metadata.app]
+        assert self.posted_commands[GUILD_ID] == [
+            slash_command.metadata.app,
+            user_command.metadata.app,
+            message_command.metadata.app,
+        ]
