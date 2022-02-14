@@ -3,14 +3,17 @@ from crescent.internal.registry import CommandHandler
 
 
 class MockBot(Bot):
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        default_guild=None,
+    ) -> None:
 
-        self.default_guild = None
+        super().__init__(token="")
 
-        self.token = ""
-        self.application_id = ""
+        self.default_guild = default_guild
 
         self._command_handler = CommandHandler(self, [])
+        self._command_handler.application_id = ...
 
     def run(self):
         raise Exception("`run` method of `MockBot` should never be used")

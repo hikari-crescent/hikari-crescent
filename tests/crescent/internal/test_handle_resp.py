@@ -23,9 +23,9 @@ async def test_handle_resp():
         interaction=CommandInteraction(
             app=bot,
             id=None,
-            application_id=bot.application_id,
+            application_id=...,
             type=InteractionType.APPLICATION_COMMAND,
-            token=bot.token,
+            token=bot._token,
             version=0,
             channel_id=0,
             guild_id=None,
