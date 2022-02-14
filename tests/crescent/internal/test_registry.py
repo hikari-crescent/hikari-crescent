@@ -1,6 +1,6 @@
 from unittest.mock import AsyncMock, MagicMock
-from hikari import Message, User
 
+from hikari import Message, User
 from hikari.impl import CacheImpl, RESTClientImpl
 from pytest import fixture, mark
 
