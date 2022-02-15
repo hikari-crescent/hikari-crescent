@@ -1,4 +1,5 @@
 from hikari import Snowflake
+
 from crescent import Bot
 from crescent.internal.registry import CommandHandler
 
