@@ -60,4 +60,12 @@ async def event(event: hikari.ShardReadyEvent):
     print(event)
 
 
+# Deprecated commands will not be posted to Discord but are still used respond to interactions.
+# This can be used to have a function for an old version of a guild command that has been updated.
+@bot.include
+@crescent.command(deprecated=True)
+async def deprecated_command(ctx: crescent.Context):
+    pass
+
+
 bot.run()

@@ -841,7 +841,8 @@ inheritance.</p>
     *,
     guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
     name: Union[str, NoneType] = None,
-    description: Union[str, NoneType] = None
+    description: Union[str, NoneType] = None,
+    deprecated: bool = False
 )</span>:
     </div>
 
@@ -854,9 +855,12 @@ inheritance.</p>
     <span class="n">guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
         <span class="n">defaults</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -892,6 +896,7 @@ inheritance.</p>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">&quot;No Description&quot;</span><span class="p">,</span>
         <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+        <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -910,7 +915,8 @@ inheritance.</p>
     /,
     *,
     guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
-    name: Union[str, NoneType] = None
+    name: Union[str, NoneType] = None,
+    deprecated: bool = False
 )</span>:
     </div>
 
@@ -922,15 +928,17 @@ inheritance.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">user_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">user_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">register_command</span><span class="p">(</span>
         <span class="n">callback</span><span class="o">=</span><span class="n">_kwargs_to_args_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">),</span>
         <span class="n">command_type</span><span class="o">=</span><span class="n">CommandType</span><span class="o">.</span><span class="n">USER</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
+        <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -949,7 +957,8 @@ inheritance.</p>
     /,
     *,
     guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
-    name: Union[str, NoneType] = None
+    name: Union[str, NoneType] = None,
+    deprecated: bool = False
 )</span>:
     </div>
 
@@ -961,15 +970,17 @@ inheritance.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">message_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">message_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">register_command</span><span class="p">(</span>
         <span class="n">callback</span><span class="o">=</span><span class="n">_kwargs_to_args_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">),</span>
         <span class="n">command_type</span><span class="o">=</span><span class="n">CommandType</span><span class="o">.</span><span class="n">MESSAGE</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
+        <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 

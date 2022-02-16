@@ -120,6 +120,7 @@ class AppCommandMeta:
     app: AppCommand
     group: Optional[Group] = None
     sub_group: Optional[SubGroup] = None
+    deprecated: bool = False
     hooks: List[HookCallbackT] = field(factory=list)
 
     @property

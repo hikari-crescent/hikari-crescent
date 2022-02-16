@@ -35,6 +35,7 @@ def register_command(
     description: Optional[str] = None,
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
+    deprecated: bool = False,
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
@@ -47,6 +48,7 @@ def register_command(
         callback=callback,
         app_set_hooks=[hook],
         metadata=AppCommandMeta(
+            deprecated=deprecated,
             app=AppCommand(
                 type=command_type,
                 description=description,
@@ -54,7 +56,7 @@ def register_command(
                 name=name,
                 options=options,
                 default_permission=default_permission,
-            )
+            ),
         ),
     )
 
@@ -97,6 +99,9 @@ class CommandHandler:
 
         for command in self.registry.values():
             command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
+
+            if command.metadata.deprecated:
+                continue
 
             if command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
@@ -221,7 +226,7 @@ class CommandHandler:
 
     async def post_guild_command(self, commands: List[CommandBuilder], guild: Snowflakeish):
         try:
-            if not self.application_id:
+            if self.application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
             await self.bot.rest.set_application_commands(
                 application=self.application_id, commands=commands, guild=guild
