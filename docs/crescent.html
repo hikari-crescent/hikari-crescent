@@ -362,6 +362,21 @@
 
             </li>
             <li>
+                    <a class="class" href="#PluginManager">PluginManager</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#PluginManager.__init__">PluginManager</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PluginManager.add_plugin">add_plugin</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PluginManager.load">load</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#ClassCommandOption">ClassCommandOption</a>
                             <ul class="memberlist">
                         <li>
@@ -436,6 +451,7 @@ crescent    </h1>
     <span class="s2">&quot;HookCallbackT&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ClassCommandProto&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Plugin&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PluginManager&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ClassCommandOption&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ErrorHandlerCallbackT&quot;</span><span class="p">,</span>
     <span class="s2">&quot;catch&quot;</span><span class="p">,</span>
@@ -1435,15 +1451,14 @@ inheritance.</p>
 <span class="sd">        Crescent adds two parameters to Hikari&#39;s Gateway Bot. `tracked_guilds`</span>
 <span class="sd">        and `default_guild`.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        default_guild : Optional[List[hikari.Snowflakeish]]</span>
-<span class="sd">            The guild to post application commands to by default. If this is None,</span>
-<span class="sd">            slash commands will be posted globall.</span>
-<span class="sd">        tracked_guilds : Optional[List[hikari.Snowflakeish]]</span>
-<span class="sd">            The guilds to compare posted commands to. Commands will not be</span>
-<span class="sd">            automatically removed from guilds that aren&#39;t in this list. This should</span>
-<span class="sd">            be kept to as little guilds as possible to prevent rate limits.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            default_guild:</span>
+<span class="sd">                The guild to post application commands to by default. If this is None,</span>
+<span class="sd">                slash commands will be posted globall.</span>
+<span class="sd">            tracked_guilds:</span>
+<span class="sd">                The guilds to compare posted commands to. Commands will not be</span>
+<span class="sd">                automatically removed from guilds that aren&#39;t in this list. This should</span>
+<span class="sd">                be kept to as little guilds as possible to prevent rate limits.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span>
@@ -1724,15 +1739,14 @@ rest_url : typing.Optional[builtins.str]
 <span class="sd">        Crescent adds two parameters to Hikari&#39;s Gateway Bot. `tracked_guilds`</span>
 <span class="sd">        and `default_guild`.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        default_guild : Optional[List[hikari.Snowflakeish]]</span>
-<span class="sd">            The guild to post application commands to by default. If this is None,</span>
-<span class="sd">            slash commands will be posted globall.</span>
-<span class="sd">        tracked_guilds : Optional[List[hikari.Snowflakeish]]</span>
-<span class="sd">            The guilds to compare posted commands to. Commands will not be</span>
-<span class="sd">            automatically removed from guilds that aren&#39;t in this list. This should</span>
-<span class="sd">            be kept to as little guilds as possible to prevent rate limits.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            default_guild:</span>
+<span class="sd">                The guild to post application commands to by default. If this is None,</span>
+<span class="sd">                slash commands will be posted globall.</span>
+<span class="sd">            tracked_guilds:</span>
+<span class="sd">                The guilds to compare posted commands to. Commands will not be</span>
+<span class="sd">                automatically removed from guilds that aren&#39;t in this list. This should</span>
+<span class="sd">                be kept to as little guilds as possible to prevent rate limits.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span>
@@ -1785,15 +1799,15 @@ rest_url : typing.Optional[builtins.str]
             <div class="docstring"><p>Crescent adds two parameters to Hikari's Gateway Bot. <code>tracked_guilds</code>
 and <code><a href="#Bot.default_guild">default_guild</a></code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>default_guild : Optional[List[hikari.Snowflakeish]]
-    The guild to post application commands to by default. If this is None,
-    slash commands will be posted globall.
-tracked_guilds : Optional[List[hikari.Snowflakeish]]
-    The guilds to compare posted commands to. Commands will not be
-    automatically removed from guilds that aren't in this list. This should
-    be kept to as little guilds as possible to prevent rate limits.</p>
+<ul>
+<li><strong>default_guild:</strong>  The guild to post application commands to by default. If this is None,
+slash commands will be posted globall.</li>
+<li><strong>tracked_guilds:</strong>  The guilds to compare posted commands to. Commands will not be
+automatically removed from guilds that aren't in this list. This should
+be kept to as little guilds as possible to prevent rate limits.</li>
+</ul>
 </div>
 
 
@@ -3094,6 +3108,142 @@ Protocol classes can be generic, they are defined as::</p>
         </details>
 
     
+
+                            </div>
+                </section>
+                <section id="PluginManager">
+                                <div class="attr class">
+        <a class="headerlink" href="#PluginManager">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">PluginManager</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">PluginManager</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bot</span><span class="p">:</span> <span class="n">Bot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Plugin</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bot</span> <span class="o">=</span> <span class="n">bot</span>
+
+    <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin</span>
+        <span class="n">plugin</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bot</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load a plugin from the module path.</span>
+
+<span class="sd">        ```python</span>
+<span class="sd">        import crescent</span>
+
+<span class="sd">        bot = crescent.Bot(token=...)</span>
+
+<span class="sd">        bot.plugins.load(&quot;folder.plugin&quot;)</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: The module path for the plugin.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            <div id="PluginManager.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PluginManager.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">PluginManager</span><span class="signature">(bot: <a href="#bot.Bot">crescent.bot.Bot</a>)</span>
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bot</span><span class="p">:</span> <span class="n">Bot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Plugin</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bot</span> <span class="o">=</span> <span class="n">bot</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="PluginManager.add_plugin" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PluginManager.add_plugin">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">add_plugin</span><span class="signature">(self, plugin: <a href="#plugin.Plugin">crescent.plugin.Plugin</a>) -&gt; None</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin</span>
+        <span class="n">plugin</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bot</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="PluginManager.load" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PluginManager.load">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">load</span><span class="signature">(self, path: str) -&gt; <a href="#plugin.Plugin">crescent.plugin.Plugin</a></span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load a plugin from the module path.</span>
+
+<span class="sd">        ```python</span>
+<span class="sd">        import crescent</span>
+
+<span class="sd">        bot = crescent.Bot(token=...)</span>
+
+<span class="sd">        bot.plugins.load(&quot;folder.plugin&quot;)</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: The module path for the plugin.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Load a plugin from the module path.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">crescent</span>
+
+<span class="n">bot</span> <span class="o">=</span> <span class="n">crescent</span><span class="o">.</span><span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=...</span><span class="p">)</span>
+
+<span class="n">bot</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;folder.plugin&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>path:</strong>  The module path for the plugin.</li>
+</ul>
+</div>
+
 
                             </div>
                 </section>
