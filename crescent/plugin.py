@@ -1,16 +1,50 @@
 from __future__ import annotations
 
 from importlib import import_module
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Dict, Tuple
 
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
-    from typing import TypeVar
+    from typing import Sequence, TypeVar
 
     from .bot import Bot
 
     T = TypeVar("T", bound="MetaStruct")
+
+
+__all__: Sequence[str] = ("PluginManager", "Plugin")
+
+
+class PluginManager:
+    def __init__(self, bot: Bot) -> None:
+        self.plugins: Dict[str, Plugin] = {}
+        self._bot = bot
+
+    def add_plugin(self, plugin: Plugin) -> None:
+        if plugin.name in self.plugins:
+            raise ValueError(f"Plugin name {plugin.name} already exists.")
+        self.plugins[plugin.name] = plugin
+        plugin._setup(self._bot)
+
+    def load(self, path: str) -> Plugin:
+        """Load a plugin from the module path.
+
+        ```python
+        import crescent
+
+        bot = crescent.Bot(token=...)
+
+        bot.plugins.load("folder.plugin")
+        ```
+
+        Args:
+            path: The module path for the plugin.
+
+        """
+        plugin = Plugin._from_module(path)
+        self.add_plugin(plugin)
+        return plugin
 
 
 class Plugin:

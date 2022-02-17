@@ -22,7 +22,7 @@ from crescent._ux import print_banner
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
-from crescent.plugin import Plugin
+from crescent.plugin import PluginManager
 from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
@@ -64,15 +64,14 @@ class Bot(GatewayBot):
         Crescent adds two parameters to Hikari's Gateway Bot. `tracked_guilds`
         and `default_guild`.
 
-        Parameters
-        ----------
-        default_guild : Optional[List[hikari.Snowflakeish]]
-            The guild to post application commands to by default. If this is None,
-            slash commands will be posted globall.
-        tracked_guilds : Optional[List[hikari.Snowflakeish]]
-            The guilds to compare posted commands to. Commands will not be
-            automatically removed from guilds that aren't in this list. This should
-            be kept to as little guilds as possible to prevent rate limits.
+        Args:
+            default_guild:
+                The guild to post application commands to by default. If this is None,
+                slash commands will be posted globall.
+            tracked_guilds:
+                The guilds to compare posted commands to. Commands will not be
+                automatically removed from guilds that aren't in this list. This should
+                be kept to as little guilds as possible to prevent rate limits.
         """
         super().__init__(
             token=token,
@@ -101,7 +100,8 @@ class Bot(GatewayBot):
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self._error_handler = ErrorHandler(self)
         self.default_guild: Optional[Snowflakeish] = default_guild
-        self.plugins: Dict[str, Plugin] = {}
+
+        self._plugins = PluginManager(self)
 
         async def shard_ready(event: ShardReadyEvent):
             self._command_handler.application_id = event.application_id
@@ -138,16 +138,9 @@ class Bot(GatewayBot):
     def print_banner(banner: Optional[str], allow_color: bool, force_color: bool) -> None:
         print_banner(banner, allow_color, force_color)
 
-    def add_plugin(self, plugin: Plugin) -> None:
-        if plugin.name in self.plugins:
-            raise ValueError(f"Plugin name {plugin.name} already exists.")
-        self.plugins[plugin.name] = plugin
-        plugin._setup(self)
-
-    def load_module(self, path: str) -> Plugin:
-        plugin = Plugin._from_module(path)
-        self.add_plugin(plugin)
-        return plugin
+    @property
+    def plugins(self) -> PluginManager:
+        return self._plugins
 
     async def on_crescent_error(self, exc: Exception, ctx: Context, was_handled: bool) -> None:
         if was_handled:

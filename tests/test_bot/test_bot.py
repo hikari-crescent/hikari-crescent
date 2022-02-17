@@ -38,6 +38,7 @@ class Bot(crescent.Bot):
 
 bot = Bot(os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]))
 
+bot.plugins.load("tests.test_bot.test_plugin")
 
 group = crescent.Group("group", hooks=[myhook])
 subgroup = group.sub_group("sub")
