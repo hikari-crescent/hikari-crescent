@@ -27,7 +27,7 @@ class PluginManager:
         self.plugins[plugin.name] = plugin
         plugin._setup(self._bot)
 
-    def load(self, path: str):
+    def load(self, path: str) -> Plugin:
         """Load a plugin from the module path.
 
         ```python
@@ -44,6 +44,7 @@ class PluginManager:
         """
         plugin = Plugin._from_module(path)
         self.add_plugin(plugin)
+        return plugin
 
 
 class Plugin:
