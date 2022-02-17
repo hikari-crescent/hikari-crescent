@@ -6,11 +6,17 @@ from typing import TYPE_CHECKING, Tuple, Dict
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
-    from typing import TypeVar
+    from typing import TypeVar, Sequence
 
     from .bot import Bot
 
     T = TypeVar("T", bound="MetaStruct")
+
+
+__all__: Sequence[str] = (
+    "PluginManager",
+    "Plugin",
+)
 
 
 class PluginManager:
@@ -24,10 +30,23 @@ class PluginManager:
         self.plugins[plugin.name] = plugin
         plugin._setup(self._bot)
 
-    def load_module(self, path: str) -> Plugin:
+    def load(self, path: str) -> Plugin:
+        """Load a plugin from the module path.
+
+        ```python
+        import crescent
+
+        bot = crescent.Bot(token=...)
+
+        bot.plugins.load("folder.plugin")
+        ```
+
+        Args:
+            path: The module path for the plugin.
+
+        """
         plugin = Plugin._from_module(path)
         self.add_plugin(plugin)
-        return plugin
 
 
 class Plugin:

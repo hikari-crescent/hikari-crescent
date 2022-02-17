@@ -39,6 +39,7 @@ __all__: Sequence[str] = (
     "HookCallbackT",
     "ClassCommandProto",
     "Plugin",
+    "PluginManager",
     "ClassCommandOption",
     "ErrorHandlerCallbackT",
     "catch",

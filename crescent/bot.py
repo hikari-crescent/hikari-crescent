@@ -64,15 +64,14 @@ class Bot(GatewayBot):
         Crescent adds two parameters to Hikari's Gateway Bot. `tracked_guilds`
         and `default_guild`.
 
-        Parameters
-        ----------
-        default_guild : Optional[List[hikari.Snowflakeish]]
-            The guild to post application commands to by default. If this is None,
-            slash commands will be posted globall.
-        tracked_guilds : Optional[List[hikari.Snowflakeish]]
-            The guilds to compare posted commands to. Commands will not be
-            automatically removed from guilds that aren't in this list. This should
-            be kept to as little guilds as possible to prevent rate limits.
+        Args:
+            default_guild:
+                The guild to post application commands to by default. If this is None,
+                slash commands will be posted globall.
+            tracked_guilds:
+                The guilds to compare posted commands to. Commands will not be
+                automatically removed from guilds that aren't in this list. This should
+                be kept to as little guilds as possible to prevent rate limits.
         """
         super().__init__(
             token=token,

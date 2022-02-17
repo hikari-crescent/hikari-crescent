@@ -200,10 +200,7 @@
                                 <a class="function" href="#Bot.print_banner">print_banner</a>
                         </li>
                         <li>
-                                <a class="function" href="#Bot.add_plugin">add_plugin</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Bot.load_module">load_module</a>
+                                <a class="variable" href="#Bot.plugins">plugins</a>
                         </li>
                         <li>
                                 <a class="function" href="#Bot.on_crescent_error">on_crescent_error</a>
@@ -1475,7 +1472,8 @@ inheritance.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="p">:</span> <span class="n">CommandHandler</span> <span class="o">=</span> <span class="n">CommandHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracked_guilds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_error_handler</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_guild</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Plugin</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plugins</span> <span class="o">=</span> <span class="n">PluginManager</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">async</span> <span class="k">def</span> <span class="nf">shard_ready</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">ShardReadyEvent</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">application_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">application_id</span>
@@ -1512,16 +1510,9 @@ inheritance.</p>
     <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin</span>
-        <span class="n">plugin</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">load_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
-        <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">plugin</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PluginManager</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plugins</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_crescent_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">was_handled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">was_handled</span><span class="p">:</span>
@@ -1770,7 +1761,8 @@ rest_url : typing.Optional[builtins.str]
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="p">:</span> <span class="n">CommandHandler</span> <span class="o">=</span> <span class="n">CommandHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracked_guilds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_error_handler</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_guild</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Plugin</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plugins</span> <span class="o">=</span> <span class="n">PluginManager</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">async</span> <span class="k">def</span> <span class="nf">shard_ready</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">ShardReadyEvent</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">application_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">application_id</span>
@@ -1889,45 +1881,11 @@ force_color : builtins.bool
 
 
                             </div>
-                            <div id="Bot.add_plugin" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Bot.add_plugin">#&nbsp;&nbsp</a>
+                            <div id="Bot.plugins" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Bot.plugins">#&nbsp;&nbsp</a>
 
-        
-            <span class="def">def</span>
-            <span class="name">add_plugin</span><span class="signature">(self, plugin: <a href="#plugin.Plugin">crescent.plugin.Plugin</a>) -&gt; None</span>:
+        <span class="name">plugins</span><span class="annotation">: <a href="#plugin.PluginManager">crescent.plugin.PluginManager</a></span>
     </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin</span>
-        <span class="n">plugin</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-    
-
-                            </div>
-                            <div id="Bot.load_module" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Bot.load_module">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">load_module</span><span class="signature">(self, path: str) -&gt; <a href="#plugin.Plugin">crescent.plugin.Plugin</a></span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
-        <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">plugin</span>
-</pre></div>
-
-        </details>
 
     
 
