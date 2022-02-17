@@ -156,6 +156,7 @@ def command(
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     description: Optional[str] = None,
+    deprecated: bool = False,
 ) -> Callable[
     [CommandCallbackT | Type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
@@ -169,9 +170,12 @@ def command(
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     description: Optional[str] = None,
+    deprecated: bool = False,
 ):
     if not callback:
-        return partial(command, guild=guild, name=name, description=description)
+        return partial(
+            command, guild=guild, name=name, description=description, deprecated=deprecated
+        )
 
     if isinstance(callback, type) and isinstance(callback, object):
         defaults: Dict[str, Any] = {}
@@ -207,6 +211,7 @@ def command(
         guild=guild,
         description=description or "No Description",
         options=options,
+        deprecated=deprecated,
     )
 
 
@@ -223,15 +228,17 @@ def user_command(
     *,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
+    deprecated: bool = False,
 ):
     if not callback:
-        return partial(user_command, guild=guild, name=name)
+        return partial(user_command, guild=guild, name=name, deprecated=deprecated)
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         command_type=CommandType.USER,
         name=name or callback.__name__,
         guild=guild,
+        deprecated=deprecated,
     )
 
 
@@ -241,13 +248,15 @@ def message_command(
     *,
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
+    deprecated: bool = False,
 ):
     if not callback:
-        return partial(message_command, guild=guild, name=name)
+        return partial(message_command, guild=guild, name=name, deprecated=deprecated)
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         command_type=CommandType.MESSAGE,
         name=name or callback.__name__,
         guild=guild,
+        deprecated=deprecated,
     )

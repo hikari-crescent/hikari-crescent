@@ -197,6 +197,9 @@
                                 <a class="function" href="#Bot.include">include</a>
                         </li>
                         <li>
+                                <a class="function" href="#Bot.print_banner">print_banner</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Bot.add_plugin">add_plugin</a>
                         </li>
                         <li>
@@ -395,9 +398,8 @@ crescent    </h1>
                 
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
-
-<span class="kn">from</span> <span class="nn">hikari</span> <span class="kn">import</span> <span class="n">_about</span>
+            <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">importlib.metadata</span> <span class="kn">import</span> <span class="n">version</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 
 <span class="kn">from</span> <span class="nn">crescent.bot</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">crescent.commands</span> <span class="kn">import</span> <span class="o">*</span>
@@ -407,9 +409,7 @@ crescent    </h1>
 <span class="kn">from</span> <span class="nn">crescent.plugin</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">crescent.typedefs</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">_about</span><span class="o">.</span><span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Lunarmagpie&quot;</span>  <span class="c1"># type: ignore</span>
-<span class="n">_about</span><span class="o">.</span><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;© 2021 Lunarmagpie&quot;</span>  <span class="c1"># type: ignore</span>
-<span class="n">_about</span><span class="o">.</span><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MPL 2.0&quot;</span>  <span class="c1"># type: ignore</span>
+<span class="n">__version__</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">version</span><span class="p">(</span><span class="s2">&quot;hikari-crescent&quot;</span><span class="p">)</span>
 
 <span class="n">__all__</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;Description&quot;</span><span class="p">,</span>
@@ -841,7 +841,8 @@ inheritance.</p>
     *,
     guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
     name: Union[str, NoneType] = None,
-    description: Union[str, NoneType] = None
+    description: Union[str, NoneType] = None,
+    deprecated: bool = False
 )</span>:
     </div>
 
@@ -854,9 +855,12 @@ inheritance.</p>
     <span class="n">guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
         <span class="n">defaults</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -892,6 +896,7 @@ inheritance.</p>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">&quot;No Description&quot;</span><span class="p">,</span>
         <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+        <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -910,7 +915,8 @@ inheritance.</p>
     /,
     *,
     guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
-    name: Union[str, NoneType] = None
+    name: Union[str, NoneType] = None,
+    deprecated: bool = False
 )</span>:
     </div>
 
@@ -922,15 +928,17 @@ inheritance.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">user_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">user_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">register_command</span><span class="p">(</span>
         <span class="n">callback</span><span class="o">=</span><span class="n">_kwargs_to_args_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">),</span>
         <span class="n">command_type</span><span class="o">=</span><span class="n">CommandType</span><span class="o">.</span><span class="n">USER</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
+        <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -949,7 +957,8 @@ inheritance.</p>
     /,
     *,
     guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
-    name: Union[str, NoneType] = None
+    name: Union[str, NoneType] = None,
+    deprecated: bool = False
 )</span>:
     </div>
 
@@ -961,15 +970,17 @@ inheritance.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">message_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">message_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">register_command</span><span class="p">(</span>
         <span class="n">callback</span><span class="o">=</span><span class="n">_kwargs_to_args_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">),</span>
         <span class="n">command_type</span><span class="o">=</span><span class="n">CommandType</span><span class="o">.</span><span class="n">MESSAGE</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
         <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span>
+        <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -1508,6 +1519,10 @@ inheritance.</p>
 
         <span class="k">return</span> <span class="n">command</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
@@ -1835,6 +1850,56 @@ tracked_guilds : Optional[List[hikari.Snowflakeish]]
     
 
                             </div>
+                            <div id="Bot.print_banner" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Bot.print_banner">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@staticmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">print_banner</span><span class="signature">(
+    banner: Union[str, NoneType],
+    allow_color: bool,
+    force_color: bool
+) -&gt; None</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Print the banner.</p>
+
+<p>This allows library vendors to override this behaviour, or choose to
+inject their own "branding" on top of what hikari provides by default.</p>
+
+<p>Normal users should not need to invoke this function, and can simply
+change the <code>banner</code> argument passed to the constructor to manipulate
+what is displayed.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>banner : typing.Optional[builtins.str]
+    The package to find a <code>banner.txt</code> in.
+allow_color : builtins.bool
+    A flag that allows advising whether to allow color if supported or
+    not. Can be overridden by setting a <code>"CLICOLOR"</code> environment
+    variable to a non-<code>"0"</code> string.
+force_color : builtins.bool
+    A flag that allows forcing color to always be output, even if the
+    terminal device may not support it. Setting the <code>"CLICOLOR_FORCE"</code>
+    environment variable to a non-<code>"0"</code> string will override this.</p>
+
+<p>!!! note
+    <code>force_color</code> will always take precedence over <code>allow_color</code>.</p>
+</div>
+
+
+                            </div>
                             <div id="Bot.add_plugin" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#Bot.add_plugin">#&nbsp;&nbsp</a>
 
@@ -1934,7 +1999,6 @@ tracked_guilds : Optional[List[hikari.Snowflakeish]]
                 <dd id="Bot.get_listeners" class="function">get_listeners</dd>
                 <dd id="Bot.join" class="function">join</dd>
                 <dd id="Bot.listen" class="function">listen</dd>
-                <dd id="Bot.print_banner" class="function">print_banner</dd>
                 <dd id="Bot.run" class="function">run</dd>
                 <dd id="Bot.start" class="function">start</dd>
                 <dd id="Bot.stream" class="function">stream</dd>
