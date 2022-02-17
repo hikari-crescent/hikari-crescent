@@ -1,22 +1,19 @@
 from __future__ import annotations
 
 from importlib import import_module
-from typing import TYPE_CHECKING, Tuple, Dict
+from typing import TYPE_CHECKING, Dict, Tuple
 
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
-    from typing import TypeVar, Sequence
+    from typing import Sequence, TypeVar
 
     from .bot import Bot
 
     T = TypeVar("T", bound="MetaStruct")
 
 
-__all__: Sequence[str] = (
-    "PluginManager",
-    "Plugin",
-)
+__all__: Sequence[str] = ("PluginManager", "Plugin")
 
 
 class PluginManager:
