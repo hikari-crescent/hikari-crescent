@@ -5,4 +5,4 @@ class TestPlugins:
     def test_load_plugin(self):
         bot = MockBot()
 
-        bot.plugins.load("plugin")
+        bot.plugins.load("tests.crescent.plugins.plugin")
