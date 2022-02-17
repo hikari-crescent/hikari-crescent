@@ -3144,7 +3144,7 @@ Protocol classes can be generic, they are defined as::</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin</span>
         <span class="n">plugin</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bot</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load a plugin from the module path.</span>
 
 <span class="sd">        ```python</span>
@@ -3161,6 +3161,7 @@ Protocol classes can be generic, they are defined as::</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">plugin</span>
 </pre></div>
 
         </details>
@@ -3213,12 +3214,12 @@ Protocol classes can be generic, they are defined as::</p>
 
         
             <span class="def">def</span>
-            <span class="name">load</span><span class="signature">(self, path: str)</span>:
+            <span class="name">load</span><span class="signature">(self, path: str) -&gt; <a href="#plugin.Plugin">crescent.plugin.Plugin</a></span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load a plugin from the module path.</span>
 
 <span class="sd">        ```python</span>
@@ -3235,6 +3236,7 @@ Protocol classes can be generic, they are defined as::</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">plugin</span>
 </pre></div>
 
         </details>
