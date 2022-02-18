@@ -244,6 +244,9 @@ class CommandHandler:
             )
 
     async def register_commands(self):
+        if not self.bot.update_commands:
+            return
+
         guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
 
         commands = self.build_commands()

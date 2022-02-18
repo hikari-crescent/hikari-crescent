@@ -1,3 +1,4 @@
+from collections import defaultdict
 from unittest.mock import AsyncMock, MagicMock
 
 from hikari import Message, User
@@ -15,7 +16,7 @@ GUILD_ID = 123456789
 class TestRegistry:
     @fixture(autouse=True)
     def mock_send(self):
-        self.posted_commands = {}
+        self.posted_commands = defaultdict(list)
 
         def set_application_commands(application, commands, guild=None):
             self.posted_commands[guild] = commands
@@ -95,3 +96,28 @@ class TestRegistry:
             user_command.metadata.app,
             message_command.metadata.app,
         ]
+
+    @mark.asyncio
+    async def test_dont_register_commands(self):
+        bot = MockBot(default_guild=GUILD_ID, update_commands=False)
+
+        @bot.include
+        @command
+        async def slash_command(ctx: Context):
+            pass
+
+        @bot.include
+        @_user_command
+        async def user_command(ctx: Context, user: User):
+            pass
+
+        @bot.include
+        @_message_command
+        async def message_command(ctx: Context, message: Message):
+            pass
+
+        bot._command_handler.application_id = ...
+
+        await bot._command_handler.register_commands()
+
+        assert self.posted_commands[GUILD_ID] == []
