@@ -4,7 +4,7 @@ from asyncio import Task, create_task
 from concurrent.futures import Executor
 from itertools import chain
 from traceback import print_exception
-from typing import TYPE_CHECKING, cast, overload, Callable, Coroutine, Any
+from typing import TYPE_CHECKING, overload
 
 from hikari import (
     CacheSettings,
@@ -26,7 +26,7 @@ from crescent.plugin import PluginManager
 from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, TypeVar, Union, Sequence
+    from typing import Dict, Optional, TypeVar, Union, Sequence, Callable, Any
 
     from crescent.context import Context
 
@@ -108,7 +108,7 @@ class Bot(GatewayBot):
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
         async def on_started(event: StartedEvent):
-            self._on_started(event)
+            await self._on_started(event)
 
         self.subscribe(
             StartedEvent,
