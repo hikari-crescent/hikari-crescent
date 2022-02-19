@@ -106,9 +106,13 @@ class Bot(GatewayBot):
         self._plugins = PluginManager(self)
 
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
+
+        async def on_started(event: StartedEvent):
+            self._on_started(event)
+
         self.subscribe(
             StartedEvent,
-            cast(Callable[[StartedEvent], Coroutine[Any, Any, None]], self._on_started)
+            on_started
         )
         self.subscribe(InteractionCreateEvent, handle_resp)
 
