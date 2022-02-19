@@ -26,7 +26,7 @@ from crescent.plugin import PluginManager
 from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, TypeVar, Union, Sequence, Callable, Any
+    from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
 
     from crescent.context import Context
 
@@ -110,10 +110,7 @@ class Bot(GatewayBot):
         async def on_started(event: StartedEvent):
             await self._on_started(event)
 
-        self.subscribe(
-            StartedEvent,
-            on_started
-        )
+        self.subscribe(StartedEvent, on_started)
         self.subscribe(InteractionCreateEvent, handle_resp)
 
         for _, value in iterate_vars(self.__class__):
