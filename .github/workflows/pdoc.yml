@@ -36,5 +36,5 @@ jobs:
         uses: actions/setup-node@v2
       - name: Publish Docs
         run: |
-          npm install gh-pages -g
+          npm install gh-pages
           node docs/publish.js
