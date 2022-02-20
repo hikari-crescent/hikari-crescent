@@ -26,6 +26,7 @@ jobs:
 
   publish-docs:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -42,5 +43,5 @@ jobs:
         uses: actions/setup-node@v2
       - name: Publish Docs
         run: |
-          npm install gh-pages -g
+          npm install gh-pages
           node docs/publish.js
