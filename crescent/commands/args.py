@@ -13,6 +13,9 @@ class Arg(ABC):
         """Returns the data for this object"""
         ...
 
+    def __hash__(self) -> int:
+        return super().__hash__() << 1 ^ hash(self.payload)
+
 
 @define(hash=True)
 class Description(Arg):
@@ -32,10 +35,7 @@ class Name(Arg):
         return self.name
 
 
-@define(init=False, hash=True)
 class Choices(Arg):
-    choices: Sequence[CommandChoice]
-
     def __init__(self, *choices: CommandChoice) -> None:
         self.choices = choices
 
@@ -44,10 +44,7 @@ class Choices(Arg):
         return self.choices
 
 
-@define(init=False, hash=True)
 class ChannelTypes(Arg):
-    channel_types: Sequence[CommandChoice]
-
     def __init__(self, *channel_types: ChannelType) -> None:
         self.channel_types = channel_types
 
