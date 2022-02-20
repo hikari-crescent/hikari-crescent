@@ -13,6 +13,21 @@ jobs:
           architecture: 'x64'
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.3
+      - name: run pdoc
+        run: |
+          poetry install
+          ./docs/build.sh
+
+  publish-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.1.3
       - name: Build docs
         run: |
           poetry install
@@ -21,6 +36,7 @@ jobs:
         uses: actions/setup-node@v2
       - name: Publish Docs
         run: |
-          git remote get-url origin
+          git config user.name "Github Actions"
+          git config user.email "actions@magpie.dev"
           npm install gh-pages
           node docs/publish.js
