@@ -62,6 +62,9 @@
                                 <a class="function" href="#Choices.__init__">Choices</a>
                         </li>
                         <li>
+                                <a class="variable" href="#Choices.choices">choices</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#Choices.payload">payload</a>
                         </li>
                 </ul>
@@ -72,6 +75,9 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#ChannelTypes.__init__">ChannelTypes</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ChannelTypes.channel_types">channel_types</a>
                         </li>
                         <li>
                                 <a class="variable" href="#ChannelTypes.payload">payload</a>
@@ -607,6 +613,8 @@ inheritance.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Choices</span><span class="p">(</span><span class="n">Arg</span><span class="p">):</span>
+    <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CommandChoice</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">choices</span><span class="p">:</span> <span class="n">CommandChoice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">choices</span>
 
@@ -640,6 +648,15 @@ inheritance.</p>
     
 
                             </div>
+                            <div id="Choices.choices" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Choices.choices">#&nbsp;&nbsp</a>
+
+        <span class="name">choices</span><span class="annotation">: Sequence[hikari.commands.CommandChoice]</span>
+    </div>
+
+    
+
+                            </div>
                             <div id="Choices.payload" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Choices.payload">#&nbsp;&nbsp</a>
 
@@ -664,6 +681,8 @@ inheritance.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ChannelTypes</span><span class="p">(</span><span class="n">Arg</span><span class="p">):</span>
+    <span class="n">channel_types</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CommandChoice</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">channel_types</span><span class="p">:</span> <span class="n">ChannelType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channel_types</span> <span class="o">=</span> <span class="n">channel_types</span>
 
@@ -693,6 +712,15 @@ inheritance.</p>
 </pre></div>
 
         </details>
+
+    
+
+                            </div>
+                            <div id="ChannelTypes.channel_types" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ChannelTypes.channel_types">#&nbsp;&nbsp</a>
+
+        <span class="name">channel_types</span><span class="annotation">: Sequence[hikari.commands.CommandChoice]</span>
+    </div>
 
     
 
