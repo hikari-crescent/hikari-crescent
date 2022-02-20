@@ -36,7 +36,8 @@ jobs:
         uses: actions/setup-node@v2
       - name: Publish Docs
         run: |
-          git config user.name "Github Actions"
-          git config user.email "actions@magpie.dev"
+          git remote
+          git config --global user.name "Github Actions"
+          git config --global user.email "actions@magpie.dev"
           npm install gh-pages
           node docs/publish.js
