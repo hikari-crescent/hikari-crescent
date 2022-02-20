@@ -36,8 +36,9 @@ jobs:
         uses: actions/setup-node@v2
       - name: Publish Docs
         run: |
-          git remote
           git config --global user.name "Github Actions"
           git config --global user.email "actions@magpie.dev"
+          git remote set-url origin https://${{ secrets.USERNAME }}:${{ secrets.PASSWORD }}@github.com/your_name/your_repository.git
+
           npm install gh-pages
           node docs/publish.js
