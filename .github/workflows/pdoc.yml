@@ -13,7 +13,13 @@ jobs:
           architecture: 'x64'
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.3
-      - name: run pdoc
+      - name: Build docs
         run: |
           poetry install
           ./docs/build.sh
+      - name: Setup Node
+        uses: actions/setup-node@v2
+      - name: Publish Docs
+        run: |
+          npm install gh-pages
+          node docs/publish.js
