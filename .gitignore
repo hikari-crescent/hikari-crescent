@@ -43,6 +43,9 @@ MANIFEST
 .dmypy.json
 dmypy.json
 
+# Docs
+docs/_build/*
+
 # coverage-py
 .coverage
 .coverage.*
