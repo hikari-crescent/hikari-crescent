@@ -15,6 +15,7 @@ process.exec(
             'docs/_build',
             {
                 message: commit_message,
+                history: false,
                 user: {
                     name: "Github Actions",
                     email: "actions@magpie.dev",
