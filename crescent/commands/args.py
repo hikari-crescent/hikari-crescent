@@ -14,7 +14,7 @@ class Arg(ABC):
         ...
 
     def __hash__(self) -> int:
-        return super().__hash__() << 1 ^ hash(self.payload)
+        return super().__hash__() ^ hash(self.payload)
 
 
 @define(hash=True)
