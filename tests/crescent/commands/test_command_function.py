@@ -12,7 +12,7 @@ from hikari import (
 )
 from typing_extensions import Annotated
 
-from crescent import Context, command, message_command, user_command, Name
+from crescent import Context, Name, command, message_command, user_command
 from crescent.commands.args import ChannelTypes, MaxValue, MinValue
 from crescent.internal.app_command import AppCommand, AppCommandMeta
 
