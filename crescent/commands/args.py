@@ -1,10 +1,24 @@
+from __future__ import annotations
+
 from abc import ABC
-from typing import Any, Sequence
+from typing import TYPE_CHECKING
 
 from attr import define
 from hikari import ChannelType, CommandChoice
 
-__all__: Sequence[str] = ("Description", "Name", "Choices", "ChannelTypes", "MaxValue", "MinValue")
+if TYPE_CHECKING:
+    from typing import Sequence, Any
+    from crescent.typedefs import AutocompleteCallbackT
+
+__all__: Sequence[str] = (
+    "Description",
+    "Name",
+    "Choices",
+    "ChannelTypes",
+    "MaxValue",
+    "MinValue",
+    "Autocomplete",
+)
 
 
 class Arg(ABC):
@@ -66,3 +80,12 @@ class MinValue(Arg):
     @property
     def payload(self) -> int:
         return self.min_value
+
+
+@define
+class Autocomplete(Arg):
+    callback: AutocompleteCallbackT
+
+    @property
+    def payload(self) -> str:
+        return self.callback

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.meta_struct import MetaStruct
-    from crescent.typedefs import CommandCallbackT, HookCallbackT
+    from crescent.typedefs import CommandCallbackT, HookCallbackT, AutocompleteCallbackT
 
 
 @define(hash=True)
@@ -118,6 +118,7 @@ class AppCommand(CommandBuilder):
 @define
 class AppCommandMeta:
     app: AppCommand
+    autocomplete: Dict[str, AutocompleteCallbackT]
     group: Optional[Group] = None
     sub_group: Optional[SubGroup] = None
     deprecated: bool = False

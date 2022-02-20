@@ -6,6 +6,7 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
+    List,
     Optional,
     Protocol,
     Sequence,
@@ -29,6 +30,7 @@ __all__: Sequence[str] = (
     "ClassCommandProto",
     "HookCallbackT",
     "ErrorHandlerCallbackT",
+    "AutocompleteCallbackT",
 )
 
 CommandCallbackT = Callable[..., Awaitable[Any]]
@@ -44,6 +46,7 @@ MessageCommandCallbackT = Union[
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable"]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
+AutocompleteCallbackT = Callable[["Context", str], Awaitable[List[str]]]
 
 
 class ClassCommandProto(Protocol):
