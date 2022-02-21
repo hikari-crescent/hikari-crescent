@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from asyncio import create_task
+from asyncio import Task, create_task
 from concurrent.futures import Executor
 from itertools import chain
 from traceback import print_exception
-from typing import TYPE_CHECKING, Callable, Sequence, overload
+from typing import TYPE_CHECKING, overload
 
 from hikari import (
     CacheSettings,
@@ -26,7 +26,7 @@ from crescent.plugin import PluginManager
 from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
 
     from crescent.context import Context
 
@@ -46,6 +46,7 @@ class Bot(GatewayBot):
         *,
         tracked_guilds: Sequence[Snowflakeish] = None,
         default_guild: Optional[Snowflakeish] = None,
+        update_commands: bool = True,
         allow_unknown_interactions: bool = False,
         allow_color: bool = True,
         banner: Optional[str] = "crescent",
@@ -96,6 +97,7 @@ class Bot(GatewayBot):
             tracked_guilds = tuple(chain(tracked_guilds, (default_guild,)))
 
         self.allow_unknown_interactions = allow_unknown_interactions
+        self.update_commands = update_commands
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self._error_handler = ErrorHandler(self)
@@ -103,20 +105,25 @@ class Bot(GatewayBot):
 
         self._plugins = PluginManager(self)
 
-        async def shard_ready(event: ShardReadyEvent):
-            self._command_handler.application_id = event.application_id
+        self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
-        async def started(_: StartedEvent):
-            create_task(self._command_handler.register_commands())
+        async def on_started(event: StartedEvent):
+            await self._on_started(event)
 
-        self.subscribe(ShardReadyEvent, shard_ready)
-        self.subscribe(StartedEvent, started)
-
+        self.subscribe(StartedEvent, on_started)
         self.subscribe(InteractionCreateEvent, handle_resp)
 
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, MetaStruct):
                 value.register_to_app(self, self)
+
+    async def _on_shard_ready(self, event: ShardReadyEvent):
+        self._command_handler.application_id = event.application_id
+
+    async def _on_started(self, _: StartedEvent) -> Optional[Task]:
+        if self.update_commands:
+            return create_task(self._command_handler.register_commands())
+        return None
 
     @overload
     def include(self, command: META_STRUCT) -> META_STRUCT:
