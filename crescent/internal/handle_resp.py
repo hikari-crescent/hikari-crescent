@@ -128,6 +128,7 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
         callback_options = _resolved_data_to_kwargs(interaction)
 
     return Context(
+        interaction=interaction,
         app=cast("RestAndCacheAware", interaction.app),
         application_id=interaction.application_id,
         type=interaction.type,
