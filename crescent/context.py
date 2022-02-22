@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Literal, Optional, Sequence
 
     from hikari import (
+        CommandInteraction,
         Embed,
         Message,
         PartialRole,
@@ -47,6 +48,7 @@ __all__: Sequence[str] = ("Context",)
 class Context:
     """Represents the context for interactions"""
 
+    interaction: CommandInteraction
     app: RestAndCacheAware
     application_id: Snowflake
     type: int
