@@ -3,10 +3,13 @@ from __future__ import annotations
 from importlib import import_module
 from typing import TYPE_CHECKING, Dict, Tuple
 
+from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
     from typing import Sequence, TypeVar
+
+    from crescent.typedefs import HookCallbackT
 
     from .bot import Bot
 
@@ -48,15 +51,20 @@ class PluginManager:
 
 
 class Plugin:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, command_hooks: list[HookCallbackT]) -> None:
         self.name = name
+        self.command_hooks = command_hooks
         self._children: list[Tuple[MetaStruct, bool]] = []
 
         for value in vars(self.__class__).values():
             if isinstance(value, MetaStruct):
+                if isinstance(value.metadata, AppCommandMeta):
+                    value.metadata.hooks.extend(self.command_hooks)
                 self._children.append((value, True))
 
     def include(self, obj: T) -> T:
+        if isinstance(obj.metadata, AppCommandMeta):
+            obj.metadata.hooks.extend(self.command_hooks)
         self._children.append((obj, False))
         return obj
 
