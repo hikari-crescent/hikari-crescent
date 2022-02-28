@@ -36,7 +36,13 @@ class Bot(crescent.Bot):
         return await super().on_crescent_error(exc, ctx, was_handled)
 
 
-bot = Bot(os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]))
+async def bot_wide_hook(ctx: crescent.Context) -> None:
+    await ctx.respond("Bot wide hook called")
+
+
+bot = Bot(
+    os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]), command_hooks=[bot_wide_hook],
+)
 
 bot.plugins.load("tests.test_bot.test_plugin")
 
