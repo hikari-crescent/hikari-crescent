@@ -1449,6 +1449,7 @@ inheritance.</p>
         <span class="n">default_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">update_commands</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">allow_unknown_interactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">command_hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HookCallbackT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;crescent&quot;</span><span class="p">,</span>
         <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Executor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1499,6 +1500,7 @@ inheritance.</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">allow_unknown_interactions</span> <span class="o">=</span> <span class="n">allow_unknown_interactions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_commands</span> <span class="o">=</span> <span class="n">update_commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span> <span class="o">=</span> <span class="n">command_hooks</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="p">:</span> <span class="n">CommandHandler</span> <span class="o">=</span> <span class="n">CommandHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracked_guilds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_error_handler</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1538,6 +1540,8 @@ inheritance.</p>
         <span class="k">if</span> <span class="n">command</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">include</span>
 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
+            <span class="n">command</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
         <span class="n">command</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">command</span>
@@ -1720,6 +1724,7 @@ rest_url : typing.Optional[builtins.str]
     default_guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
     update_commands: bool = True,
     allow_unknown_interactions: bool = False,
+    command_hooks: &#39;list[HookCallbackT] | None&#39; = None,
     allow_color: bool = True,
     banner: Union[str, NoneType] = &#39;crescent&#39;,
     executor: Union[concurrent.futures._base.Executor, NoneType] = None,
@@ -1745,6 +1750,7 @@ rest_url : typing.Optional[builtins.str]
         <span class="n">default_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Snowflakeish</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">update_commands</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">allow_unknown_interactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">command_hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HookCallbackT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;crescent&quot;</span><span class="p">,</span>
         <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Executor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1795,6 +1801,7 @@ rest_url : typing.Optional[builtins.str]
 
         <span class="bp">self</span><span class="o">.</span><span class="n">allow_unknown_interactions</span> <span class="o">=</span> <span class="n">allow_unknown_interactions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_commands</span> <span class="o">=</span> <span class="n">update_commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span> <span class="o">=</span> <span class="n">command_hooks</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="p">:</span> <span class="n">CommandHandler</span> <span class="o">=</span> <span class="n">CommandHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracked_guilds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_error_handler</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1856,6 +1863,8 @@ be kept to as little guilds as possible to prevent rate limits.</li>
         <span class="k">if</span> <span class="n">command</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">include</span>
 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
+            <span class="n">command</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
         <span class="n">command</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">command</span>
@@ -3060,19 +3069,14 @@ Protocol classes can be generic, they are defined as::</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Plugin</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">command_hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HookCallbackT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">command_hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HookCallbackT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span> <span class="o">=</span> <span class="n">command_hooks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">MetaStruct</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span>
-                <span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
                     <span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
 
@@ -3084,6 +3088,8 @@ Protocol classes can be generic, they are defined as::</p>
 
     <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bot</span><span class="p">:</span> <span class="n">Bot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">is_method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bot</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">bot</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
             <span class="n">item</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="n">bot</span><span class="p">,</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">is_method</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -3119,19 +3125,14 @@ Protocol classes can be generic, they are defined as::</p>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">command_hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HookCallbackT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">command_hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HookCallbackT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span> <span class="o">=</span> <span class="n">command_hooks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">MetaStruct</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span>
-                <span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
                     <span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
 </pre></div>
