@@ -51,19 +51,24 @@ class PluginManager:
 
 
 class Plugin:
-    def __init__(self, name: str, command_hooks: list[HookCallbackT]) -> None:
+    def __init__(
+        self, name: str, command_hooks: list[HookCallbackT] | None = None
+    ) -> None:
         self.name = name
         self.command_hooks = command_hooks
         self._children: list[Tuple[MetaStruct, bool]] = []
 
         for value in vars(self.__class__).values():
             if isinstance(value, MetaStruct):
-                if isinstance(value.metadata, AppCommandMeta):
+                if (
+                    isinstance(value.metadata, AppCommandMeta)
+                    and self.command_hooks
+                ):
                     value.metadata.hooks.extend(self.command_hooks)
                 self._children.append((value, True))
 
     def include(self, obj: T) -> T:
-        if isinstance(obj.metadata, AppCommandMeta):
+        if isinstance(obj.metadata, AppCommandMeta) and self.command_hooks:
             obj.metadata.hooks.extend(self.command_hooks)
         self._children.append((obj, False))
         return obj
