@@ -41,7 +41,7 @@ async def bot_wide_hook(ctx: crescent.Context) -> None:
 
 
 bot = Bot(
-    os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]), command_hooks=[bot_wide_hook],
+    os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]), command_hooks=[bot_wide_hook]
 )
 
 bot.plugins.load("tests.test_bot.test_plugin")
