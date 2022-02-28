@@ -2,7 +2,7 @@ import crescent
 
 
 async def plugin_hook(ctx: crescent.Context) -> None:
-    await ctx.respond(f"Plugin wide hook called.")
+    await ctx.respond("Plugin wide hook called.")
 
 
 plugin = crescent.Plugin("plugin", [plugin_hook])
