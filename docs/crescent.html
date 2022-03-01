@@ -1518,6 +1518,8 @@ inheritance.</p>
 
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iterate_vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_on_shard_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ShardReadyEvent</span><span class="p">):</span>
@@ -1819,6 +1821,8 @@ rest_url : typing.Optional[builtins.str]
 
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iterate_vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 </pre></div>
 
