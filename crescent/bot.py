@@ -119,6 +119,8 @@ class Bot(GatewayBot):
 
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, MetaStruct):
+                if isinstance(value.metadata, AppCommandMeta) and self.command_hooks:
+                    value.metadata.hooks.extend(self.command_hooks)
                 value.register_to_app(self, self)
 
     async def _on_shard_ready(self, event: ShardReadyEvent):
