@@ -3,8 +3,7 @@ from __future__ import annotations
 from types import MethodType
 from typing import TYPE_CHECKING, Any
 
-from crescent import Bot, Plugin, command, hook
-from crescent.commands.groups import Group
+from crescent import hook, Bot, Plugin, command, Group
 
 
 async def async_func(*a, **k) -> None:
@@ -47,11 +46,10 @@ class MyPlugin(Plugin):
 
 def test_hook_order():
     bot = MyBot("NO TOKEN", command_hooks=[MockHook("bot")])
-
+    plugin = MyPlugin("PLUGIN", [MockHook("plugin")])
     group = Group("BOT_GROUP", hooks=[MockHook("group")])
     subgroup = group.sub_group("SUBGROUP", hooks=[MockHook("subgroup")])
 
-    plugin = MyPlugin("PLUGIN", [MockHook("plugin")])
 
     @bot.include
     @hook(MockHook("command"))
