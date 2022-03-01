@@ -22,7 +22,7 @@ class _MockHook:
     __func__ = async_func
 
     def __eq__(self, ot: object) -> bool:
-        return ot == self.name
+        return self.name == ot
 
 
 if TYPE_CHECKING:
