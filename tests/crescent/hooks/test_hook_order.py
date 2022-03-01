@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from typing import  TYPE_CHECKING, Any
 from types import MethodType
+from typing import TYPE_CHECKING, Any
 
-from crescent import hook, Bot, Plugin, command
+from crescent import Bot, Plugin, command, hook
 from crescent.commands.groups import Group
 
 
-async def async_func(*a, **k) -> None: ...
+async def async_func(*a, **k) -> None:
+    ...
+
 
 class _MockHook:
     def __init__(self, name: str) -> None:
@@ -22,6 +24,7 @@ class _MockHook:
     def __eq__(self, ot: object) -> bool:
         return ot == self.name
 
+
 if TYPE_CHECKING:
     MockHook = Any
 else:
@@ -31,13 +34,15 @@ else:
 class MyBot(Bot):
     @hook(MockHook("command"))
     @command
-    async def c7(self, ctx) -> None: ...
+    async def c7(self, ctx) -> None:
+        ...
 
 
 class MyPlugin(Plugin):
     @hook(MockHook("command"))
     @command
-    async def c8(self, ctx) -> None: ...
+    async def c8(self, ctx) -> None:
+        ...
 
 
 def test_hook_order():
@@ -51,36 +56,42 @@ def test_hook_order():
     @bot.include
     @hook(MockHook("command"))
     @command
-    async def c1(ctx) -> None: ...
+    async def c1(ctx) -> None:
+        ...
 
     @bot.include
     @hook(MockHook("command"))
     @group.child
     @command
-    async def c2(ctx) -> None: ...
+    async def c2(ctx) -> None:
+        ...
 
     @bot.include
     @hook(MockHook("command"))
     @subgroup.child
     @command
-    async def c3(ctx) -> None: ...
+    async def c3(ctx) -> None:
+        ...
 
     @plugin.include
     @hook(MockHook("command"))
     @command
-    async def c4(ctx) -> None: ...  # *pytest explodes*
+    async def c4(ctx) -> None:
+        ...  # *pytest explodes*
 
     @plugin.include
     @hook(MockHook("command"))
     @group.child
     @command
-    async def c5(ctx) -> None: ...
+    async def c5(ctx) -> None:
+        ...
 
     @plugin.include
     @hook(MockHook("command"))
     @subgroup.child
     @command
-    async def c6(ctx) -> None: ...
+    async def c6(ctx) -> None:
+        ...
 
     bot.plugins.add_plugin(plugin)
 
