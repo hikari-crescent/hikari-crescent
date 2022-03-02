@@ -19,6 +19,7 @@ from hikari import (
 )
 
 from crescent._ux import print_banner
+from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
@@ -29,6 +30,7 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
 
     from crescent.context import Context
+    from crescent.typedefs import HookCallbackT
 
     META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct)
 
@@ -48,6 +50,7 @@ class Bot(GatewayBot):
         default_guild: Optional[Snowflakeish] = None,
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
+        command_hooks: list[HookCallbackT] | None = None,
         allow_color: bool = True,
         banner: Optional[str] = "crescent",
         executor: Optional[Executor] = None,
@@ -98,6 +101,7 @@ class Bot(GatewayBot):
 
         self.allow_unknown_interactions = allow_unknown_interactions
         self.update_commands = update_commands
+        self.command_hooks = command_hooks
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self._error_handler = ErrorHandler(self)
@@ -115,6 +119,8 @@ class Bot(GatewayBot):
 
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, MetaStruct):
+                if isinstance(value.metadata, AppCommandMeta) and self.command_hooks:
+                    value.metadata.hooks.extend(self.command_hooks)
                 value.register_to_app(self, self)
 
     async def _on_shard_ready(self, event: ShardReadyEvent):
@@ -137,6 +143,8 @@ class Bot(GatewayBot):
         if command is None:
             return self.include
 
+        if isinstance(command.metadata, AppCommandMeta) and self.command_hooks:
+            command.metadata.hooks.extend(self.command_hooks)
         command.register_to_app(app=self)
 
         return command
