@@ -3097,7 +3097,7 @@ Protocol classes can be generic, they are defined as::</p>
             <span class="n">item</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="n">bot</span><span class="p">,</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">is_method</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
         <span class="n">parents</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
 
         <span class="n">name</span> <span class="o">=</span> <span class="n">parents</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -3105,6 +3105,8 @@ Protocol classes can be generic, they are defined as::</p>
         <span class="k">if</span> <span class="n">package</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">name</span>
         <span class="n">module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">refresh</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">reload</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
         <span class="n">plugin</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">Plugin</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -3185,13 +3187,16 @@ Protocol classes can be generic, they are defined as::</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Plugin</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bot</span> <span class="o">=</span> <span class="n">bot</span>
 
-    <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">force</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin</span>
         <span class="n">plugin</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bot</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load a plugin from the module path.</span>
 
 <span class="sd">        ```python</span>
@@ -3206,8 +3211,8 @@ Protocol classes can be generic, they are defined as::</p>
 <span class="sd">            path: The module path for the plugin.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+        <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">plugin</span>
 </pre></div>
 
@@ -3239,14 +3244,17 @@ Protocol classes can be generic, they are defined as::</p>
 
         
             <span class="def">def</span>
-            <span class="name">add_plugin</span><span class="signature">(self, plugin: <a href="#plugin.Plugin">crescent.plugin.Plugin</a>) -&gt; None</span>:
+            <span class="name">add_plugin</span><span class="signature">(self, plugin: <a href="#plugin.Plugin">crescent.plugin.Plugin</a>, force: bool = False) -&gt; None</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">force</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin name </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin</span>
         <span class="n">plugin</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bot</span><span class="p">)</span>
 </pre></div>
@@ -3261,12 +3269,12 @@ Protocol classes can be generic, they are defined as::</p>
 
         
             <span class="def">def</span>
-            <span class="name">load</span><span class="signature">(self, path: str) -&gt; <a href="#plugin.Plugin">crescent.plugin.Plugin</a></span>:
+            <span class="name">load</span><span class="signature">(self, path: str, refresh: bool = False) -&gt; <a href="#plugin.Plugin">crescent.plugin.Plugin</a></span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load a plugin from the module path.</span>
 
 <span class="sd">        ```python</span>
@@ -3281,8 +3289,8 @@ Protocol classes can be generic, they are defined as::</p>
 <span class="sd">            path: The module path for the plugin.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+        <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">plugin</span>
 </pre></div>
 
