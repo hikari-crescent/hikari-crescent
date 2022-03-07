@@ -168,12 +168,7 @@ class Bot(GatewayBot):
         if extra_args:
             args = {**extra_args, **args}
 
-        super().print_banner(
-            banner,
-            allow_color,
-            force_color,
-            extra_args=args,
-        )
+        super().print_banner(banner, allow_color, force_color, extra_args=args)
 
     @property
     def plugins(self) -> PluginManager:
