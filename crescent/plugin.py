@@ -26,9 +26,7 @@ class PluginManager:
 
     def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
         if plugin.name in self.plugins:
-            if force:
-                del self.plugins[plugin.name]
-            else:
+            if not force:
                 raise ValueError(f"Plugin name {plugin.name} already exists.")
         self.plugins[plugin.name] = plugin
         plugin._setup(self._bot)
