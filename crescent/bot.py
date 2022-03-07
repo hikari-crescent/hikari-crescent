@@ -150,7 +150,12 @@ class Bot(GatewayBot):
         return command
 
     @staticmethod
-    def print_banner(banner: Optional[str], allow_color: bool, force_color: bool) -> None:
+    def print_banner(
+        banner: Optional[str],
+        allow_color: bool,
+        force_color: bool,
+        extra_args: Optional[Dict[str, str]] = None,
+    ) -> None:
         print_banner(banner, allow_color, force_color)
 
     @property
