@@ -18,7 +18,6 @@ from hikari import (
     StartedEvent,
 )
 
-from crescent._ux import print_banner
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
@@ -156,7 +155,24 @@ class Bot(GatewayBot):
         force_color: bool,
         extra_args: Optional[Dict[str, str]] = None,
     ) -> None:
-        print_banner(banner, allow_color, force_color)
+        from crescent import __version__
+        from crescent._about import __copyright__, __license__
+
+        args: Dict[str, str] = {
+            "crescent_version": __version__,
+            "crescent_copyright": __copyright__,
+            "crescent_license": __license__,
+        }
+
+        if extra_args:
+            args = {**extra_args, **args}
+
+        super(__class__, __class__).print_banner(  # type: ignore
+            banner,
+            allow_color,
+            force_color,
+            extra_args=args,
+        )
 
     @property
     def plugins(self) -> PluginManager:
