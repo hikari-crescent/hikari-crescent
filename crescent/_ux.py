@@ -1,6 +1,7 @@
 from typing import Dict, Optional, Sequence
 
 from hikari.internal.ux import print_banner as _print_banner
+
 from crescent._about import __copyright__, __license__
 
 __all__: Sequence[str] = ("print_banner",)
