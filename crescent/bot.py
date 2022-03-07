@@ -148,8 +148,9 @@ class Bot(GatewayBot):
 
         return command
 
-    @staticmethod
+    @classmethod
     def print_banner(
+        cls,
         banner: Optional[str],
         allow_color: bool,
         force_color: bool,
@@ -167,7 +168,7 @@ class Bot(GatewayBot):
         if extra_args:
             args = {**extra_args, **args}
 
-        super(__class__, __class__).print_banner(  # type: ignore
+        super().print_banner(
             banner,
             allow_color,
             force_color,
