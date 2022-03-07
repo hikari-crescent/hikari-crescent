@@ -3207,8 +3207,9 @@ Protocol classes can be generic, they are defined as::</p>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path: The module path for the plugin.</span>
-
+<span class="sd">            refresh: Whether or not to reload the plugin.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">plugin</span>
@@ -3283,8 +3284,9 @@ Protocol classes can be generic, they are defined as::</p>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path: The module path for the plugin.</span>
-
+<span class="sd">            refresh: Whether or not to reload the plugin.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">plugin</span> <span class="o">=</span> <span class="n">Plugin</span><span class="o">.</span><span class="n">_from_module</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">plugin</span>
@@ -3305,6 +3307,7 @@ Protocol classes can be generic, they are defined as::</p>
 
 <ul>
 <li><strong>path:</strong>  The module path for the plugin.</li>
+<li><strong>refresh:</strong>  Whether or not to reload the plugin.</li>
 </ul>
 </div>
 
