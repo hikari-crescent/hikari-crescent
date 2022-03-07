@@ -44,8 +44,9 @@ class PluginManager:
 
         Args:
             path: The module path for the plugin.
-
+            refresh: Whether or not to reload the plugin.
         """
+
         plugin = Plugin._from_module(path, refresh=refresh)
         self.add_plugin(plugin, force=refresh)
         return plugin
