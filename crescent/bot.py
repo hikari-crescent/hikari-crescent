@@ -168,10 +168,7 @@ class Bot(GatewayBot):
             args = {**extra_args, **args}
 
         super(__class__, __class__).print_banner(  # type: ignore
-            banner,
-            allow_color,
-            force_color,
-            extra_args=args,
+            banner, allow_color, force_color, extra_args=args
         )
 
     @property
