@@ -1924,7 +1924,15 @@ force_color : builtins.bool
     environment variable to a non-<code>"0"</code> string will override this.</p>
 
 <p>!!! note
-    <code>force_color</code> will always take precedence over <code>allow_color</code>.</p>
+    <code>force_color</code> will always take precedence over <code>allow_color</code>.
+extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
+    If provided, extra $-substitutions to use when printing the banner.
+    Default substitutions can not be overwritten.</p>
+
+<h2 id="raises">Raises</h2>
+
+<p>builtins.ValueError
+    If <code>extra_args</code> contains a default $-substitution.</p>
 </div>
 
 
