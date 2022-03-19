@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from tests.utils import MockBot
 from tests.crescent.plugins.plugin import plugin as real_plugin
-
+from tests.utils import MockBot
 
 BOT = MockBot()
 
