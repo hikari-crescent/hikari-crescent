@@ -67,6 +67,13 @@ async def command(ctx: crescent.Context, arg: str) -> None:
 
 
 @bot.include
+@crescent.command
+async def reload_plugin(ctx: crescent.Context) -> None:
+    ctx.app.plugins.load("tests.test_bot.test_plugin", refresh=True)
+    await ctx.respond("Done")
+
+
+@bot.include
 @group.child
 @crescent.command
 async def group_command(ctx: crescent.Context, arg: str) -> None:

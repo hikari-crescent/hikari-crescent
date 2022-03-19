@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from importlib import import_module
+from importlib import import_module, reload
 from typing import TYPE_CHECKING, Dict, Tuple
 
 from crescent.internal.app_command import AppCommandMeta
@@ -24,13 +24,14 @@ class PluginManager:
         self.plugins: Dict[str, Plugin] = {}
         self._bot = bot
 
-    def add_plugin(self, plugin: Plugin) -> None:
+    def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
         if plugin.name in self.plugins:
-            raise ValueError(f"Plugin name {plugin.name} already exists.")
+            if not force:
+                raise ValueError(f"Plugin name {plugin.name} already exists.")
         self.plugins[plugin.name] = plugin
         plugin._setup(self._bot)
 
-    def load(self, path: str) -> Plugin:
+    def load(self, path: str, refresh: bool = False) -> Plugin:
         """Load a plugin from the module path.
 
         ```python
@@ -43,10 +44,11 @@ class PluginManager:
 
         Args:
             path: The module path for the plugin.
-
+            refresh: Whether or not to reload the plugin.
         """
-        plugin = Plugin._from_module(path)
-        self.add_plugin(plugin)
+
+        plugin = Plugin._from_module(path, refresh=refresh)
+        self.add_plugin(plugin, force=refresh)
         return plugin
 
 
@@ -75,7 +77,7 @@ class Plugin:
             item.register_to_app(bot, self if is_method else None)
 
     @classmethod
-    def _from_module(cls, path: str) -> Plugin:
+    def _from_module(cls, path: str, refresh: bool = False) -> Plugin:
         parents = path.split(".")
 
         name = parents.pop(-1)
@@ -83,6 +85,8 @@ class Plugin:
         if package:
             name = "." + name
         module = import_module(name, package)
+        if refresh:
+            module = reload(module)
         plugin = getattr(module, "plugin", None)
         if not isinstance(plugin, Plugin):
             raise ValueError(
