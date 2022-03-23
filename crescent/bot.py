@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from crescent.context import Context
     from crescent.typedefs import HookCallbackT
 
-    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct)
+    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
 
 
 __all___: Sequence[str] = "Bot"
@@ -40,13 +40,17 @@ __all___: Sequence[str] = "Bot"
 
 class Bot(GatewayBot):
 
-    __slots__: Sequence[str] = ("__dict__", "_command_handler", "default_guild")
+    __slots__: Sequence[str] = (
+        "__dict__",
+        "_command_handler",
+        "default_guild",
+    )
 
     def __init__(
         self,
         token: str,
         *,
-        tracked_guilds: Sequence[Snowflakeish] = None,
+        tracked_guilds: Sequence[Snowflakeish] | None = None,
         default_guild: Optional[Snowflakeish] = None,
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
@@ -103,7 +107,9 @@ class Bot(GatewayBot):
         self.update_commands = update_commands
         self.command_hooks = command_hooks
 
-        self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
+        self._command_handler: CommandHandler = CommandHandler(
+            self, tracked_guilds
+        )
         self._error_handler = ErrorHandler(self)
         self.default_guild: Optional[Snowflakeish] = default_guild
 
@@ -111,7 +117,7 @@ class Bot(GatewayBot):
 
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
-        async def on_started(event: StartedEvent):
+        async def on_started(event: StartedEvent) -> None:
             await self._on_started(event)
 
         self.subscribe(StartedEvent, on_started)
@@ -119,14 +125,17 @@ class Bot(GatewayBot):
 
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, MetaStruct):
-                if isinstance(value.metadata, AppCommandMeta) and self.command_hooks:
+                if (
+                    isinstance(value.metadata, AppCommandMeta)
+                    and self.command_hooks
+                ):
                     value.metadata.hooks.extend(self.command_hooks)
                 value.register_to_app(self, self)
 
-    async def _on_shard_ready(self, event: ShardReadyEvent):
+    async def _on_shard_ready(self, event: ShardReadyEvent) -> None:
         self._command_handler.application_id = event.application_id
 
-    async def _on_started(self, _: StartedEvent) -> Optional[Task]:
+    async def _on_started(self, _: StartedEvent) -> Optional[Task[None]]:
         if self.update_commands:
             return create_task(self._command_handler.register_commands())
         return None
@@ -136,10 +145,14 @@ class Bot(GatewayBot):
         ...
 
     @overload
-    def include(self, command: None = ...) -> Callable[[META_STRUCT], META_STRUCT]:
+    def include(
+        self, command: None = ...
+    ) -> Callable[[META_STRUCT], META_STRUCT]:
         ...
 
-    def include(self, command: META_STRUCT | None = None):
+    def include(
+        self, command: META_STRUCT | None = None
+    ) -> META_STRUCT | Callable[[META_STRUCT], META_STRUCT]:
         if command is None:
             return self.include
 
@@ -150,14 +163,18 @@ class Bot(GatewayBot):
         return command
 
     @staticmethod
-    def print_banner(banner: Optional[str], allow_color: bool, force_color: bool) -> None:
+    def print_banner(
+        banner: Optional[str], allow_color: bool, force_color: bool
+    ) -> None:
         print_banner(banner, allow_color, force_color)
 
     @property
     def plugins(self) -> PluginManager:
         return self._plugins
 
-    async def on_crescent_error(self, exc: Exception, ctx: Context, was_handled: bool) -> None:
+    async def on_crescent_error(
+        self, exc: Exception, ctx: Context, was_handled: bool
+    ) -> None:
         if was_handled:
             return
         try:

@@ -7,13 +7,13 @@ from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
-    from typing import Sequence, TypeVar
+    from typing import Sequence, TypeVar, Any
 
     from crescent.typedefs import HookCallbackT
 
     from .bot import Bot
 
-    T = TypeVar("T", bound="MetaStruct")
+    T = TypeVar("T", bound="MetaStruct[Any, Any]")
 
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
@@ -56,7 +56,7 @@ class Plugin:
     def __init__(self, name: str, command_hooks: list[HookCallbackT] | None = None) -> None:
         self.name = name
         self.command_hooks = command_hooks
-        self._children: list[Tuple[MetaStruct, bool]] = []
+        self._children: list[Tuple[MetaStruct[Any, Any], bool]] = []
 
         for value in vars(self.__class__).values():
             if isinstance(value, MetaStruct):

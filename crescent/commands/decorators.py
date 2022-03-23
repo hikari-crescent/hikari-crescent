@@ -25,7 +25,11 @@ from crescent.commands.args import (
     MinValue,
     Name,
 )
-from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption, get_channel_types
+from crescent.commands.options import (
+    OPTIONS_TYPE_MAP,
+    ClassCommandOption,
+    get_channel_types,
+)
 from crescent.context import Context
 from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
@@ -51,14 +55,16 @@ __all__: Sequence[str] = ("command", "user_command", "message_command")
 NoneType = type(None)
 
 
-def _unwrap_optional(origin: Type) -> Any:
+def _unwrap_optional(origin: Type[Any]) -> Any:
     if get_origin(origin) is not Union:
         return origin
 
     args = get_args(origin)
 
     if len(args) != 2 or NoneType not in args:
-        raise ValueError("Typehint must be `T`, `Optional[T]`, or `Union[T, None]`")
+        raise ValueError(
+            "Typehint must be `T`, `Optional[T]`, or `Union[T, None]`"
+        )
 
     if args[1] is NoneType:
         return args[0]
@@ -124,9 +130,11 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
 
 
 def _class_command_callback(
-    cls: Type[ClassCommandProto], defaults: Dict[str, Any], name_map: dict[str, str]
+    cls: Type[ClassCommandProto],
+    defaults: Dict[str, Any],
+    name_map: dict[str, str],
 ) -> CommandCallbackT:
-    async def callback(*args, **kwargs) -> Any:
+    async def callback(*args: Any, **kwargs: Any) -> Any:
         values = defaults.copy()
         values.update(kwargs)
 
@@ -158,7 +166,8 @@ def command(
     description: Optional[str] = None,
     deprecated: bool = False,
 ) -> Callable[
-    [CommandCallbackT | Type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
+    [CommandCallbackT | Type[ClassCommandProto]],
+    MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
     ...
 
@@ -171,10 +180,17 @@ def command(
     name: Optional[str] = None,
     description: Optional[str] = None,
     deprecated: bool = False,
-):
+) -> MetaStruct[CommandCallbackT, AppCommandMeta] | Callable[
+    [CommandCallbackT | Type[ClassCommandProto]],
+    MetaStruct[CommandCallbackT, AppCommandMeta],
+]:
     if not callback:
         return partial(
-            command, guild=guild, name=name, description=description, deprecated=deprecated
+            command,
+            guild=guild,
+            name=name,
+            description=description,
+            deprecated=deprecated,
         )
 
     if isinstance(callback, type) and isinstance(callback, object):
@@ -200,7 +216,10 @@ def command(
 
         options = [
             param
-            for param in (_gen_command_option(param) for param in get_parameters(callback_func))
+            for param in (
+                _gen_command_option(param)
+                for param in get_parameters(callback_func)
+            )
             if param is not None
         ]
 
@@ -215,11 +234,33 @@ def command(
     )
 
 
-def _kwargs_to_args_callback(callback: Callable[..., Awaitable[Any]]):
-    async def inner(*args, **kwargs):
+def _kwargs_to_args_callback(
+    callback: Callable[..., Awaitable[Any]]
+) -> Callable[..., Awaitable[Any]]:
+    async def inner(*args: Any, **kwargs: Any) -> Any:
         return await callback(*args, *kwargs.values())
 
     return inner
+
+
+@overload
+def user_command(
+    callback: UserCommandCallbackT, /
+) -> MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]:
+    ...
+
+
+@overload
+def user_command(
+    *,
+    guild: Optional[Snowflakeish] = None,
+    name: Optional[str] = None,
+    deprecated: bool = False,
+) -> Callable[
+    [Callable[..., Awaitable[Any]]],
+    MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta],
+]:
+    ...
 
 
 def user_command(
@@ -229,9 +270,14 @@ def user_command(
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     deprecated: bool = False,
-):
+) -> Callable[
+    [Callable[..., Awaitable[Any]]],
+    MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta],
+] | MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]:
     if not callback:
-        return partial(user_command, guild=guild, name=name, deprecated=deprecated)
+        return partial(
+            user_command, guild=guild, name=name, deprecated=deprecated
+        )
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
@@ -242,6 +288,26 @@ def user_command(
     )
 
 
+@overload
+def message_command(
+    callback: MessageCommandCallbackT, /
+) -> MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]:
+    ...
+
+
+@overload
+def message_command(
+    *,
+    guild: Optional[Snowflakeish] = None,
+    name: Optional[str] = None,
+    deprecated: bool = False,
+) -> Callable[
+    [Callable[..., Awaitable[Any]]],
+    MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta],
+]:
+    ...
+
+
 def message_command(
     callback: MessageCommandCallbackT | None = None,
     /,
@@ -249,9 +315,14 @@ def message_command(
     guild: Optional[Snowflakeish] = None,
     name: Optional[str] = None,
     deprecated: bool = False,
-):
+) -> Callable[
+    [Callable[..., Awaitable[Any]]],
+    MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta],
+] | MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]:
     if not callback:
-        return partial(message_command, guild=guild, name=name, deprecated=deprecated)
+        return partial(
+            message_command, guild=guild, name=name, deprecated=deprecated
+        )
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),

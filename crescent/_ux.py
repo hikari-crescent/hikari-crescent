@@ -11,7 +11,7 @@ from crescent._about import __copyright__, __license__
 __all__: Sequence[str] = ("print_banner",)
 
 
-def print_banner(banner: Optional[str], allow_color: bool, force_color: bool):
+def print_banner(banner: Optional[str], allow_color: bool, force_color: bool) -> None:
     # Prevent circular import
     from crescent import __version__
 
