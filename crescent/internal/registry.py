@@ -7,14 +7,7 @@ from logging import getLogger
 from typing import TYPE_CHECKING, cast
 from weakref import WeakValueDictionary
 
-from hikari import (
-    UNDEFINED,
-    CommandOption,
-    CommandType,
-    ForbiddenError,
-    OptionType,
-    Snowflake,
-)
+from hikari import UNDEFINED, CommandOption, CommandType, ForbiddenError, OptionType, Snowflake
 from hikari.api import CommandBuilder
 
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
@@ -105,12 +98,8 @@ class CommandHandler:
             Unique, MetaStruct["Callable[..., Awaitable[Any]]", AppCommandMeta]
         ] = WeakValueDictionary()
 
-    def register(
-        self, command: MetaStruct[T, AppCommandMeta]
-    ) -> MetaStruct[T, AppCommandMeta]:
-        command.metadata.app.guild_id = (
-            command.metadata.app.guild_id or self.bot.default_guild
-        )
+    def register(self, command: MetaStruct[T, AppCommandMeta]) -> MetaStruct[T, AppCommandMeta]:
+        command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
         # NOTE: T is bound to Callable[..., Awaitable[Any]], so we can cast it safely.
         _command = cast("MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]", command)
         self.registry[command.metadata.unique] = _command
@@ -121,9 +110,7 @@ class CommandHandler:
         built_commands: Dict[Unique, AppCommand] = {}
 
         for command in self.registry.values():
-            command.metadata.app.guild_id = (
-                command.metadata.app.guild_id or self.bot.default_guild
-            )
+            command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
 
             if command.metadata.deprecated:
                 continue
@@ -155,8 +142,7 @@ class CommandHandler:
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
                         name=unwrap(command.metadata.group).name,
-                        description=unwrap(command.metadata.group).description
-                        or "No Description",
+                        description=unwrap(command.metadata.group).description or "No Description",
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
@@ -170,8 +156,7 @@ class CommandHandler:
 
                 sub_command_group = CommandOption(
                     name=unwrap(command.metadata.sub_group).name,
-                    description=unwrap(command.metadata.sub_group).description
-                    or "No Description",
+                    description=unwrap(command.metadata.sub_group).description or "No Description",
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
                     is_required=None,  # type: ignore
@@ -183,8 +168,7 @@ class CommandHandler:
                     if all(
                         (
                             cmd_in_children.name == sub_command_group.name,
-                            cmd_in_children.description
-                            == sub_command_group.description,
+                            cmd_in_children.description == sub_command_group.description,
                             cmd_in_children.type == sub_command_group.type,
                         )
                     ):
@@ -227,8 +211,7 @@ class CommandHandler:
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
                         name=command.metadata.group.name,
-                        description=unwrap(command.metadata.group).description
-                        or "No Description",
+                        description=unwrap(command.metadata.group).description or "No Description",
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
@@ -249,9 +232,7 @@ class CommandHandler:
 
                 continue
 
-            built_commands[
-                Unique.from_meta_struct(command)
-            ] = command.metadata.app
+            built_commands[Unique.from_meta_struct(command)] = command.metadata.app
 
         return tuple(built_commands.values())
 
@@ -277,15 +258,11 @@ class CommandHandler:
             )
 
     async def register_commands(self) -> None:
-        guilds = list(self.guilds) or list(
-            self.bot.cache.get_guilds_view().keys()
-        )
+        guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
 
         commands = self.build_commands()
 
-        command_guilds: DefaultDict[
-            Snowflakeish, List[AppCommand]
-        ] = defaultdict(list)
+        command_guilds: DefaultDict[Snowflakeish, List[AppCommand]] = defaultdict(list)
         global_commands: List[AppCommand] = []
 
         for command in commands:

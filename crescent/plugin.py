@@ -7,7 +7,7 @@ from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
-    from typing import Sequence, TypeVar, Any
+    from typing import Any, Sequence, TypeVar
 
     from crescent.typedefs import HookCallbackT
 

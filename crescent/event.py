@@ -17,9 +17,7 @@ __all__: Sequence[str] = ("event",)
 
 
 @overload
-def event(
-    callback: Callable[..., Awaitable[None]], /
-) -> MetaStruct[CallbackT[Any], None]:
+def event(callback: Callable[..., Awaitable[None]], /) -> MetaStruct[CallbackT[Any], None]:
     ...
 
 
@@ -45,16 +43,12 @@ def event(
         event_type = next(iter(get_type_hints(callback).values()))
 
     if not event_type:
-        raise ValueError(
-            "`event_type` must be provided in the decorator or as a typehint"
-        )
+        raise ValueError("`event_type` must be provided in the decorator or as a typehint")
 
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(self: MetaStruct[CallbackT[Any], None]) -> None:
-        self.app.subscribe(
-            event_type=unwrap(event_type), callback=self.callback
-        )
+        self.app.subscribe(event_type=unwrap(event_type), callback=self.callback)
 
     return MetaStruct(callback=callback, metadata=None, app_set_hooks=[hook])  # type: ignore

@@ -40,11 +40,7 @@ __all___: Sequence[str] = "Bot"
 
 class Bot(GatewayBot):
 
-    __slots__: Sequence[str] = (
-        "__dict__",
-        "_command_handler",
-        "default_guild",
-    )
+    __slots__: Sequence[str] = ("__dict__", "_command_handler", "default_guild")
 
     def __init__(
         self,
@@ -107,9 +103,7 @@ class Bot(GatewayBot):
         self.update_commands = update_commands
         self.command_hooks = command_hooks
 
-        self._command_handler: CommandHandler = CommandHandler(
-            self, tracked_guilds
-        )
+        self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self._error_handler = ErrorHandler(self)
         self.default_guild: Optional[Snowflakeish] = default_guild
 
@@ -125,10 +119,7 @@ class Bot(GatewayBot):
 
         for _, value in iterate_vars(self.__class__):
             if isinstance(value, MetaStruct):
-                if (
-                    isinstance(value.metadata, AppCommandMeta)
-                    and self.command_hooks
-                ):
+                if isinstance(value.metadata, AppCommandMeta) and self.command_hooks:
                     value.metadata.hooks.extend(self.command_hooks)
                 value.register_to_app(self, self)
 
@@ -145,9 +136,7 @@ class Bot(GatewayBot):
         ...
 
     @overload
-    def include(
-        self, command: None = ...
-    ) -> Callable[[META_STRUCT], META_STRUCT]:
+    def include(self, command: None = ...) -> Callable[[META_STRUCT], META_STRUCT]:
         ...
 
     def include(
@@ -163,18 +152,14 @@ class Bot(GatewayBot):
         return command
 
     @staticmethod
-    def print_banner(
-        banner: Optional[str], allow_color: bool, force_color: bool
-    ) -> None:
+    def print_banner(banner: Optional[str], allow_color: bool, force_color: bool) -> None:
         print_banner(banner, allow_color, force_color)
 
     @property
     def plugins(self) -> PluginManager:
         return self._plugins
 
-    async def on_crescent_error(
-        self, exc: Exception, ctx: Context, was_handled: bool
-    ) -> None:
+    async def on_crescent_error(self, exc: Exception, ctx: Context, was_handled: bool) -> None:
         if was_handled:
             return
         try:

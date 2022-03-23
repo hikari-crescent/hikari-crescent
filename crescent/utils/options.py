@@ -25,9 +25,7 @@ def map_or(o: Optional[T], func: Callable[[T], U], default: V) -> U | V:
     ...
 
 
-def map_or(
-    o: T | None, func: Callable[[T], U], default: V | None = None
-) -> U | V | None:
+def map_or(o: T | None, func: Callable[[T], U], default: V | None = None) -> U | V | None:
     if o is None:
         return default
     return func(o)

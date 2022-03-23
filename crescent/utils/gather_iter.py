@@ -1,5 +1,5 @@
 from asyncio import gather
-from typing import Iterable, Sequence, Any
+from typing import Any, Iterable, Sequence
 
 __all__: Sequence[str] = ("gather_iter",)
 
