@@ -166,7 +166,7 @@ class Bot(GatewayBot):
         }
 
         if extra_args:
-            args = {**extra_args, **args}
+            args.update(extra_args)
 
         super().print_banner(banner, allow_color, force_color, extra_args=args)
 
