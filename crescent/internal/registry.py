@@ -100,7 +100,8 @@ class CommandHandler:
 
     def register(self, command: MetaStruct[T, AppCommandMeta]) -> MetaStruct[T, AppCommandMeta]:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
-        # NOTE: T is bound to Callable[..., Awaitable[Any]], so we can cast it safely.
+        # NOTE: T is bound to Callable[..., Awaitable[Any]], so we can cast it safely. Mypy's
+        # support for TypeVars is bad, so it doesn't understand this.
         _command = cast("MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]", command)
         self.registry[command.metadata.unique] = _command
         return command
