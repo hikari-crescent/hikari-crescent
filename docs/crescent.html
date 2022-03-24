@@ -1566,7 +1566,7 @@ inheritance.</p>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">extra_args</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">}</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_args</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
 
@@ -1932,7 +1932,7 @@ be kept to as little guilds as possible to prevent rate limits.</li>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">extra_args</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">}</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_args</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
