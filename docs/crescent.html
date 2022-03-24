@@ -1548,9 +1548,27 @@ inheritance.</p>
 
         <span class="k">return</span> <span class="n">command</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">extra_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">crescent</span> <span class="kn">import</span> <span class="n">__version__</span>
+        <span class="kn">from</span> <span class="nn">crescent._about</span> <span class="kn">import</span> <span class="n">__copyright__</span><span class="p">,</span> <span class="n">__license__</span>
+
+        <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;crescent_version&quot;</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
+            <span class="s2">&quot;crescent_copyright&quot;</span><span class="p">:</span> <span class="n">__copyright__</span><span class="p">,</span>
+            <span class="s2">&quot;crescent_license&quot;</span><span class="p">:</span> <span class="n">__license__</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_args</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PluginManager</span><span class="p">:</span>
@@ -1882,21 +1900,41 @@ be kept to as little guilds as possible to prevent rate limits.</li>
                             <div id="Bot.print_banner" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#Bot.print_banner">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@staticmethod</div>
+                <div class="decorator">@classmethod</div>
 
             <span class="def">def</span>
             <span class="name">print_banner</span><span class="signature">(
+    cls,
     banner: Union[str, NoneType],
     allow_color: bool,
-    force_color: bool
+    force_color: bool,
+    extra_args: Union[Dict[str, str], NoneType] = None
 ) -&gt; None</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
+            <div class="codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">extra_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">crescent</span> <span class="kn">import</span> <span class="n">__version__</span>
+        <span class="kn">from</span> <span class="nn">crescent._about</span> <span class="kn">import</span> <span class="n">__copyright__</span><span class="p">,</span> <span class="n">__license__</span>
+
+        <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;crescent_version&quot;</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
+            <span class="s2">&quot;crescent_copyright&quot;</span><span class="p">:</span> <span class="n">__copyright__</span><span class="p">,</span>
+            <span class="s2">&quot;crescent_license&quot;</span><span class="p">:</span> <span class="n">__license__</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_args</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -1924,7 +1962,15 @@ force_color : builtins.bool
     environment variable to a non-<code>"0"</code> string will override this.</p>
 
 <p>!!! note
-    <code>force_color</code> will always take precedence over <code>allow_color</code>.</p>
+    <code>force_color</code> will always take precedence over <code>allow_color</code>.
+extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
+    If provided, extra $-substitutions to use when printing the banner.
+    Default substitutions can not be overwritten.</p>
+
+<h2 id="raises">Raises</h2>
+
+<p>builtins.ValueError
+    If <code>extra_args</code> contains a default $-substitution.</p>
 </div>
 
 
