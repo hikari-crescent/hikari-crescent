@@ -7,18 +7,15 @@ from traceback import print_exception
 from typing import TYPE_CHECKING, overload
 
 from hikari import (
-    CacheSettings,
     GatewayBot,
-    HTTPSettings,
     Intents,
     InteractionCreateEvent,
-    ProxySettings,
     ShardReadyEvent,
     Snowflakeish,
     StartedEvent,
 )
+from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
-from crescent._ux import print_banner
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
@@ -151,9 +148,27 @@ class Bot(GatewayBot):
 
         return command
 
-    @staticmethod
-    def print_banner(banner: Optional[str], allow_color: bool, force_color: bool) -> None:
-        print_banner(banner, allow_color, force_color)
+    @classmethod
+    def print_banner(
+        cls,
+        banner: Optional[str],
+        allow_color: bool,
+        force_color: bool,
+        extra_args: Optional[Dict[str, str]] = None,
+    ) -> None:
+        from crescent import __version__
+        from crescent._about import __copyright__, __license__
+
+        args: Dict[str, str] = {
+            "crescent_version": __version__,
+            "crescent_copyright": __copyright__,
+            "crescent_license": __license__,
+        }
+
+        if extra_args:
+            args.update(extra_args)
+
+        super().print_banner(banner, allow_color, force_color, extra_args=args)
 
     @property
     def plugins(self) -> PluginManager:

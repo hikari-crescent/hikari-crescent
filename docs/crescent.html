@@ -1556,9 +1556,27 @@ inheritance.</p>
 
         <span class="k">return</span> <span class="n">command</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">extra_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">crescent</span> <span class="kn">import</span> <span class="n">__version__</span>
+        <span class="kn">from</span> <span class="nn">crescent._about</span> <span class="kn">import</span> <span class="n">__copyright__</span><span class="p">,</span> <span class="n">__license__</span>
+
+        <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;crescent_version&quot;</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
+            <span class="s2">&quot;crescent_copyright&quot;</span><span class="p">:</span> <span class="n">__copyright__</span><span class="p">,</span>
+            <span class="s2">&quot;crescent_license&quot;</span><span class="p">:</span> <span class="n">__license__</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_args</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PluginManager</span><span class="p">:</span>
@@ -1625,9 +1643,9 @@ on using ProcessPoolExecutor implementations with this parameter.
     will __force__ colour to be used in console-based output. Specifying a
     <code>"CLICOLOR_FORCE"</code> environment variable with a non-<code>"0"</code> value will
     override this setting.
-cache_settings : typing.Optional[hikari.config.CacheSettings]
+cache_settings : typing.Optional[hikari.impl.config.CacheSettings]
     Optional cache settings. If unspecified, will use the defaults.
-http_settings : typing.Optional[hikari.config.HTTPSettings]
+http_settings : typing.Optional[hikari.impl.config.HTTPSettings]
     Optional custom HTTP configuration settings to use. Allows you to
     customise functionality such as whether SSL-verification is enabled,
     what timeouts <code>aiohttp</code> should expect to use for requests, and behavior
@@ -1680,7 +1698,7 @@ that may be in use.
 <p>max_retries : typing.Optional[builtins.int]
     Maximum number of times a request will be retried if
     it fails with a <code>5xx</code> status. Defaults to 3 if set to <code>builtins.None</code>.
-proxy_settings : typing.Optional[config.ProxySettings]
+proxy_settings : typing.Optional[hikari.impl.config.ProxySettings]
     Custom proxy settings to use with network-layer logic
     in your application to get through an HTTP-proxy.
 rest_url : typing.Optional[builtins.str]
@@ -1739,13 +1757,13 @@ rest_url : typing.Optional[builtins.str]
     banner: Union[str, NoneType] = &#39;crescent&#39;,
     executor: Union[concurrent.futures._base.Executor, NoneType] = None,
     force_color: bool = False,
-    cache_settings: Union[hikari.config.CacheSettings, NoneType] = None,
-    http_settings: Union[hikari.config.HTTPSettings, NoneType] = None,
-    intents: hikari.intents.Intents = &lt;Intents.ALL_UNPRIVILEGED: 32509&gt;,
+    cache_settings: Union[hikari.impl.config.CacheSettings, NoneType] = None,
+    http_settings: Union[hikari.impl.config.HTTPSettings, NoneType] = None,
+    intents: hikari.intents.Intents = &lt;Intents.ALL_UNPRIVILEGED: 98045&gt;,
     logs: Union[NoneType, int, str, Dict[str, Any]] = &#39;INFO&#39;,
     max_rate_limit: float = 300,
     max_retries: int = 3,
-    proxy_settings: Union[hikari.config.ProxySettings, NoneType] = None,
+    proxy_settings: Union[hikari.impl.config.ProxySettings, NoneType] = None,
     rest_url: Union[str, NoneType] = None
 )</span>
     </div>
@@ -1895,21 +1913,41 @@ be kept to as little guilds as possible to prevent rate limits.</li>
                             <div id="Bot.print_banner" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#Bot.print_banner">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@staticmethod</div>
+                <div class="decorator">@classmethod</div>
 
             <span class="def">def</span>
             <span class="name">print_banner</span><span class="signature">(
+    cls,
     banner: Union[str, NoneType],
     allow_color: bool,
-    force_color: bool
+    force_color: bool,
+    extra_args: Union[Dict[str, str], NoneType] = None
 ) -&gt; None</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">)</span>
+            <div class="codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">banner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">allow_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">force_color</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">extra_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">crescent</span> <span class="kn">import</span> <span class="n">__version__</span>
+        <span class="kn">from</span> <span class="nn">crescent._about</span> <span class="kn">import</span> <span class="n">__copyright__</span><span class="p">,</span> <span class="n">__license__</span>
+
+        <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;crescent_version&quot;</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
+            <span class="s2">&quot;crescent_copyright&quot;</span><span class="p">:</span> <span class="n">__copyright__</span><span class="p">,</span>
+            <span class="s2">&quot;crescent_license&quot;</span><span class="p">:</span> <span class="n">__license__</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_args</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_banner</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">allow_color</span><span class="p">,</span> <span class="n">force_color</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -1937,7 +1975,15 @@ force_color : builtins.bool
     environment variable to a non-<code>"0"</code> string will override this.</p>
 
 <p>!!! note
-    <code>force_color</code> will always take precedence over <code>allow_color</code>.</p>
+    <code>force_color</code> will always take precedence over <code>allow_color</code>.
+extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
+    If provided, extra $-substitutions to use when printing the banner.
+    Default substitutions can not be overwritten.</p>
+
+<h2 id="raises">Raises</h2>
+
+<p>builtins.ValueError
+    If <code>extra_args</code> contains a default $-substitution.</p>
 </div>
 
 
