@@ -14,11 +14,7 @@ from hikari import (
     Snowflakeish,
     StartedEvent,
 )
-from hikari.impl.config import (
-    CacheSettings,
-    HTTPSettings,
-    ProxySettings
-)
+from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
