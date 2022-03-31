@@ -8,6 +8,8 @@ __all__: Sequence[str] = ("Description", "Name", "Choices", "ChannelTypes", "Max
 
 
 class Arg(ABC):
+    """Base class for annotated argument parameters."""
+
     @property
     def payload(self) -> Any:
         """Returns the data for this object"""
@@ -19,6 +21,8 @@ class Arg(ABC):
 
 @define(hash=True)
 class Description(Arg):
+    """Set the parameter description."""
+
     description: str
 
     @property
@@ -28,6 +32,8 @@ class Description(Arg):
 
 @define(hash=True)
 class Name(Arg):
+    """Set the parameter name."""
+
     name: str
 
     @property
@@ -36,6 +42,8 @@ class Name(Arg):
 
 
 class Choices(Arg):
+    """Set the parameter choices."""
+
     def __init__(self, *choices: CommandChoice) -> None:
         self.choices = choices
 
@@ -45,6 +53,8 @@ class Choices(Arg):
 
 
 class ChannelTypes(Arg):
+    """Set the parameter channel types (for channel options only)."""
+
     def __init__(self, *channel_types: ChannelType) -> None:
         self.channel_types = channel_types
 
@@ -55,6 +65,8 @@ class ChannelTypes(Arg):
 
 @define(hash=True)
 class MaxValue(Arg):
+    """Set the parameter maximum value."""
+
     max_value: int
 
     @property
@@ -64,6 +76,8 @@ class MaxValue(Arg):
 
 @define(hash=True)
 class MinValue(Arg):
+    """Set the parameter minimum value."""
+
     min_value: int
 
     @property

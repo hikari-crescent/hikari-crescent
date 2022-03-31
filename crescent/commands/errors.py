@@ -19,6 +19,8 @@ def catch(
     [ErrorHandlerCallbackT[Any] | MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]],
     MetaStruct[_InternalErrorHandlerCallbackT[Any], Any],
 ]:
+    """Register an exception handler for app commands."""
+
     def decorator(
         callback: ErrorHandlerCallbackT[Any] | MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]
     ) -> MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]:

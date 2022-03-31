@@ -82,6 +82,7 @@ CHANNEL_TYPE_MAP: Dict[Type[VALID_CHANNEL_TYPES], ChannelType] = {
 }
 
 
+# TODO: should this be private?
 def get_channel_types(*channels: Type[PartialChannel]) -> set[ChannelType]:
     if len(channels) == 1 and channels[0] is PartialChannel:
         return set()
@@ -100,14 +101,24 @@ Self = TypeVar("Self")
 
 @dataclass
 class ClassCommandOption(Generic[T]):
+    """An option for a class slash command."""
+
     name: Optional[str]
+    """The name of the option."""
     type: OptionType
+    """The type of the option."""
     description: str
+    """The description of the option."""
     default: UndefinedNoneOr[Any]
+    """The default value of the option."""
     choices: Optional[Sequence[CommandChoice]]
+    """The choices for the option."""
     channel_types: Optional[Sequence[ChannelType]]
+    """The channel types for the option."""
     min_value: Optional[Union[int, float]]
+    """The minimum value of the option."""
     max_value: Optional[Union[int, float]]
+    """The maximum value of the option."""
 
     def _gen_option(self, name: str) -> CommandOption:
         return CommandOption(
@@ -310,6 +321,21 @@ def option(
     max_value: Optional[Union[int, float]] = None,
     name: Optional[str] = None,
 ) -> ClassCommandOption[Any]:
+    """Generate an option for a class slash command.
+
+    Args:
+        option_type: The type of the option.
+        description: The description of the option.
+        default: The default value of the option. Defaults to ``UNDEFINED``.
+        choices: The choices of the option. Defaults to ``None``.
+        min_value: The minimum value of the option. Defaults to ``None``.
+        max_value: The maximum value of the option. Defaults to ``None``.
+        name: The name of the option. Defaults to ``None``.
+
+    Returns:
+        The generated option.
+    """
+
     if (
         isclass(option_type)
         and issubclass(option_type, PartialChannel)

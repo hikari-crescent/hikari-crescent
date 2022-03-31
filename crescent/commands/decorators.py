@@ -174,6 +174,15 @@ def command(
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta] | Callable[
     [CommandCallbackT | Type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
+    """Create a slash command.
+
+    Args:
+        guild: The ID of the guild to set this command to. Defaults to None.
+        name: The name of this command. Defaults to None. If unset, use the callback's name.
+        description: The description of this command. Defaults to None.
+        deprecated: If True, this command will not be posted. Defaults to False.
+    """
+
     if not callback:
         return partial(
             command, guild=guild, name=name, description=description, deprecated=deprecated
@@ -250,6 +259,14 @@ def user_command(
 ) -> Callable[
     [UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]
 ] | MetaStruct[UserCommandCallbackT, AppCommandMeta]:
+    """Create a user command.
+
+    Args:
+        guild: The ID of the guild to set this command to. Defaults to None.
+        name: The name of this command. Defaults to None. If unset, use the callback's name.
+        deprecated: If True, this command will not be posted. Defaults to False.
+    """
+
     if not callback:
         return partial(user_command, guild=guild, name=name, deprecated=deprecated)
 
@@ -286,6 +303,14 @@ def message_command(
 ) -> Callable[
     [MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],
 ] | MetaStruct[MessageCommandCallbackT, AppCommandMeta]:
+    """Create a message command.
+
+    Args:
+        guild: The ID of the guild to set this command to. Defaults to None.
+        name: The name of this command. Defaults to None. If unset, use the callback's name.
+        deprecated: If True, this command will not be posted. Defaults to False.
+    """
+
     if not callback:
         return partial(message_command, guild=guild, name=name, deprecated=deprecated)
 

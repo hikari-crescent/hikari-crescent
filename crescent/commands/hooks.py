@@ -20,7 +20,13 @@ __all__: Sequence[str] = ("HookResult", "hook")
 
 @define
 class HookResult:
+    """Return this from a hook to call an action.
+
+    Currently only `exit` is supported. Return `HookResult(exit=True)` to stop the command.
+    """
+
     exit: bool = False
+    """Whether or not to exit the command."""
 
 
 @overload
@@ -34,6 +40,8 @@ def hook(callback: HookCallbackT, command: T, /) -> T:
 
 
 def hook(callback: HookCallbackT, command: T | None = None) -> T | Callable[..., T]:
+    """Register a hook to a command."""
+
     if command is None:
         return partial(hook, callback)  # type: ignore
     if not iscoroutinefunction(callback):
