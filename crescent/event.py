@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Awaitable, Callable, get_type_hints, overload, cast
+from typing import TYPE_CHECKING, Awaitable, Callable, cast, get_type_hints, overload
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils.options import unwrap
