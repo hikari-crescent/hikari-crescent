@@ -13,7 +13,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
-hikari = ">=2.0.0.dev106"
+hikari = ">=2.0.0.dev108"
 attrs = "^21.4.0"
 
 [tool.poetry.dev-dependencies]

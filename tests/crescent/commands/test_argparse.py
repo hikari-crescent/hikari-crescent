@@ -12,7 +12,6 @@ from hikari import (
     GuildChannel,
     GuildNewsChannel,
     GuildStageChannel,
-    GuildStoreChannel,
     GuildTextChannel,
     GuildVoiceChannel,
     OptionType,
@@ -115,7 +114,6 @@ def test_gen_channel_options():
         (TextableGuildChannel, [ChannelType.GUILD_TEXT, ChannelType.GUILD_NEWS]),
         (GuildTextChannel, [ChannelType.GUILD_TEXT]),
         (GuildNewsChannel, [ChannelType.GUILD_NEWS]),
-        (GuildStoreChannel, [ChannelType.GUILD_STORE]),
         (GuildVoiceChannel, [ChannelType.GUILD_VOICE]),
         (GuildStageChannel, [ChannelType.GUILD_STAGE]),
         (
@@ -125,7 +123,6 @@ def test_gen_channel_options():
                 ChannelType.GUILD_VOICE,
                 ChannelType.GUILD_CATEGORY,
                 ChannelType.GUILD_NEWS,
-                ChannelType.GUILD_STORE,
                 ChannelType.GUILD_STAGE,
             ],
         ),
