@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Awaitable, Callable, get_type_hints, overload
+from typing import TYPE_CHECKING, Awaitable, Callable, cast, get_type_hints, overload
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils.options import unwrap
@@ -17,14 +17,14 @@ __all__: Sequence[str] = ("event",)
 
 
 @overload
-def event(callback: Callable[..., Awaitable[None]], /) -> MetaStruct[CallbackT, None]:
+def event(callback: Callable[..., Awaitable[None]], /) -> MetaStruct[CallbackT[Any], None]:
     ...
 
 
 @overload
 def event(
     *, event_type: Optional[Type[Any]]
-) -> Callable[[CallbackT], MetaStruct[CallbackT, None]]:
+) -> Callable[[CallbackT[Any]], MetaStruct[CallbackT[Any], None]]:
     ...
 
 
@@ -33,7 +33,9 @@ def event(
     /,
     *,
     event_type: Optional[Type[Any]] = None,
-):
+) -> Callable[[CallbackT[Any]], MetaStruct[CallbackT[Any], None]] | MetaStruct[
+    CallbackT[Any], None
+]:
     if callback is None:
         return partial(event, event_type=event_type)
 
@@ -46,7 +48,13 @@ def event(
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
-    def hook(self: MetaStruct[CallbackT, None]):
+    def hook(self: MetaStruct[CallbackT[Any], None]) -> None:
         self.app.subscribe(event_type=unwrap(event_type), callback=self.callback)
 
-    return MetaStruct(callback=callback, metadata=None, app_set_hooks=[hook])
+    return MetaStruct(
+        # NOTE: type of `callback` is `Callable[..., Awaitable[None]]` according to mypy, but at
+        # runtime it will be CallbackT[Any]
+        callback=cast("CallbackT[Any]", callback),
+        metadata=None,
+        app_set_hooks=[hook],
+    )
