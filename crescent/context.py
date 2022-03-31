@@ -78,7 +78,7 @@ class Context:
     def guild(self) -> Optional[Guild]:
         return map_or(self.guild_id, self.app.cache.get_available_guild)
 
-    async def defer(self, ephemeral: bool = False):
+    async def defer(self, ephemeral: bool = False) -> None:
         self._has_replied = True
         await self.app.rest.create_interaction_response(
             interaction=self.id,
@@ -87,7 +87,7 @@ class Context:
             response_type=ResponseType.DEFERRED_MESSAGE_CREATE,
         )
 
-    async def defer_update(self, ephemeral: bool = False):
+    async def defer_update(self, ephemeral: bool = False) -> None:
         self._has_replied = True
         await self.app.rest.create_interaction_response(
             interaction=self.id,
@@ -251,7 +251,7 @@ class Context:
             role_mentions=role_mentions,
         )
 
-    async def delete(self):
+    async def delete(self) -> None:
         await self.app.rest.delete_interaction_response(
             application=self.application_id, token=self.token
         )
