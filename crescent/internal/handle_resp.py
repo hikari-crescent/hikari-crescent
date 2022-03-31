@@ -31,10 +31,11 @@ if TYPE_CHECKING:
 
 _log = getLogger(__name__)
 
-__all__: Sequence[str] = ("handle_resp",)
+__all__: Sequence = ("handle_resp",)
 
 
-async def handle_resp(event: InteractionCreateEvent) -> None:
+async def handle_resp(event: InteractionCreateEvent):
+
     interaction = event.interaction
     bot = event.app
 

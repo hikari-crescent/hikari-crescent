@@ -16,19 +16,19 @@ _InternalErrorHandlerCallbackT = Callable[["ERROR", "Context"], Awaitable[None]]
 def catch(
     *exceptions: Type[Exception],
 ) -> Callable[
-    [ErrorHandlerCallbackT[Any] | MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]],
-    MetaStruct[_InternalErrorHandlerCallbackT[Any], Any],
+    [ErrorHandlerCallbackT | MetaStruct[_InternalErrorHandlerCallbackT, Any]],
+    MetaStruct[_InternalErrorHandlerCallbackT, Any],
 ]:
     def decorator(
-        callback: ErrorHandlerCallbackT[Any] | MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]
-    ) -> MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]:
+        callback: ErrorHandlerCallbackT | MetaStruct[_InternalErrorHandlerCallbackT, Any]
+    ) -> MetaStruct[_InternalErrorHandlerCallbackT, Any]:
         if isinstance(callback, MetaStruct):
             meta = callback
         else:
-            callback = cast("_InternalErrorHandlerCallbackT[Any]", callback)
+            callback = cast(_InternalErrorHandlerCallbackT, callback)
             meta = MetaStruct(callback, None)
 
-        def app_set_hook(meta: MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]) -> None:
+        def app_set_hook(meta: MetaStruct[_InternalErrorHandlerCallbackT, Any]) -> None:
             for exc in exceptions:
                 registry = meta.app._error_handler.registry
                 if reg_meta := registry.get(exc):

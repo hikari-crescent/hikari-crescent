@@ -29,10 +29,6 @@ class Bot(crescent.Bot):
         assert isinstance(self, Bot)
         await ctx.respond("works")
 
-    @crescent.event
-    async def on_msg(self, event: hikari.MessageCreateEvent) -> None:
-        print(event)
-
     async def on_crescent_error(
         self, exc: Exception, ctx: crescent.Context, was_handled: bool
     ) -> None:

@@ -6,7 +6,7 @@ from typing import Any, Iterator, Sequence
 __all__: Sequence[str] = ("iterate_vars",)
 
 
-def iterate_vars(*objs: type[Any]) -> Iterator[Any]:
+def iterate_vars(*objs) -> Iterator[Any]:
     return chain.from_iterable(
         chain(
             getattr(obj, "__dict__", {}).items(),

@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from crescent.context import Context
     from crescent.typedefs import HookCallbackT
 
-    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
+    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct)
 
 
 __all___: Sequence[str] = "Bot"
@@ -43,7 +43,7 @@ class Bot(GatewayBot):
         self,
         token: str,
         *,
-        tracked_guilds: Sequence[Snowflakeish] | None = None,
+        tracked_guilds: Sequence[Snowflakeish] = None,
         default_guild: Optional[Snowflakeish] = None,
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
@@ -108,7 +108,7 @@ class Bot(GatewayBot):
 
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
-        async def on_started(event: StartedEvent) -> None:
+        async def on_started(event: StartedEvent):
             await self._on_started(event)
 
         self.subscribe(StartedEvent, on_started)
@@ -120,10 +120,10 @@ class Bot(GatewayBot):
                     value.metadata.hooks.extend(self.command_hooks)
                 value.register_to_app(self, self)
 
-    async def _on_shard_ready(self, event: ShardReadyEvent) -> None:
+    async def _on_shard_ready(self, event: ShardReadyEvent):
         self._command_handler.application_id = event.application_id
 
-    async def _on_started(self, _: StartedEvent) -> Optional[Task[None]]:
+    async def _on_started(self, _: StartedEvent) -> Optional[Task]:
         if self.update_commands:
             return create_task(self._command_handler.register_commands())
         return None
@@ -136,9 +136,7 @@ class Bot(GatewayBot):
     def include(self, command: None = ...) -> Callable[[META_STRUCT], META_STRUCT]:
         ...
 
-    def include(
-        self, command: META_STRUCT | None = None
-    ) -> META_STRUCT | Callable[[META_STRUCT], META_STRUCT]:
+    def include(self, command: META_STRUCT | None = None):
         if command is None:
             return self.include
 

@@ -25,7 +25,7 @@ class Unique:
     group: UndefinedNoneOr[str]
     sub_group: UndefinedNoneOr[str]
 
-    def __attrs_post_init__(self) -> None:
+    def __attrs_post_init__(self):
         if self.guild_id is UNDEFINED:
             self.guild_id = None
         if self.group is UNDEFINED:
@@ -89,7 +89,7 @@ class AppCommand(CommandBuilder):
 
         return True
 
-    def is_same_command(self, o: AppCommand) -> bool:
+    def is_same_command(self, o: AppCommand):
         return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
 
     def build(self, encoder: EntityFactory) -> JSONObject:
