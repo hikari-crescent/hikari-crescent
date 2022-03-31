@@ -30,23 +30,9 @@ else:
     MockHook = _MockHook
 
 
-class MyBot(Bot):
-    @hook(MockHook("command"))
-    @command
-    async def c7(self, ctx) -> None:
-        ...
-
-
-class MyPlugin(Plugin):
-    @hook(MockHook("command"))
-    @command
-    async def c8(self, ctx) -> None:
-        ...
-
-
 def test_hook_order():
-    bot = MyBot("NO TOKEN", command_hooks=[MockHook("bot")])
-    plugin = MyPlugin("PLUGIN", [MockHook("plugin")])
+    bot = Bot("NO TOKEN", command_hooks=[MockHook("bot")])
+    plugin = Plugin("PLUGIN", [MockHook("plugin")])
     group = Group("BOT_GROUP", hooks=[MockHook("group")])
     subgroup = group.sub_group("SUBGROUP", hooks=[MockHook("subgroup")])
 
@@ -98,5 +84,3 @@ def test_hook_order():
     assert c4.metadata.hooks == ["command", "plugin", "bot"]
     assert c5.metadata.hooks == ["command", "group", "plugin", "bot"]
     assert c6.metadata.hooks == ["command", "subgroup", "group", "plugin", "bot"]
-    assert bot.c7.metadata.hooks == ["command", "bot"]
-    assert plugin.c8.metadata.hooks == ["command", "plugin", "bot"]

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Type, cast
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Type
 
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.meta_struct import MetaStruct
@@ -25,7 +25,6 @@ def catch(
         if isinstance(callback, MetaStruct):
             meta = callback
         else:
-            callback = cast("_InternalErrorHandlerCallbackT[Any]", callback)
             meta = MetaStruct(callback, None)
 
         def app_set_hook(meta: MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]) -> None:

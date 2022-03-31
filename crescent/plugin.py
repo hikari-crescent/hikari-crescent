@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from importlib import import_module, reload
-from typing import TYPE_CHECKING, Dict, Tuple
+from typing import TYPE_CHECKING, Dict
 
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
@@ -56,25 +56,19 @@ class Plugin:
     def __init__(self, name: str, command_hooks: list[HookCallbackT] | None = None) -> None:
         self.name = name
         self.command_hooks = command_hooks
-        self._children: list[Tuple[MetaStruct[Any, Any], bool]] = []
-
-        for value in vars(self.__class__).values():
-            if isinstance(value, MetaStruct):
-                if isinstance(value.metadata, AppCommandMeta) and self.command_hooks:
-                    value.metadata.hooks.extend(self.command_hooks)
-                self._children.append((value, True))
+        self._children: list[MetaStruct[Any, Any]] = []
 
     def include(self, obj: T) -> T:
         if isinstance(obj.metadata, AppCommandMeta) and self.command_hooks:
             obj.metadata.hooks.extend(self.command_hooks)
-        self._children.append((obj, False))
+        self._children.append(obj)
         return obj
 
     def _setup(self, bot: Bot) -> None:
-        for item, is_method in self._children:
+        for item in self._children:
             if isinstance(item.metadata, AppCommandMeta) and bot.command_hooks:
                 item.metadata.hooks.extend(bot.command_hooks)
-            item.register_to_app(bot, self if is_method else None)
+            item.register_to_app(bot)
 
     @classmethod
     def _from_module(cls, path: str, refresh: bool = False) -> Plugin:
