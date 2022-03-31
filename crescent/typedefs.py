@@ -32,14 +32,8 @@ __all__: Sequence[str] = (
 )
 
 CommandCallbackT = Callable[..., Awaitable[Any]]
-UserCommandCallbackT = Union[
-    Callable[["Context", User], Awaitable[None]],
-    Callable[[Any, "Context", User], Awaitable[None]],
-]
-MessageCommandCallbackT = Union[
-    Callable[["Context", Message], Awaitable[None]],
-    Callable[[Any, "Context", Message], Awaitable[None]],
-]
+UserCommandCallbackT = Callable[["Context", User], Awaitable[None]]
+MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]
 
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable"]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
@@ -53,7 +47,4 @@ class ClassCommandProto(Protocol):
 
 ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
 
-ErrorHandlerCallbackT = Union[
-    Callable[[ERROR, "Context"], Awaitable[None]],
-    Callable[[Any, ERROR, "Context"], Awaitable[None]],
-]
+ErrorHandlerCallbackT = Callable[[ERROR, "Context"], Awaitable[None]]

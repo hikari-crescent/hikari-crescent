@@ -229,16 +229,14 @@ def _kwargs_to_args_callback(
 @overload
 def user_command(
     callback: UserCommandCallbackT, /
-) -> MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]:
+) -> MetaStruct[UserCommandCallbackT, AppCommandMeta]:
     ...
 
 
 @overload
 def user_command(
     *, guild: Optional[Snowflakeish] = None, name: Optional[str] = None, deprecated: bool = False
-) -> Callable[
-    [Callable[..., Awaitable[Any]]], MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta],
-]:
+) -> Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta],]:
     ...
 
 
@@ -250,8 +248,8 @@ def user_command(
     name: Optional[str] = None,
     deprecated: bool = False,
 ) -> Callable[
-    [Callable[..., Awaitable[Any]]], MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta],
-] | MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]:
+    [UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]
+] | MetaStruct[UserCommandCallbackT, AppCommandMeta]:
     if not callback:
         return partial(user_command, guild=guild, name=name, deprecated=deprecated)
 
@@ -267,16 +265,14 @@ def user_command(
 @overload
 def message_command(
     callback: MessageCommandCallbackT, /
-) -> MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]:
+) -> MetaStruct[MessageCommandCallbackT, AppCommandMeta]:
     ...
 
 
 @overload
 def message_command(
     *, guild: Optional[Snowflakeish] = None, name: Optional[str] = None, deprecated: bool = False
-) -> Callable[
-    [Callable[..., Awaitable[Any]]], MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta],
-]:
+) -> Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],]:
     ...
 
 
@@ -288,8 +284,8 @@ def message_command(
     name: Optional[str] = None,
     deprecated: bool = False,
 ) -> Callable[
-    [Callable[..., Awaitable[Any]]], MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta],
-] | MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]:
+    [MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],
+] | MetaStruct[MessageCommandCallbackT, AppCommandMeta]:
     if not callback:
         return partial(message_command, guild=guild, name=name, deprecated=deprecated)
 

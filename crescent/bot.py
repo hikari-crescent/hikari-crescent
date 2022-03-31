@@ -21,7 +21,6 @@ from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
-from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
@@ -114,12 +113,6 @@ class Bot(GatewayBot):
         self.subscribe(StartedEvent, on_started)
         self.subscribe(InteractionCreateEvent, handle_resp)
 
-        for _, value in iterate_vars(self.__class__):
-            if isinstance(value, MetaStruct):
-                if isinstance(value.metadata, AppCommandMeta) and self.command_hooks:
-                    value.metadata.hooks.extend(self.command_hooks)
-                value.register_to_app(self, self)
-
     async def _on_shard_ready(self, event: ShardReadyEvent) -> None:
         self._command_handler.application_id = event.application_id
 
@@ -144,7 +137,7 @@ class Bot(GatewayBot):
 
         if isinstance(command.metadata, AppCommandMeta) and self.command_hooks:
             command.metadata.hooks.extend(self.command_hooks)
-        command.register_to_app(app=self)
+        command.register_to_app(self)
 
         return command
 
