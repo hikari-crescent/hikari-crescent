@@ -236,7 +236,7 @@ def user_command(
 @overload
 def user_command(
     *, guild: Optional[Snowflakeish] = None, name: Optional[str] = None, deprecated: bool = False
-) -> Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta],]:
+) -> Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]]:
     ...
 
 
@@ -272,7 +272,7 @@ def message_command(
 @overload
 def message_command(
     *, guild: Optional[Snowflakeish] = None, name: Optional[str] = None, deprecated: bool = False
-) -> Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],]:
+) -> Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta]]:
     ...
 
 
