@@ -1635,9 +1635,9 @@ on using ProcessPoolExecutor implementations with this parameter.
     will __force__ colour to be used in console-based output. Specifying a
     <code>"CLICOLOR_FORCE"</code> environment variable with a non-<code>"0"</code> value will
     override this setting.
-cache_settings : typing.Optional[hikari.config.CacheSettings]
+cache_settings : typing.Optional[hikari.impl.config.CacheSettings]
     Optional cache settings. If unspecified, will use the defaults.
-http_settings : typing.Optional[hikari.config.HTTPSettings]
+http_settings : typing.Optional[hikari.impl.config.HTTPSettings]
     Optional custom HTTP configuration settings to use. Allows you to
     customise functionality such as whether SSL-verification is enabled,
     what timeouts <code>aiohttp</code> should expect to use for requests, and behavior
@@ -1690,7 +1690,7 @@ that may be in use.
 <p>max_retries : typing.Optional[builtins.int]
     Maximum number of times a request will be retried if
     it fails with a <code>5xx</code> status. Defaults to 3 if set to <code>builtins.None</code>.
-proxy_settings : typing.Optional[config.ProxySettings]
+proxy_settings : typing.Optional[hikari.impl.config.ProxySettings]
     Custom proxy settings to use with network-layer logic
     in your application to get through an HTTP-proxy.
 rest_url : typing.Optional[builtins.str]
@@ -1749,13 +1749,13 @@ rest_url : typing.Optional[builtins.str]
     banner: Union[str, NoneType] = &#39;crescent&#39;,
     executor: Union[concurrent.futures._base.Executor, NoneType] = None,
     force_color: bool = False,
-    cache_settings: Union[hikari.config.CacheSettings, NoneType] = None,
-    http_settings: Union[hikari.config.HTTPSettings, NoneType] = None,
-    intents: hikari.intents.Intents = &lt;Intents.ALL_UNPRIVILEGED: 32509&gt;,
+    cache_settings: Union[hikari.impl.config.CacheSettings, NoneType] = None,
+    http_settings: Union[hikari.impl.config.HTTPSettings, NoneType] = None,
+    intents: hikari.intents.Intents = &lt;Intents.ALL_UNPRIVILEGED: 98045&gt;,
     logs: Union[NoneType, int, str, Dict[str, Any]] = &#39;INFO&#39;,
     max_rate_limit: float = 300,
     max_retries: int = 3,
-    proxy_settings: Union[hikari.config.ProxySettings, NoneType] = None,
+    proxy_settings: Union[hikari.impl.config.ProxySettings, NoneType] = None,
     rest_url: Union[str, NoneType] = None
 )</span>
     </div>

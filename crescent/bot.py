@@ -7,16 +7,14 @@ from traceback import print_exception
 from typing import TYPE_CHECKING, overload
 
 from hikari import (
-    CacheSettings,
     GatewayBot,
-    HTTPSettings,
     Intents,
     InteractionCreateEvent,
-    ProxySettings,
     ShardReadyEvent,
     Snowflakeish,
     StartedEvent,
 )
+from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
