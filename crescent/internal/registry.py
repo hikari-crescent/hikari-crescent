@@ -15,20 +15,32 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, DefaultDict, Dict, List, Optional, Sequence, Type
+    from typing import (
+        Any,
+        Awaitable,
+        Callable,
+        DefaultDict,
+        Dict,
+        List,
+        Optional,
+        Sequence,
+        Type,
+        TypeVar,
+    )
 
     from hikari import Snowflakeish, UndefinedOr
 
     from crescent.bot import Bot
     from crescent.commands.errors import _InternalErrorHandlerCallbackT
-    from crescent.typedefs import CommandCallbackT
+
+    T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 
 
 _log = getLogger(__name__)
 
 
 def register_command(
-    callback: Callable[..., Awaitable[Any]],
+    callback: T,
     command_type: CommandType,
     name: str,
     guild: Optional[Snowflakeish] = None,
@@ -36,15 +48,15 @@ def register_command(
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
     deprecated: bool = False,
-) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
+) -> MetaStruct[T, AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
-    def hook(self: MetaStruct[CommandCallbackT, AppCommandMeta]) -> None:
+    def hook(self: MetaStruct[T, AppCommandMeta]) -> None:
         self.app._command_handler.register(self)
 
-    meta: MetaStruct[CommandCallbackT, AppCommandMeta] = MetaStruct(
+    meta: MetaStruct[T, AppCommandMeta] = MetaStruct(
         callback=callback,
         app_set_hooks=[hook],
         metadata=AppCommandMeta(
@@ -69,7 +81,7 @@ class ErrorHandler:
     def __init__(self, bot: Bot):
         self.bot = bot
         self.registry: WeakValueDictionary[
-            Type[Exception], MetaStruct[_InternalErrorHandlerCallbackT, Any]
+            Type[Exception], MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]
         ] = WeakValueDictionary()
 
 
@@ -83,14 +95,15 @@ class CommandHandler:
         self.application_id: Optional[Snowflake] = None
 
         self.registry: WeakValueDictionary[
-            Unique, MetaStruct[CommandCallbackT, AppCommandMeta]
+            Unique, MetaStruct["Callable[..., Awaitable[Any]]", AppCommandMeta]
         ] = WeakValueDictionary()
 
-    def register(
-        self, command: MetaStruct[CommandCallbackT, AppCommandMeta]
-    ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
+    def register(self, command: MetaStruct[T, AppCommandMeta]) -> MetaStruct[T, AppCommandMeta]:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
-        self.registry[command.metadata.unique] = command
+        # NOTE: T is bound to Callable[..., Awaitable[Any]], so we can cast it safely. Mypy's
+        # support for TypeVars is bad, so it doesn't understand this.
+        _command = cast("MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]", command)
+        self.registry[command.metadata.unique] = _command
         return command
 
     def build_commands(self) -> Sequence[AppCommand]:
@@ -140,7 +153,7 @@ class CommandHandler:
                 # The top-level command now exists. A subcommand group now if placed
                 # inside the top-level command. This subcommand group will hold `command`.
 
-                children = unwrap(built_commands[key].options)
+                children = cast("list[CommandOption]", unwrap(built_commands[key].options))
 
                 sub_command_group = CommandOption(
                     name=unwrap(command.metadata.sub_group).name,
@@ -163,9 +176,9 @@ class CommandHandler:
                         sub_command_group = cmd_in_children
                         break
                 else:
-                    cast(list, children).append(sub_command_group)
+                    children.append(sub_command_group)
 
-                cast(list, sub_command_group.options).append(
+                cast(list[CommandOption], sub_command_group.options).append(
                     CommandOption(
                         name=command.metadata.app.name,
                         description=unwrap(command.metadata.app.description),
@@ -208,7 +221,7 @@ class CommandHandler:
 
                 # No checking has to be done before appending `command` since it is the
                 # lowest level.
-                cast(list, built_commands[key].options).append(
+                cast(list[CommandOption], built_commands[key].options).append(
                     CommandOption(
                         name=command.metadata.app.name,
                         description=unwrap(command.metadata.app.description),
@@ -224,7 +237,9 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def post_guild_command(self, commands: List[CommandBuilder], guild: Snowflakeish):
+    async def post_guild_command(
+        self, commands: Sequence[CommandBuilder], guild: Snowflakeish
+    ) -> None:
         try:
             if self.application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
@@ -243,7 +258,7 @@ class CommandHandler:
                 "Cannot post application commands to guild %s. Bot is not part of the guild."
             )
 
-    async def register_commands(self):
+    async def register_commands(self) -> None:
         guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
 
         commands = self.build_commands()
@@ -259,6 +274,7 @@ class CommandHandler:
             else:
                 global_commands.append(command)
 
+        assert self.application_id is not None
         await gather(
             self.bot.rest.set_application_commands(
                 application=self.application_id, commands=global_commands
