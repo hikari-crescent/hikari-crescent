@@ -27,7 +27,6 @@ from hikari import (
     GuildCategory,
     GuildNewsChannel,
     GuildStageChannel,
-    GuildStoreChannel,
     GuildTextChannel,
     GuildVoiceChannel,
     InteractionChannel,
@@ -70,7 +69,6 @@ VALID_CHANNEL_TYPES = Union[
     GuildVoiceChannel,
     GuildCategory,
     GuildNewsChannel,
-    GuildStoreChannel,
     GuildStageChannel,
 ]
 CHANNEL_TYPE_MAP: Dict[Type[VALID_CHANNEL_TYPES], ChannelType] = {
@@ -80,7 +78,6 @@ CHANNEL_TYPE_MAP: Dict[Type[VALID_CHANNEL_TYPES], ChannelType] = {
     GroupDMChannel: ChannelType.GROUP_DM,
     GuildCategory: ChannelType.GUILD_CATEGORY,
     GuildNewsChannel: ChannelType.GUILD_NEWS,
-    GuildStoreChannel: ChannelType.GUILD_STORE,
     GuildStageChannel: ChannelType.GUILD_STAGE,
 }
 
