@@ -6,13 +6,11 @@ import hikari
 from attr import define
 from hikari import (
     UNDEFINED,
-    CacheAware,
     Guild,
     GuildChannel,
     Member,
     MessageFlag,
     ResponseType,
-    RESTAware,
     Snowflake,
     User,
 )
@@ -36,9 +34,7 @@ if TYPE_CHECKING:
     )
     from hikari.api import ComponentBuilder
 
-
-class RestAndCacheAware(RESTAware, CacheAware):
-    ...
+    from crescent.bot import Bot
 
 
 __all__: Sequence[str] = ("Context",)
@@ -49,7 +45,7 @@ class Context:
     """Represents the context for interactions"""
 
     interaction: CommandInteraction
-    app: RestAndCacheAware
+    app: Bot
     application_id: Snowflake
     type: int
     token: str
