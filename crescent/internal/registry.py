@@ -178,7 +178,7 @@ class CommandHandler:
                 else:
                     children.append(sub_command_group)
 
-                cast(list[CommandOption], sub_command_group.options).append(
+                cast("list[CommandOption]", sub_command_group.options).append(
                     CommandOption(
                         name=command.metadata.app.name,
                         description=unwrap(command.metadata.app.description),
@@ -221,7 +221,7 @@ class CommandHandler:
 
                 # No checking has to be done before appending `command` since it is the
                 # lowest level.
-                cast(list[CommandOption], built_commands[key].options).append(
+                cast("list[CommandOption]", built_commands[key].options).append(
                     CommandOption(
                         name=command.metadata.app.name,
                         description=unwrap(command.metadata.app.description),
