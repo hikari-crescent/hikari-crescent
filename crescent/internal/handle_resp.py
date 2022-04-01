@@ -24,7 +24,6 @@ if TYPE_CHECKING:
     )
 
     from crescent.bot import Bot
-    from crescent.context import RestAndCacheAware
     from crescent.internal import AppCommandMeta, MetaStruct
     from crescent.typedefs import CommandCallbackT, OptionTypesT
 
@@ -128,7 +127,7 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
 
     return Context(
         interaction=interaction,
-        app=cast("RestAndCacheAware", interaction.app),
+        app=cast("Bot", interaction.app),
         application_id=interaction.application_id,
         type=interaction.type,
         token=interaction.token,

@@ -13,26 +13,6 @@ async def myhook(ctx: crescent.Context) -> None:
 
 
 class Bot(crescent.Bot):
-    @crescent.user_command(name="Subclassed User")
-    async def sc_user(self, ctx: crescent.Context, user: hikari.User):
-        assert isinstance(self, Bot)
-        await ctx.respond(str(user))
-
-    @crescent.message_command(name="Subclassed Message")
-    async def sc_msg(self, ctx: crescent.Context, msg: hikari.Message):
-        assert isinstance(self, Bot)
-        await ctx.respond(str(msg))
-
-    @crescent.hook(myhook)
-    @crescent.command
-    async def subclassed_command(self, ctx: crescent.Context) -> None:
-        assert isinstance(self, Bot)
-        await ctx.respond("works")
-
-    @crescent.event
-    async def on_msg(self, event: hikari.MessageCreateEvent) -> None:
-        print(event)
-
     async def on_crescent_error(
         self, exc: Exception, ctx: crescent.Context, was_handled: bool
     ) -> None:

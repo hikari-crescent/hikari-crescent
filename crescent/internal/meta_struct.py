@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from functools import partial
-from typing import TYPE_CHECKING, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from attr import define, field
 
@@ -40,7 +39,5 @@ class MetaStruct(Generic[T, U]):
         for hook in self.app_set_hooks:
             hook(self)
 
-    def register_to_app(self, app: Bot, manager: Optional[Any] = None) -> None:
-        if manager:
-            self.callback = cast(T, partial(self.callback, manager))
+    def register_to_app(self, app: Bot) -> None:
         self.app = app

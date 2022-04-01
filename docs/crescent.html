@@ -935,7 +935,7 @@ inheritance.</p>
     guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
     name: Union[str, NoneType] = None,
     deprecated: bool = False
-) -&gt; &#39;Callable[[Callable[..., Awaitable[Any]]], MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]] | MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]&#39;</span>:
+) -&gt; &#39;Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]] | MetaStruct[UserCommandCallbackT, AppCommandMeta]&#39;</span>:
     </div>
 
                 <details>
@@ -948,8 +948,8 @@ inheritance.</p>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">deprecated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span>
-    <span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">AppCommandMeta</span><span class="p">],</span>
-<span class="p">]</span> <span class="o">|</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">AppCommandMeta</span><span class="p">]:</span>
+    <span class="p">[</span><span class="n">UserCommandCallbackT</span><span class="p">],</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">UserCommandCallbackT</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">]</span>
+<span class="p">]</span> <span class="o">|</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">UserCommandCallbackT</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">]:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">user_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">)</span>
 
@@ -979,7 +979,7 @@ inheritance.</p>
     guild: Union[hikari.snowflakes.Snowflake, int, NoneType] = None,
     name: Union[str, NoneType] = None,
     deprecated: bool = False
-) -&gt; &#39;Callable[[Callable[..., Awaitable[Any]]], MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]] | MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]&#39;</span>:
+) -&gt; &#39;Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta]] | MetaStruct[MessageCommandCallbackT, AppCommandMeta]&#39;</span>:
     </div>
 
                 <details>
@@ -992,8 +992,8 @@ inheritance.</p>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">deprecated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span>
-    <span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">AppCommandMeta</span><span class="p">],</span>
-<span class="p">]</span> <span class="o">|</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">AppCommandMeta</span><span class="p">]:</span>
+    <span class="p">[</span><span class="n">MessageCommandCallbackT</span><span class="p">],</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">MessageCommandCallbackT</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">],</span>
+<span class="p">]</span> <span class="o">|</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">MessageCommandCallbackT</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">]:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">message_command</span><span class="p">,</span> <span class="n">guild</span><span class="o">=</span><span class="n">guild</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">=</span><span class="n">deprecated</span><span class="p">)</span>
 
@@ -1522,12 +1522,6 @@ inheritance.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">StartedEvent</span><span class="p">,</span> <span class="n">on_started</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">InteractionCreateEvent</span><span class="p">,</span> <span class="n">handle_resp</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iterate_vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
-                    <span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-                <span class="n">value</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_on_shard_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ShardReadyEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_handler</span><span class="o">.</span><span class="n">application_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">application_id</span>
 
@@ -1552,7 +1546,7 @@ inheritance.</p>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
             <span class="n">command</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-        <span class="n">command</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">command</span>
 
@@ -1844,12 +1838,6 @@ rest_url : typing.Optional[builtins.str]
 
         <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">StartedEvent</span><span class="p">,</span> <span class="n">on_started</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">InteractionCreateEvent</span><span class="p">,</span> <span class="n">handle_resp</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iterate_vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
-                    <span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-                <span class="n">value</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -1900,7 +1888,7 @@ be kept to as little guilds as possible to prevent rate limits.</li>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
             <span class="n">command</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-        <span class="n">command</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">command</span>
 </pre></div>
@@ -2082,7 +2070,7 @@ extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
     <span class="sd">&quot;&quot;&quot;Represents the context for interactions&quot;&quot;&quot;</span>
 
     <span class="n">interaction</span><span class="p">:</span> <span class="n">CommandInteraction</span>
-    <span class="n">app</span><span class="p">:</span> <span class="n">RestAndCacheAware</span>
+    <span class="n">app</span><span class="p">:</span> <span class="n">Bot</span>
     <span class="n">application_id</span><span class="p">:</span> <span class="n">Snowflake</span>
     <span class="nb">type</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">token</span><span class="p">:</span> <span class="nb">str</span>
@@ -2302,7 +2290,7 @@ extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
         
             <span class="name">Context</span><span class="signature">(
     interaction: hikari.interactions.command_interactions.CommandInteraction,
-    app: <a href="#context.RestAndCacheAware">crescent.context.RestAndCacheAware</a>,
+    app: <a href="#bot.Bot">crescent.bot.Bot</a>,
     application_id: hikari.snowflakes.Snowflake,
     type: int,
     token: str,
@@ -2364,7 +2352,7 @@ extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
                             <div id="Context.app" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Context.app">#&nbsp;&nbsp</a>
 
-        <span class="name">app</span><span class="annotation">: <a href="#context.RestAndCacheAware">crescent.context.RestAndCacheAware</a></span>
+        <span class="name">app</span><span class="annotation">: <a href="#bot.Bot">crescent.bot.Bot</a></span>
     </div>
 
     
@@ -2799,7 +2787,7 @@ extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
         
             <span class="def">def</span>
             <span class="name">event</span><span class="signature">(
-    callback: &#39;Callable[..., Awaitable[None]] | None&#39; = None,
+    callback: &#39;CallbackT[Any] | None&#39; = None,
     /,
     *,
     event_type: Union[Type[Any], NoneType] = None
@@ -2809,10 +2797,7 @@ extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">event</span><span class="p">(</span>
-    <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">[</span><span class="kc">None</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">/</span><span class="p">,</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">event_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">callback</span><span class="p">:</span> <span class="n">CallbackT</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">event_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">CallbackT</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">CallbackT</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">|</span> <span class="n">MetaStruct</span><span class="p">[</span>
     <span class="n">CallbackT</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span>
 <span class="p">]:</span>
@@ -2831,13 +2816,7 @@ extra_args : typing.Optional[typing.Dict[builtins.str, builtins.str]]
     <span class="k">def</span> <span class="nf">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">CallbackT</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">event_type</span><span class="o">=</span><span class="n">unwrap</span><span class="p">(</span><span class="n">event_type</span><span class="p">),</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">MetaStruct</span><span class="p">(</span>
-        <span class="c1"># NOTE: type of `callback` is `Callable[..., Awaitable[None]]` according to mypy, but at</span>
-        <span class="c1"># runtime it will be CallbackT[Any]</span>
-        <span class="n">callback</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;CallbackT[Any]&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">),</span>
-        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">app_set_hooks</span><span class="o">=</span><span class="p">[</span><span class="n">hook</span><span class="p">],</span>
-    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">MetaStruct</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_set_hooks</span><span class="o">=</span><span class="p">[</span><span class="n">hook</span><span class="p">])</span>
 </pre></div>
 
         </details>
@@ -3143,25 +3122,19 @@ Protocol classes can be generic, they are defined as::</p>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">command_hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HookCallbackT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span> <span class="o">=</span> <span class="n">command_hooks</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">MetaStruct</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
-                    <span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MetaStruct</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">include</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">obj</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bot</span><span class="p">:</span> <span class="n">Bot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">is_method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bot</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
                 <span class="n">item</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">bot</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="n">bot</span><span class="p">,</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">is_method</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">register_to_app</span><span class="p">(</span><span class="n">bot</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plugin</span><span class="p">:</span>
@@ -3201,13 +3174,7 @@ Protocol classes can be generic, they are defined as::</p>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">command_hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HookCallbackT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span> <span class="o">=</span> <span class="n">command_hooks</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">MetaStruct</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
-                    <span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MetaStruct</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 </pre></div>
 
         </details>
@@ -3228,7 +3195,7 @@ Protocol classes can be generic, they are defined as::</p>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">include</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">AppCommandMeta</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command_hooks</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">obj</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span>
 </pre></div>
 
@@ -3460,7 +3427,7 @@ Protocol classes can be generic, they are defined as::</p>
                 <section id="ErrorHandlerCallbackT">
                                 <div class="attr variable"><a class="headerlink" href="#ErrorHandlerCallbackT">#&nbsp;&nbsp</a>
 
-        <span class="name">ErrorHandlerCallbackT</span><span class="default_value"> = typing.Union[typing.Callable[[-ERROR, ForwardRef(&#39;Context&#39;)], typing.Awaitable[NoneType]], typing.Callable[[typing.Any, -ERROR, ForwardRef(&#39;Context&#39;)], typing.Awaitable[NoneType]]]</span>
+        <span class="name">ErrorHandlerCallbackT</span><span class="default_value"> = typing.Callable[[-ERROR, ForwardRef(&#39;Context&#39;)], typing.Awaitable[NoneType]]</span>
     </div>
 
     
@@ -3490,7 +3457,6 @@ Protocol classes can be generic, they are defined as::</p>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">MetaStruct</span><span class="p">):</span>
             <span class="n">meta</span> <span class="o">=</span> <span class="n">callback</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">callback</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;_InternalErrorHandlerCallbackT[Any]&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
             <span class="n">meta</span> <span class="o">=</span> <span class="n">MetaStruct</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">app_set_hook</span><span class="p">(</span><span class="n">meta</span><span class="p">:</span> <span class="n">MetaStruct</span><span class="p">[</span><span class="n">_InternalErrorHandlerCallbackT</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
