@@ -110,6 +110,21 @@
 
             </li>
             <li>
+                    <a class="class" href="#Autocomplete">Autocomplete</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Autocomplete.__init__">Autocomplete</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Autocomplete.callback">callback</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Autocomplete.payload">payload</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="function" href="#command">command</a>
             </li>
             <li>
@@ -338,6 +353,9 @@
                     <a class="variable" href="#HookCallbackT">HookCallbackT</a>
             </li>
             <li>
+                    <a class="variable" href="#AutocompleteCallbackT">AutocompleteCallbackT</a>
+            </li>
+            <li>
                     <a class="class" href="#ClassCommandProto">ClassCommandProto</a>
                             <ul class="memberlist">
                         <li>
@@ -430,6 +448,7 @@ crescent    </h1>
     <span class="s2">&quot;ChannelTypes&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MaxValue&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MinValue&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Autocomplete&quot;</span><span class="p">,</span>
     <span class="s2">&quot;command&quot;</span><span class="p">,</span>
     <span class="s2">&quot;user_command&quot;</span><span class="p">,</span>
     <span class="s2">&quot;message_command&quot;</span><span class="p">,</span>
@@ -449,6 +468,7 @@ crescent    </h1>
     <span class="s2">&quot;CommandOptionsT&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OptionTypesT&quot;</span><span class="p">,</span>
     <span class="s2">&quot;HookCallbackT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AutocompleteCallbackT&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ClassCommandProto&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Plugin&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PluginManager&quot;</span><span class="p">,</span>
@@ -835,6 +855,73 @@ inheritance.</p>
                                             <div class="attr variable"><a class="headerlink" href="#MinValue.payload">#&nbsp;&nbsp</a>
 
         <span class="name">payload</span><span class="annotation">: int</span>
+    </div>
+
+            <div class="docstring"><p>Returns the data for this object</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="Autocomplete">
+                                <div class="attr class">
+        <a class="headerlink" href="#Autocomplete">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">Autocomplete</span><wbr>(<span class="base">crescent.commands.args.Arg</span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Autocomplete</span><span class="p">(</span><span class="n">Arg</span><span class="p">):</span>
+    <span class="n">callback</span><span class="p">:</span> <span class="n">AutocompleteCallbackT</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">payload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="Autocomplete.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Autocomplete.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">Autocomplete</span><span class="signature">(callback: &#39;AutocompleteCallbackT&#39;)</span>
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Method generated by attrs for class Autocomplete.</p>
+</div>
+
+
+                            </div>
+                            <div id="Autocomplete.callback" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Autocomplete.callback">#&nbsp;&nbsp</a>
+
+        <span class="name">callback</span><span class="annotation">: &#39;AutocompleteCallbackT&#39;</span>
+    </div>
+
+    
+
+                            </div>
+                            <div id="Autocomplete.payload" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Autocomplete.payload">#&nbsp;&nbsp</a>
+
+        <span class="name">payload</span><span class="annotation">: str</span>
     </div>
 
             <div class="docstring"><p>Returns the data for this object</p>
@@ -2937,6 +3024,15 @@ force_color : builtins.bool
                                 <div class="attr variable"><a class="headerlink" href="#HookCallbackT">#&nbsp;&nbsp</a>
 
         <span class="name">HookCallbackT</span><span class="default_value"> = typing.Callable[[ForwardRef(&#39;Context&#39;)], typing.Awaitable[typing.Union[ForwardRef(&#39;HookResult&#39;), NoneType]]]</span>
+    </div>
+
+    
+
+                </section>
+                <section id="AutocompleteCallbackT">
+                                <div class="attr variable"><a class="headerlink" href="#AutocompleteCallbackT">#&nbsp;&nbsp</a>
+
+        <span class="name">AutocompleteCallbackT</span><span class="default_value"> = typing.Callable[[ForwardRef(&#39;Context&#39;), str], typing.Awaitable[typing.List[str]]]</span>
     </div>
 
     
