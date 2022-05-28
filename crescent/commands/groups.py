@@ -56,6 +56,6 @@ class SubGroup:
             meta.metadata.hooks = self.hooks + meta.metadata.hooks
 
         if self.parent.hooks:
-            meta.metadata.hooks = self.parent.hooks + meta.metadata.hooks
+            meta.metadata.hooks = meta.metadata.hooks + self.parent.hooks
 
         return meta

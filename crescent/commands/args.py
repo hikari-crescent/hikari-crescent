@@ -27,8 +27,11 @@ class Arg(ABC):
         """Returns the data for this object"""
         ...
 
+    def __hash__(self) -> int:
+        return super().__hash__() ^ hash(self.payload)
 
-@define
+
+@define(hash=True)
 class Description(Arg):
     description: str
 
@@ -37,7 +40,7 @@ class Description(Arg):
         return self.description
 
 
-@define
+@define(hash=True)
 class Name(Arg):
     name: str
 
@@ -64,7 +67,7 @@ class ChannelTypes(Arg):
         return self.channel_types
 
 
-@define
+@define(hash=True)
 class MaxValue(Arg):
     max_value: int
 
@@ -73,7 +76,7 @@ class MaxValue(Arg):
         return self.max_value
 
 
-@define
+@define(hash=True)
 class MinValue(Arg):
     min_value: int
 

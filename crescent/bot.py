@@ -7,30 +7,28 @@ from traceback import print_exception
 from typing import TYPE_CHECKING, overload
 
 from hikari import (
-    CacheSettings,
     GatewayBot,
-    HTTPSettings,
     Intents,
     InteractionCreateEvent,
-    ProxySettings,
     ShardReadyEvent,
     Snowflakeish,
     StartedEvent,
 )
+from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
-from crescent._ux import print_banner
+from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
-from crescent.utils import iterate_vars
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
 
     from crescent.context import Context
+    from crescent.typedefs import HookCallbackT
 
-    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct)
+    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
 
 
 __all___: Sequence[str] = "Bot"
@@ -44,10 +42,11 @@ class Bot(GatewayBot):
         self,
         token: str,
         *,
-        tracked_guilds: Sequence[Snowflakeish] = None,
+        tracked_guilds: Sequence[Snowflakeish] | None = None,
         default_guild: Optional[Snowflakeish] = None,
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
+        command_hooks: list[HookCallbackT] | None = None,
         allow_color: bool = True,
         banner: Optional[str] = "crescent",
         executor: Optional[Executor] = None,
@@ -98,6 +97,7 @@ class Bot(GatewayBot):
 
         self.allow_unknown_interactions = allow_unknown_interactions
         self.update_commands = update_commands
+        self.command_hooks = command_hooks
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
         self._error_handler = ErrorHandler(self)
@@ -107,20 +107,16 @@ class Bot(GatewayBot):
 
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
-        async def on_started(event: StartedEvent):
+        async def on_started(event: StartedEvent) -> None:
             await self._on_started(event)
 
         self.subscribe(StartedEvent, on_started)
         self.subscribe(InteractionCreateEvent, handle_resp)
 
-        for _, value in iterate_vars(self.__class__):
-            if isinstance(value, MetaStruct):
-                value.register_to_app(self, self)
-
-    async def _on_shard_ready(self, event: ShardReadyEvent):
+    async def _on_shard_ready(self, event: ShardReadyEvent) -> None:
         self._command_handler.application_id = event.application_id
 
-    async def _on_started(self, _: StartedEvent) -> Optional[Task]:
+    async def _on_started(self, _: StartedEvent) -> Optional[Task[None]]:
         if self.update_commands:
             return create_task(self._command_handler.register_commands())
         return None
@@ -133,17 +129,39 @@ class Bot(GatewayBot):
     def include(self, command: None = ...) -> Callable[[META_STRUCT], META_STRUCT]:
         ...
 
-    def include(self, command: META_STRUCT | None = None):
+    def include(
+        self, command: META_STRUCT | None = None
+    ) -> META_STRUCT | Callable[[META_STRUCT], META_STRUCT]:
         if command is None:
             return self.include
 
-        command.register_to_app(app=self)
+        if isinstance(command.metadata, AppCommandMeta) and self.command_hooks:
+            command.metadata.hooks.extend(self.command_hooks)
+        command.register_to_app(self)
 
         return command
 
-    @staticmethod
-    def print_banner(banner: Optional[str], allow_color: bool, force_color: bool) -> None:
-        print_banner(banner, allow_color, force_color)
+    @classmethod
+    def print_banner(
+        cls,
+        banner: Optional[str],
+        allow_color: bool,
+        force_color: bool,
+        extra_args: Optional[Dict[str, str]] = None,
+    ) -> None:
+        from crescent import __version__
+        from crescent._about import __copyright__, __license__
+
+        args: Dict[str, str] = {
+            "crescent_version": __version__,
+            "crescent_copyright": __copyright__,
+            "crescent_license": __license__,
+        }
+
+        if extra_args:
+            args.update(extra_args)
+
+        super().print_banner(banner, allow_color, force_color, extra_args=args)
 
     @property
     def plugins(self) -> PluginManager:

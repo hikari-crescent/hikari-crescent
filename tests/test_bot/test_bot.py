@@ -13,22 +13,6 @@ async def myhook(ctx: crescent.Context) -> None:
 
 
 class Bot(crescent.Bot):
-    @crescent.user_command(name="Subclassed User")
-    async def sc_user(self, ctx: crescent.Context, user: hikari.User):
-        assert isinstance(self, Bot)
-        await ctx.respond(str(user))
-
-    @crescent.message_command(name="Subclassed Message")
-    async def sc_msg(self, ctx: crescent.Context, msg: hikari.Message):
-        assert isinstance(self, Bot)
-        await ctx.respond(str(msg))
-
-    @crescent.hook(myhook)
-    @crescent.command
-    async def subclassed_command(self, ctx: crescent.Context) -> None:
-        assert isinstance(self, Bot)
-        await ctx.respond("works")
-
     async def on_crescent_error(
         self, exc: Exception, ctx: crescent.Context, was_handled: bool
     ) -> None:
@@ -36,7 +20,13 @@ class Bot(crescent.Bot):
         return await super().on_crescent_error(exc, ctx, was_handled)
 
 
-bot = Bot(os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]))
+async def bot_wide_hook(ctx: crescent.Context) -> None:
+    await ctx.respond("Bot wide hook called")
+
+
+bot = Bot(
+    os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]), command_hooks=[bot_wide_hook]
+)
 
 bot.plugins.load("tests.test_bot.test_plugin")
 
@@ -58,6 +48,13 @@ class ClassCommand:
 @crescent.command
 async def command(ctx: crescent.Context, arg: str) -> None:
     await ctx.respond(arg)
+
+
+@bot.include
+@crescent.command
+async def reload_plugin(ctx: crescent.Context) -> None:
+    ctx.app.plugins.load("tests.test_bot.test_plugin", refresh=True)
+    await ctx.respond("Done")
 
 
 @bot.include
