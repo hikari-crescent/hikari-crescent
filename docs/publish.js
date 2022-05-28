@@ -15,10 +15,6 @@ process.exec(
             {
                 message: commit_message,
                 history: false,
-                user: {
-                    name: "Github Actions",
-                    email: "actions@magpie.dev",
-                }
             },
             err => { console.log(err.message) }
         );
