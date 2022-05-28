@@ -36,5 +36,6 @@ jobs:
         uses: actions/setup-node@v2
       - name: Publish Docs
         run: |
+          git remote -v
           npm install gh-pages
           node docs/publish.js
