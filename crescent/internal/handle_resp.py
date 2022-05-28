@@ -59,14 +59,15 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         return
 
     if interaction.type is InteractionType.AUTOCOMPLETE:
-        interaction = cast(AutocompleteInteraction, interaction)
+        await _handle_autocomplete_resp(command, ctx)
+        return
 
-        for option in interaction.options:
-            if option.is_focused and command.metadata.autocomplete:
-                autocomplete = command.metadata.autocomplete[option.name]
-                await interaction.create_response(await autocomplete(ctx, option))
-                return
+    await _handle_slash_resp(bot, command, ctx)
 
+
+async def _handle_slash_resp(
+    bot: Bot, command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
+) -> None:
     for hook in command.metadata.hooks:
         hook_res = await hook(ctx)
 
@@ -84,6 +85,17 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
                 handled = False
 
             await bot.on_crescent_error(e, ctx, handled)
+
+
+async def _handle_autocomplete_resp(
+    command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
+):
+    interaction = cast(AutocompleteInteraction, ctx.interaction)
+
+    for option in interaction.options:
+        if option.is_focused and command.metadata.autocomplete:
+            autocomplete = command.metadata.autocomplete[option.name]
+            await interaction.create_response(await autocomplete(ctx, option))
 
 
 def _get_command(
