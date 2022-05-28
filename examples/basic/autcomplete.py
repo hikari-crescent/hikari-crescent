@@ -13,7 +13,6 @@ async def autocomplete_response(
 
     # All the other options are stored in ctx.options
     options = ctx.options
-    print(options)
 
     return [hikari.CommandChoice(name="Some Option", value="1234")]
 
