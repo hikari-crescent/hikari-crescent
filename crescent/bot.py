@@ -64,6 +64,7 @@ class Bot(GatewayBot):
         """
         Crescent adds two parameters to Hikari's Gateway Bot. `tracked_guilds`
         and `default_guild`.
+        test
 
         Args:
             default_guild:
