@@ -1,5 +1,10 @@
 name: Pdoc
-on: [push, pull_request]
+
+'on':
+  push:
+    branches:
+      - main
+
 jobs:
   check-build:
     name: Check docs build
