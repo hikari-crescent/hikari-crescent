@@ -90,5 +90,5 @@ class Autocomplete(Arg):
     callback: AutocompleteCallbackT
 
     @property
-    def payload(self) -> str:
+    def payload(self) -> AutocompleteCallbackT:
         return self.callback

@@ -11,9 +11,17 @@ from typing import (
     Sequence,
     TypeVar,
     Union,
+    overload,
 )
 
-from hikari import CommandChoice, Message, PartialChannel, Role, User
+from hikari import (
+    AutocompleteInteractionOption,
+    CommandChoice,
+    Message,
+    PartialChannel,
+    Role,
+    User,
+)
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
@@ -39,7 +47,9 @@ MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable"]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
-AutocompleteCallbackT = Callable[["Context", str], Awaitable[Sequence[CommandChoice]]]
+AutocompleteCallbackT = Callable[
+    ["Context", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
+]
 
 
 class ClassCommandProto(Protocol):
