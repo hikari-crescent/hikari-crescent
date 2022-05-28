@@ -10,8 +10,6 @@ process.exec(
             commit_message = `:memo: publish docs for version ${stdout.trim()}`
         }
 
-        console.log(ghpages.defaults)
-
         ghpages.publish(
             'docs/_build',
             {

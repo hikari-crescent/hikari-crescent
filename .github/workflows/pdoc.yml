@@ -36,8 +36,6 @@ jobs:
         uses: actions/setup-node@v2
       - name: Publish Docs
         run: |
-          git config user.email "actions@magpie.dev"
-          git config user.name "Github Actions"
-          git remote set-url origin https://${{ secrets.USERNAME }}:${{ secrets.PASSWORD }}@github.com/magpie-dev/hikari-crescent.git
+          # git remote set-url origin https://${{ secrets.USERNAME }}:${{ secrets.PASSWORD }}@github.com/magpie-dev/hikari-crescent.git
           npm install gh-pages
           node docs/publish.js
