@@ -20,12 +20,12 @@ from hikari import CommandOption, CommandType, OptionType, Snowflakeish
 from crescent.bot import Bot
 from crescent.commands.args import (
     Arg,
+    Autocomplete,
     ChannelTypes,
     Choices,
     Description,
     MaxValue,
     MinValue,
-    Autocomplete,
     Name,
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption, get_channel_types
@@ -40,11 +40,11 @@ if TYPE_CHECKING:
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import (
+        AutocompleteCallbackT,
         ClassCommandProto,
         CommandCallbackT,
         MessageCommandCallbackT,
         UserCommandCallbackT,
-        AutocompleteCallbackT,
     )
 
     T = TypeVar("T")

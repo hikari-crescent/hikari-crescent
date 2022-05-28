@@ -7,7 +7,8 @@ from attr import define
 from hikari import ChannelType, CommandChoice
 
 if TYPE_CHECKING:
-    from typing import Sequence, Any
+    from typing import Any, Sequence
+
     from crescent.typedefs import AutocompleteCallbackT
 
 __all__: Sequence[str] = (

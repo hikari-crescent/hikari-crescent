@@ -1,6 +1,7 @@
 import typing
-import typing_extensions
+
 import hikari
+import typing_extensions
 
 import crescent
 
