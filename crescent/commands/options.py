@@ -120,6 +120,7 @@ class ClassCommandOption(Generic[T]):
             channel_types=self.channel_types,
             min_value=self.min_value,
             max_value=self.max_value,
+            autocomplete=bool(self.autocomplete)
         )
 
     @overload
@@ -242,8 +243,35 @@ def option(
     option_type: Type[int],
     description: str = ...,
     *,
+    autocomplete: Optional[AutocompleteCallbackT] = ...,
+    min_value: Optional[int] = ...,
+    max_value: Optional[int] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[int]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[int],
+    description: str = ...,
+    *,
     default: DEFAULT,
     choices: Optional[Sequence[Tuple[str, int]]] = ...,
+    min_value: Optional[int] = ...,
+    max_value: Optional[int] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[Union[int, DEFAULT]]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[int],
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    autocomplete: Optional[AutocompleteCallbackT] = ...,
     min_value: Optional[int] = ...,
     max_value: Optional[int] = ...,
     name: Optional[str] = ...,
@@ -269,8 +297,35 @@ def option(
     option_type: Type[float],
     description: str = ...,
     *,
+    autocomplete: Optional[AutocompleteCallbackT] = ...,
+    min_value: Optional[float] = ...,
+    max_value: Optional[float] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[float]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[float],
+    description: str = ...,
+    *,
     default: DEFAULT,
     choices: Optional[Sequence[Tuple[str, float]]] = ...,
+    min_value: Optional[float] = ...,
+    max_value: Optional[float] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[Union[float, DEFAULT]]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[float],
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    autocomplete: Optional[AutocompleteCallbackT] = ...,
     min_value: Optional[float] = ...,
     max_value: Optional[float] = ...,
     name: Optional[str] = ...,
@@ -294,8 +349,31 @@ def option(
     option_type: Type[str],
     description: str = ...,
     *,
+    autocomplete: Optional[AutocompleteCallbackT] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[str]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[str],
+    description: str = ...,
+    *,
     default: DEFAULT,
     choices: Optional[Sequence[Tuple[str, str]]] = ...,
+    name: Optional[str] = ...,
+) -> ClassCommandOption[Union[str, DEFAULT]]:
+    ...
+
+
+@overload
+def option(
+    option_type: Type[str],
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    autocomplete: Optional[AutocompleteCallbackT] = ...,
     name: Optional[str] = ...,
 ) -> ClassCommandOption[Union[str, DEFAULT]]:
     ...
