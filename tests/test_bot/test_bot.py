@@ -1,9 +1,9 @@
 import os
 from typing import Sequence
-from typing_extensions import Annotated
 
 import dotenv
 import hikari
+from typing_extensions import Annotated
 
 import crescent
 

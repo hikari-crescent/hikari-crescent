@@ -41,7 +41,7 @@ from hikari import (
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
-    from crescent.typedefs import OptionTypesT, AutocompleteCallbackT
+    from crescent.typedefs import AutocompleteCallbackT, OptionTypesT
 
 __all__ = (
     "OPTIONS_TYPE_MAP",
@@ -120,7 +120,7 @@ class ClassCommandOption(Generic[T]):
             channel_types=self.channel_types,
             min_value=self.min_value,
             max_value=self.max_value,
-            autocomplete=bool(self.autocomplete)
+            autocomplete=bool(self.autocomplete),
         )
 
     @overload

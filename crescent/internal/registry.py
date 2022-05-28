@@ -30,9 +30,9 @@ if TYPE_CHECKING:
 
     from hikari import Snowflakeish, UndefinedOr
 
-    from crescent.typedefs import AutocompleteCallbackT
     from crescent.bot import Bot
     from crescent.commands.errors import _InternalErrorHandlerCallbackT
+    from crescent.typedefs import AutocompleteCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 
