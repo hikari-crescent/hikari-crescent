@@ -6,6 +6,8 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
+    Iterable,
+    Tuple,
     Type,
     Union,
     get_args,
@@ -23,6 +25,7 @@ from crescent.commands.args import (
     Description,
     MaxValue,
     MinValue,
+    Autocomplete,
     Name,
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption, get_channel_types
@@ -41,6 +44,7 @@ if TYPE_CHECKING:
         CommandCallbackT,
         MessageCommandCallbackT,
         UserCommandCallbackT,
+        AutocompleteCallbackT,
     )
 
     T = TypeVar("T")
@@ -66,17 +70,30 @@ def _unwrap_optional(origin: Type[Any]) -> Any:
     return args[1]
 
 
-def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
-    name = param.name
+def _get_arg(t: Type[Arg] | Type[Any], metadata: Iterable[Any]) -> Optional[T]:
+    data: T
+    for data in metadata:
+        if isinstance(data, t):
+            return getattr(data, "payload", data)
+    return None
+
+
+def _get_origin_and_metadata(param: Parameter) -> Tuple[Any, Iterable[Any]]:
     typehint = param.annotation
-
-    metadata = ()
-
     origin = _unwrap_optional(typehint)
+    metadata = ()
 
     if hasattr(origin, "__metadata__"):
         metadata = origin.__metadata__
         origin = _unwrap_optional(origin.__origin__)
+
+    return origin, metadata
+
+
+def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
+    name = param.name
+
+    origin, metadata = _get_origin_and_metadata(param)
 
     if origin is Context or origin is param.empty:
         return None
@@ -94,24 +111,19 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
             " `hikari.Role`, `hikari.User`, or `crescent.Mentionable`."
         )
 
-    def get_arg(t: Type[Arg] | Type[Any]) -> Optional[T]:
-        data: T
-        for data in metadata:
-            if isinstance(data, t):
-                return getattr(data, "payload", data)
-        return None
-
-    name = get_arg(Name) or name
-    description = get_arg(Description) or get_arg(str) or "No Description"
-    choices = get_arg(Choices)
-    channel_types = _channel_types or get_arg(ChannelTypes)
-    min_value = get_arg(MinValue)
-    max_value = get_arg(MaxValue)
+    name = _get_arg(Name, metadata) or name
+    description = _get_arg(Description, metadata) or _get_arg(str, metadata) or "No Description"
+    choices = _get_arg(Choices, metadata)
+    channel_types = _channel_types or _get_arg(ChannelTypes, metadata)
+    min_value = _get_arg(MinValue, metadata)
+    max_value = _get_arg(MaxValue, metadata)
+    autocomplete = _get_arg(Autocomplete, metadata)
 
     required = param.default is param.empty
 
     return CommandOption(
         name=name,
+        autocomplete=bool(autocomplete),
         type=_type,
         description=description,
         choices=choices,
@@ -121,6 +133,11 @@ def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
         max_value=max_value,
         is_required=required,
     )
+
+
+def _get_autocomplete_func(param: Parameter) -> Optional[Autocomplete]:
+    _, metadata = _get_origin_and_metadata(param)
+    return _get_arg(Autocomplete, metadata)
 
 
 def _class_command_callback(
@@ -179,16 +196,23 @@ def command(
             command, guild=guild, name=name, description=description, deprecated=deprecated
         )
 
+    autocomplete: Dict[str, AutocompleteCallbackT] = {}
+
     if isinstance(callback, type) and isinstance(callback, object):
-        defaults: Dict[str, Any] = {}
         options: list[CommandOption] = []
         name_map: dict[str, str] = {}
+        defaults: Dict[str, Any] = {}
 
         for n, v in callback.__dict__.items():
+
             if not isinstance(v, ClassCommandOption):
                 continue
+
             generated = v._gen_option(n)
             options.append(generated)
+
+            if v.autocomplete:
+                autocomplete[generated.name] = v.autocomplete
 
             if generated.name != n:
                 name_map[generated.name] = n
@@ -200,11 +224,21 @@ def command(
     else:
         callback_func = callback
 
-        options = [
-            param
-            for param in (_gen_command_option(param) for param in get_parameters(callback_func))
-            if param is not None
-        ]
+        options = []
+
+        for param in get_parameters(callback_func):
+            if param is None:
+                continue
+
+            option = _gen_command_option(param)
+            if not option:
+                continue
+
+            options.append(option)
+
+            autocomplete_func = _get_autocomplete_func(param)
+            if autocomplete_func:
+                autocomplete[option.name] = autocomplete_func
 
     return register_command(
         callback=callback_func,
@@ -214,6 +248,7 @@ def command(
         description=description or "No Description",
         options=options,
         deprecated=deprecated,
+        autocomplete=autocomplete,
     )
 
 

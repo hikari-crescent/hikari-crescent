@@ -85,7 +85,7 @@ class MinValue(Arg):
         return self.min_value
 
 
-@define
+@define(hash=True)
 class Autocomplete(Arg):
     callback: AutocompleteCallbackT
 

@@ -41,7 +41,7 @@ from hikari import (
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
-    from crescent.typedefs import OptionTypesT
+    from crescent.typedefs import OptionTypesT, AutocompleteCallbackT
 
 __all__ = (
     "OPTIONS_TYPE_MAP",
@@ -108,6 +108,7 @@ class ClassCommandOption(Generic[T]):
     channel_types: Optional[Sequence[ChannelType]]
     min_value: Optional[Union[int, float]]
     max_value: Optional[Union[int, float]]
+    autocomplete: Optional[AutocompleteCallbackT]
 
     def _gen_option(self, name: str) -> CommandOption:
         return CommandOption(
@@ -309,6 +310,7 @@ def option(
     min_value: Optional[Union[int, float]] = None,
     max_value: Optional[Union[int, float]] = None,
     name: Optional[str] = None,
+    autocomplete: Optional[AutocompleteCallbackT] = None,
 ) -> ClassCommandOption[Any]:
     if (
         isclass(option_type)
@@ -333,4 +335,5 @@ def option(
         min_value=min_value,
         max_value=max_value,
         name=name,
+        autocomplete=autocomplete,
     )

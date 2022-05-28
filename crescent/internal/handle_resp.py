@@ -4,7 +4,13 @@ from contextlib import suppress
 from logging import getLogger
 from typing import TYPE_CHECKING, Mapping, Optional, cast
 
-from hikari import UNDEFINED, CommandType, InteractionType, OptionType
+from hikari import (
+    UNDEFINED,
+    AutocompleteInteraction,
+    CommandType,
+    InteractionType,
+    OptionType,
+)
 
 from crescent.context import Context
 from crescent.internal.app_command import Unique
@@ -37,7 +43,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     interaction = event.interaction
     bot = event.app
 
-    if interaction.type in (InteractionType.MESSAGE_COMPONENT, InteractionType.AUTOCOMPLETE):
+    if interaction.type is InteractionType.MESSAGE_COMPONENT:
         return
 
     if TYPE_CHECKING:
@@ -45,9 +51,19 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         bot = cast(Bot, bot)
 
     ctx = _context_from_interaction_resp(interaction)
+
     command = _get_command(
         bot, ctx.command, int(ctx.command_type), ctx.guild_id, ctx.group, ctx.sub_group
     )
+
+    if interaction.type is InteractionType.AUTOCOMPLETE:
+        interaction = cast(AutocompleteInteraction, interaction)
+
+        for option in interaction.options:
+            if option.is_focused:
+                autocomplete = command.metadata.autocomplete[option.name]
+                await interaction.create_response(await autocomplete(ctx, option.value))
+                return
 
     if not command:
         if not bot.allow_unknown_interactions:
