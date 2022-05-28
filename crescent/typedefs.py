@@ -11,7 +11,6 @@ from typing import (
     Sequence,
     TypeVar,
     Union,
-    overload,
 )
 
 from hikari import (
