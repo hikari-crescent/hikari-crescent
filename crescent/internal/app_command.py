@@ -118,7 +118,7 @@ class AppCommand(CommandBuilder):
 @define
 class AppCommandMeta:
     app: AppCommand
-    autocomplete: Dict[str, AutocompleteCallbackT]
+    autocomplete: Dict[str, AutocompleteCallbackT] = field(factory=dict)
     group: Optional[Group] = None
     sub_group: Optional[SubGroup] = None
     deprecated: bool = False
