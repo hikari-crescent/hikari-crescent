@@ -13,7 +13,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
-hikari = ">=2.0.0.dev106"
+hikari = ">=2.0.0.dev108"
 attrs = "^21.4.0"
 
 [tool.poetry.dev-dependencies]
@@ -40,6 +40,7 @@ python_version = 3.8
 warn_unused_configs = true
 warn_return_any = true
 warn_redundant_casts = true
+strict = true
 
 [tool.isort]
 profile="black"

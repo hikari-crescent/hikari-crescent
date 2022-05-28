@@ -24,18 +24,16 @@ if TYPE_CHECKING:
     )
 
     from crescent.bot import Bot
-    from crescent.context import RestAndCacheAware
     from crescent.internal import AppCommandMeta, MetaStruct
     from crescent.typedefs import CommandCallbackT, OptionTypesT
 
 
 _log = getLogger(__name__)
 
-__all__: Sequence = ("handle_resp",)
+__all__: Sequence[str] = ("handle_resp",)
 
 
-async def handle_resp(event: InteractionCreateEvent):
-
+async def handle_resp(event: InteractionCreateEvent) -> None:
     interaction = event.interaction
     bot = event.app
 
@@ -128,7 +126,8 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
         callback_options = _resolved_data_to_kwargs(interaction)
 
     return Context(
-        app=cast("RestAndCacheAware", interaction.app),
+        interaction=interaction,
+        app=cast("Bot", interaction.app),
         application_id=interaction.application_id,
         type=interaction.type,
         token=interaction.token,

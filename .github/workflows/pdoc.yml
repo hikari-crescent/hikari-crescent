@@ -1,10 +1,8 @@
 name: Pdoc
-
-'on':
+on:
   push:
     branches:
       - main
-
 jobs:
   check-build:
     name: Check docs build

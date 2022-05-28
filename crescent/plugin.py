@@ -1,16 +1,19 @@
 from __future__ import annotations
 
-from importlib import import_module
-from typing import TYPE_CHECKING, Dict, Tuple
+from importlib import import_module, reload
+from typing import TYPE_CHECKING, Dict
 
+from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
 
 if TYPE_CHECKING:
-    from typing import Sequence, TypeVar
+    from typing import Any, Sequence, TypeVar
+
+    from crescent.typedefs import HookCallbackT
 
     from .bot import Bot
 
-    T = TypeVar("T", bound="MetaStruct")
+    T = TypeVar("T", bound="MetaStruct[Any, Any]")
 
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
@@ -21,13 +24,14 @@ class PluginManager:
         self.plugins: Dict[str, Plugin] = {}
         self._bot = bot
 
-    def add_plugin(self, plugin: Plugin) -> None:
+    def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
         if plugin.name in self.plugins:
-            raise ValueError(f"Plugin name {plugin.name} already exists.")
+            if not force:
+                raise ValueError(f"Plugin name {plugin.name} already exists.")
         self.plugins[plugin.name] = plugin
         plugin._setup(self._bot)
 
-    def load(self, path: str) -> Plugin:
+    def load(self, path: str, refresh: bool = False) -> Plugin:
         """Load a plugin from the module path.
 
         ```python
@@ -40,32 +44,34 @@ class PluginManager:
 
         Args:
             path: The module path for the plugin.
-
+            refresh: Whether or not to reload the plugin.
         """
-        plugin = Plugin._from_module(path)
-        self.add_plugin(plugin)
+
+        plugin = Plugin._from_module(path, refresh=refresh)
+        self.add_plugin(plugin, force=refresh)
         return plugin
 
 
 class Plugin:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, command_hooks: list[HookCallbackT] | None = None) -> None:
         self.name = name
-        self._children: list[Tuple[MetaStruct, bool]] = []
-
-        for value in vars(self.__class__).values():
-            if isinstance(value, MetaStruct):
-                self._children.append((value, True))
+        self.command_hooks = command_hooks
+        self._children: list[MetaStruct[Any, Any]] = []
 
     def include(self, obj: T) -> T:
-        self._children.append((obj, False))
+        if isinstance(obj.metadata, AppCommandMeta) and self.command_hooks:
+            obj.metadata.hooks.extend(self.command_hooks)
+        self._children.append(obj)
         return obj
 
     def _setup(self, bot: Bot) -> None:
-        for item, is_method in self._children:
-            item.register_to_app(bot, self if is_method else None)
+        for item in self._children:
+            if isinstance(item.metadata, AppCommandMeta) and bot.command_hooks:
+                item.metadata.hooks.extend(bot.command_hooks)
+            item.register_to_app(bot)
 
     @classmethod
-    def _from_module(cls, path: str) -> Plugin:
+    def _from_module(cls, path: str, refresh: bool = False) -> Plugin:
         parents = path.split(".")
 
         name = parents.pop(-1)
@@ -73,6 +79,8 @@ class Plugin:
         if package:
             name = "." + name
         module = import_module(name, package)
+        if refresh:
+            module = reload(module)
         plugin = getattr(module, "plugin", None)
         if not isinstance(plugin, Plugin):
             raise ValueError(
