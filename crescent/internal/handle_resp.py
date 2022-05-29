@@ -4,7 +4,14 @@ from contextlib import suppress
 from logging import getLogger
 from typing import TYPE_CHECKING, Mapping, Optional, cast
 
-from hikari import UNDEFINED, AutocompleteInteraction, CommandType, InteractionType, OptionType
+from hikari import (
+    UNDEFINED,
+    AutocompleteInteraction,
+    AutocompleteInteractionOption,
+    CommandType,
+    InteractionType,
+    OptionType,
+)
 
 from crescent.context import Context
 from crescent.internal.app_command import Unique
@@ -92,10 +99,23 @@ async def _handle_autocomplete_resp(
 ) -> None:
     interaction = cast(AutocompleteInteraction, ctx.interaction)
 
-    for option in interaction.options:
-        if option.is_focused and command.metadata.autocomplete:
-            autocomplete = command.metadata.autocomplete[option.name]
-            await interaction.create_response(await autocomplete(ctx, option))
+    if not command.metadata.autocomplete:
+        return
+
+    def get_option_recursive(
+        options: Sequence[AutocompleteInteractionOption],
+    ) -> AutocompleteInteractionOption:
+        for option in options:
+            if option.is_focused:
+                return option
+            if option.options:
+                maybe_option = get_option_recursive(option.options)
+                if maybe_option:
+                    return maybe_option
+
+    option = get_option_recursive(interaction.options)
+    autocomplete = command.metadata.autocomplete[option.name]
+    await interaction.create_response(await autocomplete(ctx, option))
 
 
 def _get_command(
