@@ -7,6 +7,7 @@ from traceback import print_exception
 from typing import TYPE_CHECKING, overload
 
 from hikari import (
+    Event,
     GatewayBot,
     Intents,
     InteractionCreateEvent,
@@ -167,7 +168,9 @@ class Bot(GatewayBot):
     def plugins(self) -> PluginManager:
         return self._plugins
 
-    async def on_crescent_error(self, exc: Exception, ctx: Context, was_handled: bool) -> None:
+    async def on_crescent_command_error(
+        self, exc: Exception, ctx: Context, was_handled: bool
+    ) -> None:
         if was_handled:
             return
         try:
@@ -176,3 +179,6 @@ class Bot(GatewayBot):
             pass
         print(f"Unhandled exception occurred in the command {ctx.command}:")
         print_exception(exc.__class__, exc, exc.__traceback__)
+
+    async def on_crescent_event_error(self, exc: Exception, event: Event) -> None:
+        ...

@@ -10,6 +10,7 @@ from crescent.utils.options import unwrap
 if TYPE_CHECKING:
     from typing import Any, Optional, Sequence, Type
 
+    from hikari import Event
     from hikari.api.event_manager import CallbackT
 
 
@@ -45,7 +46,16 @@ def event(
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
+    def _event_callback(self: MetaStruct[CallbackT[Any], None]):
+        async def func(event: Event):
+            try:
+                await self.callback(event)
+            except Exception as e:
+                await self.app.on_crescent_event_error(e, event)
+
+        return func
+
     def hook(self: MetaStruct[CallbackT[Any], None]) -> None:
-        self.app.subscribe(event_type=unwrap(event_type), callback=self.callback)
+        self.app.subscribe(event_type=unwrap(event_type), callback=_event_callback(self))
 
     return MetaStruct(callback=callback, metadata=None, app_set_hooks=[hook])

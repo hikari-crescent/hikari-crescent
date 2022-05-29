@@ -73,7 +73,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
             else:
                 handled = False
 
-            await bot.on_crescent_error(e, ctx, handled)
+            await bot.on_crescent_command_error(e, ctx, handled)
 
 
 def _get_command(
