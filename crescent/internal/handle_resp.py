@@ -108,10 +108,11 @@ async def _handle_autocomplete_resp(
         for option in options:
             if option.is_focused:
                 return option
-            if option.options:
-                maybe_option = get_option_recursive(option.options)
-                if maybe_option:
-                    return maybe_option
+            if not option.options:
+                continue
+            maybe_option = get_option_recursive(option.options)
+            if maybe_option:
+                return maybe_option
         return None
 
     option = get_option_recursive(interaction.options)
