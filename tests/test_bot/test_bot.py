@@ -1,7 +1,9 @@
 import os
+from typing import Sequence
 
 import dotenv
 import hikari
+from typing_extensions import Annotated
 
 import crescent
 
@@ -116,6 +118,20 @@ async def raise_unhandled_err(ctx: crescent.Context) -> None:
 @crescent.command(deprecated=True)
 async def deprecated_command(ctx: crescent.Context) -> None:
     pass
+
+
+async def autocomplete_response(
+    ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
+) -> Sequence[hikari.CommandChoice]:
+    return [hikari.CommandChoice(name="Some Option", value="1234")]
+
+
+@bot.include
+@crescent.command
+async def autocomplete_interaction(
+    ctx: crescent.Context, result: Annotated[str, crescent.Autocomplete(autocomplete_response)]
+) -> None:
+    await ctx.respond(result, ephemeral=True)
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ from hikari import (
 from typing_extensions import Annotated
 
 from crescent import Context, Name, command, message_command, user_command
-from crescent.commands.args import ChannelTypes, MaxValue, MinValue
+from crescent.commands.args import Autocomplete, ChannelTypes, MaxValue, MinValue
 from crescent.internal.app_command import AppCommand, AppCommandMeta
 
 
@@ -138,3 +138,15 @@ class TestCommandFunction:
                 type=CommandType.USER, name="callback", default_permission=UNDEFINED, guild_id=None
             )
         )
+
+    def test_autocomplete_exists(self):
+
+        autocomplete_response = object()
+
+        @command
+        async def callback(
+            ctx: Context, parameter: Annotated[str, Autocomplete(autocomplete_response)]
+        ):
+            pass
+
+        assert callback.metadata.autocomplete == {"parameter": autocomplete_response}
