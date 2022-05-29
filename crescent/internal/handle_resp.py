@@ -4,7 +4,14 @@ from contextlib import suppress
 from logging import getLogger
 from typing import TYPE_CHECKING, Mapping, Optional, cast
 
-from hikari import UNDEFINED, CommandType, InteractionType, OptionType
+from hikari import (
+    UNDEFINED,
+    AutocompleteInteraction,
+    AutocompleteInteractionOption,
+    CommandType,
+    InteractionType,
+    OptionType,
+)
 
 from crescent.context import Context
 from crescent.internal.app_command import Unique
@@ -37,7 +44,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     interaction = event.interaction
     bot = event.app
 
-    if interaction.type in (InteractionType.MESSAGE_COMPONENT, InteractionType.AUTOCOMPLETE):
+    if interaction.type is InteractionType.MESSAGE_COMPONENT:
         return
 
     if TYPE_CHECKING:
@@ -45,6 +52,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         bot = cast(Bot, bot)
 
     ctx = _context_from_interaction_resp(interaction)
+
     command = _get_command(
         bot, ctx.command, int(ctx.command_type), ctx.guild_id, ctx.group, ctx.sub_group
     )
@@ -57,6 +65,16 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
             )
         return
 
+    if interaction.type is InteractionType.AUTOCOMPLETE:
+        await _handle_autocomplete_resp(command, ctx)
+        return
+
+    await _handle_slash_resp(bot, command, ctx)
+
+
+async def _handle_slash_resp(
+    bot: Bot, command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
+) -> None:
     for hook in command.metadata.hooks:
         hook_res = await hook(ctx)
 
@@ -74,6 +92,34 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
                 handled = False
 
             await bot.on_crescent_error(e, ctx, handled)
+
+
+async def _handle_autocomplete_resp(
+    command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
+) -> None:
+    interaction = cast(AutocompleteInteraction, ctx.interaction)
+
+    if not command.metadata.autocomplete:
+        return
+
+    option = _get_option_recursive(interaction.options)
+    if not option:
+        return
+    autocomplete = command.metadata.autocomplete[option.name]
+    await interaction.create_response(await autocomplete(ctx, option))
+
+
+def _get_option_recursive(
+    options: Sequence[AutocompleteInteractionOption],
+) -> Optional[AutocompleteInteractionOption]:
+    for option in options:
+        if option.is_focused:
+            return option
+        if not option.options:
+            continue
+        if maybe_option := _get_option_recursive(option.options):
+            return maybe_option
+    return None
 
 
 def _get_command(

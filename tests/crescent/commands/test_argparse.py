@@ -23,7 +23,7 @@ from hikari import (
 from typing_extensions import Annotated
 
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
-from crescent.commands.decorators import _gen_command_option
+from crescent.commands.signature import gen_command_option
 
 
 @dataclass
@@ -39,21 +39,21 @@ class Parameter:
 POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD
 
 
-def test_gen_command_option():
+def testgen_command_option():
     assert (
-        _gen_command_option(
+        gen_command_option(
             Parameter(name="self", annotation=_empty, default=None, kind=POSITIONAL_OR_KEYWORD)
         )
         is None
     )
 
-    assert _gen_command_option(
+    assert gen_command_option(
         Parameter(name="1234", annotation=str, default=_empty, kind=POSITIONAL_OR_KEYWORD)
     ) == CommandOption(
         name="1234", type=OptionType.STRING, description="No Description", is_required=True
     )
 
-    assert _gen_command_option(
+    assert gen_command_option(
         Parameter(name="1234", annotation=str, default=12345, kind=POSITIONAL_OR_KEYWORD)
     ) == CommandOption(
         name="1234", type=OptionType.STRING, description="No Description", is_required=False
@@ -98,7 +98,7 @@ def test_annotations():
         kwargs = {"name": "1234", "description": "No Description"}
         kwargs.update(params)
 
-        assert _gen_command_option(
+        assert gen_command_option(
             Parameter(name="1234", annotation=annotation, default=None, kind=POSITIONAL_OR_KEYWORD)
         ) == CommandOption(**kwargs)
 
@@ -129,7 +129,7 @@ def test_gen_channel_options():
     )
 
     for channel_in, channel_types in channels:
-        assert _gen_command_option(
+        assert gen_command_option(
             Parameter(
                 name="1234", annotation=channel_in, default=12345, kind=POSITIONAL_OR_KEYWORD
             )

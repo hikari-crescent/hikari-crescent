@@ -32,6 +32,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.commands.errors import _InternalErrorHandlerCallbackT
+    from crescent.typedefs import AutocompleteCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 
@@ -48,6 +49,7 @@ def register_command(
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
     deprecated: bool = False,
+    autocomplete: Dict[str, AutocompleteCallbackT] = {},
 ) -> MetaStruct[T, AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
@@ -61,6 +63,7 @@ def register_command(
         app_set_hooks=[hook],
         metadata=AppCommandMeta(
             deprecated=deprecated,
+            autocomplete=autocomplete,
             app=AppCommand(
                 type=command_type,
                 description=description,

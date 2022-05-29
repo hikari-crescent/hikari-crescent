@@ -14,6 +14,7 @@ __all__: Sequence[str] = (
     "ChannelTypes",
     "MaxValue",
     "MinValue",
+    "Autocomplete",
     "command",
     "user_command",
     "message_command",
