@@ -1,40 +1,18 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import (
-    TYPE_CHECKING,
-    Awaitable,
-    Callable,
-    Dict,
-    Iterable,
-    Tuple,
-    Type,
-    Union,
-    get_args,
-    get_origin,
-    overload,
-)
+from typing import TYPE_CHECKING, Awaitable, Callable, Dict, Type, overload
 
-from hikari import CommandOption, CommandType, OptionType, Snowflakeish
+from hikari import CommandOption, CommandType, Snowflakeish
 
 from crescent.bot import Bot
-from crescent.commands.args import (
-    Arg,
-    Autocomplete,
-    ChannelTypes,
-    Choices,
-    Description,
-    MaxValue,
-    MinValue,
-    Name,
-)
-from crescent.commands.options import OPTIONS_TYPE_MAP, ClassCommandOption, get_channel_types
-from crescent.context import Context
+from crescent.commands.options import ClassCommandOption
 from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
+from crescent.commands.signature import gen_command_option, get_autocomplete_func
+
 
 if TYPE_CHECKING:
-    from inspect import Parameter
     from typing import Any, Optional, Sequence, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
@@ -50,94 +28,6 @@ if TYPE_CHECKING:
     T = TypeVar("T")
 
 __all__: Sequence[str] = ("command", "user_command", "message_command")
-
-
-NoneType = type(None)
-
-
-def _unwrap_optional(origin: Type[Any]) -> Any:
-    if get_origin(origin) is not Union:
-        return origin
-
-    args = get_args(origin)
-
-    if len(args) != 2 or NoneType not in args:
-        raise ValueError("Typehint must be `T`, `Optional[T]`, or `Union[T, None]`")
-
-    if args[1] is NoneType:
-        return args[0]
-
-    return args[1]
-
-
-def _get_arg(t: Type[Arg] | Type[Any], metadata: Iterable[Any]) -> Optional[T]:
-    data: T
-    for data in metadata:
-        if isinstance(data, t):
-            return getattr(data, "payload", data)
-    return None
-
-
-def _get_origin_and_metadata(param: Parameter) -> Tuple[Any, Iterable[Any]]:
-    typehint = param.annotation
-    origin = _unwrap_optional(typehint)
-    metadata = ()
-
-    if hasattr(origin, "__metadata__"):
-        metadata = origin.__metadata__
-        origin = _unwrap_optional(origin.__origin__)
-
-    return origin, metadata
-
-
-def _gen_command_option(param: Parameter) -> Optional[CommandOption]:
-    name = param.name
-
-    origin, metadata = _get_origin_and_metadata(param)
-
-    if origin is Context or origin is param.empty:
-        return None
-
-    _type = OPTIONS_TYPE_MAP.get(origin)
-
-    _channel_types = get_channel_types(origin)
-    if _channel_types:
-        _type = OptionType.CHANNEL
-
-    if _type is None:
-        raise ValueError(
-            f"`{origin.__name__}` is not a valid typehint."
-            " Must be `str`, `bool`, `int`, `float`, `hikari.PartialChannel`,"
-            " `hikari.Role`, `hikari.User`, or `crescent.Mentionable`."
-        )
-
-    name = _get_arg(Name, metadata) or name
-    description = _get_arg(Description, metadata) or _get_arg(str, metadata) or "No Description"
-    choices = _get_arg(Choices, metadata)
-    channel_types = _channel_types or _get_arg(ChannelTypes, metadata)
-    min_value = _get_arg(MinValue, metadata)
-    max_value = _get_arg(MaxValue, metadata)
-    autocomplete = _get_arg(Autocomplete, metadata)
-
-    required = param.default is param.empty
-
-    return CommandOption(
-        name=name,
-        autocomplete=bool(autocomplete),
-        type=_type,
-        description=description,
-        choices=choices,
-        options=None,
-        channel_types=list(channel_types) if channel_types else None,
-        min_value=min_value,
-        max_value=max_value,
-        is_required=required,
-    )
-
-
-def _get_autocomplete_func(param: Parameter) -> Optional[AutocompleteCallbackT]:
-    _, metadata = _get_origin_and_metadata(param)
-    return _get_arg(Autocomplete, metadata)
 
 
 def _class_command_callback(
@@ -230,13 +120,13 @@ def command(
             if param is None:
                 continue
 
-            option = _gen_command_option(param)
+            option = gen_command_option(param)
             if not option:
                 continue
 
             options.append(option)
 
-            autocomplete_func = _get_autocomplete_func(param)
+            autocomplete_func = get_autocomplete_func(param)
             if autocomplete_func:
                 autocomplete[option.name] = autocomplete_func
 
