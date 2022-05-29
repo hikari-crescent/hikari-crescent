@@ -89,7 +89,7 @@ async def _handle_slash_resp(
 
 async def _handle_autocomplete_resp(
     command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
-):
+) -> None:
     interaction = cast(AutocompleteInteraction, ctx.interaction)
 
     for option in interaction.options:
