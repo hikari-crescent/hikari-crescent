@@ -7,10 +7,9 @@ from hikari import CommandOption, CommandType, Snowflakeish
 
 from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
+from crescent.commands.signature import gen_command_option, get_autocomplete_func
 from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
-from crescent.commands.signature import gen_command_option, get_autocomplete_func
-
 
 if TYPE_CHECKING:
     from typing import Any, Optional, Sequence, TypeVar
