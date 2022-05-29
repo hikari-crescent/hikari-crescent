@@ -110,8 +110,7 @@ async def _handle_autocomplete_resp(
                 return option
             if not option.options:
                 continue
-            maybe_option = get_option_recursive(option.options)
-            if maybe_option:
+            if maybe_option := get_option_recursive(option.options):
                 return maybe_option
         return None
 
