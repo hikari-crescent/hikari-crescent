@@ -104,7 +104,7 @@ async def _handle_autocomplete_resp(
 
     def get_option_recursive(
         options: Sequence[AutocompleteInteractionOption],
-    ) -> AutocompleteInteractionOption:
+    ) -> Optional[AutocompleteInteractionOption]:
         for option in options:
             if option.is_focused:
                 return option
@@ -112,8 +112,11 @@ async def _handle_autocomplete_resp(
                 maybe_option = get_option_recursive(option.options)
                 if maybe_option:
                     return maybe_option
+        return None
 
     option = get_option_recursive(interaction.options)
+    if not option:
+        return
     autocomplete = command.metadata.autocomplete[option.name]
     await interaction.create_response(await autocomplete(ctx, option))
 
