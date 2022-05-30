@@ -1,4 +1,5 @@
 import hikari
+
 import crescent
 from tests.utils import MockBot
 
