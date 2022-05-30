@@ -18,13 +18,12 @@ T = TypeVar("T", bound=Callable[..., Awaitable[Any]])
 def _make_catch_function(
     error_handler_var: str,
 ) -> Callable[[Type[Exception]], Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]]:
-    def app_set_hook(meta: MetaStruct[T, Any]) -> None:
-        for exc in exceptions:
-            getattr(meta.app, error_handler_var).register(meta, exc)
-
     def func(
         *exceptions: Type[Exception],
     ) -> Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]:
+        def app_set_hook(meta: MetaStruct[T, Any]) -> None:
+            for exc in exceptions:
+                getattr(meta.app, error_handler_var).register(meta, exc)
 
         def decorator(callback: T | MetaStruct[T, Any]) -> MetaStruct[T, Any]:
             if isinstance(callback, MetaStruct):
