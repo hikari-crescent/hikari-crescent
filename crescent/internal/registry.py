@@ -102,7 +102,6 @@ class CommandHandler:
         ] = WeakValueDictionary()
 
     def register(self, command: MetaStruct[T, AppCommandMeta]) -> MetaStruct[T, AppCommandMeta]:
-        command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
         # NOTE: T is bound to Callable[..., Awaitable[Any]], so we can cast it safely. Mypy's
         # support for TypeVars is bad, so it doesn't understand this.
         _command = cast("MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]", command)
@@ -114,8 +113,6 @@ class CommandHandler:
         built_commands: Dict[Unique, AppCommand] = {}
 
         for command in self.registry.values():
-            command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
-
             if command.metadata.deprecated:
                 continue
 
@@ -254,15 +251,17 @@ class CommandHandler:
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
-                    " `application.commands` scope"
+                    " `application.commands` scope",
+                    guild,
                 )
                 return
             _log.warning(
-                "Cannot post application commands to guild %s. Bot is not part of the guild."
+                "Cannot post application commands to guild %s. Bot is not part of the guild.",
+                guild,
             )
 
     async def register_commands(self) -> None:
-        guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
+        guilds = list(self.guilds) or ()
 
         commands = self.build_commands()
 
@@ -280,7 +279,9 @@ class CommandHandler:
         assert self.application_id is not None
         await gather(
             self.bot.rest.set_application_commands(
-                application=self.application_id, commands=global_commands
+                application=self.application_id,
+                commands=global_commands,
+                guild=self.bot.default_guild,
             ),
             gather_iter(
                 self.post_guild_command(commands, guild)
