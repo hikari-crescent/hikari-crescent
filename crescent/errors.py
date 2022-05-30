@@ -21,7 +21,7 @@ def _make_catch_function(
     def app_set_hook(meta: MetaStruct[T, Any]) -> None:
         for exc in exceptions:
             getattr(meta.app, error_handler_var).register(meta, exc)
-    
+
     def func(
         *exceptions: Type[Exception],
     ) -> Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]:
