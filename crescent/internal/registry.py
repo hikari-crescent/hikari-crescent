@@ -127,8 +127,6 @@ class CommandHandler:
         built_commands: Dict[Unique, AppCommand] = {}
 
         for command in self.registry.values():
-            command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
-
             if command.metadata.deprecated:
                 continue
 
@@ -267,15 +265,17 @@ class CommandHandler:
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
-                    " `application.commands` scope"
+                    " `application.commands` scope",
+                    guild,
                 )
                 return
             _log.warning(
-                "Cannot post application commands to guild %s. Bot is not part of the guild."
+                "Cannot post application commands to guild %s. Bot is not part of the guild.",
+                guild,
             )
 
     async def register_commands(self) -> None:
-        guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
+        guilds = list(self.guilds)
 
         commands = self.build_commands()
 
