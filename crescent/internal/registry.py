@@ -115,6 +115,7 @@ class CommandHandler:
         ] = WeakValueDictionary()
 
     def register(self, command: MetaStruct[T, AppCommandMeta]) -> MetaStruct[T, AppCommandMeta]:
+        command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
         # NOTE: T is bound to Callable[..., Awaitable[Any]], so we can cast it safely. Mypy's
         # support for TypeVars is bad, so it doesn't understand this.
         _command = cast("MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]", command)
@@ -274,7 +275,7 @@ class CommandHandler:
             )
 
     async def register_commands(self) -> None:
-        guilds = list(self.guilds) or ()
+        guilds = list(self.guilds)
 
         commands = self.build_commands()
 
@@ -292,9 +293,7 @@ class CommandHandler:
         assert self.application_id is not None
         await gather(
             self.bot.rest.set_application_commands(
-                application=self.application_id,
-                commands=global_commands,
-                guild=self.bot.default_guild,
+                application=self.application_id, commands=global_commands
             ),
             gather_iter(
                 self.post_guild_command(commands, guild)
