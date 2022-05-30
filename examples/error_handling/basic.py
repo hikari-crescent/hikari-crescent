@@ -6,7 +6,7 @@ from typing_extensions import Annotated as Atd
 
 import crescent
 
-bot = crescent.Bot("OTQ1MTUwMTc1NjYyNDU2ODQy.YhL9sQ.OjXVlFpK-136l225DbtCvA0onC8")
+bot = crescent.Bot("...")
 
 
 class RandomError(Exception):
