@@ -20,6 +20,7 @@ from hikari import (
     PartialChannel,
     Role,
     User,
+    Event,
 )
 
 if TYPE_CHECKING:
@@ -35,7 +36,7 @@ __all__: Sequence[str] = (
     "CommandOptionsT",
     "ClassCommandProto",
     "HookCallbackT",
-    "ErrorHandlerCallbackT",
+    "CommandErrorHandlerCallbackT",
     "AutocompleteCallbackT",
 )
 
@@ -58,4 +59,8 @@ class ClassCommandProto(Protocol):
 
 ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
 
-ErrorHandlerCallbackT = Callable[[ERROR, "Context"], Awaitable[None]]
+CommandErrorHandlerCallbackT = Callable[[ERROR, "Context"], Awaitable[None]]
+EventErrorHandlerCallbackT = Callable[[ERROR, Event], Awaitable[None]]
+AutocompleteErrorHandlerCallbackT = Callable[
+    [ERROR, "Context", AutocompleteInteractionOption], Awaitable[None]
+]

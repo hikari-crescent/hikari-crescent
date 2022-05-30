@@ -24,5 +24,7 @@ __all__: Sequence[str] = (
     "SubGroup",
     "ClassCommandOption",
     "option",
-    "catch",
+    "catch_command",
+    "catch_event",
+    "catch_autocomplete",
 )

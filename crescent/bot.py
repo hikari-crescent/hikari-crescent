@@ -7,6 +7,7 @@ from traceback import print_exception
 from typing import TYPE_CHECKING, overload
 
 from hikari import (
+    AutocompleteInteractionOption,
     Event,
     GatewayBot,
     Intents,
@@ -27,7 +28,12 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
 
     from crescent.context import Context
-    from crescent.typedefs import HookCallbackT
+    from crescent.typedefs import (
+        HookCallbackT,
+        CommandErrorHandlerCallbackT,
+        EventErrorHandlerCallbackT,
+        AutocompleteErrorHandlerCallbackT,
+    )
 
     META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
 
@@ -101,7 +107,17 @@ class Bot(GatewayBot):
         self.command_hooks = command_hooks
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
-        self._error_handler = ErrorHandler(self)
+
+        self._command_error_handler: ErrorHandler[
+            CommandErrorHandlerCallbackT[Any]
+        ] = ErrorHandler(self)
+        self._event_error_handler: ErrorHandler[EventErrorHandlerCallbackT[Any]] = ErrorHandler(
+            self
+        )
+        self._autocomplete_error_handler: ErrorHandler[
+            AutocompleteErrorHandlerCallbackT[Any]
+        ] = ErrorHandler(self)
+
         self.default_guild: Optional[Snowflakeish] = default_guild
 
         self._plugins = PluginManager(self)
@@ -180,5 +196,25 @@ class Bot(GatewayBot):
         print(f"Unhandled exception occurred in the command {ctx.command}:")
         print_exception(exc.__class__, exc, exc.__traceback__)
 
-    async def on_crescent_event_error(self, exc: Exception, event: Event) -> None:
-        ...
+    async def on_crescent_event_error(
+        self, exc: Exception, event: Event, was_handled: bool
+    ) -> None:
+        if was_handled:
+            return
+        print(f"Unhandled exception occurred for {type(event)}:")
+        print_exception(exc.__class__, exc, exc.__traceback__)
+
+    async def on_crescent_autocomplete_error(
+        self,
+        exc: Exception,
+        ctx: Context,
+        option: AutocompleteInteractionOption,
+        was_handled: bool,
+    ) -> None:
+        if was_handled:
+            return
+        print(
+            f"Unhandled exception occurred in the autocomplete interaction for {ctx.command}"
+            f" (option: {option.name}):"
+        )
+        print_exception(exc.__class__, exc, exc.__traceback__)
