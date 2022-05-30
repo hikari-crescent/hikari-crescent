@@ -84,14 +84,9 @@ async def _handle_slash_resp(
     else:
         try:
             await command.callback(ctx, **ctx.options)
-        except Exception as e:
-            if func := command.app._error_handler.registry.get(e.__class__):
-                await func.callback(e, ctx)
-                handled = True
-            else:
-                handled = False
-
-            await bot.on_crescent_error(e, ctx, handled)
+        except Exception as exc:
+            handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
+            await bot.on_crescent_command_error(exc, ctx, handled)
 
 
 async def _handle_autocomplete_resp(
@@ -106,7 +101,12 @@ async def _handle_autocomplete_resp(
     if not option:
         return
     autocomplete = command.metadata.autocomplete[option.name]
-    await interaction.create_response(await autocomplete(ctx, option))
+
+    try:
+        await interaction.create_response(await autocomplete(ctx, option))
+    except Exception as exc:
+        handled = await command.app._autocomplete_error_handler.try_handle(exc, [exc, ctx, option])
+        await command.app.on_crescent_autocomplete_error(exc, ctx, option, handled)
 
 
 def _get_option_recursive(
