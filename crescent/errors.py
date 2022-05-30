@@ -25,7 +25,6 @@ def _make_catch_function(
     def func(
         *exceptions: Type[Exception],
     ) -> Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]:
-
         def decorator(callback: T | MetaStruct[T, Any]) -> MetaStruct[T, Any]:
             if isinstance(callback, MetaStruct):
                 meta = callback
