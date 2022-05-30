@@ -97,7 +97,7 @@ class UnhandledErr(Exception):
 
 
 @bot.include
-@crescent.catch(HandledErr)
+@crescent.catch_command(HandledErr)
 async def handle_err(exc: HandledErr, ctx: crescent.Context) -> None:
     await ctx.respond(f"HandledErr raised in {ctx.command}: {exc!r}")
 
