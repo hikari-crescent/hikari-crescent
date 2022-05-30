@@ -16,11 +16,11 @@ from typing import (
 from hikari import (
     AutocompleteInteractionOption,
     CommandChoice,
+    Event,
     Message,
     PartialChannel,
     Role,
     User,
-    Event,
 )
 
 if TYPE_CHECKING:

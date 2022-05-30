@@ -4,29 +4,19 @@ from asyncio import gather
 from collections import defaultdict
 from inspect import iscoroutinefunction
 from logging import getLogger
-from typing import TYPE_CHECKING, Generic, cast, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar, cast
 from weakref import WeakValueDictionary
 
 from hikari import UNDEFINED, CommandOption, CommandType, ForbiddenError, OptionType, Snowflake
 from hikari.api import CommandBuilder
-from crescent.exceptions import AlreadyRegisteredError
 
+from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import (
-        Any,
-        Awaitable,
-        Callable,
-        DefaultDict,
-        Dict,
-        List,
-        Optional,
-        Sequence,
-        Type,
-    )
+    from typing import Any, Awaitable, Callable, DefaultDict, Dict, List, Optional, Sequence, Type
 
     from hikari import Snowflakeish, UndefinedOr
 
