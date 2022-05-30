@@ -46,19 +46,20 @@ def event(
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
-    def _event_callback(
-        self: MetaStruct[CallbackT[Any], None]
-    ) -> Callable[[Event], Coroutine[None, None, None]]:
-        async def func(event: Event) -> None:
-            try:
-                await self.callback(event)
-            except Exception as exc:
-                handled = await self.app._event_error_handler.try_handle(exc, [exc, event])
-                await self.app.on_crescent_event_error(exc, event, handled)
-
-        return func
-
     def hook(self: MetaStruct[CallbackT[Any], None]) -> None:
         self.app.subscribe(event_type=unwrap(event_type), callback=_event_callback(self))
 
     return MetaStruct(callback=callback, metadata=None, app_set_hooks=[hook])
+
+
+def _event_callback(
+    self: MetaStruct[CallbackT[Any], None]
+) -> Callable[[Event], Coroutine[None, None, None]]:
+    async def func(event: Event) -> None:
+        try:
+            await self.callback(event)
+        except Exception as exc:
+            handled = await self.app._event_error_handler.try_handle(exc, [exc, event])
+            await self.app.on_crescent_event_error(exc, event, handled)
+
+    return func
