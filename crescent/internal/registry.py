@@ -91,7 +91,7 @@ class ErrorHandler(Generic[_E]):
 
     async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
         """
-        Attemps to run a function to handle an exception. Returns whether the exception
+        Attempts to run a function to handle an exception. Returns whether the exception
         was handled.
         """
         if func := self.registry.get(exc.__class__):
