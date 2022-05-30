@@ -114,19 +114,19 @@ class UnhandledErr(Exception):
 
 @bot.include
 @crescent.catch_command(HandledErr)
-async def handle_err(exc: HandledErr, ctx: crescent.Context) -> None:
+async def handle_cmd_err(exc: HandledErr, ctx: crescent.Context) -> None:
     await ctx.respond(f"HandledErr raised in {ctx.command}: {exc!r}")
 
 
 @bot.include
 @crescent.catch_event(HandledErr)
-async def handle_err(exc: HandledErr, event: hikari.Event) -> None:
+async def handle_event_err(exc: HandledErr, event: hikari.Event) -> None:
     print(f"HandledErr raised in {event}: {exc!r}")
 
 
 @bot.include
 @crescent.catch_autocomplete(HandledErr)
-async def handle_err(
+async def handle_autocomplete_err(
     exc: HandledErr, ctx: crescent.Context, inter: hikari.AutocompleteInteractionOption
 ) -> None:
     print(f"HandledErr raised in {ctx.command}: {exc!r}")
