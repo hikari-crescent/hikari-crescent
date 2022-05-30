@@ -29,10 +29,10 @@ if TYPE_CHECKING:
 
     from crescent.context import Context
     from crescent.typedefs import (
-        HookCallbackT,
+        AutocompleteErrorHandlerCallbackT,
         CommandErrorHandlerCallbackT,
         EventErrorHandlerCallbackT,
-        AutocompleteErrorHandlerCallbackT,
+        HookCallbackT,
     )
 
     META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])

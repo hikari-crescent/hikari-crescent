@@ -4,11 +4,10 @@ from typing import Any, Awaitable, Callable, Sequence, Type, TypeVar
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.typedefs import (
+    AutocompleteErrorHandlerCallbackT,
     CommandErrorHandlerCallbackT,
     EventErrorHandlerCallbackT,
-    AutocompleteErrorHandlerCallbackT,
 )
-
 
 __all__: Sequence[str] = ("catch_command", "catch_event", "catch_autocomplete")
 
@@ -18,13 +17,7 @@ T = TypeVar("T", bound=Callable[..., Awaitable[Any]])
 
 def _make_catch_function(
     error_handler_var: str,
-) -> Callable[
-    [Type[Exception]],
-    Callable[
-        [T | MetaStruct[T, Any]],
-        MetaStruct[T, Any],
-    ],
-]:
+) -> Callable[[Type[Exception]], Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any],],]:
     def func(
         *exceptions: Type[Exception],
     ) -> Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]:
