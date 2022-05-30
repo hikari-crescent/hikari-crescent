@@ -15,11 +15,27 @@ async def myhook(ctx: crescent.Context) -> None:
 
 
 class Bot(crescent.Bot):
-    async def on_crescent_error(
+    async def on_crescent_command_error(
         self, exc: Exception, ctx: crescent.Context, was_handled: bool
     ) -> None:
-        await ctx.respond(f"default err handler called. was_handled={was_handled}")
-        return await super().on_crescent_error(exc, ctx, was_handled)
+        await ctx.respond(f"default command err handler called. was_handled={was_handled}")
+        return await super().on_crescent_command_error(exc, ctx, was_handled)
+
+    async def on_crescent_event_error(
+        self, exc: Exception, event: hikari.Event, was_handled: bool
+    ) -> None:
+        print(f"default event err handler called. was_handled={was_handled}")
+        return await super().on_crescent_event_error(exc, event, was_handled)
+
+    async def on_crescent_autocomplete_error(
+        self,
+        exc: Exception,
+        ctx: crescent.Context,
+        inter: hikari.AutocompleteInteractionOption,
+        was_handled: bool,
+    ) -> None:
+        print(f"default autcomplete err handler called. was_handled={was_handled}")
+        return await super().on_crescent_autocomplete_error(exc, ctx, inter, was_handled)
 
 
 async def bot_wide_hook(ctx: crescent.Context) -> None:
@@ -103,6 +119,21 @@ async def handle_err(exc: HandledErr, ctx: crescent.Context) -> None:
 
 
 @bot.include
+@crescent.catch_event(HandledErr)
+async def handle_err(exc: HandledErr, event: hikari.Event) -> None:
+    print(f"HandledErr raised in {event}: {exc!r}")
+
+
+@bot.include
+@crescent.catch_autocomplete(HandledErr)
+async def handle_err(
+    exc: HandledErr, ctx: crescent.Context, inter: hikari.AutocompleteInteractionOption
+) -> None:
+    print(f"HandledErr raised in {ctx.command}: {exc!r}")
+
+
+# ERRORS!!!!!!!!!!
+@bot.include
 @crescent.command
 async def raise_err(ctx: crescent.Context) -> None:
     raise HandledErr()
@@ -112,6 +143,42 @@ async def raise_err(ctx: crescent.Context) -> None:
 @crescent.command
 async def raise_unhandled_err(ctx: crescent.Context) -> None:
     raise UnhandledErr()
+
+
+@bot.include
+@crescent.event
+async def on_message(event: hikari.MessageCreateEvent) -> None:
+    if event.author.is_bot or not event.message.content:
+        return
+
+    if event.message.content == "!error":
+        raise HandledErr()
+    elif event.message.content == "!unhandled":
+        raise UnhandledErr()
+    elif event.message.content.startswith("!"):
+        await event.message.respond("Use !error or !unhandled")
+
+
+async def error_autocomplete(
+    ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
+) -> Sequence[hikari.CommandChoice]:
+    if option.value == "error":
+        raise HandledErr()
+    elif option.value == "unhandled":
+        raise UnhandledErr()
+
+    return [
+        hikari.CommandChoice(name="error", value="error"),
+        hikari.CommandChoice(name="unhandled", value="unhandled"),
+    ]
+
+
+@bot.include
+@crescent.command
+async def error_autocomplete(
+    ctx: crescent.Context, option: Annotated[str, crescent.Autocomplete(error_autocomplete)]
+) -> None:
+    await ctx.respond(option)
 
 
 @bot.include
