@@ -19,11 +19,11 @@ def cooldown(period: float, capacity: int, callback: Optional[CooldownCallbackT]
     cooldown = FixedCooldown(period, capacity)
 
     async def inner(ctx: Context):
-        retry_after = cooldown.update_ratelimit(ctx.user.id)
-
+        retry_after = cooldown.update_rate_limit(ctx.user.id)
         if retry_after:
             if callback:
-                return (await callback(ctx, retry_after)) or HookResult(exit=True)
+                await callback(ctx, retry_after)
+            return HookResult(exit=True)
         else:
             return None
 
