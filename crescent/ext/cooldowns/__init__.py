@@ -4,7 +4,7 @@ from pycooldown import FixedCooldown
 
 from crescent import Context, HookResult
 
-CooldownCallbackT = Callable[[Context], Awaitable[None]]
+CooldownCallbackT = Callable[[Context, float], Awaitable[Optional[HookResult]]]
 
 
 def cooldown(period: float, capacity: int, callback: Optional[CooldownCallbackT] = None):
@@ -23,8 +23,7 @@ def cooldown(period: float, capacity: int, callback: Optional[CooldownCallbackT]
 
         if retry_after:
             if callback:
-                await callback(ctx)
-            return HookResult(exit=True)
+                return (await callback(ctx, retry_after)) or HookResult(exit=True)
         else:
             return None
 
