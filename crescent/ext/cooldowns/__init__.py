@@ -1,4 +1,4 @@
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, Optional
 
 from pycooldown import FixedCooldown
 
@@ -7,7 +7,7 @@ from crescent import Context, HookResult
 CooldownCallbackT = Callable[[Context], Awaitable[None]]
 
 
-def cooldown(period: float, capacity: int, callback: CooldownCallbackT):
+def cooldown(period: float, capacity: int, callback: Optional[CooldownCallbackT] = None):
     """
     period:
         The amount of of seconds for the ratelimit
@@ -22,7 +22,8 @@ def cooldown(period: float, capacity: int, callback: CooldownCallbackT):
         retry_after = cooldown.update_ratelimit(ctx.user.id)
 
         if retry_after:
-            await callback(ctx)
+            if callback:
+                await callback(ctx)
             return HookResult(exit=True)
         else:
             return None
