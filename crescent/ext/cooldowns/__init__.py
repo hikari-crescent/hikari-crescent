@@ -1,6 +1,8 @@
 from typing import Awaitable, Callable
-from crescent import HookResult, Context
+
 from pycooldown import FixedCooldown
+
+from crescent import Context, HookResult
 
 CooldownCallbackT = Callable[[Context], Awaitable[None]]
 
