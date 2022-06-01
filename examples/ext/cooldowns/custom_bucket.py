@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 import hikari
 
@@ -8,8 +8,10 @@ from crescent.ext import cooldowns
 bot = crescent.Bot("...")
 
 
-def guild_specific_rate_limits(ctx: crescent.Context) -> Tuple[hikari.Snowflake, hikari.Snowflake]:
-    return (ctx.user.id, ctx.guild.id)
+def guild_specific_rate_limits(
+    ctx: crescent.Context,
+) -> Tuple[hikari.Snowflake, Optional[hikari.Snowflake]]:
+    return (ctx.user.id, ctx.guild_id)
 
 
 # This function now has individual rate limit buckets for each guild.

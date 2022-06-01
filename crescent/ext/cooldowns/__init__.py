@@ -18,8 +18,9 @@ def _default_bucket(ctx: Context) -> Snowflake:
 def cooldown(
     period: float,
     capacity: int,
+    *,
     callback: Optional[CooldownCallbackT] = None,
-    bucket: Optional[BucketCallbackT] = None,
+    bucket: Optional[BucketCallbackT] = _default_bucket,
 ) -> Callable[[Context], Awaitable[Optional[HookResult]]]:
     """
     Ratelimit implementation using a sliding window.
@@ -35,10 +36,9 @@ def cooldown(
             Callback that returns a key for a bucket.
     """
     cooldown: FixedCooldown[Any] = FixedCooldown(period, capacity)
-    get_identifier = bucket or _default_bucket
 
     async def inner(ctx: Context) -> Optional[HookResult]:
-        retry_after = cooldown.update_ratelimit(get_identifier(ctx))
+        retry_after = cooldown.update_ratelimit(bucket(ctx))
 
         if not retry_after:
             return None
