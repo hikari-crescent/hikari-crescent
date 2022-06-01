@@ -37,14 +37,15 @@ def cooldown(
 
     async def inner(ctx: Context) -> Optional[HookResult]:
         retry_after = cooldown.update_ratelimit(get_identifier(ctx))
-        if retry_after:
-            if callback:
-                await callback(ctx, retry_after)
-            else:
-                # Default response for when there is no callback
-                await ctx.respond(f"You are rate limited! Try again in {retry_after:.2f}s.")
-            return HookResult(exit=True)
-        else:
+
+        if not retry_after:
             return None
+
+        if callback:
+            await callback(ctx, retry_after)
+        else:
+            # Default response for when there is no callback
+            await ctx.respond(f"You are rate limited! Try again in {retry_after:.2f}s.")
+        return HookResult(exit=True)
 
     return inner
