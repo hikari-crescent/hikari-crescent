@@ -16,8 +16,8 @@ def _default_bucket(ctx: Context) -> Snowflake:
 
 
 def cooldown(
-    period: float,
     capacity: int,
+    period: float,
     *,
     callback: Optional[CooldownCallbackT] = None,
     bucket: BucketCallbackT = _default_bucket,
@@ -26,10 +26,10 @@ def cooldown(
     Ratelimit implementation using a sliding window.
 
     Args:
-        period:
-            The period of time, in seconds, between cooldown resets.
         capacity:
             The amount of times the command can be used within the period.
+        period:
+            The period of time, in seconds, between cooldown resets.
         callback:
             Callback for when a user is ratelimited.
         bucket:
