@@ -102,7 +102,7 @@ class MyError(Exception):
 @bot.include
 @crescent.catch_command(MyError)
 async def on_err(exc: MyError, ctx: crescent.Context) -> None:
-    await ctx.respond("There was an error while running the command.")
+    await ctx.respond("An error occurred while running the command.")
 
 @bot.include
 @crescent.command
