@@ -15,7 +15,11 @@ A simple command handler for [Hikari](https://github.com/hikari-py/hikari).
 ## Features
  - Simple and intuitive API.
  - Slash, user, and message commands.
- - Error handling.
+ - Error handling for commands, events, and autocomplete.
+ - Command groups.
+ - Hooks to run function before a command (or any command from a group!)
+ - Plugin system to easily split bot into different modules.
+ - Typing is easy.
 
 ### Links
 > 📝 | [Docs](https://magpie-dev.github.io/hikari-crescent/crescent.html)<br>
@@ -27,8 +31,8 @@ Crescent is supported in python3.8+.
 pip install hikari-crescent
 ```
 
-## Usage
-Crescent uses signature parsing to generate your commands. Creating commands is as easy as adding typehints!
+# Usage
+Signature parsing can be used for simple commands.
 
 ```python
 import crescent
@@ -57,9 +61,55 @@ from typing_extensions import Annotated as Atd
 
 @bot.include
 @crescent.command
-async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]):
+async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
     await ctx.respond(word)
 ```
+
+Complicated commands, such as commands with many modifiers on options or autocomplete on several options, should
+use the class command system. Class commands allow you to declare a command similar to how you
+declare a dataclass. The option function takes a type followed by the description then optional
+information.
+
+```python
+@bot.include
+@crescent.command(name="say")
+class Say:
+    word = crescent.option(str, "The word to say")
+
+    async def callback(self, ctx: crescent.Context) -> None:
+        await ctx.respond(self.word)
+```
+
+## Error Handling
+Errors that are raised by a command can be handled by `crescent.catch_command`.
+
+```python
+class MyError(Exception):
+    ...
+
+@bot.include
+@crescent.catch_command(MyError)
+async def on_err(exc: MyError, ctx: crescent.Context) -> None:
+    await ctx.respond("There was an error while running the command.")
+
+@bot.include
+@crescent.command
+async def my_command(ctx: crescent.Context):
+    raise MyError()
+```
+
+## Events
+```python
+import hikari
+
+@bot.include
+@crescent.event
+async def on_message_create(event: hikari.MessageCreateEvent):
+    if event.message.author.is_bot:
+        return
+    await event.message.respond("Hello!")
+```
+Using crescent's event decorator allows you to access crescent's [event error handling system](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/error_handling/basic.py#L27).
 
 # Support
 Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!
