@@ -8,7 +8,8 @@ maintainers = ["Circuit <circuitsacul@icloud.com>"]
 license = "MPL-2.0"
 include = ["crescent/banner.txt"]
 packages = [
-    { include = "crescent"}
+    { include = "crescent"},
+    { include = "cooldowns", from = "crescent/ext" },
 ]
 
 [tool.poetry.dependencies]
@@ -38,10 +39,11 @@ skip-magic-trailing-comma=true
 
 [tool.mypy]
 python_version = 3.8
+strict = true
 warn_unused_configs = true
 warn_return_any = true
 warn_redundant_casts = true
-strict = true
+namespace_packages = true
 
 [tool.isort]
 profile="black"
