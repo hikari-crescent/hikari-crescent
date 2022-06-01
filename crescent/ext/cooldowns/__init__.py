@@ -5,7 +5,6 @@ from pycooldown import FixedCooldown
 
 from crescent import Context, HookResult
 
-
 __all__ = ("CooldownCallbackT", "BucketCallbackT", "cooldown")
 
 CooldownCallbackT = Callable[[Context, float], Awaitable[Optional[HookResult]]]
