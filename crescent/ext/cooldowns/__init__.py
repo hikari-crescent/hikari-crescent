@@ -31,6 +31,8 @@ def cooldown(
             The amount of times the command can be used within the period.
         callback:
             Callback for when a user is ratelimited.
+        bucket:
+            Callback that returns a key for a bucket.
     """
     cooldown: FixedCooldown[Any] = FixedCooldown(period, capacity)
     get_identifier = bucket or _default_bucket
