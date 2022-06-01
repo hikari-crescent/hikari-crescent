@@ -31,7 +31,7 @@ Crescent is supported in python3.8+.
 pip install hikari-crescent
 ```
 
-# Usage
+## Usage
 Signature parsing can be used for simple commands.
 
 ```python
@@ -80,7 +80,7 @@ class Say:
         await ctx.respond(self.word)
 ```
 
-## Error Handling
+### Error Handling
 Errors that are raised by a command can be handled by `crescent.catch_command`.
 
 ```python
@@ -98,7 +98,7 @@ async def my_command(ctx: crescent.Context):
     raise MyError()
 ```
 
-## Events
+### Events
 ```python
 import hikari
 
