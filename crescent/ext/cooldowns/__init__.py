@@ -34,10 +34,10 @@ def cooldown(
             Callback for when a user is ratelimited.
     """
     cooldown: FixedCooldown[Any] = FixedCooldown(period, capacity)
-    get_bucket = bucket or _default_bucket
+    get_identifier = bucket or _default_bucket
 
     async def inner(ctx: Context) -> Optional[HookResult]:
-        retry_after = cooldown.update_ratelimit(get_bucket(ctx))
+        retry_after = cooldown.update_ratelimit(get_identifier(ctx))
         if retry_after:
             if callback:
                 await callback(ctx, retry_after)
