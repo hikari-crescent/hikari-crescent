@@ -1,7 +1,6 @@
 from typing import Awaitable, Callable, Optional
 
 from hikari import Snowflakeish
-
 from pycooldown import FixedCooldown
 
 from crescent import Context, HookResult
