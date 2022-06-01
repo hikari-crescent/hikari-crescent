@@ -15,7 +15,7 @@ def cooldown(
     Ratelimit implementation using a sliding window.
 
     period:
-        The amount of time between each ratelimit.
+        The amount of seconds between each ratelimit.
     capacity:
         The amount of times the command can be used within the period.
     callback:
