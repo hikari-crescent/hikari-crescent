@@ -4,7 +4,7 @@ from crescent.ext import cooldowns
 bot = crescent.Bot("...")
 
 
-# The user can use the command 3 times in 20 seconds.
+# In a 20 second interval, the function can be used 3 times.
 @bot.include
 @crescent.hook(cooldowns.cooldown(20, 3))
 @crescent.command

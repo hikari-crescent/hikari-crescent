@@ -20,7 +20,7 @@ def cooldown(
     capacity: int,
     *,
     callback: Optional[CooldownCallbackT] = None,
-    bucket: Optional[BucketCallbackT] = _default_bucket,
+    bucket: BucketCallbackT = _default_bucket,
 ) -> Callable[[Context], Awaitable[Optional[HookResult]]]:
     """
     Ratelimit implementation using a sliding window.
@@ -35,7 +35,7 @@ def cooldown(
         bucket:
             Callback that returns a key for a bucket.
     """
-    cooldown: FixedCooldown[Any] = FixedCooldown(period, capacity)
+    cooldown: FixedCooldown[Any] = FixedCooldown(period=period, capacity=capacity)
 
     async def inner(ctx: Context) -> Optional[HookResult]:
         retry_after = cooldown.update_ratelimit(bucket(ctx))
@@ -47,7 +47,9 @@ def cooldown(
             await callback(ctx, retry_after)
         else:
             # Default response for when there is no callback
-            await ctx.respond(f"You are rate limited! Try again in {retry_after:.2f}s.")
+            await ctx.respond(
+                f"You're using this command too much! Try again in {retry_after:.2f}s."
+            )
         return HookResult(exit=True)
 
     return inner
