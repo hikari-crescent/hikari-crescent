@@ -14,12 +14,13 @@ def cooldown(
     """
     Ratelimit implementation using a sliding window.
 
-    period:
-        The amount of seconds between each ratelimit.
-    capacity:
-        The amount of times the command can be used within the period.
-    callback:
-        Callback for when a user is ratelimited.
+    Args:
+        period:
+            The period of time, in seconds, between cooldown resets.
+        capacity:
+            The amount of times the command can be used within the period.
+        callback:
+            Callback for when a user is ratelimited.
     """
     cooldown: FixedCooldown[Snowflakeish] = FixedCooldown(period, capacity)
 
@@ -28,6 +29,9 @@ def cooldown(
         if retry_after:
             if callback:
                 await callback(ctx, retry_after)
+            else:
+                # Default response for when there is no callback
+                await ctx.respond(f"You are rate limited! Try again in {retry_after:.2f}s.")
             return HookResult(exit=True)
         else:
             return None
