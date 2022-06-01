@@ -19,7 +19,7 @@ A simple command handler for [Hikari](https://github.com/hikari-py/hikari).
  - Command groups.
  - Hooks to run function before a command (or any command from a group!)
  - Plugin system to easily split bot into different modules.
- - Typing is easy.
+ - Makes typehinting easy.
 
 ### Links
 > 📝 | [Docs](https://magpie-dev.github.io/hikari-crescent/crescent.html)<br>
@@ -66,9 +66,9 @@ async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
 ```
 
 Complicated commands, such as commands with many modifiers on options or autocomplete on several options, should
-use the class command system. Class commands allow you to declare a command similar to how you
-declare a dataclass. The option function takes a type followed by the description then optional
-information.
+use [class commands](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/basic/command_classes.py).
+Class commands allow you to declare a command similar to how you declare a dataclass. The option function takes a
+type followed by the description then optional information.
 
 ```python
 @bot.include
@@ -109,7 +109,8 @@ async def on_message_create(event: hikari.MessageCreateEvent):
         return
     await event.message.respond("Hello!")
 ```
-Using crescent's event decorator allows you to access crescent's [event error handling system](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/error_handling/basic.py#L27).
+Using crescent's event decorator lets you use
+crescent's [event error handling system](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/error_handling/basic.py#L27).
 
 # Support
 Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!
