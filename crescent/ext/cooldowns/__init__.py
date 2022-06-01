@@ -7,7 +7,9 @@ from crescent import Context, HookResult
 CooldownCallbackT = Callable[[Context, float], Awaitable[Optional[HookResult]]]
 
 
-def cooldown(period: float, capacity: int, callback: Optional[CooldownCallbackT] = None):
+def cooldown(
+    period: float, capacity: int, callback: Optional[CooldownCallbackT] = None
+) -> Callable[[Context], Awaitable[Optional[HookResult]]]:
     """
     Ratelimit inplementation using a sliding window.
 
@@ -20,8 +22,8 @@ def cooldown(period: float, capacity: int, callback: Optional[CooldownCallbackT]
     """
     cooldown = FixedCooldown(period, capacity)
 
-    async def inner(ctx: Context):
-        retry_after = cooldown.update_rate_limit(ctx.user.id)
+    async def inner(ctx: Context) -> Optional[HookResult]:
+        retry_after = cooldown.update_ratelimit(ctx.user.id)
         if retry_after:
             if callback:
                 await callback(ctx, retry_after)
