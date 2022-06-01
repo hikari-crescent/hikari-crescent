@@ -4,7 +4,7 @@ from crescent.ext import cooldowns
 bot = crescent.Bot("...")
 
 
-# The user can use the command 3 times in 20 seconds
+# The user can use the command 3 times in 20 seconds.
 @bot.include
 @crescent.hook(cooldowns.cooldown(20, 3))
 @crescent.command
@@ -12,7 +12,7 @@ async def my_command(ctx: crescent.Context) -> None:
     await ctx.respond("Hello!")
 
 
-# Callbacks can be set to run when a user is ratelimited
+# Callbacks can be set to run when a user is ratelimited.
 async def on_rate_limited(ctx: crescent.Context, time_remaining: float) -> None:
     await ctx.respond(f"You are ratelimited for {time_remaining}s.")
 
