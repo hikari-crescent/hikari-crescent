@@ -13,7 +13,7 @@ def cooldown(
     period: float, capacity: int, callback: Optional[CooldownCallbackT] = None
 ) -> Callable[[Context], Awaitable[Optional[HookResult]]]:
     """
-    Ratelimit inplementation using a sliding window.
+    Ratelimit implementation using a sliding window.
 
     period:
         The amount of time between each ratelimit.
