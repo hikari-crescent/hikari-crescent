@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from inspect import _empty, _ParameterKind
-from typing import Any, Type
+from typing import Any, Type, Union
 
 from hikari import (
     ChannelType,
@@ -105,6 +105,7 @@ def test_annotations():
 
 def test_gen_channel_options():
     channels = (
+        # Test single channels
         (PartialChannel, None),
         (PrivateChannel, [ChannelType.DM, ChannelType.GROUP_DM]),
         (DMChannel, [ChannelType.DM]),
@@ -125,6 +126,15 @@ def test_gen_channel_options():
                 ChannelType.GUILD_NEWS,
                 ChannelType.GUILD_STAGE,
             ],
+        ),
+        # Test channel combonation
+        (
+            Union[GuildTextChannel, GuildVoiceChannel],
+            [ChannelType.GUILD_TEXT, ChannelType.GUILD_VOICE],
+        ),
+        (
+            Union[TextableChannel, TextableGuildChannel],
+            [ChannelType.GUILD_TEXT, ChannelType.DM, ChannelType.GUILD_NEWS],
         ),
     )
 
