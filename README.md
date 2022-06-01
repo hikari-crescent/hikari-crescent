@@ -80,6 +80,18 @@ class Say:
         await ctx.respond(self.word)
 ```
 
+### Typing to Option Types Lookup Table 
+| Type | Option Type |
+|---|---|
+| `str` | Text |
+| `int` | Integer |
+| `bool` | Boolean |
+| `float` | Number |
+| `hikari.User` | User |
+| `hikari.Role` | Role |
+| `crescent.Mentionable` | Role or User |
+| Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
+
 ### Error Handling
 Errors that are raised by a command can be handled by `crescent.catch_command`.
 
