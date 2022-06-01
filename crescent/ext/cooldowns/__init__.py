@@ -9,12 +9,14 @@ CooldownCallbackT = Callable[[Context, float], Awaitable[Optional[HookResult]]]
 
 def cooldown(period: float, capacity: int, callback: Optional[CooldownCallbackT] = None):
     """
+    Ratelimit inplementation using a sliding window.
+
     period:
-        The amount of of seconds for the ratelimit
+        The amount of time between each ratelimit.
     capacity:
-        i have no idea
+        The amount of times the command can be used within the period.
     callback:
-        callback for when a user is ratelimited
+        Callback for when a user is ratelimited.
     """
     cooldown = FixedCooldown(period, capacity)
 
