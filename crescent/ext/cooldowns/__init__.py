@@ -1,5 +1,7 @@
 from typing import Awaitable, Callable, Optional
 
+from hikari import Snowflakeish
+
 from pycooldown import FixedCooldown
 
 from crescent import Context, HookResult
@@ -20,7 +22,7 @@ def cooldown(
     callback:
         Callback for when a user is ratelimited.
     """
-    cooldown: FixedCooldown = FixedCooldown(period, capacity)
+    cooldown: FixedCooldown[Snowflakeish] = FixedCooldown(period, capacity)
 
     async def inner(ctx: Context) -> Optional[HookResult]:
         retry_after = cooldown.update_ratelimit(ctx.user.id)
