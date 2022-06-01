@@ -158,3 +158,17 @@ def test_gen_channel_options():
             ).channel_types,
             channel_types,
         )
+
+
+def test_partial_channel_has_no_type():
+    assert gen_command_option(
+        Parameter(
+            name="1234", annotation=PartialChannel, default=12345, kind=POSITIONAL_OR_KEYWORD
+        )
+    ) == CommandOption(
+        name="1234",
+        type=OptionType.CHANNEL,
+        description="No Description",
+        is_required=False,
+        channel_types=None,
+    )
