@@ -196,7 +196,7 @@ python-versions = "*"
 
 [[package]]
 name = "filelock"
-version = "3.7.0"
+version = "3.7.1"
 description = "A platform independent file lock."
 category = "dev"
 optional = false
@@ -451,7 +451,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pycooldown"
-version = "0.1.0b5"
+version = "0.1.0b6"
 description = "A lightning fast cooldown/ratelimit implementation."
 category = "main"
 optional = false
@@ -621,7 +621,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "fc0cc1e7272b87915f945b544b26a4d869fcabee1dce827ad4302c0fde6b24f2"
+content-hash = "63d710a116230da80b852a855c7f952ec93d010e7ff8950fb96a0fa38d91ac88"
 
 [metadata.files]
 aiohttp = [
@@ -798,8 +798,8 @@ distlib = [
     {file = "distlib-0.3.4.zip", hash = "sha256:e4b58818180336dc9c529bfb9a0b58728ffc09ad92027a3f30b7cd91e3458579"},
 ]
 filelock = [
-    {file = "filelock-3.7.0-py3-none-any.whl", hash = "sha256:c7b5fdb219b398a5b28c8e4c1893ef5f98ece6a38c6ab2c22e26ec161556fed6"},
-    {file = "filelock-3.7.0.tar.gz", hash = "sha256:b795f1b42a61bbf8ec7113c341dad679d772567b936fbd1bf43c9a238e673e20"},
+    {file = "filelock-3.7.1-py3-none-any.whl", hash = "sha256:37def7b658813cda163b56fc564cdc75e86d338246458c4c28ae84cabefa2404"},
+    {file = "filelock-3.7.1.tar.gz", hash = "sha256:3a0fd85166ad9dbab54c9aec96737b744106dc5f15c0b09a6744a445299fcf04"},
 ]
 flake8 = [
     {file = "flake8-4.0.1-py2.py3-none-any.whl", hash = "sha256:479b1304f72536a55948cb40a32dce8bb0ffe3501e26eaf292c7e60eb5e0428d"},
@@ -1059,8 +1059,8 @@ pycodestyle = [
     {file = "pycodestyle-2.8.0.tar.gz", hash = "sha256:eddd5847ef438ea1c7870ca7eb78a9d47ce0cdb4851a5523949f2601d0cbbe7f"},
 ]
 pycooldown = [
-    {file = "pycooldown-0.1.0b5-py3-none-any.whl", hash = "sha256:21aad5ac63ce35b406a8a7cb44590a2c91e52d0705ace6d54a548421aabaf843"},
-    {file = "pycooldown-0.1.0b5.tar.gz", hash = "sha256:e2afb45d217923d41eec5271e5fd3aeac878852acb15aa07c9e4a6dfd3488abd"},
+    {file = "pycooldown-0.1.0b6-py3-none-any.whl", hash = "sha256:fbedc95046c3e214c2951cb7f2c7fad089726677607c871ca5d5a622f6356309"},
+    {file = "pycooldown-0.1.0b6.tar.gz", hash = "sha256:621c6b33fcf5dd314f390f56d4dd51361c094fce2625c35ccb16e265ead4e313"},
 ]
 pyflakes = [
     {file = "pyflakes-2.4.0-py2.py3-none-any.whl", hash = "sha256:3bb3a3f256f4b7968c9c788781e4ff07dce46bdf12339dcda61053375426ee2e"},
