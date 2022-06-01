@@ -20,7 +20,7 @@ def cooldown(
     callback:
         Callback for when a user is ratelimited.
     """
-    cooldown = FixedCooldown(period, capacity)
+    cooldown: FixedCooldown = FixedCooldown(period, capacity)
 
     async def inner(ctx: Context) -> Optional[HookResult]:
         retry_after = cooldown.update_ratelimit(ctx.user.id)
