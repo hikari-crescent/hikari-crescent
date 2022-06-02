@@ -4,7 +4,7 @@
 
 ![code-style-black](https://img.shields.io/badge/code%20style-black-black)
 [![Mypy](https://github.com/magpie-dev/hikari-crescent/actions/workflows/mypy.yml/badge.svg)](https://github.com/magpie-dev/hikari-crescent/actions/workflows/mypy.yml)
-[![Docs](https://github.com/magpie-dev/hikari-crescent/actions/workflows/pdoc.yml/badge.svg)](https://magpie-dev.github.io/hikari-crescent/crescent.html)
+[![Docs](https://github.com/magpie-dev/hikari-crescent/actions/workflows/pdoc_build.yml/badge.svg)](https://magpie-dev.github.io/hikari-crescent/crescent.html)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/magpie-dev/hikari-crescent/main.svg)](https://results.pre-commit.ci/latest/github/magpie-dev/hikari-crescent/main)
 ![Pypi](https://img.shields.io/pypi/v/hikari-crescent)
 
