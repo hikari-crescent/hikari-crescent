@@ -15,6 +15,7 @@ A simple command handler for [Hikari](https://github.com/hikari-py/hikari).
 ## Features
  - Simple and intuitive API.
  - Slash, user, and message commands.
+ - Supports autocomplete.
  - Error handling for commands, events, and autocomplete.
  - Command groups.
  - Hooks to run function before a command (or any command from a group!)
