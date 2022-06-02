@@ -22,8 +22,7 @@ async def _default_callback(ctx: Context, retry: float) -> None:
     else:
         message = f"{seconds} seconds"
     await ctx.respond(
-        f"You're using this command too much! Try again in {message}.",
-        ephemeral=True,
+        f"You're using this command too much! Try again in {message}.", ephemeral=True
     )
 
 
