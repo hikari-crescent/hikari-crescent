@@ -17,9 +17,7 @@ def _default_bucket(ctx: Context) -> Snowflake:
 
 async def _default_callback(ctx: Context, retry: float) -> None:
     seconds = round(retry)
-    if seconds == 0:
-        message = "a moment"
-    elif seconds == 1:
+    elif seconds <= 1:
         message = "1 second"
     else:
         message = f"{seconds} seconds"
