@@ -378,7 +378,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
 [[package]]
 name = "pdoc"
-version = "9.0.1"
+version = "12.0.0"
 description = "API Documentation for Python Projects"
 category = "dev"
 optional = false
@@ -388,7 +388,7 @@ python-versions = ">=3.7"
 astunparse = {version = "*", markers = "python_version < \"3.9\""}
 Jinja2 = ">=2.11.0"
 MarkupSafe = "*"
-pygments = "*"
+pygments = ">=2.12.0"
 
 [package.extras]
 dev = ["flake8", "hypothesis", "mypy", "pytest", "pytest-cov", "pytest-timeout", "tox"]
@@ -621,7 +621,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "63d710a116230da80b852a855c7f952ec93d010e7ff8950fb96a0fa38d91ac88"
+content-hash = "aa14b2345115853c6774afe892c633fe7bcb1a59319fbc759c78b35fe432ad31"
 
 [metadata.files]
 aiohttp = [
@@ -1036,7 +1036,8 @@ pathspec = [
     {file = "pathspec-0.9.0.tar.gz", hash = "sha256:e564499435a2673d586f6b2130bb5b95f04a3ba06f81b8f895b651a3c76aabb1"},
 ]
 pdoc = [
-    {file = "pdoc-9.0.1-py3-none-any.whl", hash = "sha256:de3784b5692397fa2f9ddb57a61513a1cabf38281f084aef32b5ed4ee6fbc09e"},
+    {file = "pdoc-12.0.0-py3-none-any.whl", hash = "sha256:18bf740336d3c43994f6c47552b922f622ebda9d99d5e2319077dee6689c2820"},
+    {file = "pdoc-12.0.0.tar.gz", hash = "sha256:fdda764a035adc14e7c205bfe7dce46d3cf5ce85564da3bccb0cccf0229fc98f"},
 ]
 platformdirs = [
     {file = "platformdirs-2.5.2-py3-none-any.whl", hash = "sha256:027d8e83a2d7de06bbac4e5ef7e023c02b863d7ea5d079477e722bb41ab25788"},
