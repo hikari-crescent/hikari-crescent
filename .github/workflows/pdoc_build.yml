@@ -1,4 +1,4 @@
-name: Pdoc Build
+name: Build & upload pdoc
 
 on:
   push:

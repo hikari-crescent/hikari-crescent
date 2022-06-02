@@ -1,4 +1,4 @@
-name: Check Pdoc
+name: Build Docs
 
 on: [push, pull_request]
 
