@@ -91,6 +91,8 @@ class Say:
 | `hikari.Role` | Role |
 | `crescent.Mentionable` | Role or User |
 | Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
+| `Union[Channel Types]` (command only) | Channel. ^ |
+| `List[Channel Types]` (classes only) | Channel. ^ |
 
 ### Error Handling
 Errors that are raised by a command can be handled by `crescent.catch_command`.
