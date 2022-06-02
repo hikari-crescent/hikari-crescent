@@ -9,8 +9,8 @@
 ![Pypi](https://img.shields.io/pypi/v/hikari-crescent)
 
  </div>
- 
-A simple command handler for [Hikari](https://github.com/hikari-py/hikari).
+
+🌕 A command handler for [Hikari](https://github.com/hikari-py/hikari) that keeps your project neat and tidy.
 
 ## Features
  - Simple and intuitive API.
@@ -92,7 +92,7 @@ class Say:
 | `hikari.Role` | Role |
 | `crescent.Mentionable` | Role or User |
 | Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
-| `Union[Channel Types]` (command only) | Channel. ^ |
+| `Union[Channel Types]` (functions only) | Channel. ^ |
 | `List[Channel Types]` (classes only) | Channel. ^ |
 
 ### Error Handling
