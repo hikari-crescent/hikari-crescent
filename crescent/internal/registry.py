@@ -4,34 +4,23 @@ from asyncio import gather
 from collections import defaultdict
 from inspect import iscoroutinefunction
 from logging import getLogger
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Generic, TypeVar, cast
 from weakref import WeakValueDictionary
 
 from hikari import UNDEFINED, CommandOption, CommandType, ForbiddenError, OptionType, Snowflake
 from hikari.api import CommandBuilder
 
+from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import (
-        Any,
-        Awaitable,
-        Callable,
-        DefaultDict,
-        Dict,
-        List,
-        Optional,
-        Sequence,
-        Type,
-        TypeVar,
-    )
+    from typing import Any, Awaitable, Callable, DefaultDict, Dict, List, Optional, Sequence, Type
 
     from hikari import Snowflakeish, UndefinedOr
 
     from crescent.bot import Bot
-    from crescent.commands.errors import _InternalErrorHandlerCallbackT
     from crescent.typedefs import AutocompleteCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
@@ -78,14 +67,38 @@ def register_command(
     return meta
 
 
-class ErrorHandler:
+_E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
+
+
+class ErrorHandler(Generic[_E]):
     __slots__: Sequence[str] = ("bot", "registry")
 
     def __init__(self, bot: Bot):
         self.bot = bot
         self.registry: WeakValueDictionary[
-            Type[Exception], MetaStruct[_InternalErrorHandlerCallbackT[Any], Any]
+            Type[Exception], MetaStruct[_E, Any]
         ] = WeakValueDictionary()
+
+    def register(self, meta: MetaStruct[_E, Any], exc: Type[Exception]) -> None:
+        if reg_meta := self.registry.get(exc):
+            raise AlreadyRegisteredError(
+                f"`{getattr(meta.callback, '__name__')}` can not catch `{exc.__name__}`."
+                f"`{exc.__name__}` is already registered to"
+                f" `{reg_meta.callback.__name__}`."
+            )
+
+        self.registry[exc] = meta
+
+    async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
+        """
+        Attempts to run a function to handle an exception. Returns whether the exception
+        was handled.
+        """
+        if func := self.registry.get(exc.__class__):
+            await func.callback(*args)
+            return True
+
+        return False
 
 
 class CommandHandler:
@@ -114,8 +127,6 @@ class CommandHandler:
         built_commands: Dict[Unique, AppCommand] = {}
 
         for command in self.registry.values():
-            command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
-
             if command.metadata.deprecated:
                 continue
 
@@ -254,15 +265,17 @@ class CommandHandler:
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
-                    " `application.commands` scope"
+                    " `application.commands` scope",
+                    guild,
                 )
                 return
             _log.warning(
-                "Cannot post application commands to guild %s. Bot is not part of the guild."
+                "Cannot post application commands to guild %s. Bot is not part of the guild.",
+                guild,
             )
 
     async def register_commands(self) -> None:
-        guilds = list(self.guilds) or list(self.bot.cache.get_guilds_view().keys())
+        guilds = list(self.guilds)
 
         commands = self.build_commands()
 

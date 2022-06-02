@@ -2,14 +2,15 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Callable, get_type_hints, overload
+from typing import TYPE_CHECKING, get_type_hints, overload
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Sequence, Type
+    from typing import Any, Callable, Coroutine, Optional, Sequence, Type
 
+    from hikari import Event
     from hikari.api.event_manager import CallbackT
 
 
@@ -46,6 +47,19 @@ def event(
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(self: MetaStruct[CallbackT[Any], None]) -> None:
-        self.app.subscribe(event_type=unwrap(event_type), callback=self.callback)
+        self.app.subscribe(event_type=unwrap(event_type), callback=_event_callback(self))
 
     return MetaStruct(callback=callback, metadata=None, app_set_hooks=[hook])
+
+
+def _event_callback(
+    self: MetaStruct[CallbackT[Any], None]
+) -> Callable[[Event], Coroutine[None, None, None]]:
+    async def func(event: Event) -> None:
+        try:
+            await self.callback(event)
+        except Exception as exc:
+            handled = await self.app._event_error_handler.try_handle(exc, [exc, event])
+            await self.app.on_crescent_event_error(exc, event, handled)
+
+    return func
