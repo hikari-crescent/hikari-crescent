@@ -42,7 +42,7 @@ class LocaleStr:
     """Dutch"""
     NO: str | None = None
     """Norwegian"""
-    OL: str | None = None
+    PL: str | None = None
     """Polish"""
     PT_BR: str | None = None
     """Portuguese, Bralizian"""
