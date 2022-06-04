@@ -24,12 +24,12 @@ class HookResult:
 
 
 @overload
-def hook(callback: HookCallbackT, after: bool = False) -> Callable[..., T]:
+def hook(callback: HookCallbackT, *, after: bool = False) -> Callable[..., T]:
     ...
 
 
 @overload
-def hook(callback: HookCallbackT, command: T, /) -> T:
+def hook(callback: HookCallbackT, *, command: T) -> T:
     ...
 
 
