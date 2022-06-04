@@ -54,6 +54,7 @@ class Bot(GatewayBot):
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
         command_hooks: list[HookCallbackT] | None = None,
+        command_hook_after: list[HookCallbackT] | None = None,
         allow_color: bool = True,
         banner: Optional[str] = "crescent",
         executor: Optional[Executor] = None,
@@ -105,6 +106,7 @@ class Bot(GatewayBot):
         self.allow_unknown_interactions = allow_unknown_interactions
         self.update_commands = update_commands
         self.command_hooks = command_hooks
+        self.command_hook_after = command_hook_after
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
@@ -152,8 +154,11 @@ class Bot(GatewayBot):
         if command is None:
             return self.include
 
-        if isinstance(command.metadata, AppCommandMeta) and self.command_hooks:
-            command.metadata.hooks.extend(self.command_hooks)
+        if isinstance(command.metadata, AppCommandMeta):
+            if self.command_hooks:
+                command.metadata.hooks.extend(self.command_hooks)
+            if self.command_hook_after:
+                command.metadata.after_hooks.extend(self.command_hook_after)
         command.register_to_app(self)
 
         return command

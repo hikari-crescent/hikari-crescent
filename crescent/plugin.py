@@ -53,21 +53,33 @@ class PluginManager:
 
 
 class Plugin:
-    def __init__(self, name: str, command_hooks: list[HookCallbackT] | None = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        command_hooks: list[HookCallbackT] | None = None,
+        command_hook_after: list[HookCallbackT] | None = None,
+    ) -> None:
         self.name = name
         self.command_hooks = command_hooks
+        self.command_hook_after = command_hook_after
         self._children: list[MetaStruct[Any, Any]] = []
 
     def include(self, obj: T) -> T:
-        if isinstance(obj.metadata, AppCommandMeta) and self.command_hooks:
-            obj.metadata.hooks.extend(self.command_hooks)
+        if isinstance(obj.metadata, AppCommandMeta):
+            if self.command_hooks:
+                obj.metadata.hooks.extend(self.command_hooks)
+            if self.command_hook_after:
+                obj.metadata.after_hooks.extend(self.command_hook_after)
         self._children.append(obj)
         return obj
 
     def _setup(self, bot: Bot) -> None:
         for item in self._children:
-            if isinstance(item.metadata, AppCommandMeta) and bot.command_hooks:
-                item.metadata.hooks.extend(bot.command_hooks)
+            if isinstance(item.metadata, AppCommandMeta):
+                if bot.command_hooks:
+                    item.metadata.hooks.extend(bot.command_hooks)
+                if bot.command_hook_after:
+                    item.metadata.after_hooks.extend(bot.command_hook_after)
             item.register_to_app(bot)
 
     @classmethod
