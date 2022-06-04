@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
-    from crescent.typedefs import CommandCallbackT, OptionTypesT, HookCallbackT
+    from crescent.typedefs import CommandCallbackT, HookCallbackT, OptionTypesT
 
 
 _log = getLogger(__name__)
