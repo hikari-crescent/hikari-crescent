@@ -91,11 +91,10 @@ async def _handle_slash_resp(
 
     try:
         await command.callback(ctx, **ctx.options)
+        await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
         handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
         await bot.on_crescent_command_error(exc, ctx, handled)
-
-    await _handle_hooks(command.metadata.after_hooks, ctx)
 
 
 async def _handle_autocomplete_resp(
