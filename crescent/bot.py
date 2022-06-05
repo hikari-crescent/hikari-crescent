@@ -18,10 +18,10 @@ from hikari import (
 )
 from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
-from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
+from crescent.utils import add_hooks
 from crescent.plugin import PluginManager
 
 if TYPE_CHECKING:
@@ -154,11 +154,8 @@ class Bot(GatewayBot):
         if command is None:
             return self.include
 
-        if isinstance(command.metadata, AppCommandMeta):
-            if self.command_hooks:
-                command.metadata.hooks.extend(self.command_hooks)
-            if self.command_after_hooks:
-                command.metadata.after_hooks.extend(self.command_after_hooks)
+        add_hooks(self, command)
+
         command.register_to_app(self)
 
         return command

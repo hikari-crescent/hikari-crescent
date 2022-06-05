@@ -18,7 +18,7 @@
  - Supports autocomplete.
  - Error handling for commands, events, and autocomplete.
  - Command groups.
- - Hooks to run function before a command (or any command from a group!)
+ - Hooks to run function before or after a command (or any command from a group!)
  - Plugin system to easily split bot into different modules.
  - Makes typehinting easy.
 

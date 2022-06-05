@@ -3,8 +3,8 @@ from __future__ import annotations
 from importlib import import_module, reload
 from typing import TYPE_CHECKING, Dict
 
-from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
+from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
@@ -65,21 +65,13 @@ class Plugin:
         self._children: list[MetaStruct[Any, Any]] = []
 
     def include(self, obj: T) -> T:
-        if isinstance(obj.metadata, AppCommandMeta):
-            if self.command_hooks:
-                obj.metadata.hooks.extend(self.command_hooks)
-            if self.command_after_hooks:
-                obj.metadata.after_hooks.extend(self.command_after_hooks)
+        add_hooks(self, obj)
         self._children.append(obj)
         return obj
 
     def _setup(self, bot: Bot) -> None:
         for item in self._children:
-            if isinstance(item.metadata, AppCommandMeta):
-                if bot.command_hooks:
-                    item.metadata.hooks.extend(bot.command_hooks)
-                if bot.command_after_hooks:
-                    item.metadata.after_hooks.extend(bot.command_after_hooks)
+            add_hooks(bot, item)
             item.register_to_app(bot)
 
     @classmethod
