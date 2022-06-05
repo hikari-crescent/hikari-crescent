@@ -19,8 +19,8 @@ async def third_hook(ctx: crescent.Context):
     print("Here third.")
 
 
-group = crescent.Group("my_group", hooks=[first_hook], hook_after=[first_hook])
-sub_group = group.sub_group("my_sub_group", hooks=[second_hook], hooks=[second_hook])
+group = crescent.Group("my_group", hooks=[first_hook], after_hooks=[first_hook])
+sub_group = group.sub_group("my_sub_group", hooks=[second_hook], after_hooks=[second_hook])
 
 
 # Hooks execute in order before the command:

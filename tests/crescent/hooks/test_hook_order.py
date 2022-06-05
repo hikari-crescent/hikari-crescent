@@ -89,8 +89,8 @@ def test_hook_order():
 def test_after_hook_order():
     bot = Bot("NO TOKEN", command_after_hooks=[MockHook("bot")])
     plugin = Plugin("PLUGIN", command_after_hooks=[MockHook("plugin")])
-    group = Group("BOT_GROUP", hook_after=[MockHook("group")])
-    subgroup = group.sub_group("SUBGROUP", hook_after=[MockHook("subgroup")])
+    group = Group("BOT_GROUP", after_hooks=[MockHook("group")])
+    subgroup = group.sub_group("SUBGROUP", after_hooks=[MockHook("subgroup")])
 
     @bot.include
     @hook(MockHook("command"), after=True)
