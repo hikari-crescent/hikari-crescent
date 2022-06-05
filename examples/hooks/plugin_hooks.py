@@ -24,6 +24,7 @@ plugin = crescent.Plugin(
 
 # After the command first hook will execute
 
+
 @plugin.include
 @crescent.hook(second_hook)
 @crescent.command
