@@ -1,6 +1,7 @@
 import crescent
 
-# Hooks can be executed after commands
+# Hooks can be executed after commands.
+# After hooks are NOT run when there is an exception.
 
 bot = crescent.Bot("...")
 
