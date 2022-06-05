@@ -24,8 +24,8 @@ sub_group = group.sub_group("my_sub_group", hooks=[second_hook])
 
 
 # Hooks execute in order:
-# first_hook
 # second_hook
+# first_hook
 # third_hook
 
 
