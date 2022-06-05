@@ -57,19 +57,19 @@ class Plugin:
         self,
         name: str,
         command_hooks: list[HookCallbackT] | None = None,
-        command_hook_after: list[HookCallbackT] | None = None,
+        command_after_hooks: list[HookCallbackT] | None = None,
     ) -> None:
         self.name = name
         self.command_hooks = command_hooks
-        self.command_hook_after = command_hook_after
+        self.command_after_hooks = command_after_hooks
         self._children: list[MetaStruct[Any, Any]] = []
 
     def include(self, obj: T) -> T:
         if isinstance(obj.metadata, AppCommandMeta):
             if self.command_hooks:
                 obj.metadata.hooks.extend(self.command_hooks)
-            if self.command_hook_after:
-                obj.metadata.after_hooks.extend(self.command_hook_after)
+            if self.command_after_hooks:
+                obj.metadata.after_hooks.extend(self.command_after_hooks)
         self._children.append(obj)
         return obj
 
@@ -78,8 +78,8 @@ class Plugin:
             if isinstance(item.metadata, AppCommandMeta):
                 if bot.command_hooks:
                     item.metadata.hooks.extend(bot.command_hooks)
-                if bot.command_hook_after:
-                    item.metadata.after_hooks.extend(bot.command_hook_after)
+                if bot.command_after_hooks:
+                    item.metadata.after_hooks.extend(bot.command_after_hooks)
             item.register_to_app(bot)
 
     @classmethod
