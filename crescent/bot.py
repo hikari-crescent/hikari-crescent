@@ -18,11 +18,11 @@ from hikari import (
 )
 from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
-from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.meta_struct import MetaStruct
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
+from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
@@ -54,6 +54,7 @@ class Bot(GatewayBot):
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
         command_hooks: list[HookCallbackT] | None = None,
+        command_after_hooks: list[HookCallbackT] | None = None,
         allow_color: bool = True,
         banner: Optional[str] = "crescent",
         executor: Optional[Executor] = None,
@@ -105,6 +106,7 @@ class Bot(GatewayBot):
         self.allow_unknown_interactions = allow_unknown_interactions
         self.update_commands = update_commands
         self.command_hooks = command_hooks
+        self.command_after_hooks = command_after_hooks
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
@@ -152,8 +154,8 @@ class Bot(GatewayBot):
         if command is None:
             return self.include
 
-        if isinstance(command.metadata, AppCommandMeta) and self.command_hooks:
-            command.metadata.hooks.extend(self.command_hooks)
+        add_hooks(self, command)
+
         command.register_to_app(self)
 
         return command

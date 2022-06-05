@@ -1,5 +1,8 @@
 import crescent
 
+# Hooks allow you to execute functions before or after command
+# They execute in this order: command -> subgroup -> group -> plugin -> bot
+
 
 async def first_hook(ctx: crescent.Context) -> crescent.HookResult:  # you can also return None
     print("Here first.")

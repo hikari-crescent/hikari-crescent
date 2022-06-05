@@ -24,19 +24,25 @@ class HookResult:
 
 
 @overload
-def hook(callback: HookCallbackT, /) -> Callable[..., T]:
+def hook(callback: HookCallbackT, *, after: bool = False) -> Callable[..., T]:
     ...
 
 
 @overload
-def hook(callback: HookCallbackT, command: T, /) -> T:
+def hook(callback: HookCallbackT, *, command: T) -> T:
     ...
 
 
-def hook(callback: HookCallbackT, command: T | None = None) -> T | Callable[..., T]:
+def hook(
+    callback: HookCallbackT, after: bool = False, command: T | None = None
+) -> T | Callable[..., T]:
     if command is None:
-        return partial(hook, callback)  # type: ignore
+        return partial(hook, callback, after)  # type: ignore
     if not iscoroutinefunction(callback):
         raise ValueError(f"Function `{callback.__name__}` must be async.")
-    command.metadata.hooks.insert(0, callback)
+    if after:
+        command.metadata.after_hooks.insert(0, callback)
+    else:
+        command.metadata.hooks.insert(0, callback)
+
     return command

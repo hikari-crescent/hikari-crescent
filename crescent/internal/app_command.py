@@ -123,6 +123,7 @@ class AppCommandMeta:
     sub_group: Optional[SubGroup] = None
     deprecated: bool = False
     hooks: List[HookCallbackT] = field(factory=list)
+    after_hooks: List[HookCallbackT] = field(factory=list)
 
     @property
     def unique(self) -> Unique:
