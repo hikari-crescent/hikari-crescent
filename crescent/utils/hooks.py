@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import Protocol, List, Any, Sequence
-from crescent.typedefs import HookCallbackT
-from crescent.internal.meta_struct import MetaStruct
-from crescent.internal.app_command import AppCommandMeta
+from typing import Any, List, Protocol, Sequence
 
+from crescent.internal.app_command import AppCommandMeta
+from crescent.internal.meta_struct import MetaStruct
+from crescent.typedefs import HookCallbackT
 
 __all__: Sequence[str] = ("add_hooks",)
 
