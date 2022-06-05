@@ -19,11 +19,16 @@ async def third_hook(ctx: crescent.Context):
     print("Here third.")
 
 
-group = crescent.Group("my_group", hooks=[first_hook])
-sub_group = group.sub_group("my_sub_group", hooks=[second_hook])
+group = crescent.Group("my_group", hooks=[first_hook], hook_after=[first_hook])
+sub_group = group.sub_group("my_sub_group", hooks=[second_hook], hooks=[second_hook])
 
 
-# Hooks execute in order:
+# Hooks execute in order before the command:
+# second_hook
+# first_hook
+# third_hook
+
+# Hooks execute in order after the command:
 # second_hook
 # first_hook
 # third_hook
@@ -32,6 +37,7 @@ sub_group = group.sub_group("my_sub_group", hooks=[second_hook])
 @bot.include
 @sub_group.child
 @crescent.hook(third_hook)
+@crescent.hook(third_hook, after=True)
 @crescent.command
 async def say(ctx: crescent.Context, word: str):
     await ctx.respond(word)
