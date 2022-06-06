@@ -13,7 +13,6 @@ if TYPE_CHECKING:
     from hikari import Event
     from hikari.api.event_manager import CallbackT
 
-
 __all__: Sequence[str] = ("event",)
 
 
@@ -46,10 +45,18 @@ def event(
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
-    def hook(self: MetaStruct[CallbackT[Any], None]) -> None:
-        self.app.subscribe(event_type=unwrap(event_type), callback=_event_callback(self))
+    def hook(meta: MetaStruct[CallbackT[Any], None]) -> None:
+        meta.app.subscribe(event_type=unwrap(event_type), callback=event_callback)
 
-    return MetaStruct(callback=callback, metadata=None, app_set_hooks=[hook])
+    def on_remove(meta: MetaStruct[CallbackT[Any], None]) -> None:
+        meta.app.unsubscribe(event_type=unwrap(event_type), callback=event_callback)
+
+    meta = MetaStruct(
+        callback=callback, metadata=None, app_set_hooks=[hook], plugin_unload_hook=on_remove
+    )
+    event_callback = _event_callback(meta)
+
+    return meta
 
 
 def _event_callback(

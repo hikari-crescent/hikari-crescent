@@ -9,7 +9,7 @@ from crescent.utils import add_hooks
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
 
-    from crescent.typedefs import HookCallbackT
+    from crescent.typedefs import HookCallbackT, PluginCallbackT
 
     from .bot import Bot
 
@@ -31,6 +31,15 @@ class PluginManager:
         self.plugins[plugin.name] = plugin
         plugin._setup(self._bot)
 
+    def unload(self, name: str) -> None:
+        plugin = self.plugins[name]
+
+        for child in plugin._children:
+            if child.plugin_unload_hook:
+                child.plugin_unload_hook(child)
+
+        del self.plugins[name]
+
     def load(self, path: str, refresh: bool = False) -> Plugin:
         """Load a plugin from the module path.
 
@@ -49,6 +58,10 @@ class PluginManager:
 
         plugin = Plugin._from_module(path, refresh=refresh)
         self.add_plugin(plugin, force=refresh)
+
+        for callback in plugin.on_load:
+            callback(self._bot)
+
         return plugin
 
 
@@ -58,10 +71,14 @@ class Plugin:
         name: str,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
+        on_load: list[PluginCallbackT] | None = None,
+        on_unload: list[PluginCallbackT] | None = None,
     ) -> None:
         self.name = name
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
+        self.on_load: list[PluginCallbackT] = on_load or list()
+        self.on_unload: list[PluginCallbackT] = on_unload or list()
         self._children: list[MetaStruct[Any, Any]] = []
 
     def include(self, obj: T) -> T:
