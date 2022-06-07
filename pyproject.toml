@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "hikari-crescent"
 version = "0"
-description = "🌕 A dead simple command handler for Hikari"
+description = "🌕 A command handler for Hikari that keeps your project neat and tidy."
 readme = "README.md"
 authors = ["Lunarmagpie <Bambolambo0@gmail.com>"]
 maintainers = ["Circuit <circuitsacul@icloud.com>"]

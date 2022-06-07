@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, MetaStruct
-    from crescent.typedefs import CommandCallbackT, OptionTypesT
+    from crescent.typedefs import CommandCallbackT, HookCallbackT, OptionTypesT
 
 
 _log = getLogger(__name__)
@@ -72,21 +72,29 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     await _handle_slash_resp(bot, command, ctx)
 
 
-async def _handle_slash_resp(
-    bot: Bot, command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
-) -> None:
-    for hook in command.metadata.hooks:
+async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
+    """Returns `False` if the command should not be run."""
+    for hook in hooks:
         hook_res = await hook(ctx)
 
         if hook_res and hook_res.exit:
-            break
+            return False
+    return True
 
-    else:
-        try:
-            await command.callback(ctx, **ctx.options)
-        except Exception as exc:
-            handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
-            await bot.on_crescent_command_error(exc, ctx, handled)
+
+async def _handle_slash_resp(
+    bot: Bot, command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
+) -> None:
+
+    if not await _handle_hooks(command.metadata.hooks, ctx):
+        return
+
+    try:
+        await command.callback(ctx, **ctx.options)
+        await _handle_hooks(command.metadata.after_hooks, ctx)
+    except Exception as exc:
+        handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
+        await bot.on_crescent_command_error(exc, ctx, handled)
 
 
 async def _handle_autocomplete_resp(

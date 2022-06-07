@@ -15,11 +15,22 @@ def _default_bucket(ctx: Context) -> Snowflake:
     return ctx.user.id
 
 
+async def _default_callback(ctx: Context, retry: float) -> None:
+    seconds = round(retry)
+    if seconds <= 1:
+        message = "1 second"
+    else:
+        message = f"{seconds} seconds"
+    await ctx.respond(
+        f"You're using this command too much! Try again in {message}.", ephemeral=True
+    )
+
+
 def cooldown(
     capacity: int,
     period: float,
     *,
-    callback: Optional[CooldownCallbackT] = None,
+    callback: CooldownCallbackT = _default_callback,
     bucket: BucketCallbackT = _default_bucket,
 ) -> Callable[[Context], Awaitable[Optional[HookResult]]]:
     """
@@ -43,13 +54,7 @@ def cooldown(
         if not retry_after:
             return None
 
-        if callback:
-            await callback(ctx, retry_after)
-        else:
-            # Default response for when there is no callback
-            await ctx.respond(
-                f"You're using this command too much! Try again in {retry_after:.2f}s."
-            )
+        await callback(ctx, retry_after)
         return HookResult(exit=True)
 
     return inner
