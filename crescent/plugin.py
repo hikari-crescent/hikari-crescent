@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from importlib import import_module, reload
+from logging import getLogger
 from typing import TYPE_CHECKING, Dict
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import add_hooks
-from logging import getLogger
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
