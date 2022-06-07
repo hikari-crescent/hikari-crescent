@@ -94,7 +94,7 @@ class ErrorHandler(Generic[_E]):
 
         self.registry[exc] = meta
 
-    def remove(self, exc: Type[Exception]):
+    def remove(self, exc: Type[Exception]) -> None:
         self.registry.pop(exc)
 
     async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
