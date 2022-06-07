@@ -1,7 +1,8 @@
 # This plugin is loaded by the `test_plugins.py` tests
 
 from hikari import MessageCreateEvent
-from crescent import Plugin, event, catch_command, command, Context
+
+from crescent import Context, Plugin, catch_command, command, event
 
 plugin = Plugin("test-plugin")
 

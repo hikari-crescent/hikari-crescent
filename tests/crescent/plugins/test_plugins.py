@@ -5,8 +5,8 @@ from hikari import MessageCreateEvent
 from tests.crescent.plugins.plugin import (
     plugin,
     plugin_catch_command,
-    plugin_event,
     plugin_command,
+    plugin_event,
 )
 from tests.utils import MockBot
 
