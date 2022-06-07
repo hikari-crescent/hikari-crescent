@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
     from crescent.context import Context
     from crescent.mentionable import Mentionable
+    from crescent.bot import Bot
 
 __all__: Sequence[str] = (
     "CommandCallbackT",
@@ -50,6 +51,8 @@ HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
 AutocompleteCallbackT = Callable[
     ["Context", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
 ]
+
+PluginCallbackT = Callable[["Bot"], None]
 
 
 class ClassCommandProto(Protocol):

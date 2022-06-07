@@ -17,21 +17,21 @@ T = TypeVar("T", bound=Callable[..., Awaitable[Any]])
 
 def _make_catch_function(
     error_handler_var: str,
-) -> Callable[[Type[Exception]], Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]]:
-    def func(
-        *exceptions: Type[Exception],
-    ) -> Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]:
+) -> Callable[[Type[Exception]], Callable[[T], MetaStruct[T, Any]]]:
+    def func(*exceptions: Type[Exception]) -> Callable[[T], MetaStruct[T, Any]]:
         def app_set_hook(meta: MetaStruct[T, Any]) -> None:
             for exc in exceptions:
                 getattr(meta.app, error_handler_var).register(meta, exc)
 
-        def decorator(callback: T | MetaStruct[T, Any]) -> MetaStruct[T, Any]:
-            if isinstance(callback, MetaStruct):
-                meta = callback
-            else:
-                meta = MetaStruct(callback, None)
+        def plugin_unload_hook(meta: MetaStruct[T, Any]):
+            for exc in exceptions:
+                getattr(meta.app, error_handler_var).remove(exc)
 
-            meta.app_set_hooks.append(app_set_hook)
+        def decorator(callback: T) -> MetaStruct[T, Any]:
+            meta = MetaStruct(
+                callback, None, app_set_hooks=[app_set_hook], plugin_unload_hook=plugin_unload_hook
+            )
+
             return meta
 
         return decorator
