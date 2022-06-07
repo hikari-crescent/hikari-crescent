@@ -70,3 +70,14 @@ class TestPlugins:
 
         assert orig is orig2
         assert orig is not new
+
+    def test_load_hook(self):
+        bot = MockBot()
+
+        plugin = bot.plugins.load("tests.crescent.plugins.hook_plugin")
+        assert plugin.loaded_hook_run_count == 1
+        assert plugin.unloaded_hook_run_count == 0
+
+        bot.plugins.unload("test-plugin")
+        assert plugin.loaded_hook_run_count == 1
+        assert plugin.unloaded_hook_run_count == 1
