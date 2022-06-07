@@ -80,9 +80,7 @@ class ErrorHandler(Generic[_E]):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: Dict[
-            Type[Exception], MetaStruct[_E, Any]
-        ] = dict()
+        self.registry: Dict[Type[Exception], MetaStruct[_E, Any]] = dict()
 
     def register(self, meta: MetaStruct[_E, Any], exc: Type[Exception]) -> None:
         if reg_meta := self.registry.get(exc):
@@ -94,7 +92,7 @@ class ErrorHandler(Generic[_E]):
 
         self.registry[exc] = meta
 
-    def remove(self, exc: Type[Exception]):
+    def remove(self, exc: Type[Exception]) -> None:
         self.registry.pop(exc)
 
     async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
