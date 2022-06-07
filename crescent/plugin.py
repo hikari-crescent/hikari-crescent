@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Dict
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import add_hooks
+from logging import getLogger
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
@@ -17,6 +18,8 @@ if TYPE_CHECKING:
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
 
+_log = getLogger(__name__)
+
 
 class PluginManager:
     def __init__(self, bot: Bot) -> None:
@@ -24,20 +27,19 @@ class PluginManager:
         self._bot = bot
 
     def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
-        if plugin.name in self.plugins:
-            if not force:
-                raise ValueError(f"Plugin name {plugin.name} already exists.")
-        self.plugins[plugin.name] = plugin
-        plugin._setup(self._bot)
+        _log.warning("`add_plugin` is deprecated and will be removed in a future release.")
+
+        self._add_plugin(self, plugin, force=force)
 
     def unload(self, name: str) -> None:
-        plugin = self.plugins[name]
+        plugin = self.plugins.pop(name)
+
+        for callback in plugin._unload_hooks:
+            callback()
 
         for child in plugin._children:
             if child.plugin_unload_hook:
                 child.plugin_unload_hook(child)
-
-        del self.plugins[name]
 
     def load(self, path: str, refresh: bool = False) -> Plugin:
         """Load a plugin from the module path.
@@ -56,12 +58,19 @@ class PluginManager:
         """
 
         plugin = Plugin._from_module(path, refresh=refresh)
-        self.add_plugin(plugin, force=refresh)
+        self._add_plugin(plugin, force=refresh)
 
-        for callback in plugin.on_load:
-            callback(self._bot)
+        for callback in plugin._load_hooks:
+            callback()
 
         return plugin
+
+    def _add_plugin(self, plugin: Plugin, force: bool = False) -> None:
+        if plugin.name in self.plugins:
+            if not force:
+                raise ValueError(f"Plugin name {plugin.name} already exists.")
+        self.plugins[plugin.name] = plugin
+        plugin._setup(self._bot)
 
 
 class Plugin:
@@ -70,20 +79,25 @@ class Plugin:
         name: str,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
-        on_load: list[PluginCallbackT] | None = None,
-        on_unload: list[PluginCallbackT] | None = None,
     ) -> None:
         self.name = name
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
-        self.on_load: list[PluginCallbackT] = on_load or list()
-        self.on_unload: list[PluginCallbackT] = on_unload or list()
         self._children: list[MetaStruct[Any, Any]] = []
+
+        self._load_hooks: list[PluginCallbackT] = []
+        self._unload_hooks: list[PluginCallbackT] = []
 
     def include(self, obj: T) -> T:
         add_hooks(self, obj)
         self._children.append(obj)
         return obj
+
+    def load_hook(self, callback: PluginCallbackT) -> None:
+        self._load_hooks.append(callback)
+
+    def unload_hook(self, callback: PluginCallbackT) -> None:
+        self._unload_hooks.append(callback)
 
     def _setup(self, bot: Bot) -> None:
         for item in self._children:

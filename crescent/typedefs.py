@@ -24,7 +24,6 @@ from hikari import (
 )
 
 if TYPE_CHECKING:
-    from crescent.bot import Bot
     from crescent.commands.hooks import HookResult
     from crescent.context import Context
     from crescent.mentionable import Mentionable
@@ -52,7 +51,7 @@ AutocompleteCallbackT = Callable[
     ["Context", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
 ]
 
-PluginCallbackT = Callable[["Bot"], None]
+PluginCallbackT = Callable[[], None]
 
 
 class ClassCommandProto(Protocol):
