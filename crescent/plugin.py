@@ -29,7 +29,7 @@ class PluginManager:
     def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
         _log.warning("`add_plugin` is deprecated and will be removed in a future release.")
 
-        self._add_plugin(self, plugin, force=force)
+        self._add_plugin(plugin, force=force)
 
     def unload(self, name: str) -> None:
         plugin = self.plugins.pop(name)
