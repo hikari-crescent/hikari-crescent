@@ -9,9 +9,8 @@ from crescent.utils import add_hooks
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
 
-    from crescent.typedefs import HookCallbackT, PluginCallbackT
-
     from crescent.bot import Bot
+    from crescent.typedefs import HookCallbackT, PluginCallbackT
 
     T = TypeVar("T", bound="MetaStruct[Any, Any]")
 

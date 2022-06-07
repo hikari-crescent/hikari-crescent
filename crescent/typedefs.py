@@ -24,10 +24,10 @@ from hikari import (
 )
 
 if TYPE_CHECKING:
+    from crescent.bot import Bot
     from crescent.commands.hooks import HookResult
     from crescent.context import Context
     from crescent.mentionable import Mentionable
-    from crescent.bot import Bot
 
 __all__: Sequence[str] = (
     "CommandCallbackT",
