@@ -15,3 +15,16 @@ async def plugin_command(ctx):
 @crescent.event
 async def plugin_event(event: hikari.MessageCreateEvent):
     print("plugin event triggered")
+
+
+# You can run functions when a plugin is loaded and unloaded
+
+
+@plugin.load_hook
+def on_load():
+    print("LOADED")
+
+
+@plugin.unload_hook
+def on_load():
+    print("UNLOADED")
