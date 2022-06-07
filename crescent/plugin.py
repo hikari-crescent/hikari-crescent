@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
-    from .bot import Bot
+    from crescent.bot import Bot
 
     T = TypeVar("T", bound="MetaStruct[Any, Any]")
 
@@ -53,7 +53,7 @@ class PluginManager:
 
         Args:
             path: The module path for the plugin.
-            refresh: Whether or not to reload the plugin.
+            refresh: Whether or not to reload the plugin's module.
         """
 
         plugin = Plugin._from_module(path, refresh=refresh)

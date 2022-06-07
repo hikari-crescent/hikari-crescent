@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from tests.crescent.plugins.plugin import plugin as real_plugin
+from hikari import MessageCreateEvent
+
+from tests.crescent.plugins.plugin import (
+    plugin,
+    plugin_catch_command,
+    plugin_event,
+    plugin_command,
+)
 from tests.utils import MockBot
 
 
@@ -8,16 +15,57 @@ class TestPlugins:
     def test_load_plugin(self):
         bot = MockBot()
 
-        plugin = bot.plugins.load("tests.crescent.plugins.plugin")
+        _plugin = bot.plugins.load("tests.crescent.plugins.plugin")
 
-        assert plugin is real_plugin
+        assert _plugin is plugin
+
+        assert plugin_command in _plugin._children
+        assert plugin_command.metadata.unique in bot._command_handler.registry
+
+        assert plugin_event in _plugin._children
+        # Length is one because only one event is listened to
+        assert len(bot._event_manager.get_listeners(MessageCreateEvent)) == 1
+
+        assert plugin_catch_command in _plugin._children
+        assert plugin_catch_command in bot._command_error_handler.registry.values()
+
+    def test_unload_plugin(self):
+        bot = MockBot()
+
+        bot.plugins.load("tests.crescent.plugins.plugin")
+        bot.plugins.unload("test-plugin")
+
+        assert plugin_command.metadata.unique not in bot._command_handler.registry
+        assert len(bot._event_manager.get_listeners(MessageCreateEvent)) == 0
+        assert plugin_catch_command not in bot._command_error_handler.registry.values()
 
     def test_plugin_reload(self):
         bot = MockBot()
 
+        bot.plugins.load("tests.crescent.plugins.plugin")
+        bot.plugins.unload("test-plugin")
+        _plugin = bot.plugins.load("tests.crescent.plugins.plugin")
+
+        assert _plugin is plugin
+
+        assert plugin_command in _plugin._children
+        assert plugin_command.metadata.unique in bot._command_handler.registry
+
+        assert plugin_event in _plugin._children
+        assert len(bot._event_manager.get_listeners(MessageCreateEvent)) == 1
+
+        assert plugin_catch_command in _plugin._children
+        assert plugin_catch_command in bot._command_error_handler.registry.values()
+
+    def test_plugin_refresh(self):
+        bot = MockBot()
+
         orig = bot.plugins.load("tests.crescent.plugins.plugin")
-        del bot.plugins.plugins[real_plugin.name]
+        bot.plugins.unload("test-plugin")
+
         orig2 = bot.plugins.load("tests.crescent.plugins.plugin")
+        bot.plugins.unload("test-plugin")
+
         new = bot.plugins.load("tests.crescent.plugins.plugin", refresh=True)
 
         assert orig is orig2
