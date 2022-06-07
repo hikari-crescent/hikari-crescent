@@ -16,19 +16,19 @@ class _Task:
         self.callback = callback
         self.running = True
 
-    def start(self):
+    def start(self) -> None:
         self.call_next()
 
-    def stop(self):
+    def stop(self) -> None:
         self.running = False
 
-    def call_async(self):
+    def call_async(self) -> None:
         if not self.running:
             return
         ensure_future(self.callback())
         self.call_next()
 
-    def call_next(self):
+    def call_next(self) -> None:
         call_next_at = self.cron.get_next(datetime)
         time_to_next = call_next_at - datetime.now()
         self.event_loop.call_later(time_to_next.total_seconds(), self.call_async)
@@ -42,8 +42,8 @@ def _unload(self: MetaStruct[TaskCallbackT, _Task]) -> None:
     self.metadata.stop()
 
 
-def cronjob(cron: str) -> MetaStruct[TaskCallbackT, _Task]:
-    def inner(callback: TaskCallbackT):
+def cronjob(cron: str) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, _Task]]:
+    def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, _Task]:
         return MetaStruct(
             callback,
             _Task(cron, callback),

@@ -603,6 +603,14 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "types-croniter"
+version = "1.0.10"
+description = "Typing stubs for croniter"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "typing-extensions"
 version = "4.2.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
@@ -643,7 +651,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "820045d8aec0edd540e62f85c82ef1d2c21c53204a7c46817c8ca03a3e46ebe4"
+content-hash = "deb6408426557809293961306b382362caa520376138cbe9becce64f64541145"
 
 [metadata.files]
 aiohttp = [
@@ -1168,6 +1176,10 @@ toml = [
 tomli = [
     {file = "tomli-1.2.3-py3-none-any.whl", hash = "sha256:e3069e4be3ead9668e21cb9b074cd948f7b3113fd9c8bba083f48247aab8b11c"},
     {file = "tomli-1.2.3.tar.gz", hash = "sha256:05b6166bff487dc068d322585c7ea4ef78deed501cc124060e0f238e89a9231f"},
+]
+types-croniter = [
+    {file = "types-croniter-1.0.10.tar.gz", hash = "sha256:10ae27340a37952b9ac67d7d2fc3bc9d4d88b6ae2c7b5a0b2c393b24d0a21ce0"},
+    {file = "types_croniter-1.0.10-py3-none-any.whl", hash = "sha256:3ae500135d4d6ccc5a4e54a4c9b971fcbe98b5f0970ee2987f7ad60e77b3f95f"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},
