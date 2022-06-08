@@ -38,8 +38,8 @@ class PluginManager:
             callback()
 
         for child in plugin._children:
-            if child.plugin_unload_hook:
-                child.plugin_unload_hook(child)
+            for hook in child.plugin_unload_hooks:
+                hook(child)
 
     def load(self, path: str, refresh: bool = False) -> Plugin:
         """Load a plugin from the module path.

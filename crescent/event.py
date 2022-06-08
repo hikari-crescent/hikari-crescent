@@ -52,7 +52,7 @@ def event(
         meta.app.unsubscribe(event_type=unwrap(event_type), callback=event_callback)
 
     meta = MetaStruct(
-        callback=callback, metadata=None, app_set_hooks=[hook], plugin_unload_hook=on_remove
+        callback=callback, metadata=None, app_set_hooks=[hook], plugin_unload_hooks=[on_remove]
     )
     event_callback = _event_callback(meta)
 

@@ -54,7 +54,7 @@ def register_command(
     meta: MetaStruct[T, AppCommandMeta] = MetaStruct(
         callback=callback,
         app_set_hooks=[_command_app_set_hook],
-        plugin_unload_hook=_plugin_unload_callback,
+        plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
             deprecated=deprecated,
             autocomplete=autocomplete,
