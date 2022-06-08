@@ -1,10 +1,12 @@
 from asyncio import ensure_future, get_event_loop
 from datetime import datetime
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, Sequence
 
 from croniter import croniter
 
 from crescent.internal.meta_struct import MetaStruct
+
+__all__: Sequence[str] = ("cronjob",)
 
 TaskCallbackT = Callable[[], Awaitable[None]]
 
