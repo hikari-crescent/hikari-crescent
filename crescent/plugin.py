@@ -29,7 +29,7 @@ class PluginManager:
     def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
         _LOG.warning("`add_plugin` is deprecated and will be removed in a future release.")
 
-        self._add_plugin(plugin, refresh=force)
+        self._add_plugin("", plugin, refresh=force)
 
     def unload(self, name: str) -> None:
         plugin = self.plugins.pop(name)
@@ -51,22 +51,21 @@ class PluginManager:
             refresh: Whether or not to reload the plugin and the plugin's module.
         """
 
-        new_plugin = Plugin._from_module(path, refresh=refresh)
-
         if refresh:
-            old_plugin = self.plugins.pop(new_plugin.name)
+            old_plugin = self.plugins.pop(path)
             old_plugin._unload()
 
-        self._add_plugin(new_plugin, refresh=refresh)
+        plugin = Plugin._from_module(path, refresh=refresh)
 
-        return new_plugin
+        self._add_plugin(path, plugin, refresh=refresh)
 
-    def _add_plugin(self, plugin: Plugin, refresh: bool = False) -> None:
-        if plugin.name in self.plugins:
-            if not refresh:
-                raise ValueError(f"Plugin name {plugin.name} already exists.")
+        return plugin
 
-        self.plugins[plugin.name] = plugin
+    def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
+        if path in self.plugins and not refresh:
+            raise ValueError(f"Plugin {plugin.path} is already loaded.")
+
+        self.plugins[path] = plugin
 
         plugin._load(self._bot)
 
@@ -74,11 +73,16 @@ class PluginManager:
 class Plugin:
     def __init__(
         self,
-        name: str,
+        name: str | None = None,
+        *,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
     ) -> None:
-        self.name = name
+        if name is not None:
+            _LOG.warning(
+                "Pluin option `name` is deprecated and will be removed in a future release."
+            )
+
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
         self._children: list[MetaStruct[Any, Any]] = []
@@ -109,7 +113,6 @@ class Plugin:
             callback()
 
         for child in self._children:
-            print(child._app)
             for hook in child.plugin_unload_hooks:
                 hook(child)
 

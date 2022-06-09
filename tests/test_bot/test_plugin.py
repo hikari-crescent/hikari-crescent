@@ -9,7 +9,7 @@ async def command_hook(ctx: crescent.Context) -> None:
     await ctx.respond("Command hook called.")
 
 
-plugin = crescent.Plugin("plugin", [plugin_hook])
+plugin = crescent.Plugin("plugin", command_hooks=[plugin_hook])
 
 
 @plugin.include
