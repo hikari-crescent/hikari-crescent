@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
 
-_log = getLogger(__name__)
+_LOG = getLogger(__name__)
 
 
 class PluginManager:
@@ -27,7 +27,7 @@ class PluginManager:
         self._bot = bot
 
     def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
-        _log.warning("`add_plugin` is deprecated and will be removed in a future release.")
+        _LOG.warning("`add_plugin` is deprecated and will be removed in a future release.")
 
         self._add_plugin(plugin, force=force)
 
