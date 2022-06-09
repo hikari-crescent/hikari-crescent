@@ -31,8 +31,8 @@ class PluginManager:
 
         self._add_plugin("", plugin, refresh=force)
 
-    def unload(self, name: str) -> None:
-        plugin = self.plugins.pop(name)
+    def unload(self, path: str) -> None:
+        plugin = self.plugins.pop(path)
         plugin._unload()
 
     def load(self, path: str, refresh: bool = False) -> Plugin:
