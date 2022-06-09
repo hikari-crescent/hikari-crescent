@@ -29,7 +29,10 @@ def _make_catch_function(
 
         def decorator(callback: T) -> MetaStruct[T, Any]:
             meta = MetaStruct(
-                callback, None, app_set_hooks=[app_set_hook], plugin_unload_hook=plugin_unload_hook
+                callback,
+                None,
+                app_set_hooks=[app_set_hook],
+                plugin_unload_hooks=[plugin_unload_hook],
             )
 
             return meta

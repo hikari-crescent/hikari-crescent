@@ -27,7 +27,7 @@ class MetaStruct(Generic[T, U]):
     _app: Optional[Bot] = None
 
     app_set_hooks: List[Callable[[MetaStruct[T, U]], None]] = field(factory=list)
-    plugin_unload_hook: Callable[[MetaStruct[T, U]], None] | None = None
+    plugin_unload_hooks: List[Callable[[MetaStruct[T, U]], None]] = field(factory=list)
 
     @property
     def app(self) -> Bot:

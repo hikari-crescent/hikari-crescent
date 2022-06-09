@@ -64,8 +64,8 @@ class TestPlugins:
         bot.plugins.unload("test-plugin")
 
         orig2 = bot.plugins.load("tests.crescent.plugins.plugin")
-        bot.plugins.unload("test-plugin")
 
+        # Calling refresh should automatically unload the plugin.
         new = bot.plugins.load("tests.crescent.plugins.plugin", refresh=True)
 
         assert orig is orig2

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
 
-_log = getLogger(__name__)
+_LOG = getLogger(__name__)
 
 
 class PluginManager:
@@ -27,19 +27,13 @@ class PluginManager:
         self._bot = bot
 
     def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
-        _log.warning("`add_plugin` is deprecated and will be removed in a future release.")
+        _LOG.warning("`add_plugin` is deprecated and will be removed in a future release.")
 
-        self._add_plugin(plugin, force=force)
+        self._add_plugin(plugin, refresh=force)
 
     def unload(self, name: str) -> None:
         plugin = self.plugins.pop(name)
-
-        for callback in plugin._unload_hooks:
-            callback()
-
-        for child in plugin._children:
-            if child.plugin_unload_hook:
-                child.plugin_unload_hook(child)
+        plugin._unload()
 
     def load(self, path: str, refresh: bool = False) -> Plugin:
         """Load a plugin from the module path.
@@ -54,23 +48,27 @@ class PluginManager:
 
         Args:
             path: The module path for the plugin.
-            refresh: Whether or not to reload the plugin's module.
+            refresh: Whether or not to reload the plugin and the plugin's module.
         """
 
-        plugin = Plugin._from_module(path, refresh=refresh)
-        self._add_plugin(plugin, force=refresh)
+        new_plugin = Plugin._from_module(path, refresh=refresh)
 
-        for callback in plugin._load_hooks:
-            callback()
+        if refresh:
+            old_plugin = self.plugins.pop(new_plugin.name)
+            old_plugin._unload()
 
-        return plugin
+        self._add_plugin(new_plugin, refresh=refresh)
 
-    def _add_plugin(self, plugin: Plugin, force: bool = False) -> None:
+        return new_plugin
+
+    def _add_plugin(self, plugin: Plugin, refresh: bool = False) -> None:
         if plugin.name in self.plugins:
-            if not force:
+            if not refresh:
                 raise ValueError(f"Plugin name {plugin.name} already exists.")
+
         self.plugins[plugin.name] = plugin
-        plugin._setup(self._bot)
+
+        plugin._load(self._bot)
 
 
 class Plugin:
@@ -99,10 +97,21 @@ class Plugin:
     def unload_hook(self, callback: PluginCallbackT) -> None:
         self._unload_hooks.append(callback)
 
-    def _setup(self, bot: Bot) -> None:
-        for item in self._children:
-            add_hooks(bot, item)
-            item.register_to_app(bot)
+    def _load(self, bot: Bot) -> None:
+        for callback in self._load_hooks:
+            callback()
+        for child in self._children:
+            add_hooks(bot, child)
+            child.register_to_app(bot)
+
+    def _unload(self) -> None:
+        for callback in self._unload_hooks:
+            callback()
+
+        for child in self._children:
+            print(child._app)
+            for hook in child.plugin_unload_hooks:
+                hook(child)
 
     @classmethod
     def _from_module(cls, path: str, refresh: bool = False) -> Plugin:
