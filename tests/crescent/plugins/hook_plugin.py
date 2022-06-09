@@ -9,7 +9,7 @@ class HookPlugin(crescent.Plugin):
         super().__init__(name)
 
 
-plugin = HookPlugin("test-plugin")
+plugin = HookPlugin()
 
 
 @plugin.load_hook
