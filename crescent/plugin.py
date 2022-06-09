@@ -56,7 +56,6 @@ class PluginManager:
             old_plugin._unload()
 
         plugin = Plugin._from_module(path, refresh=refresh)
-
         self._add_plugin(path, plugin, refresh=refresh)
 
         return plugin
@@ -66,7 +65,6 @@ class PluginManager:
             raise ValueError(f"Plugin {plugin.path} is already loaded.")
 
         self.plugins[path] = plugin
-
         plugin._load(self._bot)
 
 
