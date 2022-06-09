@@ -62,7 +62,7 @@ class PluginManager:
 
     def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
         if path in self.plugins and not refresh:
-            raise ValueError(f"Plugin {plugin.path} is already loaded.")
+            raise ValueError(f"Plugin {path} is already loaded.")
 
         self.plugins[path] = plugin
         plugin._load(self._bot)
