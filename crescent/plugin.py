@@ -61,7 +61,7 @@ class PluginManager:
 
         return new_plugin
 
-    def _add_plugin(self, plugin: Plugin, refresh: bool = False, path: str = None) -> None:
+    def _add_plugin(self, plugin: Plugin, refresh: bool = False) -> None:
         if plugin.name in self.plugins:
             if not refresh:
                 raise ValueError(f"Plugin name {plugin.name} already exists.")
