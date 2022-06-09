@@ -2,7 +2,7 @@ import hikari
 
 import crescent
 
-plugin = crescent.Plugin("example")
+plugin = crescent.Plugin()
 
 
 @plugin.include
