@@ -180,12 +180,10 @@ class CommandHandler:
                 # This for-else makes sure that sub_command_group will hold a reference
                 # to the subcommand group that we want to modify to hold `command`
                 for cmd_in_children in children:
-                    if all(
-                        (
-                            cmd_in_children.name == sub_command_group.name,
-                            cmd_in_children.description == sub_command_group.description,
-                            cmd_in_children.type == sub_command_group.type,
-                        )
+                    if (
+                        cmd_in_children.name == sub_command_group.name
+                        and cmd_in_children.description == sub_command_group.description
+                        and cmd_in_children.type == sub_command_group.type
                     ):
                         sub_command_group = cmd_in_children
                         break

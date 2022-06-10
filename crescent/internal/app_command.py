@@ -90,7 +90,7 @@ class AppCommand(CommandBuilder):
         return True
 
     def is_same_command(self, o: AppCommand) -> bool:
-        return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
+        return self.guild_id == o.guild_id and self.name == o.name and self.type == o.type
 
     def build(self, encoder: EntityFactory) -> JSONObject:
         out: dict[str, Any] = {"name": self.name, "type": self.type}
