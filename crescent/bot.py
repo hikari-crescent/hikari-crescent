@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from asyncio import Task, create_task
 from concurrent.futures import Executor
+from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, overload
@@ -191,10 +192,8 @@ class Bot(GatewayBot):
     ) -> None:
         if was_handled:
             return
-        try:
+        with suppress(Exception):
             await ctx.respond("An unexpected error occurred.", ephemeral=True)
-        except Exception:
-            pass
         print(f"Unhandled exception occurred in the command {ctx.command}:")
         print_exception(exc.__class__, exc, exc.__traceback__)
 
