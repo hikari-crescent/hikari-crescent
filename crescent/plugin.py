@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from importlib import import_module, reload
 from logging import getLogger
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, Optional
+
+import hikari
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import add_hooks
@@ -83,6 +85,7 @@ class Plugin:
 
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
+        self._app: Optional[Bot] = None
         self._children: list[MetaStruct[Any, Any]] = []
 
         self._load_hooks: list[PluginCallbackT] = []
@@ -100,19 +103,30 @@ class Plugin:
         self._unload_hooks.append(callback)
 
     def _load(self, bot: Bot) -> None:
+        self._app = bot
+
         for callback in self._load_hooks:
             callback()
         for child in self._children:
             add_hooks(bot, child)
             child.register_to_app(bot)
 
+        bot.subscribe(hikari.StoppedEvent, self._on_bot_close)
+
     def _unload(self) -> None:
+        assert self._app
+        self._app.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
+        self._app = None
+
         for callback in self._unload_hooks:
             callback()
 
         for child in self._children:
             for hook in child.plugin_unload_hooks:
                 hook(child)
+
+    async def _on_bot_close(self, bot: Bot) -> None:
+        self._unload()
 
     @classmethod
     def _from_module(cls, path: str, refresh: bool = False) -> Plugin:

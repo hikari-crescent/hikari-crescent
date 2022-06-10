@@ -81,3 +81,11 @@ class TestPlugins:
         bot.plugins.unload("tests.crescent.plugins.hook_plugin")
         assert plugin.loaded_hook_run_count == 1
         assert plugin.unloaded_hook_run_count == 1
+
+    def test_app_set(self):
+        bot = MockBot()
+
+        plugin = bot.plugins.load("tests.crescent.plugins.plugin")
+        assert plugin._app is not None
+        bot.plugins.unload("tests.crescent.plugins.plugin")
+        assert plugin._app is None
