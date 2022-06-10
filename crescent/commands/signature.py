@@ -70,7 +70,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin is Context or origin is param.empty:
+    if origin in {Context, param.empty}:
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
