@@ -25,6 +25,7 @@ def on_load():
     print("LOADED")
 
 
+# Unload is automatically called when the bot is closed (hikari.StoppedEvent)
 @plugin.unload_hook
-def on_load():
+def on_unload():
     print("UNLOADED")
