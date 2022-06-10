@@ -130,7 +130,7 @@ class CommandHandler:
             if command.metadata.deprecated:
                 continue
 
-            if command.metadata.sub_group:
+            elif command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
                 #
                 # command
@@ -200,9 +200,7 @@ class CommandHandler:
                     )
                 )
 
-                continue
-
-            if command.metadata.group:
+            elif command.metadata.group:
                 # Any command at this point will only have one level of nesting.
                 #
                 # Command
@@ -239,13 +237,12 @@ class CommandHandler:
                         description=unwrap(command.metadata.app.description),
                         type=command.metadata.app.type,
                         options=command.metadata.app.options,
-                        is_required=None,  # type: ignore
+                        is_required=None,
                     )
                 )
 
-                continue
-
-            built_commands[Unique.from_meta_struct(command)] = command.metadata.app
+            else:
+                built_commands[Unique.from_meta_struct(command)] = command.metadata.app
 
         return tuple(built_commands.values())
 
