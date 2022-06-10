@@ -86,9 +86,9 @@ def command(
         )
 
     autocomplete: dict[str, AutocompleteCallbackT] = {}
+    options: list[CommandOption] = []
 
     if isinstance(callback, type) and isinstance(callback, object):
-        options: list[CommandOption] = []
         name_map: dict[str, str] = {}
         defaults: dict[str, Any] = {}
 
@@ -112,8 +112,6 @@ def command(
 
     else:
         callback_func = callback
-
-        options = []
 
         for param in get_parameters(callback_func):
             if param is None:
