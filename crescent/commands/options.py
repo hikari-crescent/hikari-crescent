@@ -2,16 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from inspect import isclass
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Generic,
-    Sequence,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, Union, cast, overload
 
 from hikari import (
     UNDEFINED,
