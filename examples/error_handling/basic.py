@@ -1,5 +1,4 @@
-from re import I
-from typing import List
+from __future__ import annotations
 
 import hikari
 from typing_extensions import Annotated as Atd
