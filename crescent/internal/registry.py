@@ -83,7 +83,7 @@ class ErrorHandler(Generic[_E]):
         if reg_meta := self.registry.get(exc):
             raise AlreadyRegisteredError(
                 f"`{getattr(meta.callback, '__name__')}` can not catch `{exc.__name__}`."
-                f"`{exc.__name__}` is already registered to"
+                f" `{exc.__name__}` is already registered to"
                 f" `{reg_meta.callback.__name__}`."
             )
 
