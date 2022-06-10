@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attr import define
 
 if TYPE_CHECKING:
-    from typing import List, Optional, Sequence
+    from typing import Sequence
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
@@ -17,16 +17,16 @@ __all__: Sequence[str] = ("Group", "SubGroup")
 @define
 class Group:
     name: str
-    description: Optional[str] = None
-    hooks: Optional[List[HookCallbackT]] = None
-    after_hooks: Optional[List[HookCallbackT]] = None
+    description: str | None = None
+    hooks: list[HookCallbackT] | None = None
+    after_hooks: list[HookCallbackT] | None = None
 
     def sub_group(
         self,
         name: str,
-        description: Optional[str] = None,
-        hooks: Optional[List[HookCallbackT]] = None,
-        after_hooks: Optional[List[HookCallbackT]] = None,
+        description: str | None = None,
+        hooks: list[HookCallbackT] | None = None,
+        after_hooks: list[HookCallbackT] | None = None,
     ) -> SubGroup:
         return SubGroup(
             name=name, parent=self, description=description, hooks=hooks, after_hooks=after_hooks
@@ -50,9 +50,9 @@ class Group:
 class SubGroup:
     name: str
     parent: Group
-    description: Optional[str] = None
-    hooks: Optional[List[HookCallbackT]] = None
-    after_hooks: Optional[List[HookCallbackT]] = None
+    description: str | None = None
+    hooks: list[HookCallbackT] | None = None
+    after_hooks: list[HookCallbackT] | None = None
 
     def child(
         self, meta: MetaStruct[CommandCallbackT, AppCommandMeta]

@@ -18,7 +18,7 @@ from hikari import (
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Literal, Optional, Sequence
+    from typing import Any, Literal, Sequence
 
     from hikari import (
         CommandInteraction,
@@ -53,25 +53,25 @@ class Context:
     version: int
 
     channel_id: Snowflake
-    guild_id: Optional[Snowflake]
+    guild_id: Snowflake | None
     user: User
-    member: Optional[Member]
+    member: Member | None
 
     command: str
     command_type: hikari.CommandType
-    group: Optional[str]
-    sub_group: Optional[str]
-    options: Dict[str, Any]
+    group: str | None
+    sub_group: str | None
+    options: dict[str, Any]
 
     _has_replied: bool = False
     _used_first_resp: bool = False
 
     @property
-    def channel(self) -> Optional[GuildChannel]:
+    def channel(self) -> GuildChannel | None:
         return map_or(self.guild_id, self.app.cache.get_guild_channel)
 
     @property
-    def guild(self) -> Optional[Guild]:
+    def guild(self) -> Guild | None:
         return map_or(self.guild_id, self.app.cache.get_available_guild)
 
     async def defer(self, ephemeral: bool = False) -> None:
@@ -127,7 +127,7 @@ class Context:
         user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
         ensure_message: Literal[False] = ...,
-    ) -> Optional[Message]:
+    ) -> Message | None:
         ...
 
     async def respond(
@@ -145,7 +145,7 @@ class Context:
         user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
         ensure_message: bool = False,
-    ) -> Optional[Message]:
+    ) -> Message | None:
 
         if ephemeral:
             if flags is UNDEFINED:

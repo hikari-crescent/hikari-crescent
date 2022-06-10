@@ -16,7 +16,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, DefaultDict, Dict, List, Optional, Sequence, Type
+    from typing import Any, Awaitable, Callable, DefaultDict, Sequence
 
     from hikari import Snowflakeish, UndefinedOr
 
@@ -33,12 +33,12 @@ def register_command(
     callback: T,
     command_type: CommandType,
     name: str,
-    guild: Optional[Snowflakeish] = None,
-    description: Optional[str] = None,
-    options: Optional[Sequence[CommandOption]] = None,
+    guild: Snowflakeish | None = None,
+    description: str | None = None,
+    options: Sequence[CommandOption] | None = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
     deprecated: bool = False,
-    autocomplete: Dict[str, AutocompleteCallbackT] = {},
+    autocomplete: dict[str, AutocompleteCallbackT] = {},
 ) -> MetaStruct[T, AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
@@ -76,10 +76,10 @@ class ErrorHandler(Generic[_E]):
     def __init__(self, bot: Bot):
         self.bot = bot
         self.registry: WeakValueDictionary[
-            Type[Exception], MetaStruct[_E, Any]
+            type[Exception], MetaStruct[_E, Any]
         ] = WeakValueDictionary()
 
-    def register(self, meta: MetaStruct[_E, Any], exc: Type[Exception]) -> None:
+    def register(self, meta: MetaStruct[_E, Any], exc: type[Exception]) -> None:
         if reg_meta := self.registry.get(exc):
             raise AlreadyRegisteredError(
                 f"`{getattr(meta.callback, '__name__')}` can not catch `{exc.__name__}`."
@@ -108,7 +108,7 @@ class CommandHandler:
     def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
         self.bot: Bot = bot
         self.guilds: Sequence[Snowflakeish] = guilds
-        self.application_id: Optional[Snowflake] = None
+        self.application_id: Snowflake | None = None
 
         self.registry: WeakValueDictionary[
             Unique, MetaStruct["Callable[..., Awaitable[Any]]", AppCommandMeta]
@@ -124,7 +124,7 @@ class CommandHandler:
 
     def build_commands(self) -> Sequence[AppCommand]:
 
-        built_commands: Dict[Unique, AppCommand] = {}
+        built_commands: dict[Unique, AppCommand] = {}
 
         for command in self.registry.values():
             if command.metadata.deprecated:
@@ -279,8 +279,8 @@ class CommandHandler:
 
         commands = self.build_commands()
 
-        command_guilds: DefaultDict[Snowflakeish, List[AppCommand]] = defaultdict(list)
-        global_commands: List[AppCommand] = []
+        command_guilds: DefaultDict[Snowflakeish, list[AppCommand]] = defaultdict(list)
+        global_commands: list[AppCommand] = []
 
         for command in commands:
             if command.guild_id:

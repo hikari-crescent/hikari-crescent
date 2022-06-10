@@ -1,7 +1,7 @@
+from __future__ import annotations
+
 from typing_extensions import Annotated  # Python 3.8
 from typing import Annotated  # Python 3.9+
-
-import typing
 
 import hikari
 import crescent
@@ -44,7 +44,7 @@ async def add(
 
 @bot.include
 @crescent.user_command
-async def my_user_command(ctx: crescent.Context, user: typing.Union[hikari.User, hikari.Member]):
+async def my_user_command(ctx: crescent.Context, user: hikari.User | hikari.Member):
     await ctx.respond(f"Hello {user.username}")
 
 

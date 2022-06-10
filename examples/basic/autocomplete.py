@@ -1,4 +1,4 @@
-import typing
+from typing import Sequence
 
 import hikari
 import typing_extensions
@@ -10,7 +10,7 @@ bot = crescent.Bot(token="...")
 
 async def autocomplete_response(
     ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
-) -> typing.Sequence[hikari.CommandChoice]:
+) -> Sequence[hikari.CommandChoice]:
 
     # All the other options are stored in ctx.options
     options = ctx.options

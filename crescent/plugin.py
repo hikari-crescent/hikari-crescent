@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from importlib import import_module, reload
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import add_hooks
@@ -21,7 +21,7 @@ __all__: Sequence[str] = ("PluginManager", "Plugin")
 
 class PluginManager:
     def __init__(self, bot: Bot) -> None:
-        self.plugins: Dict[str, Plugin] = {}
+        self.plugins: dict[str, Plugin] = {}
         self._bot = bot
 
     def add_plugin(self, plugin: Plugin, force: bool = False) -> None:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, Tuple, Type, Union, get_args, get_origin
+from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
 from hikari import CommandOption, OptionType
 
@@ -19,7 +19,7 @@ from crescent.context import Context
 
 if TYPE_CHECKING:
     from inspect import Parameter
-    from typing import Any, Optional, Sequence, TypeVar
+    from typing import Any, Sequence, TypeVar
 
     from crescent.typedefs import AutocompleteCallbackT
 
@@ -30,7 +30,7 @@ __all__: Sequence[str] = ("gen_command_option", "get_autocomplete_func")
 NoneType = type(None)
 
 
-def _unwrap_optional(origin: Type[Any]) -> Any:
+def _unwrap_optional(origin: type[Any]) -> Any:
     if get_origin(origin) is not Union:
         return origin
 
@@ -45,7 +45,7 @@ def _unwrap_optional(origin: Type[Any]) -> Any:
     return args[1]
 
 
-def _get_arg(t: Type[Arg] | Type[Any], metadata: Iterable[Any]) -> Optional[T]:
+def _get_arg(t: type[Arg] | type[Any], metadata: Iterable[Any]) -> T | None:
     data: T
     for data in metadata:
         if isinstance(data, t):
@@ -53,7 +53,7 @@ def _get_arg(t: Type[Arg] | Type[Any], metadata: Iterable[Any]) -> Optional[T]:
     return None
 
 
-def _get_origin_and_metadata(param: Parameter) -> Tuple[Any, Iterable[Any]]:
+def _get_origin_and_metadata(param: Parameter) -> tuple[Any, Iterable[Any]]:
     typehint = param.annotation
     origin = _unwrap_optional(typehint)
     metadata = ()
@@ -65,7 +65,7 @@ def _get_origin_and_metadata(param: Parameter) -> Tuple[Any, Iterable[Any]]:
     return origin, metadata
 
 
-def gen_command_option(param: Parameter) -> Optional[CommandOption]:
+def gen_command_option(param: Parameter) -> CommandOption | None:
     name = param.name
 
     origin, metadata = _get_origin_and_metadata(param)
@@ -110,6 +110,6 @@ def gen_command_option(param: Parameter) -> Optional[CommandOption]:
     )
 
 
-def get_autocomplete_func(param: Parameter) -> Optional[AutocompleteCallbackT]:
+def get_autocomplete_func(param: Parameter) -> AutocompleteCallbackT | None:
     _, metadata = _get_origin_and_metadata(param)
     return _get_arg(Autocomplete, metadata)

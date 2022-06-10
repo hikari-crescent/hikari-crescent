@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Protocol, Sequence
+from typing import Any, Protocol, Sequence
 
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.meta_struct import MetaStruct
@@ -10,8 +10,8 @@ __all__: Sequence[str] = ("add_hooks",)
 
 
 class HasHooks(Protocol):
-    command_hooks: List[HookCallbackT] | None
-    command_after_hooks: List[HookCallbackT] | None
+    command_hooks: list[HookCallbackT] | None
+    command_after_hooks: list[HookCallbackT] | None
 
 
 def add_hooks(obj: HasHooks, command: MetaStruct[Any, Any]) -> None:

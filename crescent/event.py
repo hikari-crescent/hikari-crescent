@@ -8,7 +8,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Coroutine, Optional, Sequence, Type
+    from typing import Any, Callable, Coroutine, Sequence
 
     from hikari import Event
     from hikari.api.event_manager import CallbackT
@@ -24,13 +24,13 @@ def event(callback: CallbackT[Any], /) -> MetaStruct[CallbackT[Any], None]:
 
 @overload
 def event(
-    *, event_type: Optional[Type[Any]]
+    *, event_type: type[Any] | None
 ) -> Callable[[CallbackT[Any]], MetaStruct[CallbackT[Any], None]]:
     ...
 
 
 def event(
-    callback: CallbackT[Any] | None = None, /, *, event_type: Optional[Type[Any]] = None
+    callback: CallbackT[Any] | None = None, /, *, event_type: type[Any] | None = None
 ) -> Callable[[CallbackT[Any]], MetaStruct[CallbackT[Any], None]] | MetaStruct[
     CallbackT[Any], None
 ]:
