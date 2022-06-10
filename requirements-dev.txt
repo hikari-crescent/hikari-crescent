@@ -1,0 +1,14 @@
+aiohttp==3.8.1
+aiosignal==1.2.0
+async-timeout==4.0.2
+attrs==21.4.0
+charset-normalizer==2.0.12
+colorlog==6.6.0
+frozenlist==1.3.0
+hikari==2.0.0.dev108
+-e git+ssh://git@github.com/magpie-dev/hikari-crescent.git@9b22b408306b31ed922d1f863637b26d0a02d509#egg=hikari_crescent
+idna==3.3
+multidict==6.0.2
+mypy-extensions==0.4.3
+pycooldown==0.1.0b7
+yarl==1.7.2
