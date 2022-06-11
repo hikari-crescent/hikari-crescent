@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import get_event_loop, ensure_future
-from typing import Any, Callable, Awaitable, Sequence, TypeVar
+from asyncio import ensure_future, get_event_loop
+from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
 from hikari import StartedEvent
 from crescent.bot import Bot
