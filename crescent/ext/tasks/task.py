@@ -4,8 +4,6 @@ from abc import ABC, abstractmethod
 from asyncio import ensure_future, get_event_loop
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
-from hikari import StartedEvent
-
 from crescent.bot import Bot
 from crescent.internal.meta_struct import MetaStruct
 
@@ -27,8 +25,7 @@ class _Task(ABC):
     async def _start_inner(self) -> None:
         assert self.app is not None
 
-        if not self.app.started:
-            await self.app.event_manager.wait_for(StartedEvent, timeout=None)
+        await self.app.started.wait()
 
         self.call_next()
 

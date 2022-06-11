@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import Task, create_task
+from asyncio import Task, create_task, Event as aio_Event
 from concurrent.futures import Executor
 from itertools import chain
 from traceback import print_exception
@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, overload
 
 from hikari import (
     AutocompleteInteractionOption,
-    Event,
+    Event as hk_Event,
     GatewayBot,
     Intents,
     InteractionCreateEvent,
@@ -108,7 +108,7 @@ class Bot(GatewayBot):
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
 
-        self._started = False
+        self._started = aio_Event()
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
@@ -129,7 +129,7 @@ class Bot(GatewayBot):
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
         async def on_started(event: StartedEvent) -> None:
-            self._started = True
+            self._started.set()
             await self._on_started(event)
 
         self.subscribe(StartedEvent, on_started)
@@ -144,7 +144,7 @@ class Bot(GatewayBot):
         return None
 
     @property
-    def started(self) -> bool:
+    def started(self) -> aio_Event:
         """Returns `True` if `hikari.StartedEvent` has already been dispatched."""
         return self._started
 
@@ -207,7 +207,7 @@ class Bot(GatewayBot):
         print_exception(exc.__class__, exc, exc.__traceback__)
 
     async def on_crescent_event_error(
-        self, exc: Exception, event: Event, was_handled: bool
+        self, exc: Exception, event: hk_Event, was_handled: bool
     ) -> None:
         if was_handled:
             return
