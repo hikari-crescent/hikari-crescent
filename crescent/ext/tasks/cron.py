@@ -21,6 +21,10 @@ class _Cronjob(_Task):
 
 
 def cronjob(cron: str, /) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, _Cronjob]]:
+    """
+    Run a task at the time specified by the cron schedule expression.
+    """
+
     def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, _Cronjob]:
         meta = MetaStruct(callback, _Cronjob(cron, callback))
         _link_task(meta)

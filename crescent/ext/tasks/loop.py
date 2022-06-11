@@ -24,6 +24,11 @@ class _Loop(_Task):
 def loop(
     *, hours: int = 0, minutes: int = 0, seconds: int = 0
 ) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, _Loop]]:
+    """
+    Run a callback when the bot is started and every time the specified
+    time interval has passed.
+    """
+
     def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, _Loop]:
         meta = MetaStruct(callback, _Loop(callback, hours=hours, minutes=minutes, seconds=seconds))
         _link_task(meta)
