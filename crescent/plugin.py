@@ -55,7 +55,7 @@ class PluginManager:
         """
 
         if refresh:
-            old_plugin = self.plugins.pop(path, None)
+            old_plugin = self.plugins.pop(path)
             old_plugin._unload()
 
         plugin = Plugin._from_module(path, refresh=refresh)
