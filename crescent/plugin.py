@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING, Dict, Optional
 
 import hikari
 
+from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import add_hooks
-from crescent.exceptions import PluginAlreadyLoadedError
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
