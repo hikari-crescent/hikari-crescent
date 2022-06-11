@@ -7,14 +7,17 @@ __all__: Sequence[str] = ("loop",)
 
 
 class _Loop(_Task):
-    def __init__(
-        self, callback: TaskCallbackT, *, hours: int, minutes: int, seconds: int
-    ) -> None:
+    def __init__(self, callback: TaskCallbackT, *, hours: int, minutes: int, seconds: int) -> None:
         self.timedelta = hours * 360 + minutes * 60 + seconds
+        self.first_loop = True
 
         super().__init__(callback)
 
     def get_time_to_next(self) -> float:
+        if self.first_loop:
+            self.first_loop = False
+            return 0
+
         return self.timedelta
 
 
