@@ -1,15 +1,13 @@
 from typing import Callable, Sequence
 
-from crescent.ext.tasks.task import _Task, TaskCallbackT, _link_task
+from crescent.ext.tasks.task import TaskCallbackT, _link_task, _Task
 from crescent.internal import MetaStruct
 
 __all__: Sequence[str] = ("loop",)
 
 
 class _Loop(_Task):
-    def __init__(
-        self, callback: TaskCallbackT, *, hours: int, minutes: int, seconds: int
-    ) -> None:
+    def __init__(self, callback: TaskCallbackT, *, hours: int, minutes: int, seconds: int) -> None:
         self.timedelta = hours * 360 + minutes * 60 + seconds
 
         super().__init__(callback)

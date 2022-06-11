@@ -1,9 +1,10 @@
 from datetime import datetime
-from crescent.ext.tasks.task import _Task, TaskCallbackT, _link_task
 from typing import Callable, Sequence
-from crescent.internal import MetaStruct
 
 from croniter import croniter
+
+from crescent.ext.tasks.task import TaskCallbackT, _link_task, _Task
+from crescent.internal import MetaStruct
 
 __all__: Sequence[str] = ("cronjob",)
 
