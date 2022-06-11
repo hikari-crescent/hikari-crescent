@@ -8,6 +8,7 @@ import hikari
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import add_hooks
+from crescent.exceptions import PluginAlreadyLoadedError
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
@@ -54,7 +55,7 @@ class PluginManager:
         """
 
         if refresh:
-            old_plugin = self.plugins.pop(path)
+            old_plugin = self.plugins.pop(path, None)
             old_plugin._unload()
 
         plugin = Plugin._from_module(path, refresh=refresh)
@@ -64,7 +65,10 @@ class PluginManager:
 
     def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
         if path in self.plugins and not refresh:
-            raise ValueError(f"Plugin {path} is already loaded.")
+            raise PluginAlreadyLoadedError(
+                f"Plugin `{path}` is already loaded."
+                " Add the kwarg `refresh=True` to the function call if this is intended."
+            )
 
         self.plugins[path] = plugin
         plugin._load(self._bot)
