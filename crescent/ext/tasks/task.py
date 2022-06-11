@@ -5,8 +5,8 @@ from asyncio import ensure_future, get_event_loop
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
 from hikari import StartedEvent
-from crescent.bot import Bot
 
+from crescent.bot import Bot
 from crescent.internal.meta_struct import MetaStruct
 
 TaskCallbackT = Callable[[], Awaitable[None]]
