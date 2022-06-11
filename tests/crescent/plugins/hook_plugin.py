@@ -2,14 +2,14 @@ import crescent
 
 
 class HookPlugin(crescent.Plugin):
-    def __init__(self, name: str) -> None:
+    def __init__(self) -> None:
         self.loaded_hook_run_count = 0
         self.unloaded_hook_run_count = 0
 
-        super().__init__(name)
+        super().__init__()
 
 
-plugin = HookPlugin("test-plugin")
+plugin = HookPlugin()
 
 
 @plugin.load_hook

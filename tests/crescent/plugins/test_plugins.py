@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from hikari import MessageCreateEvent
+from pytest import raises
 
+from crescent.exceptions import PluginAlreadyLoadedError
 from tests.crescent.plugins.plugin import (
     plugin,
     plugin_catch_command,
@@ -33,7 +35,7 @@ class TestPlugins:
         bot = MockBot()
 
         bot.plugins.load("tests.crescent.plugins.plugin")
-        bot.plugins.unload("test-plugin")
+        bot.plugins.unload("tests.crescent.plugins.plugin")
 
         assert plugin_command.metadata.unique not in bot._command_handler.registry
         assert len(bot._event_manager.get_listeners(MessageCreateEvent)) == 0
@@ -43,7 +45,7 @@ class TestPlugins:
         bot = MockBot()
 
         bot.plugins.load("tests.crescent.plugins.plugin")
-        bot.plugins.unload("test-plugin")
+        bot.plugins.unload("tests.crescent.plugins.plugin")
         _plugin = bot.plugins.load("tests.crescent.plugins.plugin")
 
         assert _plugin is plugin
@@ -61,7 +63,7 @@ class TestPlugins:
         bot = MockBot()
 
         orig = bot.plugins.load("tests.crescent.plugins.plugin")
-        bot.plugins.unload("test-plugin")
+        bot.plugins.unload("tests.crescent.plugins.plugin")
 
         orig2 = bot.plugins.load("tests.crescent.plugins.plugin")
 
@@ -78,6 +80,22 @@ class TestPlugins:
         assert plugin.loaded_hook_run_count == 1
         assert plugin.unloaded_hook_run_count == 0
 
-        bot.plugins.unload("test-plugin")
+        bot.plugins.unload("tests.crescent.plugins.hook_plugin")
         assert plugin.loaded_hook_run_count == 1
         assert plugin.unloaded_hook_run_count == 1
+
+    def test_app_set(self):
+        bot = MockBot()
+
+        plugin = bot.plugins.load("tests.crescent.plugins.plugin")
+        assert plugin._app is not None
+        bot.plugins.unload("tests.crescent.plugins.plugin")
+        assert plugin._app is None
+
+    def test_load_twice(self):
+        bot = MockBot()
+
+        bot.plugins.load("tests.crescent.plugins.plugin")
+
+        with raises(PluginAlreadyLoadedError):
+            bot.plugins.load("tests.crescent.plugins.plugin")

@@ -69,7 +69,7 @@ async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
 Complicated commands, such as commands with many modifiers on options or autocomplete on several options, should
 use [class commands](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/basic/command_classes.py).
 Class commands allow you to declare a command similar to how you declare a dataclass. The option function takes a
-type followed by the description then optional information.
+type followed by the description, then optional information.
 
 ```python
 @bot.include
@@ -131,4 +131,4 @@ crescent's [event error handling system](https://github.com/magpie-dev/hikari-cr
 Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!
 
 # Contributing
-Create a issue for your feature. There aren't any guildlines right now so just don't be rude.
+Create an issue for your feature. There aren't any guidelines right now so just don't be rude.

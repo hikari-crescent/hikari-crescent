@@ -4,7 +4,7 @@ from hikari import MessageCreateEvent
 
 from crescent import Context, Plugin, catch_command, command, event
 
-plugin = Plugin("test-plugin")
+plugin = Plugin()
 
 
 @plugin.include

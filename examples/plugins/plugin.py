@@ -2,7 +2,7 @@ import hikari
 
 import crescent
 
-plugin = crescent.Plugin("example")
+plugin = crescent.Plugin()
 
 
 @plugin.include
@@ -25,6 +25,7 @@ def on_load():
     print("LOADED")
 
 
+# Unload hooks are automatically called when the bot is shut down (hikari.StoppedEvent)
 @plugin.unload_hook
-def on_load():
+def on_unload():
     print("UNLOADED")
