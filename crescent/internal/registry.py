@@ -15,7 +15,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, DefaultDict, Dict, List, Optional, Sequence, Type
+    from typing import Any, Awaitable, Callable, DefaultDict, List, Optional, Sequence, Type
 
     from hikari import Snowflakeish, UndefinedOr
 
@@ -45,7 +45,7 @@ def register_command(
     options: Optional[Sequence[CommandOption]] = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
     deprecated: bool = False,
-    autocomplete: Dict[str, AutocompleteCallbackT] = {},
+    autocomplete: dict[str, AutocompleteCallbackT] = {},
 ) -> MetaStruct[T, AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
@@ -80,7 +80,7 @@ class ErrorHandler(Generic[_E]):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: Dict[Type[Exception], MetaStruct[_E, Any]] = dict()
+        self.registry: dict[Type[Exception], MetaStruct[_E, Any]] = dict()
 
     def register(self, meta: MetaStruct[_E, Any], exc: Type[Exception]) -> None:
         if reg_meta := self.registry.get(exc):
@@ -116,7 +116,7 @@ class CommandHandler:
         self.guilds: Sequence[Snowflakeish] = guilds
         self.application_id: Optional[Snowflake] = None
 
-        self.registry: Dict[
+        self.registry: dict[
             Unique, MetaStruct["Callable[..., Awaitable[Any]]", AppCommandMeta]
         ] = dict()
 
@@ -133,7 +133,7 @@ class CommandHandler:
 
     def build_commands(self) -> Sequence[AppCommand]:
 
-        built_commands: Dict[Unique, AppCommand] = {}
+        built_commands: dict[Unique, AppCommand] = {}
 
         for command in self.registry.values():
             if command.metadata.deprecated:

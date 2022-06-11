@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from importlib import import_module, reload
 from logging import getLogger
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING
 
 import hikari
 
@@ -26,7 +26,7 @@ _LOG = getLogger(__name__)
 
 class PluginManager:
     def __init__(self, bot: Bot) -> None:
-        self.plugins: Dict[str, Plugin] = {}
+        self.plugins: dict[str, Plugin] = {}
         self._bot = bot
 
     def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
@@ -89,7 +89,7 @@ class Plugin:
 
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
-        self._app: Optional[Bot] = None
+        self._app: Bot | None = None
         self._children: list[MetaStruct[Any, Any]] = []
 
         self._load_hooks: list[PluginCallbackT] = []
