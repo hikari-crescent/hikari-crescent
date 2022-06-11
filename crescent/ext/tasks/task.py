@@ -25,8 +25,7 @@ class _Task(ABC):
         ensure_future(self._start_inner())
 
     async def _start_inner(self) -> None:
-        if not self.app:
-            raise Exception
+        assert self.app is not None
 
         if not self.app.started:
             await self.app.event_manager.wait_for(StartedEvent, timeout=None)
