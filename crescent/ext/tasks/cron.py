@@ -20,7 +20,7 @@ class _Cronjob(_Task):
         return time_to_next.total_seconds()
 
 
-def cronjob(cron: str) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, _Cronjob]]:
+def cronjob(cron: str, /) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, _Cronjob]]:
     def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, _Cronjob]:
         meta = MetaStruct(callback, _Cronjob(cron, callback))
         _link_task(meta)
