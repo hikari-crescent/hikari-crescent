@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from hikari import MessageCreateEvent
+from pytest import raises
+from crescent.exceptions import PluginAlreadyLoadedError
 
 from tests.crescent.plugins.plugin import (
     plugin,
@@ -89,3 +91,11 @@ class TestPlugins:
         assert plugin._app is not None
         bot.plugins.unload("tests.crescent.plugins.plugin")
         assert plugin._app is None
+
+    def test_load_twice(self):
+        bot = MockBot()
+
+        bot.plugins.load("tests.crescent.plugins.plugin")
+
+        with raises(PluginAlreadyLoadedError):
+            bot.plugins.load("tests.crescent.plugins.plugin")
