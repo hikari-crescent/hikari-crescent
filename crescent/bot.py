@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from asyncio import Task, create_task, Event as aio_Event
+from asyncio import Event as aio_Event
+from asyncio import Task, create_task
 from concurrent.futures import Executor
 from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, overload
 
+from hikari import AutocompleteInteractionOption
+from hikari import Event as hk_Event
 from hikari import (
-    AutocompleteInteractionOption,
-    Event as hk_Event,
     GatewayBot,
     Intents,
     InteractionCreateEvent,
