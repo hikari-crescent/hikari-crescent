@@ -42,10 +42,10 @@ class _Task(ABC):
         self.call_next()
 
     def call_next(self) -> None:
-        self.event_loop.call_later(self.get_time_to_next(), self.call_async)
+        self.event_loop.call_later(self.time_to_next(), self.call_async)
 
     @abstractmethod
-    def get_time_to_next(self) -> float:
+    def time_to_next(self) -> float:
         ...
 
 

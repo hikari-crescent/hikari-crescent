@@ -15,7 +15,7 @@ class _Cronjob(_Task):
 
         super().__init__(callback)
 
-    def get_time_to_next(self) -> float:
+    def time_to_next(self) -> float:
         call_next_at: datetime = self.cron.get_next(datetime)
         time_to_next = call_next_at - datetime.now()
         return time_to_next.total_seconds()

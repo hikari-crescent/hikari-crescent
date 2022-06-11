@@ -13,7 +13,7 @@ class _Loop(_Task):
 
         super().__init__(callback)
 
-    def get_time_to_next(self) -> float:
+    def time_to_next(self) -> float:
         if self.first_loop:
             self.first_loop = False
             return 0
