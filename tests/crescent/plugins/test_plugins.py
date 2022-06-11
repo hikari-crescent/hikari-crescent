@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from hikari import MessageCreateEvent
 from pytest import raises
-from crescent.exceptions import PluginAlreadyLoadedError
 
+from crescent.exceptions import PluginAlreadyLoadedError
 from tests.crescent.plugins.plugin import (
     plugin,
     plugin_catch_command,
