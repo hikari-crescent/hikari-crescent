@@ -1,3 +1,4 @@
+from typing import Sequence
 from importlib.metadata import version
 
 from crescent.bot import *
@@ -36,7 +37,7 @@ __all__: Sequence[str] = (
     "event",
     "CrescentException",
     "AlreadyRegisteredError",
-    "CommandNotFoundError",
+    "PluginAlreadyLoadedError",
     "Mentionable",
     "CommandCallbackT",
     "CommandOptionsT",

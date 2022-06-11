@@ -51,6 +51,8 @@ AutocompleteCallbackT = Callable[
     ["Context", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
 ]
 
+PluginCallbackT = Callable[[], None]
+
 
 class ClassCommandProto(Protocol):
     async def callback(self, ctx: Context) -> Any:
