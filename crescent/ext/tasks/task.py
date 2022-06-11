@@ -1,6 +1,11 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from asyncio import get_event_loop, ensure_future
 from typing import Any, Callable, Awaitable, Sequence, TypeVar
+
+from hikari import StartedEvent
+from crescent.bot import Bot
 
 from crescent.internal.meta_struct import MetaStruct
 
@@ -14,8 +19,18 @@ class _Task(ABC):
         self.event_loop = get_event_loop()
         self.callback = callback
         self.running = True
+        self.app: Bot | None = None
 
     def start(self) -> None:
+        ensure_future(self._start_inner())
+
+    async def _start_inner(self) -> None:
+        if not self.app:
+            raise Exception
+
+        if not self.app.started:
+            await self.app.event_manager.wait_for(StartedEvent, timeout=None)
+
         self.call_next()
 
     def stop(self) -> None:
@@ -39,6 +54,7 @@ _TaskType = TypeVar("_TaskType", bound=_Task)
 
 
 def _on_app_set(self: MetaStruct[TaskCallbackT, _TaskType]) -> None:
+    self.metadata.app = self.app
     self.metadata.start()
 
 

@@ -108,6 +108,8 @@ class Bot(GatewayBot):
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
 
+        self._started = False
+
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
         self._command_error_handler: ErrorHandler[
@@ -127,6 +129,7 @@ class Bot(GatewayBot):
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
         async def on_started(event: StartedEvent) -> None:
+            self._started = True
             await self._on_started(event)
 
         self.subscribe(StartedEvent, on_started)
@@ -139,6 +142,11 @@ class Bot(GatewayBot):
         if self.update_commands:
             return create_task(self._command_handler.register_commands())
         return None
+
+    @property
+    def started(self) -> bool:
+        """Returns `True` if `hikari.StartedEvent` has already been dispatched."""
+        return self._started
 
     @overload
     def include(self, command: META_STRUCT) -> META_STRUCT:
