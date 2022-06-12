@@ -8,7 +8,7 @@ __all__: Sequence[str] = ("loop",)
 
 class _Loop(_Task):
     def __init__(self, callback: TaskCallbackT, *, hours: int, minutes: int, seconds: int) -> None:
-        self.timedelta = hours * 360 + minutes * 60 + seconds
+        self.timedelta = hours * 3600 + minutes * 60 + seconds
         self.first_loop = True
 
         super().__init__(callback)
