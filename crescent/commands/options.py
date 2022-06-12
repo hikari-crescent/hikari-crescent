@@ -127,8 +127,8 @@ class ClassCommandOption(Generic[T]):
 
 
 DEFAULT = TypeVar("DEFAULT")
-USER = TypeVar("USER", bound=type[User])
-ROLE = TypeVar("ROLE", bound=type[Role])
+USER = TypeVar("USER", bound="type[User]")
+ROLE = TypeVar("ROLE", bound="type[Role]")
 
 
 @overload
