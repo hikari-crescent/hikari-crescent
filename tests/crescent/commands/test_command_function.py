@@ -1,4 +1,4 @@
-from __future__ import annotations
+from typing import Optional
 
 from hikari import (
     UNDEFINED,
@@ -38,8 +38,8 @@ class TestCommandFunction:
         async def callback(
             ctx: Context,
             arg_1: Annotated[str, "1234"],
-            arg_2: Annotated[str | None, "1234"] = None,
-            arg_3: float | None = None,
+            arg_2: Annotated[Optional[str], "1234"] = None,
+            arg_3: Optional[float] = None,
         ):
             pass
 
