@@ -174,7 +174,7 @@ class CommandHandler:
                     description=unwrap(command.metadata.sub_group).description or "No Description",
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
-                    is_required=None,
+                    is_required=False,
                 )
 
                 # This for-else makes sure that sub_command_group will hold a reference
@@ -196,7 +196,7 @@ class CommandHandler:
                         description=unwrap(command.metadata.app.description),
                         type=OptionType.SUB_COMMAND,
                         options=command.metadata.app.options,
-                        is_required=None,
+                        is_required=False,
                     )
                 )
 
@@ -237,7 +237,7 @@ class CommandHandler:
                         description=unwrap(command.metadata.app.description),
                         type=command.metadata.app.type,
                         options=command.metadata.app.options,
-                        is_required=None,
+                        is_required=False,
                     )
                 )
 
