@@ -27,19 +27,19 @@ class Task(ABC):
 
         await self.app.started.wait()
 
-        self.call_next()
+        self._call_next()
 
     def stop(self) -> None:
         self.running = False
 
-    def call_async(self) -> None:
+    def _call_async(self) -> None:
         if not self.running:
             return
         ensure_future(self.callback())
-        self.call_next()
+        self._call_next()
 
-    def call_next(self) -> None:
-        self.event_loop.call_later(self.time_to_next(), self.call_async)
+    def _call_next(self) -> None:
+        self.event_loop.call_later(self.time_to_next(), self._call_async)
 
     @abstractmethod
     def time_to_next(self) -> float:

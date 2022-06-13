@@ -21,8 +21,8 @@ class Loop(Task):
             return 0
         return self.timedelta
 
-    def call_next(self) -> None:
-        super().call_next()
+    def _call_next(self) -> None:
+        super()._call_next()
         self.first_loop = False
 
 
