@@ -3,13 +3,13 @@ from typing import Callable, Sequence
 
 from croniter import croniter
 
-from crescent.ext.tasks.task import TaskCallbackT, _link_task, _Task
+from crescent.ext.tasks.task import TaskCallbackT, link_task, Task
 from crescent.internal import MetaStruct
 
-__all__: Sequence[str] = ("cronjob",)
+__all__: Sequence[str] = ("cronjob", "Cronjob")
 
 
-class _Cronjob(_Task):
+class Cronjob(Task):
     def __init__(self, cron: str, callback: TaskCallbackT) -> None:
         self.cron = croniter(cron, datetime.now())
 
@@ -21,14 +21,14 @@ class _Cronjob(_Task):
         return time_to_next.total_seconds()
 
 
-def cronjob(cron: str, /) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, _Cronjob]]:
+def cronjob(cron: str, /) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, Cronjob]]:
     """
     Run a task at the time specified by the cron schedule expression.
     """
 
-    def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, _Cronjob]:
-        meta = MetaStruct(callback, _Cronjob(cron, callback))
-        _link_task(meta)
+    def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, Cronjob]:
+        meta = MetaStruct(callback, Cronjob(cron, callback))
+        link_task(meta)
         return meta
 
     return inner

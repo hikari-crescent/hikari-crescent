@@ -1,12 +1,12 @@
 from typing import Callable, Sequence
 
-from crescent.ext.tasks.task import TaskCallbackT, _link_task, _Task
+from crescent.ext.tasks.task import TaskCallbackT, link_task, Task
 from crescent.internal import MetaStruct
 
-__all__: Sequence[str] = ("loop",)
+__all__: Sequence[str] = ("loop", "Loop")
 
 
-class _Loop(_Task):
+class Loop(Task):
     def __init__(self, callback: TaskCallbackT, *, hours: int, minutes: int, seconds: int) -> None:
         self.timedelta = hours * 3600 + minutes * 60 + seconds
         self.first_loop = True
@@ -23,15 +23,15 @@ class _Loop(_Task):
 
 def loop(
     *, hours: int = 0, minutes: int = 0, seconds: int = 0
-) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, _Loop]]:
+) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, Loop]]:
     """
     Run a callback when the bot is started and every time the specified
     time interval has passed.
     """
 
-    def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, _Loop]:
-        meta = MetaStruct(callback, _Loop(callback, hours=hours, minutes=minutes, seconds=seconds))
-        _link_task(meta)
+    def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, Loop]:
+        meta = MetaStruct(callback, Loop(callback, hours=hours, minutes=minutes, seconds=seconds))
+        link_task(meta)
         return meta
 
     return inner

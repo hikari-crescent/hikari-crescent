@@ -9,10 +9,10 @@ from crescent.internal.meta_struct import MetaStruct
 
 TaskCallbackT = Callable[[], Awaitable[None]]
 
-__all__: Sequence[str] = ("TaskCallbackT",)
+__all__: Sequence[str] = ("TaskCallbackT", "Task")
 
 
-class _Task(ABC):
+class Task(ABC):
     def __init__(self, callback: TaskCallbackT) -> None:
         self.event_loop = get_event_loop()
         self.callback = callback
@@ -46,7 +46,7 @@ class _Task(ABC):
         ...
 
 
-_TaskType = TypeVar("_TaskType", bound=_Task)
+_TaskType = TypeVar("_TaskType", bound=Task)
 
 
 def _on_app_set(self: MetaStruct[TaskCallbackT, _TaskType]) -> None:
@@ -58,6 +58,6 @@ def _unload(self: MetaStruct[TaskCallbackT, _TaskType]) -> None:
     self.metadata.stop()
 
 
-def _link_task(meta: MetaStruct[Any, _TaskType]) -> None:
+def link_task(meta: MetaStruct[Any, _TaskType]) -> None:
     meta.app_set_hooks.append(_on_app_set)
     meta.plugin_unload_hooks.append(_unload)
