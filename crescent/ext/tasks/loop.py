@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import timedelta as _timedelta
 from typing import Callable, Sequence, overload
 
-from crescent.ext.tasks.task import TaskCallbackT, link_task, Task
+from crescent.ext.tasks.task import Task, TaskCallbackT, link_task
 from crescent.internal import MetaStruct
 
 __all__: Sequence[str] = ("loop", "Loop")

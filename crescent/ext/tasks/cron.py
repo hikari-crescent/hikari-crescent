@@ -3,7 +3,7 @@ from typing import Callable, Sequence
 
 from croniter import croniter
 
-from crescent.ext.tasks.task import TaskCallbackT, link_task, Task
+from crescent.ext.tasks.task import Task, TaskCallbackT, link_task
 from crescent.internal import MetaStruct
 
 __all__: Sequence[str] = ("cronjob", "Cronjob")
