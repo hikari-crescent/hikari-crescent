@@ -18,10 +18,12 @@ class Loop(Task):
 
     def time_to_next(self) -> float:
         if self.first_loop:
-            self.first_loop = False
             return 0
-
         return self.timedelta
+
+    def call_next(self) -> None:
+        super().call_next()
+        self.first_loop = False
 
 
 retT = Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, Loop]]
