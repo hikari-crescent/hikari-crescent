@@ -5,11 +5,16 @@ from asyncio import TimerHandle, ensure_future, get_event_loop
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
 from crescent.bot import Bot
+from crescent.exceptions import CrescentException
 from crescent.internal.meta_struct import MetaStruct
 
 TaskCallbackT = Callable[[], Awaitable[None]]
 
-__all__: Sequence[str] = ("TaskCallbackT", "Task")
+__all__: Sequence[str] = ("TaskCallbackT", "Task", "TaskError")
+
+
+class TaskError(CrescentException):
+    ...
 
 
 class Task(ABC):
@@ -20,6 +25,8 @@ class Task(ABC):
         self.app: Bot | None = None
 
     def start(self) -> None:
+        if self.running:
+            raise TaskError("Task is already running.")
         ensure_future(self._start_inner())
 
     async def _start_inner(self) -> None:
