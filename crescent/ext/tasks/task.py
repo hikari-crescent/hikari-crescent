@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import ensure_future, get_event_loop
+from asyncio import TimerHandle, ensure_future, get_event_loop
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
 from crescent.bot import Bot
@@ -16,7 +16,7 @@ class Task(ABC):
     def __init__(self, callback: TaskCallbackT) -> None:
         self.event_loop = get_event_loop()
         self.callback = callback
-        self.running = True
+        self.timer_handle: TimerHandle | None = None
         self.app: Bot | None = None
 
     def start(self) -> None:
@@ -30,16 +30,21 @@ class Task(ABC):
         self._call_next()
 
     def stop(self) -> None:
-        self.running = False
+        if self.timer_handle:
+            self.timer_handle.cancel()
+
+    @property
+    def running(self) -> bool:
+        if not self.timer_handle:
+            return False
+        return not self.timer_handle.cancelled()
 
     def _call_async(self) -> None:
-        if not self.running:
-            return
         ensure_future(self.callback())
         self._call_next()
 
     def _call_next(self) -> None:
-        self.event_loop.call_later(self.time_to_next(), self._call_async)
+        self.timer_handle = self.event_loop.call_later(self.time_to_next(), self._call_async)
 
     @abstractmethod
     def time_to_next(self) -> float:
