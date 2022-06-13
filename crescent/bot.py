@@ -147,7 +147,7 @@ class Bot(GatewayBot):
     @property
     def started(self) -> aio_Event:
         """
-        Returns a `asyncio.Event` that is set when `hikari.StartedEvent` is dispatched.
+        Returns `asyncio.Event` that is set when `hikari.StartedEvent` is dispatched.
         """
         return self._started
 
