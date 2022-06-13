@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Callable, Sequence
 
 from crescent.ext.tasks.task import TaskCallbackT, link_task, Task
@@ -8,7 +9,7 @@ __all__: Sequence[str] = ("loop", "Loop")
 
 class Loop(Task):
     def __init__(self, callback: TaskCallbackT, *, hours: int, minutes: int, seconds: int) -> None:
-        self.timedelta = hours * 3600 + minutes * 60 + seconds
+        self.timedelta = timedelta(hours=hours, minutes=minutes, seconds=seconds).total_seconds()
         self.first_loop = True
 
         super().__init__(callback)
