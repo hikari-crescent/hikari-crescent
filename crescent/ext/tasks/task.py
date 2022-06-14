@@ -51,10 +51,11 @@ class Task(ABC):
         self._call_next()
 
     def _call_next(self) -> None:
-        self.timer_handle = self.event_loop.call_later(self.time_to_next(), self._call_async)
+        self.timer_handle = self.event_loop.call_later(self.next_iteration(), self._call_async)
 
     @abstractmethod
-    def time_to_next(self) -> float:
+    def next_iteration(self) -> float:
+        """Seconds until the next iteration of the function when scheduling"""
         ...
 
 
