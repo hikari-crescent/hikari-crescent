@@ -16,7 +16,7 @@ class Loop(Task):
 
         super().__init__(callback)
 
-    def next_iteration(self) -> float:
+    def _next_iteration(self) -> float:
         if self.first_loop:
             return 0
         return self.delay_seconds

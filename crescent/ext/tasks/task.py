@@ -51,11 +51,11 @@ class Task(ABC):
         self._call_next()
 
     def _call_next(self) -> None:
-        self.timer_handle = self.event_loop.call_later(self.next_iteration(), self._call_async)
+        self.timer_handle = self.event_loop.call_later(self._next_iteration(), self._call_async)
 
     @abstractmethod
-    def next_iteration(self) -> float:
-        """Seconds until the next iteration of the function when scheduling"""
+    def _next_iteration(self) -> float:
+        """Returns how long to wait until the next iteration if a task was scheduled right now."""
         ...
 
 
