@@ -10,8 +10,8 @@ __all__: Sequence[str] = ("loop", "Loop")
 
 
 class Loop(Task):
-    def __init__(self, callback: TaskCallbackT, timedelta: float) -> None:
-        self.timedelta = timedelta
+    def __init__(self, callback: TaskCallbackT, delay_seconds: float) -> None:
+        self.delay_seconds = delay_seconds
         self.first_loop = True
 
         super().__init__(callback)
@@ -19,7 +19,7 @@ class Loop(Task):
     def next_iteration(self) -> float:
         if self.first_loop:
             return 0
-        return self.timedelta
+        return self.delay_seconds
 
     def _call_next(self) -> None:
         super()._call_next()
