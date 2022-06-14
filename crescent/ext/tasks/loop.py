@@ -47,12 +47,12 @@ def loop(
     time interval has passed.
     """
     if timedelta is None:
-        timedelta = _timedelta(hours=hours, minutes=minutes, seconds=seconds)
+        time = _timedelta(hours=hours, minutes=minutes, seconds=seconds)
+    else:
+        time = timedelta
 
     def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, Loop]:
-        assert timedelta is not None  # NOTE: Mypy acting sus. `timedelta` will never be None.
-
-        meta = MetaStruct(callback, Loop(callback, timedelta.total_seconds()))
+        meta = MetaStruct(callback, Loop(callback, time.total_seconds()))
         link_task(meta)
         return meta
 
