@@ -131,7 +131,7 @@ crescent's [event error handling system](https://github.com/magpie-dev/hikari-cr
 Crescent has 2 builtin extensions.
 
 - [crescent-ext-cooldowns](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/cooldowns) - Allows you to add sliding window rate limits to your commands.
-- [crescent-ext-tasks](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/tasks) - Schedules functions to loop in the background at specified intervals.
+- [crescent-ext-tasks](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/tasks) - Schedules background tasks using loops or cronjobs.
 
 
 # Support
