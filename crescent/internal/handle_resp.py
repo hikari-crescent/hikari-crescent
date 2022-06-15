@@ -11,6 +11,7 @@ from hikari import (
     CommandType,
     InteractionType,
     OptionType,
+    Snowflake,
 )
 
 from crescent.context import Context
@@ -26,7 +27,6 @@ if TYPE_CHECKING:
         CommandInteractionOption,
         InteractionCreateEvent,
         Message,
-        Snowflake,
         User,
     )
 
@@ -217,7 +217,15 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     if resolved_type is None:
         return option.value
 
-    resolved = getattr(interaction.resolved, resolved_type)
+    resolved = getattr(interaction.resolved, resolved_type, None)
+
+    # `option.value` is guaranteed to have a value because this is not a command group.
+    assert option.value is not None
+
+    # `resolved` is None when an autocomplete command has a user or role as a previous option.
+    # This should be refactored out in the autocomplete rewrite for 1.0.0
+    if resolved is None:
+        return Snowflake(option.value)
     return resolved[option.value]
 
 
