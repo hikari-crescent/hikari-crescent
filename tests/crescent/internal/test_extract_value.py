@@ -20,7 +20,26 @@ class MockOption:
 
 def test_extract_str():
     command_interaction = MockInteraction(None)
+    option = MockOption(type=OptionType.STRING, value="12345")
 
+    assert _extract_value(option, command_interaction) == "12345"
+
+
+def test_extract_user():
+    USER = object()
+
+    command_interaction = MockInteraction(
+        resolved=ResolvedOptionData(
+            users={"12345": USER}, members={}, roles={}, channels={}, messages={}, attachments={}
+        )
+    )
+    option = MockOption(type=OptionType.USER, value="12345")
+
+    assert _extract_value(option, command_interaction) == USER
+
+
+def test_extract_autocomplete_option():
+    command_interaction = MockInteraction(None)
     option = MockOption(type=OptionType.USER, value=Snowflake(12345))
 
     assert _extract_value(option, command_interaction) == Snowflake(12345)
