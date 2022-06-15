@@ -219,10 +219,11 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
 
     resolved = getattr(interaction.resolved, resolved_type, None)
 
-    # `option.value` is guaranteed to have a value because `option.type` is `None`.
+    # `option.value` is guaranteed to have a value because `option.options` is `None` because
+    # this is not a command group.
     assert option.value is not None
 
-    # `resolved`` is None when an autocomplete command has a user or role as a previous option.
+    # `resolved` is None when an autocomplete command has a user or role as a previous option.
     # This should be refactored out in the autocomplete rewrite for 1.0.0
     if resolved is None:
         return Snowflake(option.value)
