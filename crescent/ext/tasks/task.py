@@ -58,6 +58,12 @@ class Task(ABC):
         """Returns how long to wait until the next iteration if a task was scheduled right now."""
         ...
 
+    @staticmethod
+    def _link(meta: MetaStruct[Any, _TaskType]) -> None:
+        """Sets hooks on MetaStruct required for Task to function properly."""
+        meta.app_set_hooks.append(_on_app_set)
+        meta.plugin_unload_hooks.append(_unload)
+
 
 _TaskType = TypeVar("_TaskType", bound=Task)
 
@@ -69,8 +75,3 @@ def _on_app_set(self: MetaStruct[TaskCallbackT, _TaskType]) -> None:
 
 def _unload(self: MetaStruct[TaskCallbackT, _TaskType]) -> None:
     self.metadata.stop()
-
-
-def link_task(meta: MetaStruct[Any, _TaskType]) -> None:
-    meta.app_set_hooks.append(_on_app_set)
-    meta.plugin_unload_hooks.append(_unload)

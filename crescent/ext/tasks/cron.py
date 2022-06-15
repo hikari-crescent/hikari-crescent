@@ -3,7 +3,7 @@ from typing import Callable, Sequence
 
 from croniter import croniter
 
-from crescent.ext.tasks.task import Task, TaskCallbackT, link_task
+from crescent.ext.tasks.task import Task, TaskCallbackT
 from crescent.internal import MetaStruct
 
 __all__: Sequence[str] = ("cronjob", "Cronjob")
@@ -28,7 +28,7 @@ def cronjob(cron: str, /) -> Callable[[TaskCallbackT], MetaStruct[TaskCallbackT,
 
     def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, Cronjob]:
         meta = MetaStruct(callback, Cronjob(cron, callback))
-        link_task(meta)
+        Cronjob._link(meta)
         return meta
 
     return inner
