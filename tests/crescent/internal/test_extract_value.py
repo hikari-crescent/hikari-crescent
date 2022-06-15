@@ -35,7 +35,7 @@ def test_extract_user():
     )
     option = MockOption(type=OptionType.USER, value="12345")
 
-    assert _extract_value(option, command_interaction) == USER
+    assert _extract_value(option, command_interaction) is USER
 
 
 def test_extract_autocomplete_option():
