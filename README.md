@@ -127,6 +127,13 @@ async def on_message_create(event: hikari.MessageCreateEvent):
 Using crescent's event decorator lets you use
 crescent's [event error handling system](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/error_handling/basic.py#L27).
 
+# Extensions
+Crescent has 2 builtin extensions.
+
+- [crescent-ext-cooldowns](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/cooldowns) - Allows you to add sliding window rate limits to your commands.
+- [crescent-ext-tasks](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/tasks) - Schedules functions to loop in the background at specified intervals.
+
+
 # Support
 Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!
 
