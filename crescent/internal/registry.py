@@ -5,7 +5,6 @@ from collections import defaultdict
 from inspect import iscoroutinefunction
 from logging import getLogger
 from typing import TYPE_CHECKING, Generic, TypeVar, cast
-from weakref import WeakValueDictionary
 
 from hikari import UNDEFINED, CommandOption, CommandType, ForbiddenError, OptionType, Snowflake
 from hikari.api import CommandBuilder
@@ -29,6 +28,14 @@ if TYPE_CHECKING:
 _log = getLogger(__name__)
 
 
+def _plugin_unload_callback(self: MetaStruct[Any, Any]) -> None:
+    self.app._command_handler.remove(self)
+
+
+def _command_app_set_hook(self: MetaStruct[T, AppCommandMeta]) -> None:
+    self.app._command_handler.register(self)
+
+
 def register_command(
     callback: T,
     command_type: CommandType,
@@ -44,12 +51,10 @@ def register_command(
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
-    def hook(self: MetaStruct[T, AppCommandMeta]) -> None:
-        self.app._command_handler.register(self)
-
     meta: MetaStruct[T, AppCommandMeta] = MetaStruct(
         callback=callback,
-        app_set_hooks=[hook],
+        app_set_hooks=[_command_app_set_hook],
+        plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
             deprecated=deprecated,
             autocomplete=autocomplete,
@@ -75,9 +80,7 @@ class ErrorHandler(Generic[_E]):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: WeakValueDictionary[
-            type[Exception], MetaStruct[_E, Any]
-        ] = WeakValueDictionary()
+        self.registry: dict[type[Exception], MetaStruct[_E, Any]] = dict()
 
     def register(self, meta: MetaStruct[_E, Any], exc: type[Exception]) -> None:
         if reg_meta := self.registry.get(exc):
@@ -88,6 +91,9 @@ class ErrorHandler(Generic[_E]):
             )
 
         self.registry[exc] = meta
+
+    def remove(self, exc: type[Exception]) -> None:
+        self.registry.pop(exc)
 
     async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
         """
@@ -110,9 +116,9 @@ class CommandHandler:
         self.guilds: Sequence[Snowflakeish] = guilds
         self.application_id: Snowflake | None = None
 
-        self.registry: WeakValueDictionary[
+        self.registry: dict[
             Unique, MetaStruct["Callable[..., Awaitable[Any]]", AppCommandMeta]
-        ] = WeakValueDictionary()
+        ] = dict()
 
     def register(self, command: MetaStruct[T, AppCommandMeta]) -> MetaStruct[T, AppCommandMeta]:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
@@ -121,6 +127,9 @@ class CommandHandler:
         _command = cast("MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]", command)
         self.registry[command.metadata.unique] = _command
         return command
+
+    def remove(self, command: MetaStruct[T, AppCommandMeta]) -> None:
+        self.registry.pop(command.metadata.unique)
 
     def build_commands(self) -> Sequence[AppCommand]:
 

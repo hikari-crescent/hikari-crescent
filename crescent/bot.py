@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from asyncio import Event as aio_Event
 from asyncio import Task, create_task
 from concurrent.futures import Executor
 from contextlib import suppress
@@ -7,9 +8,9 @@ from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, overload
 
+from hikari import AutocompleteInteractionOption
+from hikari import Event as hk_Event
 from hikari import (
-    AutocompleteInteractionOption,
-    Event,
     GatewayBot,
     Intents,
     InteractionCreateEvent,
@@ -109,6 +110,8 @@ class Bot(GatewayBot):
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
 
+        self._started = aio_Event()
+
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
         self._command_error_handler: ErrorHandler[
@@ -128,6 +131,7 @@ class Bot(GatewayBot):
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
         async def on_started(event: StartedEvent) -> None:
+            self._started.set()
             await self._on_started(event)
 
         self.subscribe(StartedEvent, on_started)
@@ -140,6 +144,13 @@ class Bot(GatewayBot):
         if self.update_commands:
             return create_task(self._command_handler.register_commands())
         return None
+
+    @property
+    def started(self) -> aio_Event:
+        """
+        Returns `asyncio.Event` that is set when `hikari.StartedEvent` is dispatched.
+        """
+        return self._started
 
     @overload
     def include(self, command: META_STRUCT) -> META_STRUCT:
@@ -198,7 +209,7 @@ class Bot(GatewayBot):
         print_exception(exc.__class__, exc, exc.__traceback__)
 
     async def on_crescent_event_error(
-        self, exc: Exception, event: Event, was_handled: bool
+        self, exc: Exception, event: hk_Event, was_handled: bool
     ) -> None:
         if was_handled:
             return

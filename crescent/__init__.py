@@ -6,6 +6,7 @@ from crescent.commands import *
 from crescent.context import *
 from crescent.errors import *
 from crescent.event import *
+from crescent.exceptions import *
 from crescent.mentionable import *
 from crescent.plugin import *
 from crescent.typedefs import *
@@ -36,7 +37,7 @@ __all__: Sequence[str] = (
     "event",
     "CrescentException",
     "AlreadyRegisteredError",
-    "CommandNotFoundError",
+    "PluginAlreadyLoadedError",
     "Mentionable",
     "CommandCallbackT",
     "CommandOptionsT",
