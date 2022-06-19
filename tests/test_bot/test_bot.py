@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from typing import Sequence
 
 import dotenv
@@ -6,6 +7,7 @@ import hikari
 from typing_extensions import Annotated
 
 import crescent
+from crescent.ext import tasks
 
 dotenv.load_dotenv()
 
@@ -199,6 +201,18 @@ async def autocomplete_interaction(
     ctx: crescent.Context, result: Annotated[str, crescent.Autocomplete(autocomplete_response)]
 ) -> None:
     await ctx.respond(result, ephemeral=True)
+
+
+@bot.include
+@tasks.loop(seconds=5)
+async def loop():
+    print(f"LOOP: {datetime.now()}")
+
+
+@bot.include
+@tasks.cronjob("* * * * *")
+async def cron():
+    print(f"CRON: {datetime.now()}")
 
 
 if __name__ == "__main__":

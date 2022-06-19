@@ -17,21 +17,24 @@ T = TypeVar("T", bound=Callable[..., Awaitable[Any]])
 
 def _make_catch_function(
     error_handler_var: str,
-) -> Callable[[Type[Exception]], Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]]:
-    def func(
-        *exceptions: Type[Exception],
-    ) -> Callable[[T | MetaStruct[T, Any]], MetaStruct[T, Any]]:
+) -> Callable[[Type[Exception]], Callable[[T], MetaStruct[T, Any]]]:
+    def func(*exceptions: Type[Exception]) -> Callable[[T], MetaStruct[T, Any]]:
         def app_set_hook(meta: MetaStruct[T, Any]) -> None:
             for exc in exceptions:
                 getattr(meta.app, error_handler_var).register(meta, exc)
 
-        def decorator(callback: T | MetaStruct[T, Any]) -> MetaStruct[T, Any]:
-            if isinstance(callback, MetaStruct):
-                meta = callback
-            else:
-                meta = MetaStruct(callback, None)
+        def plugin_unload_hook(meta: MetaStruct[T, Any]) -> None:
+            for exc in exceptions:
+                getattr(meta.app, error_handler_var).remove(exc)
 
-            meta.app_set_hooks.append(app_set_hook)
+        def decorator(callback: T) -> MetaStruct[T, Any]:
+            meta = MetaStruct(
+                callback,
+                None,
+                app_set_hooks=[app_set_hook],
+                plugin_unload_hooks=[plugin_unload_hook],
+            )
+
             return meta
 
         return decorator
@@ -51,8 +54,7 @@ _catch_autocomplete = _make_catch_function("_autocomplete_error_handler")
 def catch_command(
     *exceptions: Type[Exception],
 ) -> Callable[
-    [CommandErrorHandlerCallbackT[Any] | MetaStruct[CommandErrorHandlerCallbackT[Any], Any]],
-    MetaStruct[CommandErrorHandlerCallbackT[Any], Any],
+    [CommandErrorHandlerCallbackT[Any]], MetaStruct[CommandErrorHandlerCallbackT[Any], Any],
 ]:
     return _catch_command(*exceptions)
 
@@ -60,8 +62,7 @@ def catch_command(
 def catch_event(
     *exceptions: Type[Exception],
 ) -> Callable[
-    [EventErrorHandlerCallbackT[Any] | MetaStruct[EventErrorHandlerCallbackT[Any], Any]],
-    MetaStruct[EventErrorHandlerCallbackT[Any], Any],
+    [EventErrorHandlerCallbackT[Any]], MetaStruct[EventErrorHandlerCallbackT[Any], Any],
 ]:
     return _catch_event(*exceptions)
 
@@ -69,10 +70,7 @@ def catch_event(
 def catch_autocomplete(
     *exceptions: Type[Exception],
 ) -> Callable[
-    [
-        AutocompleteErrorHandlerCallbackT[Any]
-        | MetaStruct[AutocompleteErrorHandlerCallbackT[Any], Any]
-    ],
+    [AutocompleteErrorHandlerCallbackT[Any]],
     MetaStruct[AutocompleteErrorHandlerCallbackT[Any], Any],
 ]:
     return _catch_autocomplete(*exceptions)
