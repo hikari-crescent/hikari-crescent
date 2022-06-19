@@ -8,7 +8,7 @@ from hikari.api import CommandBuilder, EntityFactory
 from hikari.internal.data_binding import JSONObject
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence
+    from typing import Any, Sequence, Type
 
     from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
 
@@ -35,7 +35,7 @@ class Unique:
 
     @classmethod
     def from_meta_struct(
-        cls: type[Unique], command: MetaStruct[CommandCallbackT, AppCommandMeta]
+        cls: Type[Unique], command: MetaStruct[CommandCallbackT, AppCommandMeta]
     ) -> Unique:
         return cls(
             name=command.metadata.app.name,
@@ -46,7 +46,7 @@ class Unique:
         )
 
     @classmethod
-    def from_app_command_meta(cls: type[Unique], command: AppCommandMeta) -> Unique:
+    def from_app_command_meta(cls: Type[Unique], command: AppCommandMeta) -> Unique:
         return cls(
             name=command.app.name,
             type=command.app.type,
