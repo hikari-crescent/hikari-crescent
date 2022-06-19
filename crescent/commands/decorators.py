@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
+from inspect import isclass
 from typing import TYPE_CHECKING, Awaitable, Callable, Dict, Type, overload
 
 from hikari import CommandOption, CommandType, Snowflakeish
@@ -98,7 +99,6 @@ def command(
                 continue
 
             generated = v._gen_option(n)
-            generated.name = generated.name.lower()
             options.append(generated)
 
             if v.autocomplete:
@@ -124,7 +124,6 @@ def command(
             if not option:
                 continue
 
-            option.name = option.name.lower()
             options.append(option)
 
             autocomplete_func = get_autocomplete_func(param)
@@ -134,7 +133,7 @@ def command(
     return register_command(
         callback=callback_func,
         command_type=CommandType.SLASH,
-        name=name or callback.__name__.lower(),
+        name=name or callback.__name__.lower() if isclass(callback) else callback.__name__,
         guild=guild,
         description=description or "No Description",
         options=options,
