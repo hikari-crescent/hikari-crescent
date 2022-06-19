@@ -133,7 +133,6 @@ def command(
     return register_command(
         callback=callback_func,
         command_type=CommandType.SLASH,
-        name=name or callback.__name__.lower() if isclass(callback) else callback.__name__,
         name=name or (callback.__name__.lower() if isclass(callback) else callback.__name__),
         guild=guild,
         description=description or "No Description",
