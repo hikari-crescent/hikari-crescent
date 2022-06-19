@@ -98,6 +98,7 @@ def command(
                 continue
 
             generated = v._gen_option(n)
+            generated.name = generated.name.lower()
             options.append(generated)
 
             if v.autocomplete:
@@ -123,6 +124,7 @@ def command(
             if not option:
                 continue
 
+            option.name = option.name.lower()
             options.append(option)
 
             autocomplete_func = get_autocomplete_func(param)
@@ -132,7 +134,7 @@ def command(
     return register_command(
         callback=callback_func,
         command_type=CommandType.SLASH,
-        name=name or callback.__name__,
+        name=name.lower() if name is not None else callback.__name__.lower(),
         guild=guild,
         description=description or "No Description",
         options=options,
