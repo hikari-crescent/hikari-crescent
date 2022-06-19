@@ -134,7 +134,7 @@ def command(
     return register_command(
         callback=callback_func,
         command_type=CommandType.SLASH,
-        name=name.lower() if name is not None else callback.__name__.lower(),
+        name=name or callback.__name__.lower(),
         guild=guild,
         description=description or "No Description",
         options=options,
