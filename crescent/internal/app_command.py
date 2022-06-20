@@ -138,8 +138,7 @@ class AppCommand(CommandBuilder):
         """
         This method isn't used but someone made it an abstract method in CommandBuilder...
         """
-        _LOG.warning("Method `create` is not implemented for `AppCommand`.")
-        return  # type: ignore
+        raise NotImplementedError("Method `create` is not implemented for `AppCommand`.")
 
 
 @define
