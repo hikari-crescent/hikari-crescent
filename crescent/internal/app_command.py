@@ -134,7 +134,6 @@ class AppCommand(CommandBuilder):
         """
         This method isn't used but someone made it an abstract method in CommandBuilder...
         """
-        ...
 
 
 @define
