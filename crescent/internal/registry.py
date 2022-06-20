@@ -260,7 +260,7 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def post_guild_command(
+    async def post_guild_commands(
         self, commands: Sequence[CommandBuilder], guild: Snowflakeish
     ) -> None:
         try:
@@ -305,7 +305,7 @@ class CommandHandler:
                 application=self.application_id, commands=global_commands
             ),
             gather_iter(
-                self.post_guild_command(commands, guild)
+                self.post_guild_commands(commands, guild)
                 for guild, commands in command_guilds.items()
             ),
             gather_iter(
