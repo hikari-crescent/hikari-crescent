@@ -1,6 +1,6 @@
 from __future__ import annotations
-from logging import getLogger
 
+from logging import getLogger
 from typing import TYPE_CHECKING
 
 from attr import define, field
