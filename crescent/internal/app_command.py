@@ -1,4 +1,5 @@
 from __future__ import annotations
+from logging import getLogger
 
 from typing import TYPE_CHECKING
 
@@ -24,6 +25,9 @@ if TYPE_CHECKING:
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
+
+
+_LOG = getLogger(__name__)
 
 
 @define(hash=True)
@@ -134,6 +138,7 @@ class AppCommand(CommandBuilder):
         """
         This method isn't used but someone made it an abstract method in CommandBuilder...
         """
+        _LOG.warning("Method `create` is not implemented for `AppCommand`.")
 
 
 @define
