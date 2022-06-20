@@ -5,12 +5,12 @@ from sys import version_info
 from typing import TYPE_CHECKING, get_type_hints
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Sequence
+    from typing import Any, Callable, Sequence
 
 __all__: Sequence[str] = ("get_parameters",)
 
 
-def convert_signiture(param: Parameter, type_hints: Dict[str, type[Any]]) -> Parameter:
+def convert_signiture(param: Parameter, type_hints: dict[str, type[Any]]) -> Parameter:
     annotation = type_hints.get(param.name, None)
     return Parameter(
         name=param.name,

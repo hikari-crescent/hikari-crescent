@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, Sequence, Type, TypeVar
+from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
 from crescent.internal.meta_struct import MetaStruct
 from crescent.typedefs import (
@@ -17,8 +17,8 @@ T = TypeVar("T", bound=Callable[..., Awaitable[Any]])
 
 def _make_catch_function(
     error_handler_var: str,
-) -> Callable[[Type[Exception]], Callable[[T], MetaStruct[T, Any]]]:
-    def func(*exceptions: Type[Exception]) -> Callable[[T], MetaStruct[T, Any]]:
+) -> Callable[[type[Exception]], Callable[[T], MetaStruct[T, Any]]]:
+    def func(*exceptions: type[Exception]) -> Callable[[T], MetaStruct[T, Any]]:
         def app_set_hook(meta: MetaStruct[T, Any]) -> None:
             for exc in exceptions:
                 getattr(meta.app, error_handler_var).register(meta, exc)
@@ -52,7 +52,7 @@ _catch_autocomplete = _make_catch_function("_autocomplete_error_handler")
 
 
 def catch_command(
-    *exceptions: Type[Exception],
+    *exceptions: type[Exception],
 ) -> Callable[
     [CommandErrorHandlerCallbackT[Any]], MetaStruct[CommandErrorHandlerCallbackT[Any], Any],
 ]:
@@ -60,7 +60,7 @@ def catch_command(
 
 
 def catch_event(
-    *exceptions: Type[Exception],
+    *exceptions: type[Exception],
 ) -> Callable[
     [EventErrorHandlerCallbackT[Any]], MetaStruct[EventErrorHandlerCallbackT[Any], Any],
 ]:
@@ -68,7 +68,7 @@ def catch_event(
 
 
 def catch_autocomplete(
-    *exceptions: Type[Exception],
+    *exceptions: type[Exception],
 ) -> Callable[
     [AutocompleteErrorHandlerCallbackT[Any]],
     MetaStruct[AutocompleteErrorHandlerCallbackT[Any], Any],

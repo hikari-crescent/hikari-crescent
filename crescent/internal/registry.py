@@ -15,7 +15,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, DefaultDict, List, Optional, Sequence, Type
+    from typing import Any, Awaitable, Callable, DefaultDict, Sequence
 
     from hikari import Snowflakeish, UndefinedOr
 
@@ -40,9 +40,9 @@ def register_command(
     callback: T,
     command_type: CommandType,
     name: str,
-    guild: Optional[Snowflakeish] = None,
-    description: Optional[str] = None,
-    options: Optional[Sequence[CommandOption]] = None,
+    guild: Snowflakeish | None = None,
+    description: str | None = None,
+    options: Sequence[CommandOption] | None = None,
     default_permission: UndefinedOr[bool] = UNDEFINED,
     deprecated: bool = False,
     autocomplete: dict[str, AutocompleteCallbackT] = {},
@@ -80,19 +80,19 @@ class ErrorHandler(Generic[_E]):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: dict[Type[Exception], MetaStruct[_E, Any]] = dict()
+        self.registry: dict[type[Exception], MetaStruct[_E, Any]] = dict()
 
-    def register(self, meta: MetaStruct[_E, Any], exc: Type[Exception]) -> None:
+    def register(self, meta: MetaStruct[_E, Any], exc: type[Exception]) -> None:
         if reg_meta := self.registry.get(exc):
             raise AlreadyRegisteredError(
                 f"`{getattr(meta.callback, '__name__')}` can not catch `{exc.__name__}`."
-                f"`{exc.__name__}` is already registered to"
+                f" `{exc.__name__}` is already registered to"
                 f" `{reg_meta.callback.__name__}`."
             )
 
         self.registry[exc] = meta
 
-    def remove(self, exc: Type[Exception]) -> None:
+    def remove(self, exc: type[Exception]) -> None:
         self.registry.pop(exc)
 
     async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
@@ -114,7 +114,7 @@ class CommandHandler:
     def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
         self.bot: Bot = bot
         self.guilds: Sequence[Snowflakeish] = guilds
-        self.application_id: Optional[Snowflake] = None
+        self.application_id: Snowflake | None = None
 
         self.registry: dict[
             Unique, MetaStruct["Callable[..., Awaitable[Any]]", AppCommandMeta]
@@ -139,7 +139,7 @@ class CommandHandler:
             if command.metadata.deprecated:
                 continue
 
-            if command.metadata.sub_group:
+            elif command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
                 #
                 # command
@@ -183,18 +183,16 @@ class CommandHandler:
                     description=unwrap(command.metadata.sub_group).description or "No Description",
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
-                    is_required=None,  # type: ignore
+                    is_required=False,
                 )
 
                 # This for-else makes sure that sub_command_group will hold a reference
                 # to the subcommand group that we want to modify to hold `command`
                 for cmd_in_children in children:
-                    if all(
-                        (
-                            cmd_in_children.name == sub_command_group.name,
-                            cmd_in_children.description == sub_command_group.description,
-                            cmd_in_children.type == sub_command_group.type,
-                        )
+                    if (
+                        cmd_in_children.name == sub_command_group.name
+                        and cmd_in_children.description == sub_command_group.description
+                        and cmd_in_children.type == sub_command_group.type
                     ):
                         sub_command_group = cmd_in_children
                         break
@@ -207,13 +205,11 @@ class CommandHandler:
                         description=unwrap(command.metadata.app.description),
                         type=OptionType.SUB_COMMAND,
                         options=command.metadata.app.options,
-                        is_required=None,  # type: ignore
+                        is_required=False,
                     )
                 )
 
-                continue
-
-            if command.metadata.group:
+            elif command.metadata.group:
                 # Any command at this point will only have one level of nesting.
                 #
                 # Command
@@ -250,13 +246,12 @@ class CommandHandler:
                         description=unwrap(command.metadata.app.description),
                         type=command.metadata.app.type,
                         options=command.metadata.app.options,
-                        is_required=None,  # type: ignore
+                        is_required=False,
                     )
                 )
 
-                continue
-
-            built_commands[Unique.from_meta_struct(command)] = command.metadata.app
+            else:
+                built_commands[Unique.from_meta_struct(command)] = command.metadata.app
 
         return tuple(built_commands.values())
 
@@ -288,8 +283,8 @@ class CommandHandler:
 
         commands = self.build_commands()
 
-        command_guilds: DefaultDict[Snowflakeish, List[AppCommand]] = defaultdict(list)
-        global_commands: List[AppCommand] = []
+        command_guilds: DefaultDict[Snowflakeish, list[AppCommand]] = defaultdict(list)
+        global_commands: list[AppCommand] = []
 
         for command in commands:
             if command.guild_id:
