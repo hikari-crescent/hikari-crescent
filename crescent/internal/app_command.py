@@ -8,7 +8,7 @@ from hikari import UNDEFINED, CommandOption, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List, MutableMapping, Optional, Sequence, Type
+    from typing import Any, Dict, List, Optional, Sequence, Type
 
     from hikari import (
         CommandType,
@@ -105,7 +105,7 @@ class AppCommand(CommandBuilder):
     def is_same_command(self, o: AppCommand) -> bool:
         return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
 
-    def build(self, encoder: EntityFactory) -> MutableMapping[str, Any]:
+    def build(self, encoder: EntityFactory) -> dict[str, Any]:
         out: Dict[str, Any] = {"name": self.name, "type": self.type}
 
         if self.description:
