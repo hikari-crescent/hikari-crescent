@@ -5,12 +5,21 @@ from typing import TYPE_CHECKING
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
-from hikari.internal.data_binding import JSONObject
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List, Optional, Sequence, Type
+    from typing import Any, Dict, List, Optional, Sequence, Type, MutableMapping
 
-    from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
+    from hikari import (
+        CommandType,
+        Snowflake,
+        UndefinedNoneOr,
+        UndefinedOr,
+        PartialCommand,
+        SnowflakeishOr,
+        PartialGuild,
+        PartialApplication,
+    )
+    from hikari.api.rest import RESTClient
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.meta_struct import MetaStruct
@@ -92,7 +101,7 @@ class AppCommand(CommandBuilder):
     def is_same_command(self, o: AppCommand) -> bool:
         return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
 
-    def build(self, encoder: EntityFactory) -> JSONObject:
+    def build(self, encoder: EntityFactory) -> MutableMapping[str, Any]:
         out: Dict[str, Any] = {"name": self.name, "type": self.type}
 
         if self.description:
@@ -113,6 +122,19 @@ class AppCommand(CommandBuilder):
             _id = Snowflake(_id)
         self.id = _id
         return self
+
+    async def create(
+        self,
+        rest: RESTClient,
+        application: SnowflakeishOr[PartialApplication],
+        /,
+        *,
+        guild: UndefinedOr[SnowflakeishOr[PartialGuild]] = UNDEFINED,
+    ) -> PartialCommand:
+        """
+        This method isn't used but someone made it an abstract method in CommandBuilder...
+        """
+        ...
 
 
 @define
