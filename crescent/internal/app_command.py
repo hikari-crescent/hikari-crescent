@@ -7,17 +7,17 @@ from hikari import UNDEFINED, CommandOption, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List, Optional, Sequence, Type, MutableMapping
+    from typing import Any, Dict, List, MutableMapping, Optional, Sequence, Type
 
     from hikari import (
         CommandType,
+        PartialApplication,
+        PartialCommand,
+        PartialGuild,
         Snowflake,
+        SnowflakeishOr,
         UndefinedNoneOr,
         UndefinedOr,
-        PartialCommand,
-        SnowflakeishOr,
-        PartialGuild,
-        PartialApplication,
     )
     from hikari.api.rest import RESTClient
 
