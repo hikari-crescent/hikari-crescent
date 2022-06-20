@@ -177,7 +177,7 @@ async def error_autocomplete(
 
 @bot.include
 @crescent.command
-async def error_autocomplete(
+async def error_autocomplete_command(
     ctx: crescent.Context, option: Annotated[str, crescent.Autocomplete(error_autocomplete)]
 ) -> None:
     await ctx.respond(option)
