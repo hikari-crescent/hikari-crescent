@@ -317,6 +317,7 @@ def option(
         option_type = PartialChannel
     else:
         channel_types = None
+        raise TypeError(f"`{option_type}` is an invalid option type")
 
     return ClassCommandOption(
         type=OPTIONS_TYPE_MAP[option_type],

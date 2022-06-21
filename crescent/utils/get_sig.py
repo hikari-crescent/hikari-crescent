@@ -11,7 +11,7 @@ __all__: Sequence[str] = ("get_parameters",)
 
 
 def convert_signiture(param: Parameter, type_hints: dict[str, type[Any]]) -> Parameter:
-    annotation = type_hints.get(param.name, None)
+    annotation = type_hints.get(param.name)
     return Parameter(
         name=param.name,
         annotation=annotation or param.annotation,
@@ -33,4 +33,4 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
 
     sig = signature(func)
 
-    return [convert_signiture(param, type_hints) for param in sig.parameters.values()]  # type: ignore
+    return [convert_signiture(param, type_hints) for param in sig.parameters.values()]  # pyright: ignore

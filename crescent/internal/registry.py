@@ -80,7 +80,7 @@ class ErrorHandler(Generic[_E]):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.registry: dict[type[Exception], MetaStruct[_E, Any]] = dict()
+        self.registry: dict[type[Exception], MetaStruct[_E, Any]] = {}
 
     def register(self, meta: MetaStruct[_E, Any], exc: type[Exception]) -> None:
         if reg_meta := self.registry.get(exc):
@@ -118,7 +118,7 @@ class CommandHandler:
 
         self.registry: dict[
             Unique, MetaStruct["Callable[..., Awaitable[Any]]", AppCommandMeta]
-        ] = dict()
+        ] = {}
 
     def register(self, command: MetaStruct[T, AppCommandMeta]) -> MetaStruct[T, AppCommandMeta]:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
