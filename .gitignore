@@ -50,5 +50,3 @@ docs/_build/*
 .coverage
 .coverage.*
 coverage.
-
-venv/*
