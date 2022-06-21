@@ -21,7 +21,7 @@ def convert_signiture(param: Parameter, type_hints: dict[str, type[Any]]) -> Par
 
 
 def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
-    # NOTE: type: ignore is used because mypy is on python version 3.8
+    # NOTE: type: ignore is used because mypy and pyright are on python version 3.8
 
     if version_info >= (3, 10):
         return signature(func, eval_str=True).parameters.values()  # type: ignore
@@ -33,4 +33,4 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
 
     sig = signature(func)
 
-    return [convert_signiture(param, type_hints) for param in sig.parameters.values()]
+    return [convert_signiture(param, type_hints) for param in sig.parameters.values()]  # type: ignore

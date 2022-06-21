@@ -27,7 +27,7 @@ bot = crescent.Bot(token="...")
 @crescent.hook(first_hook)
 @crescent.hook(second_hook(5))
 @crescent.command
-async def test_command(ctx: crescent.Context, number: int):
+async def test_command(ctx: crescent.Context, number: int) -> None:
     # This code will never be reached due to `first_hook`
     await ctx.respond("Done!")
 

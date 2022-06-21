@@ -33,6 +33,7 @@ python-dotenv = "^0.19.2"
 pytest = "^7.0.0"
 pytest-asyncio = "^0.18.1"
 pytest-cov = "^3.0.0"
+pyright = "^1.1.255"
 
 [tool.black]
 line-length = 99
@@ -46,6 +47,16 @@ warn_unused_configs = true
 warn_return_any = true
 warn_redundant_casts = true
 namespace_packages = true
+
+[tool.pyright]
+include = ["crescent", "examples"]
+exclude = ["tests"]
+ignore = ["examples/basic/basic.py"]
+pythonVersion = "3.8"
+typeCheckingMode = "strict"
+reportPrivateUsage = false
+reportImportCycles = false
+reportIncompatibleMethodOverride = false
 
 [tool.isort]
 profile="black"

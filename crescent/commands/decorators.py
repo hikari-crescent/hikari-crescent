@@ -123,8 +123,7 @@ def command(
 
             options.append(option)
 
-            autocomplete_func = get_autocomplete_func(param)
-            if autocomplete_func:
+            if autocomplete_func := get_autocomplete_func(param):
                 autocomplete[option.name] = autocomplete_func
 
     return register_command(

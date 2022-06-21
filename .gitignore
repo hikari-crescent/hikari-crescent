@@ -49,4 +49,6 @@ docs/_build/*
 # coverage-py
 .coverage
 .coverage.*
-coverage.xml
+coverage.
+
+venv/*
