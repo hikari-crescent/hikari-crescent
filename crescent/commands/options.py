@@ -127,6 +127,7 @@ class ClassCommandOption(Generic[T]):
 
 
 DEFAULT = TypeVar("DEFAULT")
+USER = TypeVar("USER", bound="type[User]")  # mypy doesn't understand abstract classes with type[User]: 4717, 5374
 
 
 @overload
@@ -152,14 +153,21 @@ def option(
 
 @overload
 def option(
-    option_type: type[User], description: str = ..., *, name: str | None = ...
+    option_type: USER,  # pyright: ignore  # mypy doesn't understand abstract classes with type[User]: 4717, 5374
+    description: str = ...,
+    *,
+    name: str | None = ...,
 ) -> ClassCommandOption[User]:
     ...
 
 
 @overload
 def option(
-    option_type: type[User], description: str = ..., *, default: DEFAULT, name: str | None = ...
+    option_type: USER,  # pyright: ignore  # mypy doesn't understand abstract classes with type[User]: 4717, 5374
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    name: str | None = ...,
 ) -> ClassCommandOption[User | DEFAULT]:
     ...
 
