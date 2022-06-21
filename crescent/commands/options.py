@@ -127,7 +127,10 @@ class ClassCommandOption(Generic[T]):
 
 
 DEFAULT = TypeVar("DEFAULT")
-USER = TypeVar("USER", bound="type[User]")  # mypy doesn't understand abstract classes with type[User]: 4717, 5374
+
+# mypy doesn't understand abstract classes, so this is necessary and hence # pyright: ignore - (issues 4717, 5374)
+USER = TypeVar("USER", bound=type[User])
+ROLE = TypeVar("ROLE", bound=type[Role])
 
 
 @overload
@@ -153,35 +156,28 @@ def option(
 
 @overload
 def option(
-    option_type: USER,  # pyright: ignore  # mypy doesn't understand abstract classes with type[User]: 4717, 5374
-    description: str = ...,
-    *,
-    name: str | None = ...,
+    option_type: USER, description: str = ..., *, name: str | None = ...  # pyright: ignore
 ) -> ClassCommandOption[User]:
     ...
 
 
 @overload
 def option(
-    option_type: USER,  # pyright: ignore  # mypy doesn't understand abstract classes with type[User]: 4717, 5374
-    description: str = ...,
-    *,
-    default: DEFAULT,
-    name: str | None = ...,
+    option_type: USER, description: str = ..., *, default: DEFAULT, name: str | None = ...  # pyright: ignore
 ) -> ClassCommandOption[User | DEFAULT]:
     ...
 
 
 @overload
 def option(
-    option_type: type[Role], description: str = ..., *, name: str | None = ...
+    option_type: ROLE, description: str = ..., *, name: str | None = ...  # pyright: ignore
 ) -> ClassCommandOption[Role]:
     ...
 
 
 @overload
 def option(
-    option_type: type[Role], description: str = ..., *, default: DEFAULT, name: str | None = ...
+    option_type: ROLE, description: str = ..., *, default: DEFAULT, name: str | None = ...  # pyright: ignore
 ) -> ClassCommandOption[Role | DEFAULT]:
     ...
 
@@ -325,10 +321,14 @@ def option(
         option_type = PartialChannel
     else:
         channel_types = None
-        raise TypeError(f"`{option_type}` is an invalid option type")
+
+    # pyright adds `type` to the type annotation, but it's invalid.
+    # This also changes the KeyError to a TypeError instead.
+    if option_type not in OPTIONS_TYPE_MAP:
+        raise TypeError(f"`{option_type}` is not a valid option type")
 
     return ClassCommandOption(
-        type=OPTIONS_TYPE_MAP[option_type],
+        type=OPTIONS_TYPE_MAP[option_type],  # pyright: ignore
         description=description,
         default=default,
         choices=[CommandChoice(name=n, value=v) for n, v in choices] if choices else None,
