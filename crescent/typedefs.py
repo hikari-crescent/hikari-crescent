@@ -14,6 +14,7 @@ from typing import (
 )
 
 from hikari import (
+    Attachment,
     AutocompleteInteractionOption,
     CommandChoice,
     Event,
@@ -44,7 +45,7 @@ CommandCallbackT = Callable[..., Awaitable[Any]]
 UserCommandCallbackT = Callable[["Context", User], Awaitable[None]]
 MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]
 
-OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable"]
+OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable", Attachment]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
 AutocompleteCallbackT = Callable[

@@ -19,6 +19,7 @@ from typing import (
 
 from hikari import (
     UNDEFINED,
+    Attachment,
     ChannelType,
     CommandChoice,
     CommandOption,
@@ -61,6 +62,7 @@ OPTIONS_TYPE_MAP: Dict[Type[OptionTypesT], OptionType] = {
     Role: OptionType.ROLE,
     User: OptionType.USER,
     Mentionable: OptionType.MENTIONABLE,
+    Attachment: OptionType.ATTACHMENT,
 }
 VALID_CHANNEL_TYPES = Union[
     GuildTextChannel,
@@ -142,6 +144,7 @@ class ClassCommandOption(Generic[T]):
 DEFAULT = TypeVar("DEFAULT")
 USER = TypeVar("USER", bound=Type[User])
 ROLE = TypeVar("ROLE", bound=Type[Role])
+ATTACHMENT = TypeVar("ATTACHMENT", bound="type[Attachment]")
 
 
 @overload
@@ -190,6 +193,20 @@ def option(
 def option(
     option_type: ROLE, description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
 ) -> ClassCommandOption[Union[Role, DEFAULT]]:
+    ...
+
+
+@overload
+def option(
+    option_type: ATTACHMENT, description: str = ..., *, name: Optional[str] = ...
+) -> ClassCommandOption[Attachment]:
+    ...
+
+
+@overload
+def option(
+    option_type: ATTACHMENT, description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
+) -> ClassCommandOption[Attachment | DEFAULT]:
     ...
 
 

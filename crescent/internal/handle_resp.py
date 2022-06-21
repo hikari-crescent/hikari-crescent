@@ -152,6 +152,7 @@ _VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
     OptionType.ROLE: "roles",
     OptionType.USER: "users",
     OptionType.CHANNEL: "channels",
+    OptionType.ATTACHMENT: "attachments",
 }
 
 
