@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
 
 
-__all___: Sequence[str] = "Bot"
+__all___: Sequence[str] = ("Bot",)
 
 
 class Bot(GatewayBot):

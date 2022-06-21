@@ -115,7 +115,7 @@ class ClassCommandOption(Generic[T]):
         ...
 
     @overload
-    def __get__(self: Self, inst: object, cls: Any) -> T:
+    def __get__(self, inst: object, cls: Any) -> T:
         ...
 
     def __get__(self, inst: Any | None, cls: Any) -> Any:

@@ -19,13 +19,14 @@ attrs = "^21.4.0"
 pycooldown = "^0.1.0-beta.6"
 croniter = "^1.3.5"
 types-croniter = "^1.0.10"
+black = "^22.3.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
 mypy = "^0.931"
 autopep8 = "^1.6.0"
 isort = "^5.10.1"
-black = "^21.12b0"
+black = "^22.3.0"
 pre-commit = "^2.17.0"
 codespell = "^2.1.0"
 pdoc = "^12.0.0"
@@ -51,7 +52,7 @@ namespace_packages = true
 [tool.pyright]
 include = ["crescent", "examples"]
 exclude = ["tests"]
-ignore = ["examples/basic/basic.py"]
+ignore = ["examples/basic/basic.py", "examples/basic/autocomplete.py"]
 pythonVersion = "3.8"
 typeCheckingMode = "strict"
 reportPrivateUsage = false
