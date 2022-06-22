@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from inspect import isclass
 from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, Union, cast, overload
-from typing_extensions import reveal_type
 
 from hikari import (
     UNDEFINED,
@@ -25,6 +24,7 @@ from hikari import (
     UndefinedOr,
     User,
 )
+from typing_extensions import reveal_type
 
 from crescent.mentionable import Mentionable
 
