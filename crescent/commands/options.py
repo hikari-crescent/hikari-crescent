@@ -129,8 +129,8 @@ class ClassCommandOption(Generic[T]):
 DEFAULT = TypeVar("DEFAULT")
 
 # mypy doesn't understand abstract classes, so this is necessary and hence # pyright: ignore - (issues 4717, 5374)
-USER = TypeVar("USER", bound=type[User])
-ROLE = TypeVar("ROLE", bound=type[Role])
+USER = TypeVar("USER", bound="type[User]")
+ROLE = TypeVar("ROLE", bound="type[Role]")
 
 
 @overload
