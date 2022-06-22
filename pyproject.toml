@@ -52,7 +52,6 @@ namespace_packages = true
 [tool.pyright]
 include = ["crescent", "examples"]
 exclude = ["tests"]
-ignore = ["examples/basic/basic.py", "examples/basic/autocomplete.py"]
 pythonVersion = "3.8"
 typeCheckingMode = "strict"
 reportPrivateUsage = false

@@ -45,7 +45,9 @@ def _unwrap_optional(origin: type[Any]) -> Any:
     return args[1]
 
 
-def _get_arg(t: type[Arg] | type[Any], metadata: Iterable[Any]) -> T | None:  # pyright: ignore
+def _get_arg(
+    t: type[Arg] | type[Any], metadata: Iterable[Any]
+) -> T | None:  # pyright: ignore # reportInvalidTypeVarUse
     data: T
     for data in metadata:
         if isinstance(data, t):
