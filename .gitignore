@@ -49,4 +49,4 @@ docs/_build/*
 # coverage-py
 .coverage
 .coverage.*
-coverage.
+coverage.xml
