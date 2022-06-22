@@ -27,13 +27,10 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
         return signature(func, eval_str=True).parameters.values()  # type: ignore
 
     if version_info >= (3, 9):
-        type_hints = get_type_hints(func, include_extras=True)  # type: ignore
+        type_hints: dict[str, Any] = get_type_hints(func, include_extras=True)  # type: ignore
     else:
         type_hints = get_type_hints(func)
 
     sig = signature(func)
 
-    return [
-        convert_signiture(param, type_hints)  # pyright: ignore
-        for param in sig.parameters.values()
-    ]
+    return [convert_signiture(param, type_hints) for param in sig.parameters.values()]
