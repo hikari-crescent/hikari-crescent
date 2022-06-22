@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from inspect import isclass
 from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, Union, cast, overload
+from typing_extensions import reveal_type
 
 from hikari import (
     UNDEFINED,
@@ -331,8 +332,8 @@ def option(
     else:
         channel_types = None
 
-    # pyright adds `type` to the type annotation, but it's invalid. This also changes the KeyError
-    # to a TypeError instead.
+    # `isclass` adds `type` to the type annotation, but it's invalid. This also changes what would
+    #  be a KeyError to a TypeError instead.
     if option_type not in OPTIONS_TYPE_MAP:
         raise TypeError(f"`{option_type}` is not a valid option type")
 
