@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-# from typing import Annotated # Python 3.9+
 from typing_extensions import Annotated  # Python 3.8
+
+# If you're using Python 3.9+ import Annotated from typing instead:
+# from typing import Annotated
 
 import hikari
 import crescent

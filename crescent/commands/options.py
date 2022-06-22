@@ -155,11 +155,15 @@ def option(
     ...
 
 
+# fmt: off
 @overload
 def option(
-    option_type: USER, description: str = ..., *, name: str | None = ...  # pyright: ignore
+    option_type: USER,  # pyright: ignore
+    description: str = ...,
+    *, name: str | None = ...,
 ) -> ClassCommandOption[User]:
     ...
+# fmt: on
 
 
 @overload
@@ -173,11 +177,16 @@ def option(
     ...
 
 
+# fmt: off
 @overload
 def option(
-    option_type: ROLE, description: str = ..., *, name: str | None = ...  # pyright: ignore
+    option_type: ROLE,  # pyright: ignore
+    description: str = ...,
+    *,
+    name: str | None = ...,
 ) -> ClassCommandOption[Role]:
     ...
+# fmt: on
 
 
 @overload
