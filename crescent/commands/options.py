@@ -328,7 +328,7 @@ def option(
         raise TypeError(f"`{option_type}` is not a valid option type")
 
     return ClassCommandOption(
-        type=OPTIONS_TYPE_MAP[option_type],  # pyright: ignore
+        type=OPTIONS_TYPE_MAP[option_type],
         description=description,
         default=default,
         choices=[CommandChoice(name=n, value=v) for n, v in choices] if choices else None,
