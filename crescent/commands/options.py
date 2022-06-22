@@ -24,7 +24,6 @@ from hikari import (
     UndefinedOr,
     User,
 )
-from typing_extensions import reveal_type
 
 from crescent.mentionable import Mentionable
 
