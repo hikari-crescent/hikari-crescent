@@ -11,10 +11,7 @@ bot = crescent.Bot(token="...")
 async def autocomplete_response(
     ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[hikari.CommandChoice]:
-
     # All the other options are stored in ctx.options
-    options = ctx.options
-
     return [hikari.CommandChoice(name="Some Option", value="1234")]
 
 
