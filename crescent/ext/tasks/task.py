@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import TimerHandle, ensure_future, get_event_loop
+from asyncio import AbstractEventLoop, TimerHandle, ensure_future, get_event_loop
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
 from crescent.bot import Bot
@@ -19,7 +19,7 @@ class TaskError(CrescentException):
 
 class Task(ABC):
     def __init__(self, callback: TaskCallbackT) -> None:
-        self.event_loop = get_event_loop()
+        self.event_loop: AbstractEventLoop = get_event_loop()
         self.callback = callback
         self.timer_handle: TimerHandle | None = None
         self.app: Bot | None = None

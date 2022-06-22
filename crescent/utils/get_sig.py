@@ -33,4 +33,7 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
 
     sig = signature(func)
 
-    return [convert_signiture(param, type_hints) for param in sig.parameters.values()]  # pyright: ignore
+    return [
+        convert_signiture(param, type_hints)  # pyright: ignore
+        for param in sig.parameters.values()
+    ]

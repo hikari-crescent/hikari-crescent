@@ -79,7 +79,7 @@ class ErrorHandler(Generic[_E]):
     __slots__: Sequence[str] = ("bot", "registry")
 
     def __init__(self, bot: Bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.registry: dict[type[Exception], MetaStruct[_E, Any]] = {}
 
     def register(self, meta: MetaStruct[_E, Any], exc: type[Exception]) -> None:

@@ -163,7 +163,11 @@ def option(
 
 @overload
 def option(
-    option_type: USER, description: str = ..., *, default: DEFAULT, name: str | None = ...  # pyright: ignore
+    option_type: USER,  # pyright: ignore
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    name: str | None = ...,
 ) -> ClassCommandOption[User | DEFAULT]:
     ...
 
@@ -177,7 +181,11 @@ def option(
 
 @overload
 def option(
-    option_type: ROLE, description: str = ..., *, default: DEFAULT, name: str | None = ...  # pyright: ignore
+    option_type: ROLE,  # pyright: ignore
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    name: str | None = ...,
 ) -> ClassCommandOption[Role | DEFAULT]:
     ...
 
@@ -322,8 +330,8 @@ def option(
     else:
         channel_types = None
 
-    # pyright adds `type` to the type annotation, but it's invalid.
-    # This also changes the KeyError to a TypeError instead.
+    # pyright adds `type` to the type annotation, but it's invalid. This also changes the KeyError
+    # to a TypeError instead.
     if option_type not in OPTIONS_TYPE_MAP:
         raise TypeError(f"`{option_type}` is not a valid option type")
 
