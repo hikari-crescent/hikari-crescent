@@ -33,7 +33,7 @@ jobs:
           path: .coverage.${{ matrix.python-version }}.${{ matrix.os }}
 
   upload:
-    needs: [pytest]
+    needs: [ci]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
