@@ -16,12 +16,25 @@ def poetry_session(
     return inner
 
 
-@poetry_session
-def flake8(session: nox.Session) -> None:
+def pip_install(
+    *args: str
+) -> typing.Callable[[nox.Session], None]:
+    def inner(callback: typing.Callable[[nox.Session], None]):
+        @nox.session(name=callback.__name__)
+        def inner(session: nox.Session):
+            for arg in args:
+                session.install(arg)
+            callback(session)
+        return inner
+    return inner
+
+
+@pip_install("flake8")
+def lint(session: nox.Session) -> None:
     session.run("flake8", "crescent")
 
 
-@poetry_session
+@pip_install("codespell")
 def codespell(session: nox.Session) -> None:
     session.run("codespell", "crescent")
 
@@ -33,7 +46,7 @@ def mypy(session: nox.Session) -> None:
 
 @poetry_session
 def pytest(session: nox.Session) -> None:
-    session.run("pytest", "tests/crescent")
+    session.run("poetry", "run", "pytest", "tests/crescent", "--cov=crescent/")
 
 
 @poetry_session
