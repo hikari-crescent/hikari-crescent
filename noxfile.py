@@ -16,16 +16,16 @@ def poetry_session(
     return inner
 
 
-def pip_install(
-    *args: str
-) -> typing.Callable[[nox.Session], None]:
+def pip_install(*args: str) -> typing.Callable[[nox.Session], None]:
     def inner(callback: typing.Callable[[nox.Session], None]):
         @nox.session(name=callback.__name__)
         def inner(session: nox.Session):
             for arg in args:
                 session.install(arg)
             callback(session)
+
         return inner
+
     return inner
 
 
