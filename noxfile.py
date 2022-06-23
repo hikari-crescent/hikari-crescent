@@ -30,7 +30,7 @@ def pip_install(*args: str) -> typing.Callable[[nox.Session], None]:
 
 
 @pip_install("flake8")
-def lint(session: nox.Session) -> None:
+def flake8(session: nox.Session) -> None:
     session.run("flake8", "crescent")
 
 
