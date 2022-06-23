@@ -9,7 +9,7 @@ jobs:
         os: [ ubuntu, windows ]
       fail-fast: false
 
-    name: ${{ matrix.python-version }} ${{ matrix.os }})
+    name: ${{ matrix.python-version }} ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
