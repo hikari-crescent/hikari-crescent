@@ -17,3 +17,4 @@ jobs:
         run: |
           poetry install
           poetry run pyright
+          poetry run pyright --verifytypes crescent
