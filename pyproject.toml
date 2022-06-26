@@ -22,7 +22,7 @@ types-croniter = "^1.0.10"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
-mypy = "^0.931"
+mypy = "^0.961"
 autopep8 = "^1.6.0"
 isort = "^5.10.1"
 black = "^21.12b0"
