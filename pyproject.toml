@@ -58,6 +58,7 @@ typeCheckingMode = "strict"
 reportPrivateUsage = false
 reportImportCycles = false
 reportIncompatibleMethodOverride = false
+reportWildcardImportFromLibrary = false
 
 [tool.isort]
 profile="black"
