@@ -45,6 +45,11 @@ def mypy(session: nox.Session) -> None:
 
 
 @poetry_session
+def pyright(session: nox.Session) -> None:
+    session.run("pyright")
+
+
+@poetry_session
 def pytest(session: nox.Session) -> None:
     session.run("poetry", "run", "pytest", "tests/crescent", "--cov=crescent/")
 
