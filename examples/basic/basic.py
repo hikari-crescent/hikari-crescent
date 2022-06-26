@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing_extensions import Annotated  # Python 3.8
 
-# If you're using Python 3.9+ import Annotated from typing instead:
+# If you're using Python 3.9+, use this import instead:
 # from typing import Annotated
 
 import hikari
