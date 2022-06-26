@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from inspect import isclass
 from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, Union, cast, overload
 
 from hikari import (
@@ -326,27 +325,25 @@ def option(
     name: str | None = None,
     autocomplete: AutocompleteCallbackT | None = None,
 ) -> ClassCommandOption[Any]:
+
+    _option_type: type[OptionTypesT]
     if (
-        isclass(option_type)
+        isinstance(option_type, type)
         and issubclass(option_type, PartialChannel)
         and option_type is not PartialChannel
     ):
         option_type = cast(type[VALID_CHANNEL_TYPES], option_type)
         channel_types = get_channel_types(option_type)
-        option_type = PartialChannel
+        _option_type = PartialChannel
     elif isinstance(option_type, Sequence):
         channel_types = get_channel_types(*option_type)
-        option_type = PartialChannel
+        _option_type = PartialChannel
     else:
+        _option_type = option_type
         channel_types = None
 
-    # `isclass` adds `type` to the type annotation, but it's invalid. This also changes what would
-    #  be a KeyError to a TypeError instead.
-    if option_type not in OPTIONS_TYPE_MAP:
-        raise TypeError(f"`{option_type}` is not a valid option type")
-
     return ClassCommandOption(
-        type=OPTIONS_TYPE_MAP[option_type],
+        type=OPTIONS_TYPE_MAP[_option_type],
         description=description,
         default=default,
         choices=[CommandChoice(name=n, value=v) for n, v in choices] if choices else None,
