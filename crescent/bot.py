@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
 
 
-__all___: Sequence[str] = "Bot"
+__all___: Sequence[str] = ("Bot",)
 
 
 class Bot(GatewayBot):
@@ -172,9 +172,8 @@ class Bot(GatewayBot):
 
         return command
 
-    @classmethod
+    @staticmethod
     def print_banner(
-        cls,
         banner: str | None,
         allow_color: bool,
         force_color: bool,
@@ -192,7 +191,7 @@ class Bot(GatewayBot):
         if extra_args:
             args.update(extra_args)
 
-        super().print_banner(banner, allow_color, force_color, extra_args=args)
+        super(Bot, Bot).print_banner(banner, allow_color, force_color, extra_args=args)
 
     @property
     def plugins(self) -> PluginManager:

@@ -4,11 +4,11 @@ import crescent
 # exactly the same as plugins.
 
 
-def first_hook(ctx: crescent.Context):
+async def first_hook(ctx: crescent.Context) -> None:
     pass
 
 
-def second_hook(ctx: crescent.Context):
+async def second_hook(ctx: crescent.Context) -> None:
     pass
 
 
@@ -28,5 +28,5 @@ plugin = crescent.Plugin(
 @plugin.include
 @crescent.hook(second_hook)
 @crescent.command
-async def say(ctx: crescent.Context, word: str):
+async def say(ctx: crescent.Context, word: str) -> None:
     await ctx.respond(word)

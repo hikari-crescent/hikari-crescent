@@ -177,7 +177,7 @@ async def error_autocomplete(
 
 @bot.include
 @crescent.command
-async def error_autocomplete(
+async def error_autocomplete_command(
     ctx: crescent.Context, option: Annotated[str, crescent.Autocomplete(error_autocomplete)]
 ) -> None:
     await ctx.respond(option)
@@ -205,13 +205,13 @@ async def autocomplete_interaction(
 
 @bot.include
 @tasks.loop(seconds=5)
-async def loop():
+async def loop() -> None:
     print(f"LOOP: {datetime.now()}")
 
 
 @bot.include
 @tasks.cronjob("* * * * *")
-async def cron():
+async def cron() -> None:
     print(f"CRON: {datetime.now()}")
 
 

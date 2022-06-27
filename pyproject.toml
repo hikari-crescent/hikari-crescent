@@ -33,6 +33,7 @@ python-dotenv = "^0.20.0"
 pytest = "^7.0.0"
 pytest-asyncio = "^0.18.1"
 pytest-cov = "^3.0.0"
+pyright = "^1.1.255"
 nox = "^2022.1.7"
 
 [tool.black]
@@ -47,6 +48,16 @@ warn_unused_configs = true
 warn_return_any = true
 warn_redundant_casts = true
 namespace_packages = true
+
+[tool.pyright]
+include = ["crescent", "examples"]
+exclude = ["tests"]
+pythonVersion = "3.8"
+typeCheckingMode = "strict"
+reportPrivateUsage = false
+reportImportCycles = false
+reportIncompatibleMethodOverride = false
+reportWildcardImportFromLibrary = false
 
 [tool.isort]
 profile="black"

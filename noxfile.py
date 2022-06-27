@@ -41,7 +41,13 @@ def codespell(session: nox.Session) -> None:
 
 @poetry_session
 def mypy(session: nox.Session) -> None:
-    session.run("mypy", "crescent")
+    session.run("poetry", "run", "mypy", "crescent")
+
+
+@poetry_session
+def pyright(session: nox.Session) -> None:
+    session.run("poetry", "run", "pyright")
+    session.run("poetry", "run", "pyright", "--verifytypes", "crescent")
 
 
 @poetry_session

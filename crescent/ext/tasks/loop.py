@@ -12,7 +12,7 @@ __all__: Sequence[str] = ("loop", "Loop")
 class Loop(Task):
     def __init__(self, callback: TaskCallbackT, delay_seconds: float) -> None:
         self.delay_seconds = delay_seconds
-        self.first_loop = True
+        self.first_loop: bool = True
 
         super().__init__(callback)
 

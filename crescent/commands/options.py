@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from inspect import isclass
 from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, Union, cast, overload
 
 from hikari import (
@@ -115,7 +114,7 @@ class ClassCommandOption(Generic[T]):
         ...
 
     @overload
-    def __get__(self: Self, inst: object, cls: Any) -> T:
+    def __get__(self, inst: object, cls: Any) -> T:
         ...
 
     def __get__(self, inst: Any | None, cls: Any) -> Any:
@@ -127,6 +126,9 @@ class ClassCommandOption(Generic[T]):
 
 
 DEFAULT = TypeVar("DEFAULT")
+
+# mypy doesn't understand abstract classes, so this is necessary and hence # pyright: ignore
+# (github issues 4717, 5374)
 USER = TypeVar("USER", bound="type[User]")
 ROLE = TypeVar("ROLE", bound="type[Role]")
 
@@ -152,30 +154,47 @@ def option(
     ...
 
 
+# fmt: off
 @overload
 def option(
-    option_type: USER, description: str = ..., *, name: str | None = ...
+    option_type: USER,  # pyright: ignore
+    description: str = ...,
+    *, name: str | None = ...,
 ) -> ClassCommandOption[User]:
     ...
+# fmt: on
 
 
 @overload
 def option(
-    option_type: USER, description: str = ..., *, default: DEFAULT, name: str | None = ...
+    option_type: USER,  # pyright: ignore
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    name: str | None = ...,
 ) -> ClassCommandOption[User | DEFAULT]:
     ...
 
 
+# fmt: off
 @overload
 def option(
-    option_type: ROLE, description: str = ..., *, name: str | None = ...
+    option_type: ROLE,  # pyright: ignore
+    description: str = ...,
+    *,
+    name: str | None = ...,
 ) -> ClassCommandOption[Role]:
     ...
+# fmt: on
 
 
 @overload
 def option(
-    option_type: ROLE, description: str = ..., *, default: DEFAULT, name: str | None = ...
+    option_type: ROLE,  # pyright: ignore
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    name: str | None = ...,
 ) -> ClassCommandOption[Role | DEFAULT]:
     ...
 
@@ -306,22 +325,25 @@ def option(
     name: str | None = None,
     autocomplete: AutocompleteCallbackT | None = None,
 ) -> ClassCommandOption[Any]:
+
+    _option_type: type[OptionTypesT]
     if (
-        isclass(option_type)
+        isinstance(option_type, type)
         and issubclass(option_type, PartialChannel)
         and option_type is not PartialChannel
     ):
         option_type = cast(type[VALID_CHANNEL_TYPES], option_type)
         channel_types = get_channel_types(option_type)
-        option_type = PartialChannel
+        _option_type = PartialChannel
     elif isinstance(option_type, Sequence):
         channel_types = get_channel_types(*option_type)
-        option_type = PartialChannel
+        _option_type = PartialChannel
     else:
+        _option_type = option_type
         channel_types = None
 
     return ClassCommandOption(
-        type=OPTIONS_TYPE_MAP[option_type],
+        type=OPTIONS_TYPE_MAP[_option_type],
         description=description,
         default=default,
         choices=[CommandChoice(name=n, value=v) for n, v in choices] if choices else None,

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, Awaitable, Callable, overload
+from inspect import isclass, isfunction
+from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import CommandOption, CommandType, Snowflakeish
 
@@ -88,7 +89,11 @@ def command(
     autocomplete: dict[str, AutocompleteCallbackT] = {}
     options: list[CommandOption] = []
 
-    if isinstance(callback, type) and isinstance(callback, object):
+    if isclass(callback):
+        # If callback is a class it must be `type[ClassCommandProto]` because of the function
+        # signature.
+        callback = cast("type[ClassCommandProto]", callback)
+
         name_map: dict[str, str] = {}
         defaults: dict[str, Any] = {}
 
@@ -110,7 +115,7 @@ def command(
 
         callback_func = _class_command_callback(callback, defaults, name_map)
 
-    else:
+    elif isfunction(callback):
         callback_func = callback
 
         for param in get_parameters(callback_func):
@@ -123,9 +128,11 @@ def command(
 
             options.append(option)
 
-            autocomplete_func = get_autocomplete_func(param)
-            if autocomplete_func:
+            if autocomplete_func := get_autocomplete_func(param):
                 autocomplete[option.name] = autocomplete_func
+
+    else:
+        raise NotImplementedError("This function only works with classes and functions")
 
     return register_command(
         callback=callback_func,
