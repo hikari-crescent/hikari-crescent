@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, TypeVar
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
+
 from crescent.exceptions import HikariMoment
 
 if TYPE_CHECKING:
@@ -12,10 +13,10 @@ if TYPE_CHECKING:
 
     from hikari import (
         CommandType,
-        Permissions,
         PartialApplication,
         PartialCommand,
         PartialGuild,
+        Permissions,
         Snowflake,
         SnowflakeishOr,
         UndefinedNoneOr,
