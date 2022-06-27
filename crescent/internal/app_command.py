@@ -122,21 +122,22 @@ class AppCommand(CommandBuilder):
         self.default_permission = state
         return self
 
-    @property
-    def default_member_permissions(self) -> Permissions | int:
-        raise HikariMoment()
-
     def set_id(self, _id: UndefinedOr[Snowflakeish]) -> AppCommand:
         if isinstance(_id, int):
             _id = Snowflake(_id)
         self.id = _id
         return self
 
-    def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:
+    @property
+    def default_member_permissions(self) -> Permissions | int:  # noqa
+        raise HikariMoment()
+
+
+    def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:  # noqa
         raise HikariMoment()
 
     @property
-    def is_dm_enabled(self) -> UndefinedOr[bool]:
+    def is_dm_enabled(self) -> UndefinedOr[bool]:  # noqa
         raise HikariMoment()
 
     async def create(  # noqa
@@ -149,7 +150,7 @@ class AppCommand(CommandBuilder):
     ) -> PartialCommand:
         raise HikariMoment()
 
-    def set_default_member_permissions(
+    def set_default_member_permissions(  # noqa
         self: Self, default_member_permissions: UndefinedType | int | Permissions, /
     ) -> Self:
         raise HikariMoment()
