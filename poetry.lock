@@ -97,7 +97,7 @@ toml = "*"
 name = "black"
 version = "22.3.0"
 description = "The uncompromising code formatter."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6.2"
 
@@ -138,7 +138,7 @@ unicode_backport = ["unicodedata2"]
 name = "click"
 version = "8.1.3"
 description = "Composable command line interface toolkit"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -409,7 +409,7 @@ pyparsing = ">=2.0.2,<3.0.5 || >3.0.5"
 name = "pathspec"
 version = "0.9.0"
 description = "Utility library for gitignore style pattern matching of file paths."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
@@ -434,7 +434,7 @@ dev = ["flake8", "hypothesis", "mypy", "pytest", "pytest-cov", "pytest-timeout",
 name = "platformdirs"
 version = "2.5.2"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -639,13 +639,13 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
 [[package]]
 name = "types-croniter"
-version = "1.0.10"
+version = "1.3.0"
 description = "Typing stubs for croniter"
 category = "main"
 optional = false
@@ -655,7 +655,7 @@ python-versions = "*"
 name = "typing-extensions"
 version = "4.2.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -692,7 +692,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "bf62329204435cc4e2af52f25a1c7b906a4e4608811a744e1e0a0868bdba1d78"
+content-hash = "b03722b6bfe241fe3a460527437ce5efc67ff9badcb7a062b64ec9af968272b8"
 
 [metadata.files]
 aiohttp = [
@@ -1255,8 +1255,8 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 types-croniter = [
-    {file = "types-croniter-1.0.10.tar.gz", hash = "sha256:10ae27340a37952b9ac67d7d2fc3bc9d4d88b6ae2c7b5a0b2c393b24d0a21ce0"},
-    {file = "types_croniter-1.0.10-py3-none-any.whl", hash = "sha256:3ae500135d4d6ccc5a4e54a4c9b971fcbe98b5f0970ee2987f7ad60e77b3f95f"},
+    {file = "types-croniter-1.3.0.tar.gz", hash = "sha256:2cbcd76d2e00db4a4e168d734e56051f3fe71b2ad8f5c84ddcbe1df4261cc529"},
+    {file = "types_croniter-1.3.0-py3-none-any.whl", hash = "sha256:2602f7916f4e6d0a82e3a65f7bcc646cf0845dfda080f1c8c7b1dd4e2c1d3e5f"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},
