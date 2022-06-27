@@ -1,20 +1,35 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
-from hikari.internal.data_binding import JSONObject
+
+from crescent.exceptions import HikariMoment
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
 
-    from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
+    from hikari import (
+        CommandType,
+        PartialApplication,
+        PartialCommand,
+        PartialGuild,
+        Permissions,
+        Snowflake,
+        SnowflakeishOr,
+        UndefinedNoneOr,
+        UndefinedOr,
+        UndefinedType,
+    )
+    from hikari.api.rest import RESTClient
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
+
+    Self = TypeVar("Self")
 
 
 @define(hash=True)
@@ -92,7 +107,7 @@ class AppCommand(CommandBuilder):
     def is_same_command(self, o: AppCommand) -> bool:
         return self.guild_id == o.guild_id and self.name == o.name and self.type == o.type
 
-    def build(self, encoder: EntityFactory) -> JSONObject:
+    def build(self, encoder: EntityFactory) -> dict[str, Any]:
         out: dict[str, Any] = {"name": self.name, "type": self.type}
 
         if self.description:
@@ -113,6 +128,32 @@ class AppCommand(CommandBuilder):
             _id = Snowflake(_id)
         self.id = _id
         return self
+
+    @property
+    def default_member_permissions(self) -> Permissions | int:  # noqa
+        raise HikariMoment()
+
+    def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:  # noqa
+        raise HikariMoment()
+
+    @property
+    def is_dm_enabled(self) -> UndefinedOr[bool]:  # noqa
+        raise HikariMoment()
+
+    async def create(  # noqa
+        self,
+        rest: RESTClient,
+        application: SnowflakeishOr[PartialApplication],
+        /,
+        *,
+        guild: UndefinedOr[SnowflakeishOr[PartialGuild]] = UNDEFINED,
+    ) -> PartialCommand:
+        raise HikariMoment()
+
+    def set_default_member_permissions(  # noqa
+        self: Self, default_member_permissions: UndefinedType | int | Permissions, /
+    ) -> Self:
+        raise HikariMoment()
 
 
 @define
