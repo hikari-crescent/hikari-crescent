@@ -20,7 +20,7 @@ class PluginAlreadyLoadedError(CrescentException):
 
 
 class HikariMoment(NotImplementedError):
-    """Hikari added an abstract method thats useless in this project."""
+    """Hikari added an abstract method that's useless in this project."""
 
     def __init__(self) -> None:
         super().__init__("This method is not implemented because its not currently used.")
