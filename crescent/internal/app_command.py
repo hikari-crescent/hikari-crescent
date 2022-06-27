@@ -133,7 +133,6 @@ class AppCommand(CommandBuilder):
     def default_member_permissions(self) -> Permissions | int:  # noqa
         raise HikariMoment()
 
-
     def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:  # noqa
         raise HikariMoment()
 
