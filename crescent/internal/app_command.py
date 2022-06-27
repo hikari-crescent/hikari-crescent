@@ -1,16 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
+from crescent.exceptions import HikariMoment
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
 
     from hikari import (
         CommandType,
+        Permissions,
         PartialApplication,
         PartialCommand,
         PartialGuild,
@@ -18,12 +20,15 @@ if TYPE_CHECKING:
         SnowflakeishOr,
         UndefinedNoneOr,
         UndefinedOr,
+        UndefinedType,
     )
     from hikari.api.rest import RESTClient
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
+
+    Self = TypeVar("Self")
 
 
 @define(hash=True)
@@ -117,11 +122,22 @@ class AppCommand(CommandBuilder):
         self.default_permission = state
         return self
 
+    @property
+    def default_member_permissions(self) -> Permissions | int:
+        raise HikariMoment()
+
     def set_id(self, _id: UndefinedOr[Snowflakeish]) -> AppCommand:
         if isinstance(_id, int):
             _id = Snowflake(_id)
         self.id = _id
         return self
+
+    def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:
+        raise HikariMoment()
+
+    @property
+    def is_dm_enabled(self) -> UndefinedOr[bool]:
+        raise HikariMoment()
 
     async def create(  # noqa
         self,
@@ -131,10 +147,12 @@ class AppCommand(CommandBuilder):
         *,
         guild: UndefinedOr[SnowflakeishOr[PartialGuild]] = UNDEFINED,
     ) -> PartialCommand:
-        """
-        This method isn't used but someone made it an abstract method in CommandBuilder...
-        """
-        raise NotImplementedError("Method `create` is not implemented for `AppCommand`.")
+        raise HikariMoment()
+
+    def set_default_member_permissions(
+        self: Self, default_member_permissions: UndefinedType | int | Permissions, /
+    ) -> Self:
+        raise HikariMoment()
 
 
 @define
