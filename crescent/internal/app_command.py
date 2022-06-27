@@ -7,7 +7,7 @@ from hikari import UNDEFINED, CommandOption, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List, Optional, Sequence, Type
+    from typing import Any, Sequence, Type
 
     from hikari import (
         CommandType,
@@ -74,11 +74,11 @@ class AppCommand(CommandBuilder):
 
     type: CommandType
     name: str
-    guild_id: Optional[Snowflakeish]
+    guild_id: Snowflakeish | None
     default_permission: UndefinedOr[bool]
 
-    description: Optional[str] = None
-    options: Optional[Sequence[CommandOption]] = None
+    description: str | None = None
+    options: Sequence[CommandOption] | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
     __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
@@ -99,10 +99,10 @@ class AppCommand(CommandBuilder):
         return True
 
     def is_same_command(self, o: AppCommand) -> bool:
-        return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
+        return self.guild_id == o.guild_id and self.name == o.name and self.type == o.type
 
     def build(self, encoder: EntityFactory) -> dict[str, Any]:
-        out: Dict[str, Any] = {"name": self.name, "type": self.type}
+        out: dict[str, Any] = {"name": self.name, "type": self.type}
 
         if self.description:
             out["description"] = self.description
@@ -123,7 +123,7 @@ class AppCommand(CommandBuilder):
         self.id = _id
         return self
 
-    async def create(
+    async def create(  # noqa
         self,
         rest: RESTClient,
         application: SnowflakeishOr[PartialApplication],
@@ -140,12 +140,12 @@ class AppCommand(CommandBuilder):
 @define
 class AppCommandMeta:
     app: AppCommand
-    autocomplete: Dict[str, AutocompleteCallbackT] = field(factory=dict)
-    group: Optional[Group] = None
-    sub_group: Optional[SubGroup] = None
+    autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
+    group: Group | None = None
+    sub_group: SubGroup | None = None
     deprecated: bool = False
-    hooks: List[HookCallbackT] = field(factory=list)
-    after_hooks: List[HookCallbackT] = field(factory=list)
+    hooks: list[HookCallbackT] = field(factory=list)
+    after_hooks: list[HookCallbackT] = field(factory=list)
 
     @property
     def unique(self) -> Unique:

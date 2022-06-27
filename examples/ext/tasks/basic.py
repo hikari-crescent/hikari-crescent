@@ -12,14 +12,14 @@ bot = crescent.Bot("...")
 
 @bot.include
 @tasks.loop(minutes=1)
-async def loop():
+async def loop() -> None:
     print(f"Ran at {datetime.now()}")
 
 
 @bot.include
 # Check out https://crontab.guru/ for help making cron scheduling expressions.
 @tasks.cronjob("* * * * *")
-async def cronjob():
+async def cronjob() -> None:
     print(f"Ran at {datetime.now()}")
 
 

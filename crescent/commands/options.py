@@ -1,21 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from inspect import isclass
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Generic,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, Union, cast, overload
 
 from hikari import (
     UNDEFINED,
@@ -52,7 +38,7 @@ __all__ = (
     "ClassCommandOption",
 )
 
-OPTIONS_TYPE_MAP: Dict[Type[OptionTypesT], OptionType] = {
+OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType] = {
     str: OptionType.STRING,
     bool: OptionType.BOOLEAN,
     int: OptionType.INTEGER,
@@ -71,7 +57,7 @@ VALID_CHANNEL_TYPES = Union[
     GuildNewsChannel,
     GuildStageChannel,
 ]
-CHANNEL_TYPE_MAP: Dict[Type[VALID_CHANNEL_TYPES], ChannelType] = {
+CHANNEL_TYPE_MAP: dict[type[VALID_CHANNEL_TYPES], ChannelType] = {
     GuildTextChannel: ChannelType.GUILD_TEXT,
     DMChannel: ChannelType.DM,
     GuildVoiceChannel: ChannelType.GUILD_VOICE,
@@ -82,7 +68,7 @@ CHANNEL_TYPE_MAP: Dict[Type[VALID_CHANNEL_TYPES], ChannelType] = {
 }
 
 
-def get_channel_types(*channels: Type[PartialChannel]) -> set[ChannelType]:
+def get_channel_types(*channels: type[PartialChannel]) -> set[ChannelType]:
     if len(channels) == 1 and channels[0] is PartialChannel:
         return set()
 
@@ -100,15 +86,15 @@ Self = TypeVar("Self")
 
 @dataclass
 class ClassCommandOption(Generic[T]):
-    name: Optional[str]
+    name: str | None
     type: OptionType
     description: str
     default: UndefinedNoneOr[Any]
-    choices: Optional[Sequence[CommandChoice]]
-    channel_types: Optional[Sequence[ChannelType]]
-    min_value: Optional[Union[int, float]]
-    max_value: Optional[Union[int, float]]
-    autocomplete: Optional[AutocompleteCallbackT]
+    choices: Sequence[CommandChoice] | None
+    channel_types: Sequence[ChannelType] | None
+    min_value: int | float | None
+    max_value: int | float | None
+    autocomplete: AutocompleteCallbackT | None
 
     def _gen_option(self, name: str) -> CommandOption:
         return CommandOption(
@@ -128,7 +114,7 @@ class ClassCommandOption(Generic[T]):
         ...
 
     @overload
-    def __get__(self: Self, inst: object, cls: Any) -> T:
+    def __get__(self, inst: object, cls: Any) -> T:
         ...
 
     def __get__(self, inst: Any | None, cls: Any) -> Any:
@@ -140,201 +126,224 @@ class ClassCommandOption(Generic[T]):
 
 
 DEFAULT = TypeVar("DEFAULT")
-USER = TypeVar("USER", bound=Type[User])
-ROLE = TypeVar("ROLE", bound=Type[Role])
+
+# mypy doesn't understand abstract classes, so this is necessary and hence # pyright: ignore
+# (github issues 4717, 5374)
+USER = TypeVar("USER", bound="type[User]")
+ROLE = TypeVar("ROLE", bound="type[Role]")
 
 
 @overload
 def option(
-    option_type: Union[Type[PartialChannel], Sequence[Type[PartialChannel]]],
+    option_type: type[PartialChannel] | Sequence[type[PartialChannel]],
     description: str = ...,
     *,
-    name: Optional[str] = ...,
+    name: str | None = ...,
 ) -> ClassCommandOption[InteractionChannel]:
     ...
 
 
 @overload
 def option(
-    option_type: Union[Type[PartialChannel], Sequence[Type[PartialChannel]]],
+    option_type: type[PartialChannel] | Sequence[type[PartialChannel]],
     description: str = ...,
     *,
     default: DEFAULT,
-    name: Optional[str] = ...,
-) -> ClassCommandOption[Union[InteractionChannel, DEFAULT]]:
+    name: str | None = ...,
+) -> ClassCommandOption[InteractionChannel | DEFAULT]:
     ...
 
 
+# fmt: off
 @overload
 def option(
-    option_type: USER, description: str = ..., *, name: Optional[str] = ...
+    option_type: USER,  # pyright: ignore
+    description: str = ...,
+    *, name: str | None = ...,
 ) -> ClassCommandOption[User]:
     ...
+# fmt: on
 
 
 @overload
 def option(
-    option_type: USER, description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
-) -> ClassCommandOption[Union[User, DEFAULT]]:
+    option_type: USER,  # pyright: ignore
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    name: str | None = ...,
+) -> ClassCommandOption[User | DEFAULT]:
     ...
 
 
+# fmt: off
 @overload
 def option(
-    option_type: ROLE, description: str = ..., *, name: Optional[str] = ...
+    option_type: ROLE,  # pyright: ignore
+    description: str = ...,
+    *,
+    name: str | None = ...,
 ) -> ClassCommandOption[Role]:
     ...
+# fmt: on
 
 
 @overload
 def option(
-    option_type: ROLE, description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
-) -> ClassCommandOption[Union[Role, DEFAULT]]:
+    option_type: ROLE,  # pyright: ignore
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    name: str | None = ...,
+) -> ClassCommandOption[Role | DEFAULT]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[Mentionable], description: str = ..., *, name: Optional[str] = ...
+    option_type: type[Mentionable], description: str = ..., *, name: str | None = ...
 ) -> ClassCommandOption[Mentionable]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[Mentionable],
+    option_type: type[Mentionable],
     description: str = ...,
     *,
     default: DEFAULT,
-    name: Optional[str] = ...,
-) -> ClassCommandOption[Union[Mentionable, DEFAULT]]:
+    name: str | None = ...,
+) -> ClassCommandOption[Mentionable | DEFAULT]:
     ...
 
 
 @overload
 def option(  # type: ignore
-    option_type: Type[bool], description: str = ..., *, name: Optional[str] = ...
+    option_type: type[bool], description: str = ..., *, name: str | None = ...
 ) -> ClassCommandOption[bool]:
     ...
 
 
 @overload
 def option(  # type: ignore
-    option_type: Type[bool], description: str = ..., *, default: DEFAULT, name: Optional[str] = ...
-) -> ClassCommandOption[Union[bool, DEFAULT]]:
+    option_type: type[bool], description: str = ..., *, default: DEFAULT, name: str | None = ...
+) -> ClassCommandOption[bool | DEFAULT]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[int],
+    option_type: type[int],
     description: str = ...,
     *,
-    choices: Optional[Sequence[Tuple[str, int]]] = ...,
-    autocomplete: Optional[AutocompleteCallbackT] = ...,
-    min_value: Optional[int] = ...,
-    max_value: Optional[int] = ...,
-    name: Optional[str] = ...,
+    choices: Sequence[tuple[str, int]] | None = ...,
+    autocomplete: AutocompleteCallbackT | None = ...,
+    min_value: int | None = ...,
+    max_value: int | None = ...,
+    name: str | None = ...,
 ) -> ClassCommandOption[int]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[int],
+    option_type: type[int],
     description: str = ...,
     *,
     default: DEFAULT,
-    choices: Optional[Sequence[Tuple[str, int]]] = ...,
-    autocomplete: Optional[AutocompleteCallbackT] = ...,
-    min_value: Optional[int] = ...,
-    max_value: Optional[int] = ...,
-    name: Optional[str] = ...,
-) -> ClassCommandOption[Union[int, DEFAULT]]:
+    choices: Sequence[tuple[str, int]] | None = ...,
+    autocomplete: AutocompleteCallbackT | None = ...,
+    min_value: int | None = ...,
+    max_value: int | None = ...,
+    name: str | None = ...,
+) -> ClassCommandOption[int | DEFAULT]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[float],
+    option_type: type[float],
     description: str = ...,
     *,
-    choices: Optional[Sequence[Tuple[str, float]]] = ...,
-    autocomplete: Optional[AutocompleteCallbackT] = ...,
-    min_value: Optional[float] = ...,
-    max_value: Optional[float] = ...,
-    name: Optional[str] = ...,
+    choices: Sequence[tuple[str, float]] | None = ...,
+    autocomplete: AutocompleteCallbackT | None = ...,
+    min_value: float | None = ...,
+    max_value: float | None = ...,
+    name: str | None = ...,
 ) -> ClassCommandOption[float]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[float],
+    option_type: type[float],
     description: str = ...,
     *,
     default: DEFAULT,
-    choices: Optional[Sequence[Tuple[str, float]]] = ...,
-    autocomplete: Optional[AutocompleteCallbackT] = ...,
-    min_value: Optional[float] = ...,
-    max_value: Optional[float] = ...,
-    name: Optional[str] = ...,
-) -> ClassCommandOption[Union[float, DEFAULT]]:
+    choices: Sequence[tuple[str, float]] | None = ...,
+    autocomplete: AutocompleteCallbackT | None = ...,
+    min_value: float | None = ...,
+    max_value: float | None = ...,
+    name: str | None = ...,
+) -> ClassCommandOption[float | DEFAULT]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[str],
+    option_type: type[str],
     description: str = ...,
     *,
-    choices: Optional[Sequence[Tuple[str, str]]] = ...,
-    autocomplete: Optional[AutocompleteCallbackT] = ...,
-    name: Optional[str] = ...,
+    choices: Sequence[tuple[str, str]] | None = ...,
+    autocomplete: AutocompleteCallbackT | None = ...,
+    name: str | None = ...,
 ) -> ClassCommandOption[str]:
     ...
 
 
 @overload
 def option(
-    option_type: Type[str],
+    option_type: type[str],
     description: str = ...,
     *,
     default: DEFAULT,
-    choices: Optional[Sequence[Tuple[str, str]]] = ...,
-    autocomplete: Optional[AutocompleteCallbackT] = ...,
-    name: Optional[str] = ...,
-) -> ClassCommandOption[Union[str, DEFAULT]]:
+    choices: Sequence[tuple[str, str]] | None = ...,
+    autocomplete: AutocompleteCallbackT | None = ...,
+    name: str | None = ...,
+) -> ClassCommandOption[str | DEFAULT]:
     ...
 
 
 def option(
-    option_type: Union[Type[OptionTypesT], Sequence[Type[PartialChannel]]],
+    option_type: type[OptionTypesT] | Sequence[type[PartialChannel]],
     description: str = "No Description",
     *,
     default: UndefinedOr[Any] = UNDEFINED,
-    choices: Sequence[Tuple[str, Union[str, int, float]]] | None = None,
-    min_value: Optional[Union[int, float]] = None,
-    max_value: Optional[Union[int, float]] = None,
-    name: Optional[str] = None,
-    autocomplete: Optional[AutocompleteCallbackT] = None,
+    choices: Sequence[tuple[str, str | int | float]] | None = None,
+    min_value: int | float | None = None,
+    max_value: int | float | None = None,
+    name: str | None = None,
+    autocomplete: AutocompleteCallbackT | None = None,
 ) -> ClassCommandOption[Any]:
+
+    _option_type: type[OptionTypesT]
     if (
-        isclass(option_type)
+        isinstance(option_type, type)
         and issubclass(option_type, PartialChannel)
         and option_type is not PartialChannel
     ):
-        option_type = cast(Type[VALID_CHANNEL_TYPES], option_type)
+        option_type = cast(type[VALID_CHANNEL_TYPES], option_type)
         channel_types = get_channel_types(option_type)
-        option_type = PartialChannel
+        _option_type = PartialChannel
     elif isinstance(option_type, Sequence):
         channel_types = get_channel_types(*option_type)
-        option_type = PartialChannel
+        _option_type = PartialChannel
     else:
+        _option_type = option_type
         channel_types = None
 
     return ClassCommandOption(
-        type=OPTIONS_TYPE_MAP[option_type],
+        type=OPTIONS_TYPE_MAP[_option_type],
         description=description,
         default=default,
         choices=[CommandChoice(name=n, value=v) for n, v in choices] if choices else None,

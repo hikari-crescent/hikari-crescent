@@ -48,5 +48,4 @@ __all__: Sequence[str] = (
     "Plugin",
     "PluginManager",
     "ClassCommandOption",
-    "ErrorHandlerCallbackT",
 )

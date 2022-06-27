@@ -1,5 +1,4 @@
-from re import I
-from typing import List
+from __future__ import annotations
 
 import hikari
 from typing_extensions import Annotated as Atd
@@ -65,7 +64,7 @@ async def raise_error_event(event: hikari.MessageCreateEvent) -> None:
 
 async def autocomplete(
     ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
-) -> List[hikari.CommandChoice]:
+) -> list[hikari.CommandChoice]:
     assert isinstance(option.value, str)
     if option.value == "unhandled":
         raise UnhandledError("Unhandled error!")

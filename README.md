@@ -133,6 +133,9 @@ Crescent has 2 builtin extensions.
 - [crescent-ext-cooldowns](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/cooldowns) - Allows you to add sliding window rate limits to your commands.
 - [crescent-ext-tasks](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/tasks) - Schedules background tasks using loops or cronjobs.
 
+These extensions can be installed with pip.
+
+- [crescent-ext-docstrings](https://github.com/Lunarmagpie/crescent-ext-docstrings) - Lets you use docstrings to write descriptions for commands and options.
 
 # Support
 Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!
