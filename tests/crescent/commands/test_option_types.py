@@ -7,7 +7,8 @@ from hikari import (
     Role,
     User,
 )
-from crescent import command, Mentionable, option
+
+from crescent import Mentionable, command, option
 
 
 def test_option_types():
