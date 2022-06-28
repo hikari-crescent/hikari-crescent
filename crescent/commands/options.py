@@ -332,7 +332,7 @@ def option(
         and issubclass(option_type, PartialChannel)
         and option_type is not PartialChannel
     ):
-        option_type = cast(type[VALID_CHANNEL_TYPES], option_type)
+        option_type = cast("type[VALID_CHANNEL_TYPES]", option_type)
         channel_types = get_channel_types(option_type)
         _option_type = PartialChannel
     elif isinstance(option_type, Sequence):
