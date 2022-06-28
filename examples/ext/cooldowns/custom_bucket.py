@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from __future__ import annotations
 
 import hikari
 
@@ -10,7 +10,7 @@ bot = crescent.Bot("...")
 
 def guild_specific_rate_limits(
     ctx: crescent.Context,
-) -> Tuple[hikari.Snowflake, Optional[hikari.Snowflake]]:
+) -> tuple[hikari.Snowflake, hikari.Snowflake | None]:
     return (ctx.user.id, ctx.guild_id)
 
 

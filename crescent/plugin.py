@@ -84,7 +84,7 @@ class Plugin:
     ) -> None:
         if name is not None:
             _LOG.warning(
-                "Pluin option `name` is deprecated and will be removed in a future release."
+                "Plugin option `name` is deprecated and will be removed in a future release."
             )
 
         self.command_hooks = command_hooks

@@ -24,7 +24,9 @@ class HookResult:
 
 
 @overload
-def hook(callback: HookCallbackT, *, after: bool = False) -> Callable[..., T]:
+def hook(
+    callback: HookCallbackT, *, after: bool = False
+) -> Callable[..., MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]]:
     ...
 
 

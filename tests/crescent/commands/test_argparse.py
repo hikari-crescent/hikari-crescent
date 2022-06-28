@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from inspect import _empty, _ParameterKind
-from typing import Any, Type, Union
+from typing import Any, Union
 
 from hikari import (
     ChannelType,
@@ -30,11 +32,11 @@ from tests.utils import arrays_contain_same_elements
 @dataclass
 class Parameter:
     name: str
-    annotation: Type
+    annotation: type
     default: Any
     kind: _ParameterKind
 
-    empty: Type[_empty] = _empty
+    empty: type[_empty] = _empty
 
 
 POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD

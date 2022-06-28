@@ -13,5 +13,5 @@ async def hook(ctx: crescent.Context) -> None:
 @bot.include
 @crescent.hook(hook, after=True)
 @crescent.command
-async def say(ctx: crescent.Context, word: str):
+async def say(ctx: crescent.Context, word: str) -> None:
     await ctx.respond(word)

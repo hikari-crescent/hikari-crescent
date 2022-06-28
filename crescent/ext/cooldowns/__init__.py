@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Awaitable, Callable, Optional
 
 from hikari import Snowflake
@@ -32,7 +34,7 @@ def cooldown(
     *,
     callback: CooldownCallbackT = _default_callback,
     bucket: BucketCallbackT = _default_bucket,
-) -> Callable[[Context], Awaitable[Optional[HookResult]]]:
+) -> Callable[[Context], Awaitable[HookResult | None]]:
     """
     Ratelimit implementation using a sliding window.
 
@@ -48,7 +50,7 @@ def cooldown(
     """
     cooldown: FixedCooldown[Any] = FixedCooldown(period=period, capacity=capacity)
 
-    async def inner(ctx: Context) -> Optional[HookResult]:
+    async def inner(ctx: Context) -> HookResult | None:
         retry_after = cooldown.update_ratelimit(bucket(ctx))
 
         if not retry_after:
