@@ -5,7 +5,6 @@ from inspect import _empty, _ParameterKind
 from typing import Any, Union
 
 from hikari import (
-    Attachment,
     ChannelType,
     CommandChoice,
     CommandOption,
