@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, Union, cast, 
 
 from hikari import (
     UNDEFINED,
+    Attachment,
     ChannelType,
     CommandChoice,
     CommandOption,
@@ -47,6 +48,7 @@ OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType] = {
     Role: OptionType.ROLE,
     User: OptionType.USER,
     Mentionable: OptionType.MENTIONABLE,
+    Attachment: OptionType.ATTACHMENT,
 }
 VALID_CHANNEL_TYPES = Union[
     GuildTextChannel,
@@ -131,6 +133,7 @@ DEFAULT = TypeVar("DEFAULT")
 # (github issues 4717, 5374)
 USER = TypeVar("USER", bound="type[User]")
 ROLE = TypeVar("ROLE", bound="type[Role]")
+ATTACHMENT = TypeVar("ATTACHMENT", bound="type[Attachment]")
 
 
 @overload
@@ -196,6 +199,29 @@ def option(
     default: DEFAULT,
     name: str | None = ...,
 ) -> ClassCommandOption[Role | DEFAULT]:
+    ...
+
+
+# fmt: off
+@overload
+def option(
+    option_type: ATTACHMENT,  # pyright: ignore
+    description: str = ...,
+    *,
+    name: str | None = ...,
+) -> ClassCommandOption[Attachment]:
+    ...
+# fmt: on
+
+
+@overload
+def option(
+    option_type: ATTACHMENT,  # pyright: ignore
+    description: str = ...,
+    *,
+    default: DEFAULT,
+    name: str | None = ...,
+) -> ClassCommandOption[Attachment | DEFAULT]:
     ...
 
 
