@@ -106,6 +106,12 @@ class Plugin:
     def unload_hook(self, callback: PluginCallbackT) -> None:
         self._unload_hooks.append(callback)
 
+    @property
+    def app(self) -> Bot:
+        if not self._app:
+            raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
+        return self._app
+
     def _load(self, bot: Bot) -> None:
         self._app = bot
 
