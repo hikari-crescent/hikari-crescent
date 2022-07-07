@@ -4,7 +4,7 @@ from functools import partial
 from inspect import isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
-from hikari import CommandOption, CommandType, Snowflakeish
+from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
 
 from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
@@ -60,10 +60,11 @@ def command(
 @overload
 def command(
     *,
-    guild: Snowflakeish | None = None,
-    name: str | None = None,
-    description: str | None = None,
-    deprecated: bool = False,
+    guild: Snowflakeish | None = ...,
+    name: str | None = ...,
+    description: str | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    deprecated: bool = ...,
 ) -> Callable[
     [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
@@ -77,13 +78,19 @@ def command(
     guild: Snowflakeish | None = None,
     name: str | None = None,
     description: str | None = None,
+    default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     deprecated: bool = False,
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta] | Callable[
     [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
     if not callback:
         return partial(
-            command, guild=guild, name=name, description=description, deprecated=deprecated
+            command,
+            guild=guild,
+            name=name,
+            description=description,
+            default_member_permissions=default_member_permissions,
+            deprecated=deprecated,
         )
 
     autocomplete: dict[str, AutocompleteCallbackT] = {}
@@ -141,6 +148,7 @@ def command(
         guild=guild,
         description=description or "No Description",
         options=options,
+        default_member_permissions=default_member_permissions,
         deprecated=deprecated,
         autocomplete=autocomplete,
     )
@@ -164,7 +172,11 @@ def user_command(
 
 @overload
 def user_command(
-    *, guild: Snowflakeish | None = None, name: str | None = None, deprecated: bool = False
+    *,
+    guild: Snowflakeish | None = ...,
+    name: str | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    deprecated: bool = ...,
 ) -> Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]]:
     ...
 
@@ -175,18 +187,26 @@ def user_command(
     *,
     guild: Snowflakeish | None = None,
     name: str | None = None,
+    default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     deprecated: bool = False,
 ) -> Callable[
     [UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]
 ] | MetaStruct[UserCommandCallbackT, AppCommandMeta]:
     if not callback:
-        return partial(user_command, guild=guild, name=name, deprecated=deprecated)
+        return partial(
+            user_command,
+            guild=guild,
+            name=name,
+            default_member_permissions=default_member_permissions,
+            deprecated=deprecated,
+        )
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         command_type=CommandType.USER,
         name=name or callback.__name__,
         guild=guild,
+        default_member_permissions=default_member_permissions,
         deprecated=deprecated,
     )
 
@@ -200,7 +220,11 @@ def message_command(
 
 @overload
 def message_command(
-    *, guild: Snowflakeish | None = None, name: str | None = None, deprecated: bool = False
+    *,
+    guild: Snowflakeish | None = ...,
+    name: str | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    deprecated: bool = ...,
 ) -> Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta]]:
     ...
 
@@ -211,17 +235,25 @@ def message_command(
     *,
     guild: Snowflakeish | None = None,
     name: str | None = None,
+    default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     deprecated: bool = False,
 ) -> Callable[
     [MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],
 ] | MetaStruct[MessageCommandCallbackT, AppCommandMeta]:
     if not callback:
-        return partial(message_command, guild=guild, name=name, deprecated=deprecated)
+        return partial(
+            message_command,
+            guild=guild,
+            name=name,
+            default_member_permissions=default_member_permissions,
+            deprecated=deprecated,
+        )
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         command_type=CommandType.MESSAGE,
         name=name or callback.__name__,
         guild=guild,
+        default_member_permissions=default_member_permissions,
         deprecated=deprecated,
     )
