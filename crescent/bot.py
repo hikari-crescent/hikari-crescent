@@ -3,6 +3,7 @@ from __future__ import annotations
 from asyncio import Event as aio_Event
 from asyncio import Task, create_task
 from concurrent.futures import Executor
+from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, overload
@@ -26,7 +27,7 @@ from crescent.plugin import PluginManager
 from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
+    from typing import Any, Callable, Sequence, TypeVar
 
     from crescent.context import Context
     from crescent.typedefs import (
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
     META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
 
 
-__all___: Sequence[str] = "Bot"
+__all___: Sequence[str] = ("Bot",)
 
 
 class Bot(GatewayBot):
@@ -51,23 +52,24 @@ class Bot(GatewayBot):
         token: str,
         *,
         tracked_guilds: Sequence[Snowflakeish] | None = None,
-        default_guild: Optional[Snowflakeish] = None,
+        default_guild: Snowflakeish | None = None,
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
         allow_color: bool = True,
-        banner: Optional[str] = "crescent",
-        executor: Optional[Executor] = None,
+        banner: str | None = "crescent",
+        executor: Executor | None = None,
         force_color: bool = False,
-        cache_settings: Optional[CacheSettings] = None,
-        http_settings: Optional[HTTPSettings] = None,
+        cache_settings: CacheSettings | None = None,
+        http_settings: HTTPSettings | None = None,
         intents: Intents = Intents.ALL_UNPRIVILEGED,
-        logs: Union[None, int, str, Dict[str, Any]] = "INFO",
+        auto_chunk_members: bool = True,
+        logs: int | str | dict[str, Any] | None = "INFO",
         max_rate_limit: float = 300,
         max_retries: int = 3,
-        proxy_settings: Optional[ProxySettings] = None,
-        rest_url: Optional[str] = None,
+        proxy_settings: ProxySettings | None = None,
+        rest_url: str | None = None,
     ):
         """
         Crescent adds two parameters to Hikari's Gateway Bot. `tracked_guilds`
@@ -91,6 +93,7 @@ class Bot(GatewayBot):
             cache_settings=cache_settings,
             http_settings=http_settings,
             intents=intents,
+            auto_chunk_members=auto_chunk_members,
             logs=logs,
             max_rate_limit=max_rate_limit,
             max_retries=max_retries,
@@ -123,7 +126,7 @@ class Bot(GatewayBot):
             AutocompleteErrorHandlerCallbackT[Any]
         ] = ErrorHandler(self)
 
-        self.default_guild: Optional[Snowflakeish] = default_guild
+        self.default_guild: Snowflakeish | None = default_guild
 
         self._plugins = PluginManager(self)
 
@@ -139,7 +142,7 @@ class Bot(GatewayBot):
     async def _on_shard_ready(self, event: ShardReadyEvent) -> None:
         self._command_handler.application_id = event.application_id
 
-    async def _on_started(self, _: StartedEvent) -> Optional[Task[None]]:
+    async def _on_started(self, _: StartedEvent) -> Task[None] | None:
         if self.update_commands:
             return create_task(self._command_handler.register_commands())
         return None
@@ -171,18 +174,17 @@ class Bot(GatewayBot):
 
         return command
 
-    @classmethod
+    @staticmethod
     def print_banner(
-        cls,
-        banner: Optional[str],
+        banner: str | None,
         allow_color: bool,
         force_color: bool,
-        extra_args: Optional[Dict[str, str]] = None,
+        extra_args: dict[str, str] | None = None,
     ) -> None:
         from crescent import __version__
         from crescent._about import __copyright__, __license__
 
-        args: Dict[str, str] = {
+        args: dict[str, str] = {
             "crescent_version": __version__,
             "crescent_copyright": __copyright__,
             "crescent_license": __license__,
@@ -191,7 +193,7 @@ class Bot(GatewayBot):
         if extra_args:
             args.update(extra_args)
 
-        super().print_banner(banner, allow_color, force_color, extra_args=args)
+        super(Bot, Bot).print_banner(banner, allow_color, force_color, extra_args=args)
 
     @property
     def plugins(self) -> PluginManager:
@@ -202,10 +204,8 @@ class Bot(GatewayBot):
     ) -> None:
         if was_handled:
             return
-        try:
+        with suppress(Exception):
             await ctx.respond("An unexpected error occurred.", ephemeral=True)
-        except Exception:
-            pass
         print(f"Unhandled exception occurred in the command {ctx.command}:")
         print_exception(exc.__class__, exc, exc.__traceback__)
 

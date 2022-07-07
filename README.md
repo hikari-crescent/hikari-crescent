@@ -3,8 +3,9 @@
 <div align="center">
 
 ![code-style-black](https://img.shields.io/badge/code%20style-black-black)
-[![Mypy](https://github.com/magpie-dev/hikari-crescent/actions/workflows/mypy.yml/badge.svg)](https://github.com/magpie-dev/hikari-crescent/actions/workflows/mypy.yml)
-[![Docs](https://github.com/magpie-dev/hikari-crescent/actions/workflows/pdoc_build.yml/badge.svg)](https://magpie-dev.github.io/hikari-crescent/crescent.html)
+![mypy](https://badgen.net/badge/mypy/checked/2A6DB2)
+![pyright](https://badgen.net/badge/pyright/checked/2A6DB2)
+[![ci](https://github.com/magpie-dev/hikari-crescent/actions/workflows/ci.yml/badge.svg)](https://github.com/magpie-dev/hikari-crescent/actions/workflows/ci.yml)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/magpie-dev/hikari-crescent/main.svg)](https://results.pre-commit.ci/latest/github/magpie-dev/hikari-crescent/main)
 ![Pypi](https://img.shields.io/pypi/v/hikari-crescent)
 
@@ -94,6 +95,8 @@ class Say:
 | Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
 | `Union[Channel Types]` (functions only) | Channel. ^ |
 | `List[Channel Types]` (classes only) | Channel. ^ |
+| `hikari.Attachment` (classes only) | Attachment |
+
 
 ### Error Handling
 Errors that are raised by a command can be handled by `crescent.catch_command`.
@@ -133,6 +136,9 @@ Crescent has 2 builtin extensions.
 - [crescent-ext-cooldowns](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/cooldowns) - Allows you to add sliding window rate limits to your commands.
 - [crescent-ext-tasks](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/tasks) - Schedules background tasks using loops or cronjobs.
 
+These extensions can be installed with pip.
+
+- [crescent-ext-docstrings](https://github.com/Lunarmagpie/crescent-ext-docstrings) - Lets you use docstrings to write descriptions for commands and options.
 
 # Support
 Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!

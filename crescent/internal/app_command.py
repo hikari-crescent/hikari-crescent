@@ -1,20 +1,35 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
-from hikari.internal.data_binding import JSONObject
+
+from crescent.exceptions import HikariMoment
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List, Optional, Sequence, Type
+    from typing import Any, Sequence, Type
 
-    from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr
+    from hikari import (
+        CommandType,
+        PartialApplication,
+        PartialCommand,
+        PartialGuild,
+        Permissions,
+        Snowflake,
+        SnowflakeishOr,
+        UndefinedNoneOr,
+        UndefinedOr,
+        UndefinedType,
+    )
+    from hikari.api.rest import RESTClient
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.meta_struct import MetaStruct
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
+
+    Self = TypeVar("Self")
 
 
 @define(hash=True)
@@ -65,11 +80,11 @@ class AppCommand(CommandBuilder):
 
     type: CommandType
     name: str
-    guild_id: Optional[Snowflakeish]
+    guild_id: Snowflakeish | None
     default_permission: UndefinedOr[bool]
 
-    description: Optional[str] = None
-    options: Optional[Sequence[CommandOption]] = None
+    description: str | None = None
+    options: Sequence[CommandOption] | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
     __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
@@ -90,10 +105,10 @@ class AppCommand(CommandBuilder):
         return True
 
     def is_same_command(self, o: AppCommand) -> bool:
-        return all((self.guild_id == o.guild_id, self.name == o.name, self.type == o.type))
+        return self.guild_id == o.guild_id and self.name == o.name and self.type == o.type
 
-    def build(self, encoder: EntityFactory) -> JSONObject:
-        out: Dict[str, Any] = {"name": self.name, "type": self.type}
+    def build(self, encoder: EntityFactory) -> dict[str, Any]:
+        out: dict[str, Any] = {"name": self.name, "type": self.type}
 
         if self.description:
             out["description"] = self.description
@@ -114,16 +129,42 @@ class AppCommand(CommandBuilder):
         self.id = _id
         return self
 
+    @property
+    def default_member_permissions(self) -> Permissions | int:  # noqa
+        raise HikariMoment()
+
+    def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:  # noqa
+        raise HikariMoment()
+
+    @property
+    def is_dm_enabled(self) -> UndefinedOr[bool]:  # noqa
+        raise HikariMoment()
+
+    async def create(  # noqa
+        self,
+        rest: RESTClient,
+        application: SnowflakeishOr[PartialApplication],
+        /,
+        *,
+        guild: UndefinedOr[SnowflakeishOr[PartialGuild]] = UNDEFINED,
+    ) -> PartialCommand:
+        raise HikariMoment()
+
+    def set_default_member_permissions(  # noqa
+        self: Self, default_member_permissions: UndefinedType | int | Permissions, /
+    ) -> Self:
+        raise HikariMoment()
+
 
 @define
 class AppCommandMeta:
     app: AppCommand
-    autocomplete: Dict[str, AutocompleteCallbackT] = field(factory=dict)
-    group: Optional[Group] = None
-    sub_group: Optional[SubGroup] = None
+    autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
+    group: Group | None = None
+    sub_group: SubGroup | None = None
     deprecated: bool = False
-    hooks: List[HookCallbackT] = field(factory=list)
-    after_hooks: List[HookCallbackT] = field(factory=list)
+    hooks: list[HookCallbackT] = field(factory=list)
+    after_hooks: list[HookCallbackT] = field(factory=list)
 
     @property
     def unique(self) -> Unique:

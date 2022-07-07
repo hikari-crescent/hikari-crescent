@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 from logging import getLogger
-from typing import TYPE_CHECKING, Mapping, Optional, cast
+from typing import TYPE_CHECKING, Mapping, cast
 
 from hikari import (
     UNDEFINED,
@@ -20,7 +20,7 @@ from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Sequence
+    from typing import Any, Sequence
 
     from hikari import (
         CommandInteraction,
@@ -119,7 +119,7 @@ async def _handle_autocomplete_resp(
 
 def _get_option_recursive(
     options: Sequence[AutocompleteInteractionOption],
-) -> Optional[AutocompleteInteractionOption]:
+) -> AutocompleteInteractionOption | None:
     for option in options:
         if option.is_focused:
             return option
@@ -134,12 +134,12 @@ def _get_command(
     bot: Bot,
     name: str,
     type: int,
-    guild_id: Optional[Snowflake],
-    group: Optional[str],
-    sub_group: Optional[str],
-) -> Optional[MetaStruct[CommandCallbackT, AppCommandMeta]]:
+    guild_id: Snowflake | None,
+    group: str | None,
+    sub_group: str | None,
+) -> MetaStruct[CommandCallbackT, AppCommandMeta] | None:
 
-    kwargs: Dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
+    kwargs: dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
 
     with suppress(KeyError):
         return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]
@@ -148,17 +148,18 @@ def _get_command(
     return None
 
 
-_VALUE_TYPE_LINK: Dict[OptionType | int, str] = {
+_VALUE_TYPE_LINK: dict[OptionType | int, str] = {
     OptionType.ROLE: "roles",
     OptionType.USER: "users",
     OptionType.CHANNEL: "channels",
+    OptionType.ATTACHMENT: "attachments",
 }
 
 
 def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
     name: str = interaction.command_name
-    group: Optional[str] = None
-    sub_group: Optional[str] = None
+    group: str | None = None
+    sub_group: str | None = None
     options = interaction.options
 
     if options:
@@ -200,8 +201,8 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
 
 
 def _options_to_kwargs(
-    interaction: CommandInteraction, options: Optional[Sequence[CommandInteractionOption]]
-) -> Dict[str, Any]:
+    interaction: CommandInteraction, options: Sequence[CommandInteractionOption] | None
+) -> dict[str, Any]:
     if not options:
         return {}
 
@@ -212,7 +213,7 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 
-    resolved_type: Optional[str] = _VALUE_TYPE_LINK.get(option.type)
+    resolved_type: str | None = _VALUE_TYPE_LINK.get(option.type)
 
     if resolved_type is None:
         return option.value
@@ -229,7 +230,7 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     return resolved[option.value]
 
 
-def _resolved_data_to_kwargs(interaction: CommandInteraction) -> Dict[str, Message | User]:
+def _resolved_data_to_kwargs(interaction: CommandInteraction) -> dict[str, Message | User]:
     if not interaction.resolved:
         raise ValueError("interaction.resoved should be defined when running this function")
 

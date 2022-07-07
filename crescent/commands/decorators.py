@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, Awaitable, Callable, Dict, Type, overload
+from inspect import isclass, isfunction
+from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import CommandOption, CommandType, Snowflakeish
 
@@ -12,7 +13,7 @@ from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Sequence, TypeVar
+    from typing import Any, Sequence, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.meta_struct import MetaStruct
@@ -30,7 +31,7 @@ __all__: Sequence[str] = ("command", "user_command", "message_command")
 
 
 def _class_command_callback(
-    cls: Type[ClassCommandProto], defaults: Dict[str, Any], name_map: dict[str, str]
+    cls: type[ClassCommandProto], defaults: dict[str, Any], name_map: dict[str, str]
 ) -> CommandCallbackT:
     async def callback(*args: Any, **kwargs: Any) -> Any:
         values = defaults.copy()
@@ -51,7 +52,7 @@ def _class_command_callback(
 
 @overload
 def command(
-    callback: CommandCallbackT | Type[ClassCommandProto], /
+    callback: CommandCallbackT | type[ClassCommandProto], /
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
     ...
 
@@ -59,38 +60,42 @@ def command(
 @overload
 def command(
     *,
-    guild: Optional[Snowflakeish] = None,
-    name: Optional[str] = None,
-    description: Optional[str] = None,
+    guild: Snowflakeish | None = None,
+    name: str | None = None,
+    description: str | None = None,
     deprecated: bool = False,
 ) -> Callable[
-    [CommandCallbackT | Type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
+    [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
     ...
 
 
 def command(
-    callback: CommandCallbackT | Type[ClassCommandProto] | None = None,
+    callback: CommandCallbackT | type[ClassCommandProto] | None = None,
     /,
     *,
-    guild: Optional[Snowflakeish] = None,
-    name: Optional[str] = None,
-    description: Optional[str] = None,
+    guild: Snowflakeish | None = None,
+    name: str | None = None,
+    description: str | None = None,
     deprecated: bool = False,
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta] | Callable[
-    [CommandCallbackT | Type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
+    [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
 ]:
     if not callback:
         return partial(
             command, guild=guild, name=name, description=description, deprecated=deprecated
         )
 
-    autocomplete: Dict[str, AutocompleteCallbackT] = {}
+    autocomplete: dict[str, AutocompleteCallbackT] = {}
+    options: list[CommandOption] = []
 
-    if isinstance(callback, type) and isinstance(callback, object):
-        options: list[CommandOption] = []
+    if isclass(callback):
+        # If callback is a class it must be `type[ClassCommandProto]` because of the function
+        # signature.
+        callback = cast("type[ClassCommandProto]", callback)
+
         name_map: dict[str, str] = {}
-        defaults: Dict[str, Any] = {}
+        defaults: dict[str, Any] = {}
 
         for n, v in callback.__dict__.items():
 
@@ -110,10 +115,8 @@ def command(
 
         callback_func = _class_command_callback(callback, defaults, name_map)
 
-    else:
+    elif isfunction(callback):
         callback_func = callback
-
-        options = []
 
         for param in get_parameters(callback_func):
             if param is None:
@@ -125,9 +128,11 @@ def command(
 
             options.append(option)
 
-            autocomplete_func = get_autocomplete_func(param)
-            if autocomplete_func:
+            if autocomplete_func := get_autocomplete_func(param):
                 autocomplete[option.name] = autocomplete_func
+
+    else:
+        raise NotImplementedError("This function only works with classes and functions")
 
     return register_command(
         callback=callback_func,
@@ -159,7 +164,7 @@ def user_command(
 
 @overload
 def user_command(
-    *, guild: Optional[Snowflakeish] = None, name: Optional[str] = None, deprecated: bool = False
+    *, guild: Snowflakeish | None = None, name: str | None = None, deprecated: bool = False
 ) -> Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]]:
     ...
 
@@ -168,8 +173,8 @@ def user_command(
     callback: UserCommandCallbackT | None = None,
     /,
     *,
-    guild: Optional[Snowflakeish] = None,
-    name: Optional[str] = None,
+    guild: Snowflakeish | None = None,
+    name: str | None = None,
     deprecated: bool = False,
 ) -> Callable[
     [UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]
@@ -195,7 +200,7 @@ def message_command(
 
 @overload
 def message_command(
-    *, guild: Optional[Snowflakeish] = None, name: Optional[str] = None, deprecated: bool = False
+    *, guild: Snowflakeish | None = None, name: str | None = None, deprecated: bool = False
 ) -> Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta]]:
     ...
 
@@ -204,8 +209,8 @@ def message_command(
     callback: MessageCommandCallbackT | None = None,
     /,
     *,
-    guild: Optional[Snowflakeish] = None,
-    name: Optional[str] = None,
+    guild: Snowflakeish | None = None,
+    name: str | None = None,
     deprecated: bool = False,
 ) -> Callable[
     [MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],
