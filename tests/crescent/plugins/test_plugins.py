@@ -99,3 +99,19 @@ class TestPlugins:
 
         with raises(PluginAlreadyLoadedError):
             bot.plugins.load("tests.crescent.plugins.plugin")
+
+    def test_bot_loaded(self):
+        bot = MockBot()
+
+        plugin = bot.plugins.load("tests.crescent.plugins.plugin")
+
+        plugin.app
+
+    def test_bot_not_loaded(self):
+        bot = MockBot()
+
+        plugin = bot.plugins.load("tests.crescent.plugins.plugin")
+        bot.plugins.unload("tests.crescent.plugins.plugin")
+
+        with raises(AttributeError):
+            plugin.app
