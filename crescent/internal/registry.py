@@ -182,6 +182,7 @@ class CommandHandler:
                         guild_id=command.metadata.app.guild_id,
                         options=[],
                         default_member_permissions=command.metadata.app.default_member_permissions,
+                        is_dm_enabled=command.metadata.app.is_dm_enabled,
                     )
 
                 # The top-level command now exists. A subcommand group now if placed
@@ -247,6 +248,7 @@ class CommandHandler:
                         guild_id=command.metadata.app.guild_id,
                         options=[],
                         default_member_permissions=command.metadata.app.default_member_permissions,
+                        is_dm_enabled=command.metadata.app.is_dm_enabled,
                     )
 
                 # No checking has to be done before appending `command` since it is the
