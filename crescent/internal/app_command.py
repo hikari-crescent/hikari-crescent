@@ -84,6 +84,7 @@ class AppCommand(CommandBuilder):
     description: str | None = None
     options: Sequence[CommandOption] | None = None
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
+    is_dm_enabled: bool = True
     id: UndefinedOr[Snowflake] = UNDEFINED
 
     __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
@@ -123,6 +124,8 @@ class AppCommand(CommandBuilder):
 
         out["default_member_permissions"] = perms
 
+        out["dm_permission"] = self.is_dm_enabled
+
         return out
 
     def set_id(self, _id: UndefinedOr[Snowflakeish]) -> AppCommand:
@@ -132,10 +135,6 @@ class AppCommand(CommandBuilder):
         return self
 
     def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:  # noqa
-        raise HikariMoment()
-
-    @property
-    def is_dm_enabled(self) -> UndefinedOr[bool]:  # noqa
         raise HikariMoment()
 
     async def create(  # noqa
@@ -151,8 +150,7 @@ class AppCommand(CommandBuilder):
     def set_default_member_permissions(
         self: Self, default_member_permissions: UndefinedType | int | Permissions, /
     ) -> Self:
-        self.default_member_permissions = default_member_permissions
-        return self
+        raise HikariMoment()
 
 
 @define

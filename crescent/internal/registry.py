@@ -53,6 +53,7 @@ def register_command(
     description: str | None = None,
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
+    dm_enabled: bool = True,
     deprecated: bool = False,
     autocomplete: dict[str, AutocompleteCallbackT] = {},
 ) -> MetaStruct[T, AppCommandMeta]:
@@ -74,6 +75,7 @@ def register_command(
                 name=name,
                 options=options,
                 default_member_permissions=default_member_permissions,
+                is_dm_enabled=dm_enabled,
             ),
         ),
     )

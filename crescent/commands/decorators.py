@@ -64,6 +64,7 @@ def command(
     name: str | None = ...,
     description: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
+    dm_enabled: bool = ...,
     deprecated: bool = ...,
 ) -> Callable[
     [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
@@ -79,6 +80,7 @@ def command(
     name: str | None = None,
     description: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
+    dm_enabled: bool = True,
     deprecated: bool = False,
 ) -> MetaStruct[CommandCallbackT, AppCommandMeta] | Callable[
     [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
@@ -90,6 +92,7 @@ def command(
             name=name,
             description=description,
             default_member_permissions=default_member_permissions,
+            dm_enabled=dm_enabled,
             deprecated=deprecated,
         )
 
@@ -149,6 +152,7 @@ def command(
         description=description or "No Description",
         options=options,
         default_member_permissions=default_member_permissions,
+        dm_enabled=dm_enabled,
         deprecated=deprecated,
         autocomplete=autocomplete,
     )
@@ -176,6 +180,7 @@ def user_command(
     guild: Snowflakeish | None = ...,
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
+    dm_enabled: bool = ...,
     deprecated: bool = ...,
 ) -> Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]]:
     ...
@@ -188,6 +193,7 @@ def user_command(
     guild: Snowflakeish | None = None,
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
+    dm_enabled: bool = True,
     deprecated: bool = False,
 ) -> Callable[
     [UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]
@@ -198,6 +204,7 @@ def user_command(
             guild=guild,
             name=name,
             default_member_permissions=default_member_permissions,
+            dm_enabled=dm_enabled,
             deprecated=deprecated,
         )
 
@@ -207,6 +214,7 @@ def user_command(
         name=name or callback.__name__,
         guild=guild,
         default_member_permissions=default_member_permissions,
+        dm_enabled=dm_enabled,
         deprecated=deprecated,
     )
 
@@ -224,6 +232,7 @@ def message_command(
     guild: Snowflakeish | None = ...,
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
+    dm_enabled: bool = ...,
     deprecated: bool = ...,
 ) -> Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta]]:
     ...
@@ -236,6 +245,7 @@ def message_command(
     guild: Snowflakeish | None = None,
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
+    dm_enabled: bool = True,
     deprecated: bool = False,
 ) -> Callable[
     [MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],
@@ -246,6 +256,7 @@ def message_command(
             guild=guild,
             name=name,
             default_member_permissions=default_member_permissions,
+            dm_enabled=dm_enabled,
             deprecated=deprecated,
         )
 
@@ -255,5 +266,6 @@ def message_command(
         name=name or callback.__name__,
         guild=guild,
         default_member_permissions=default_member_permissions,
+        dm_enabled=dm_enabled,
         deprecated=deprecated,
     )
