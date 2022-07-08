@@ -147,7 +147,7 @@ class AppCommand(CommandBuilder):
     ) -> PartialCommand:
         raise HikariMoment()
 
-    def set_default_member_permissions(
+    def set_default_member_permissions(  # noqa
         self: Self, default_member_permissions: UndefinedType | int | Permissions, /
     ) -> Self:
         raise HikariMoment()
