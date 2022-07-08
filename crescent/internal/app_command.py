@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, TypeVar
 
 from attr import define, field
-from hikari import UNDEFINED, CommandOption, Snowflakeish, Permissions
+from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
 
 from crescent.exceptions import HikariMoment
