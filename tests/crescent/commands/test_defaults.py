@@ -1,5 +1,6 @@
-from hikari import Permissions, UNDEFINED, User, Message
-from crescent import command, Context, user_command, message_command
+from hikari import UNDEFINED, Message, Permissions, User
+
+from crescent import Context, command, message_command, user_command
 
 
 def test_defaults():
@@ -18,6 +19,7 @@ def test_user_command_defaults():
     @user_command
     async def test_command(ctx: Context, user: User):
         ...
+
     assert test_command.metadata.app.name == "test_command"
     assert test_command.metadata.app.guild_id is None
     assert test_command.metadata.app.default_member_permissions is UNDEFINED
