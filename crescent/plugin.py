@@ -65,18 +65,19 @@ class PluginManager:
 
         return plugin
 
-    def load_path(self, path: str, refresh: bool = False) -> None:
+    def load_path(self, path: str, refresh: bool = False) -> list[Plugin]:
         path = path.replace(".", os.sep)  # Allow . or / for ease of use
-        
-        for root, dirs, files in os.walk(path, topdown=False):
-            for directory in dirs:
-                if directory == "__pycache__":
-                    continue
-                self.load_path(os.path.join(root, directory))
+        loaded_plugins: list[Plugin] = []
+
+        for root, _, files in os.walk(path, topdown=False):
             for file in files:
                 if not file.endswith(".py"):
                     continue
-                self.load('.'.join(os.path.join(root, file[:-3]).split(os.sep)))
+                loaded_plugins.append(
+                    self.load('.'.join(os.path.join(root, file[:-3]).split(os.sep)))
+                )
+
+        return loaded_plugins
 
     def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
         if path in self.plugins and not refresh:
