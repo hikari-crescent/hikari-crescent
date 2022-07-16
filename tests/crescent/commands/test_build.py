@@ -34,3 +34,18 @@ def test_build_with_perms():
         "default_member_permissions": str(Permissions.ATTACH_FILES.value),
         "dm_permission": False,
     }
+
+    assert AppCommand(
+        type=CommandType.SLASH,
+        name="test_command",
+        description="test description",
+        default_member_permissions=32768,
+        is_dm_enabled=False,
+        guild_id=1234,
+    ).build(FACTORY) == {
+        "name": "test_command",
+        "type": CommandType.SLASH,
+        "description": "test description",
+        "default_member_permissions": str(32768),
+        "dm_permission": False,
+    }
