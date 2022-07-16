@@ -1,5 +1,6 @@
 from hikari import CommandType, Permissions
 from hikari.impl.entity_factory import EntityFactoryImpl
+
 from crescent.internal.app_command import AppCommand
 from tests.utils import MockBot
 
@@ -8,10 +9,7 @@ FACTORY = EntityFactoryImpl(MockBot())
 
 def test_build():
     assert AppCommand(
-        type=CommandType.SLASH,
-        name="test_command",
-        description="test description",
-        guild_id=1234,
+        type=CommandType.SLASH, name="test_command", description="test description", guild_id=1234
     ).build(FACTORY) == {
         "name": "test_command",
         "type": CommandType.SLASH,
