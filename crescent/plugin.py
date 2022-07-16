@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import os
 from importlib import import_module, reload
 from logging import getLogger
-from typing import TYPE_CHECKING
 from types import ModuleType
-import os
+from typing import TYPE_CHECKING
 
 import hikari
 
@@ -74,7 +74,7 @@ class PluginManager:
                 if not file.endswith(".py"):
                     continue
                 loaded_plugins.append(
-                    self.load('.'.join(os.path.join(root, file[:-3]).split(os.sep)))
+                    self.load(".".join(os.path.join(root, file[:-3]).split(os.sep)))
                 )
 
         return loaded_plugins
