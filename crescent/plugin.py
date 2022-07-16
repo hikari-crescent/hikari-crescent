@@ -3,6 +3,8 @@ from __future__ import annotations
 from importlib import import_module, reload
 from logging import getLogger
 from typing import TYPE_CHECKING
+from types import ModuleType
+import os
 
 import hikari
 
@@ -62,6 +64,19 @@ class PluginManager:
         self._add_plugin(path, plugin, refresh=refresh)
 
         return plugin
+
+    def load_path(self, path: str, refresh: bool = False) -> None:
+        path = path.replace(".", os.sep)  # Allow . or / for ease of use
+        
+        for root, dirs, files in os.walk(path, topdown=False):
+            for directory in dirs:
+                if directory == "__pycache__":
+                    continue
+                self.load_path(os.path.join(root, directory))
+            for file in files:
+                if not file.endswith(".py"):
+                    continue
+                self.load('.'.join(os.path.join(root, file[:-3]).split(os.sep)))
 
     def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
         if path in self.plugins and not refresh:
