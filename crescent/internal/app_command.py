@@ -87,7 +87,15 @@ class AppCommand(CommandBuilder):
     is_dm_enabled: bool = True
     id: UndefinedOr[Snowflake] = UNDEFINED
 
-    __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
+    __eq__props: Sequence[str] = (
+        "type",
+        "name",
+        "description",
+        "guild_id",
+        "options",
+        "default_member_permissions",
+        "is_dm_enabled",
+    )
 
     def __eq__(self, __o: object) -> bool:
         """
