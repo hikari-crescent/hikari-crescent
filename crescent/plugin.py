@@ -6,6 +6,7 @@ from logging import getLogger
 from typing import TYPE_CHECKING
 
 import hikari
+from glob import iglob
 
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.meta_struct import MetaStruct
@@ -89,13 +90,9 @@ class PluginManager:
         path = path.replace(".", os.sep)  # Allow . or / for ease of use
         loaded_plugins: list[Plugin] = []
 
-        for root, _, files in os.walk(path):
-            for file in files:
-                if file.startswith("_") or not file.endswith(".py"):
-                    continue
-                loaded_plugins.append(
-                    self.load(".".join(os.path.join(root, file[:-3]).split(os.sep)))
-                )
+        for name in iglob(os.path.join("./", path, "**", r"[!_]*.py"), recursive=True):
+            mod_name = ".".join(name[2:-3].split(os.sep))
+            loaded_plugins.append(self.load(mod_name))
 
         return loaded_plugins
 
