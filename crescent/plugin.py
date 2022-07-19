@@ -84,7 +84,7 @@ class PluginManager:
             path: The path to the folder that contains the plugins.
             refresh: Whether or not to reload the plugin and the plugin's module.
         Returns:
-            A list of the plugins that were loaded.
+            A list of plugins that were loaded.
         """
 
         path = path.replace(".", os.sep)
