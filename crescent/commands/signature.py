@@ -42,7 +42,6 @@ def _unwrap_optional(origin: type[Any]) -> Any:
     if len(args) != 2 or NoneType not in args:
         return args
 
-
     return args[1]
 
 

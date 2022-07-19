@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from pytest import mark
-from sys import version_info
 from dataclasses import dataclass
 from inspect import _empty, _ParameterKind
+from sys import version_info
 from typing import Any, Union
 
 from hikari import (
@@ -24,6 +23,7 @@ from hikari import (
     TextableChannel,
     TextableGuildChannel,
 )
+from pytest import mark
 from typing_extensions import Annotated
 
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
