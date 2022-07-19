@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import os
-from typing import overload
 from glob import iglob
 from importlib import import_module, reload
 from logging import getLogger
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 import hikari
 
@@ -14,7 +13,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, TypeVar, Literal
+    from typing import Any, Literal, Sequence, TypeVar
 
     from crescent.bot import Bot
     from crescent.typedefs import HookCallbackT, PluginCallbackT
@@ -209,7 +208,9 @@ class Plugin:
 
     @overload
     @classmethod
-    def _from_module(cls, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
+    def _from_module(
+        cls, path: str, *, strict: Literal[False], refresh: bool = ...
+    ) -> Plugin | None:
         ...
 
     @overload
