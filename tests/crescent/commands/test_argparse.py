@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pytest import mark
+from sys import version_info
 from dataclasses import dataclass
 from inspect import _empty, _ParameterKind
 from typing import Any, Union
@@ -104,6 +106,13 @@ def test_annotations():
         assert gen_command_option(
             Parameter(name="1234", annotation=annotation, default=None, kind=POSITIONAL_OR_KEYWORD)
         ) == CommandOption(**kwargs)
+
+
+@mark.skipif(version_info < (3, 10), reason="Syntax introduced in python 3.10")
+def test_310_annotation_syntax():
+    assert gen_command_option(
+        Parameter(name="1234", annotation=int | None, default=None, kind=POSITIONAL_OR_KEYWORD)
+    ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
 
 
 def test_gen_channel_options():

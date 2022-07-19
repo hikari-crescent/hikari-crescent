@@ -31,16 +31,17 @@ NoneType = type(None)
 
 
 def _unwrap_optional(origin: type[Any]) -> Any:
+    args = get_args(origin)
+
+    if len(args) >= 2 and args[1] is NoneType:
+        return args[0]
+
     if get_origin(origin) is not Union:
         return origin
-
-    args = get_args(origin)
 
     if len(args) != 2 or NoneType not in args:
         return args
 
-    if args[1] is NoneType:
-        return args[0]
 
     return args[1]
 
