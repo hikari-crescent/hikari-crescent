@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, TypeVar
 
 from attr import define, field
-from hikari import UNDEFINED, CommandOption, Snowflakeish
+from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
 
 from crescent.exceptions import HikariMoment
@@ -16,7 +16,6 @@ if TYPE_CHECKING:
         PartialApplication,
         PartialCommand,
         PartialGuild,
-        Permissions,
         Snowflake,
         SnowflakeishOr,
         UndefinedNoneOr,
@@ -81,13 +80,22 @@ class AppCommand(CommandBuilder):
     type: CommandType
     name: str
     guild_id: Snowflakeish | None
-    default_permission: UndefinedOr[bool]
 
     description: str | None = None
     options: Sequence[CommandOption] | None = None
+    default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
+    is_dm_enabled: bool = True
     id: UndefinedOr[Snowflake] = UNDEFINED
 
-    __eq__props: Sequence[str] = ("type", "name", "description", "guild_id", "options")
+    __eq__props: Sequence[str] = (
+        "type",
+        "name",
+        "description",
+        "guild_id",
+        "options",
+        "default_member_permissions",
+        "is_dm_enabled",
+    )
 
     def __eq__(self, __o: object) -> bool:
         """
@@ -114,14 +122,19 @@ class AppCommand(CommandBuilder):
             out["description"] = self.description
         if self.options:
             out["options"] = [encoder.serialize_command_option(option) for option in self.options]
-        if self.default_permission:
-            out["default_permission"] = self.default_permission
+
+        if isinstance(self.default_member_permissions, Permissions):
+            perms = str(self.default_member_permissions.value)
+        elif not self.default_member_permissions:
+            perms = None
+        else:
+            perms = str(self.default_member_permissions)
+
+        out["default_member_permissions"] = perms
+
+        out["dm_permission"] = self.is_dm_enabled
 
         return out
-
-    def set_default_permission(self, state: UndefinedOr[bool]) -> AppCommand:
-        self.default_permission = state
-        return self
 
     def set_id(self, _id: UndefinedOr[Snowflakeish]) -> AppCommand:
         if isinstance(_id, int):
@@ -129,15 +142,7 @@ class AppCommand(CommandBuilder):
         self.id = _id
         return self
 
-    @property
-    def default_member_permissions(self) -> Permissions | int:  # noqa
-        raise HikariMoment()
-
     def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:  # noqa
-        raise HikariMoment()
-
-    @property
-    def is_dm_enabled(self) -> UndefinedOr[bool]:  # noqa
         raise HikariMoment()
 
     async def create(  # noqa

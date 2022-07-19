@@ -28,7 +28,8 @@ class TestCommandFunction:
                 type=CommandType.SLASH,
                 name="test",
                 guild_id=12345678,
-                default_permission=UNDEFINED,
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
                 description="1234",
             )
         )
@@ -48,7 +49,8 @@ class TestCommandFunction:
                 type=CommandType.SLASH,
                 name="callback",
                 guild_id=None,
-                default_permission=UNDEFINED,
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
                 description="1234",
                 options=[
                     CommandOption(
@@ -85,7 +87,8 @@ class TestCommandFunction:
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
-                default_permission=UNDEFINED,
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
                 description="1234",
                 guild_id=None,
                 options=[
@@ -123,7 +126,8 @@ class TestCommandFunction:
             app=AppCommand(
                 type=CommandType.MESSAGE,
                 name="callback",
-                default_permission=UNDEFINED,
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
                 guild_id=None,
             )
         )
@@ -135,7 +139,11 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             app=AppCommand(
-                type=CommandType.USER, name="callback", default_permission=UNDEFINED, guild_id=None
+                type=CommandType.USER,
+                name="callback",
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
+                guild_id=None,
             )
         )
 

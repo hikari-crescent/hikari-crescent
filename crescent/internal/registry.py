@@ -6,7 +6,16 @@ from inspect import iscoroutinefunction
 from logging import getLogger
 from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
-from hikari import UNDEFINED, CommandOption, CommandType, ForbiddenError, OptionType, Snowflake
+from hikari import (
+    UNDEFINED,
+    CommandOption,
+    CommandType,
+    ForbiddenError,
+    OptionType,
+    Permissions,
+    Snowflake,
+    UndefinedType,
+)
 from hikari.api import CommandBuilder
 
 from crescent.exceptions import AlreadyRegisteredError
@@ -17,7 +26,7 @@ from crescent.utils import gather_iter, unwrap
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, DefaultDict, Sequence
 
-    from hikari import Snowflakeish, UndefinedOr
+    from hikari import Snowflakeish
 
     from crescent.bot import Bot
     from crescent.typedefs import AutocompleteCallbackT
@@ -43,7 +52,8 @@ def register_command(
     guild: Snowflakeish | None = None,
     description: str | None = None,
     options: Sequence[CommandOption] | None = None,
-    default_permission: UndefinedOr[bool] = UNDEFINED,
+    default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
+    dm_enabled: bool = True,
     deprecated: bool = False,
     autocomplete: dict[str, AutocompleteCallbackT] = {},
 ) -> MetaStruct[T, AppCommandMeta]:
@@ -64,7 +74,8 @@ def register_command(
                 guild_id=guild,
                 name=name,
                 options=options,
-                default_permission=default_permission,
+                default_member_permissions=default_member_permissions,
+                is_dm_enabled=dm_enabled,
             ),
         ),
     )
@@ -170,7 +181,8 @@ class CommandHandler:
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
-                        default_permission=command.metadata.app.default_permission,
+                        default_member_permissions=command.metadata.app.default_member_permissions,
+                        is_dm_enabled=command.metadata.app.is_dm_enabled,
                     )
 
                 # The top-level command now exists. A subcommand group now if placed
@@ -235,7 +247,8 @@ class CommandHandler:
                         type=command.metadata.app.type,
                         guild_id=command.metadata.app.guild_id,
                         options=[],
-                        default_permission=command.metadata.app.default_permission,
+                        default_member_permissions=command.metadata.app.default_member_permissions,
+                        is_dm_enabled=command.metadata.app.is_dm_enabled,
                     )
 
                 # No checking has to be done before appending `command` since it is the
