@@ -78,7 +78,7 @@ class PluginManager:
 
         If a file is attempted to be loaded that does not have a plugin variable,
         a `ValueError` will be raised. Files who's names start with an underscore
-        will not be loaded. 
+        will not be loaded.
 
         Args:
             path: The path to the folder that contains the plugins.
