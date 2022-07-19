@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from importlib import import_module, reload
 from logging import getLogger
-from types import ModuleType
 from typing import TYPE_CHECKING
 
 import hikari
@@ -66,12 +65,33 @@ class PluginManager:
         return plugin
 
     def load_folder(self, path: str, refresh: bool = False) -> list[Plugin]:
+        """Loads plugins from a folder.
+
+        ```python
+        import crescent
+
+        bot = crescent.Bot(token=...)
+
+        bot.plugins.load("project.plugin_folder")
+        ```
+
+        If a file is attempted to be loaded that does not have a plugin variable,
+        a `ValueError` exception will be raised.
+        Dunder files (`__init__.py`, `__main__.py`, etc) will not be loaded.
+
+        Args:
+            path: The path to the folder that contains the plugins.
+            refresh: Whether or not to reload the plugin and the plugin's module.
+        Returns:
+            A list of the plugins that were loaded.
+        """
+
         path = path.replace(".", os.sep)  # Allow . or / for ease of use
         loaded_plugins: list[Plugin] = []
 
-        for root, _, files in os.walk(path, topdown=False):
+        for root, _, files in os.walk(path):
             for file in files:
-                if not file.endswith(".py"):
+                if file.startswith("__") or not file.endswith(".py"):
                     continue
                 loaded_plugins.append(
                     self.load(".".join(os.path.join(root, file[:-3]).split(os.sep)))
