@@ -114,6 +114,10 @@ def test_310_annotation_syntax():
         Parameter(name="1234", annotation=int | None, default=None, kind=POSITIONAL_OR_KEYWORD)
     ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
 
+    assert gen_command_option(
+        Parameter(name="1234", annotation=None | int, default=None, kind=POSITIONAL_OR_KEYWORD)
+    ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
+
 
 def test_gen_channel_options():
     channels = (
