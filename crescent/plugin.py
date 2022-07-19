@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import overload
 from glob import iglob
 from importlib import import_module, reload
 from logging import getLogger
@@ -13,7 +14,7 @@ from crescent.internal.meta_struct import MetaStruct
 from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, TypeVar
+    from typing import Any, Sequence, TypeVar, Literal
 
     from crescent.bot import Bot
     from crescent.typedefs import HookCallbackT, PluginCallbackT
@@ -40,7 +41,23 @@ class PluginManager:
         plugin = self.plugins.pop(path)
         plugin._unload()
 
-    def load(self, path: str, refresh: bool = False) -> Plugin:
+    @overload
+    def load(self, path: str, /, *, refresh: bool = ...) -> Plugin:
+        ...
+
+    @overload
+    def load(self, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
+        ...
+
+    @overload
+    def load(self, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
+        ...
+
+    @overload
+    def load(self, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin | None:
+        ...
+
+    def load(self, path: str, refresh: bool = False, strict: bool = True) -> Plugin | None:
         """Load a plugin from the module path.
 
         ```python
@@ -54,6 +71,9 @@ class PluginManager:
         Args:
             path: The module path for the plugin.
             refresh: Whether or not to reload the plugin and the plugin's module.
+            strict:
+                If false, the function will not error when module file does not have a plugin
+                variable.
         """
 
         if refresh:
@@ -61,11 +81,13 @@ class PluginManager:
             old_plugin._unload()
 
         plugin = Plugin._from_module(path, refresh=refresh)
+        if not plugin:
+            return None
         self._add_plugin(path, plugin, refresh=refresh)
 
         return plugin
 
-    def load_folder(self, path: str, refresh: bool = False) -> list[Plugin]:
+    def load_folder(self, path: str, refresh: bool = False, strict: bool = True) -> list[Plugin]:
         """Loads plugins from a folder.
 
         ```python
@@ -83,6 +105,9 @@ class PluginManager:
         Args:
             path: The path to the folder that contains the plugins.
             refresh: Whether or not to reload the plugin and the plugin's module.
+            strict:
+                If false, the function will not error when a file does not have a plugin
+                variable.
         Returns:
             A list of plugins that were loaded.
         """
@@ -92,7 +117,8 @@ class PluginManager:
 
         for name in iglob(os.path.join("./", path, "**", r"[!_]*.py"), recursive=True):
             mod_name = ".".join(name[2:-3].split(os.sep))
-            loaded_plugins.append(self.load(mod_name))
+            if maybe_plugin := self.load(mod_name, strict=False):
+                loaded_plugins.append(maybe_plugin)
 
         return loaded_plugins
 
@@ -171,8 +197,28 @@ class Plugin:
     async def _on_bot_close(self, bot: Bot) -> None:
         self._unload()
 
+    @overload
     @classmethod
-    def _from_module(cls, path: str, refresh: bool = False) -> Plugin:
+    def _from_module(cls, path: str, /, *, refresh: bool = ...) -> Plugin:
+        ...
+
+    @overload
+    @classmethod
+    def _from_module(cls, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
+        ...
+
+    @overload
+    @classmethod
+    def _from_module(cls, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
+        ...
+
+    @overload
+    @classmethod
+    def _from_module(cls, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin | None:
+        ...
+
+    @classmethod
+    def _from_module(cls, path: str, refresh: bool = False, strict: bool = True) -> Plugin | None:
         parents = path.split(".")
 
         name = parents.pop(-1)
@@ -183,7 +229,7 @@ class Plugin:
         if refresh:
             module = reload(module)
         plugin = getattr(module, "plugin", None)
-        if not isinstance(plugin, Plugin):
+        if strict and not isinstance(plugin, Plugin):
             raise ValueError(
                 f"Plugin {path} has no `plugin` or `plugin` is not of type Plugin. "
                 "If you want to name your plugin something else, you have to add an "
