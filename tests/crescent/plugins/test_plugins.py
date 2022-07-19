@@ -79,12 +79,11 @@ class TestPlugins:
         plugins = bot.plugins.load_folder("tests.crescent.plugins.plugin_folder")
 
         from tests.crescent.plugins.plugin_folder.plugin import plugin as plugin
-        from tests.crescent.plugins.plugin_folder.plugin_subfolder.plugin import plugin as nested_plugin
-
-        assert arrays_contain_same_elements(
-            [plugin, nested_plugin],
-            plugins
+        from tests.crescent.plugins.plugin_folder.plugin_subfolder.plugin import (
+            plugin as nested_plugin,
         )
+
+        assert arrays_contain_same_elements([plugin, nested_plugin], plugins)
 
     def test_load_hook(self):
         bot = MockBot()
