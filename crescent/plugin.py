@@ -87,7 +87,7 @@ class PluginManager:
             A list of the plugins that were loaded.
         """
 
-        path = path.replace(".", os.sep)  # Allow . or / for ease of use
+        path = path.replace(".", os.sep)
         loaded_plugins: list[Plugin] = []
 
         for name in iglob(os.path.join("./", path, "**", r"[!_]*.py"), recursive=True):
