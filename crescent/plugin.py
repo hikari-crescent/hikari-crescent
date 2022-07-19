@@ -65,7 +65,7 @@ class PluginManager:
 
         return plugin
 
-    def load_path(self, path: str, refresh: bool = False) -> list[Plugin]:
+    def load_folder(self, path: str, refresh: bool = False) -> list[Plugin]:
         path = path.replace(".", os.sep)  # Allow . or / for ease of use
         loaded_plugins: list[Plugin] = []
 
