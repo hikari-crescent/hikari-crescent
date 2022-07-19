@@ -76,8 +76,8 @@ class PluginManager:
         ```
 
         If a file is attempted to be loaded that does not have a plugin variable,
-        a `ValueError` exception will be raised.
-        Dunder files (`__init__.py`, `__main__.py`, etc) will not be loaded.
+        a `ValueError` will be raised. Files who's names start with an underscore
+        will not be loaded. 
 
         Args:
             path: The path to the folder that contains the plugins.
@@ -91,7 +91,7 @@ class PluginManager:
 
         for root, _, files in os.walk(path):
             for file in files:
-                if file.startswith("__") or not file.endswith(".py"):
+                if file.startswith("_") or not file.endswith(".py"):
                     continue
                 loaded_plugins.append(
                     self.load(".".join(os.path.join(root, file[:-3]).split(os.sep)))
