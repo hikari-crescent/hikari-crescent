@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import os
+from glob import iglob
 from importlib import import_module, reload
 from logging import getLogger
 from typing import TYPE_CHECKING
 
 import hikari
-from glob import iglob
 
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.meta_struct import MetaStruct
