@@ -40,7 +40,6 @@ class TestPlugins:
         plugin = bot.plugins.load("tests.crescent.plugins.not_plugin", strict=False)
         assert not plugin
 
-
     def test_unload_plugin(self):
         bot = MockBot()
 
@@ -101,7 +100,9 @@ class TestPlugins:
         with raises(ValueError):
             bot.plugins.load_folder("tests.crescent.plugins.plugin_folder_not_strict")
 
-        plugins = bot.plugins.load_folder("tests.crescent.plugins.plugin_folder_not_strict", strict=False)
+        plugins = bot.plugins.load_folder(
+            "tests.crescent.plugins.plugin_folder_not_strict", strict=False
+        )
 
         from tests.crescent.plugins.plugin_folder_not_strict.plugin import plugin
 
