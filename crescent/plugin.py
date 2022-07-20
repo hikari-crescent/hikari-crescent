@@ -80,7 +80,7 @@ class PluginManager:
             old_plugin = self.plugins.pop(path)
             old_plugin._unload()
 
-        plugin = Plugin._from_module(path, refresh=refresh)
+        plugin = Plugin._from_module(path, refresh=refresh, strict=strict)
         if not plugin:
             return None
         self._add_plugin(path, plugin, refresh=refresh)
@@ -117,7 +117,7 @@ class PluginManager:
 
         for name in iglob(os.path.join("./", path, "**", r"[!_]*.py"), recursive=True):
             mod_name = ".".join(name[2:-3].split(os.sep))
-            if maybe_plugin := self.load(mod_name, strict=False):
+            if maybe_plugin := self.load(mod_name, strict=strict):
                 loaded_plugins.append(maybe_plugin)
 
         return loaded_plugins

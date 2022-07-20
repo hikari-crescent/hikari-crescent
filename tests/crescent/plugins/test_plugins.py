@@ -31,6 +31,16 @@ class TestPlugins:
         assert plugin_catch_command in _plugin._children
         assert plugin_catch_command in bot._command_error_handler.registry.values()
 
+    def test_load_not_plugin(self):
+        bot = MockBot()
+
+        with raises(ValueError):
+            bot.plugins.load("tests.crescent.plugins.not_plugin")
+
+        plugin = bot.plugins.load("tests.crescent.plugins.not_plugin", strict=False)
+        assert not plugin
+
+
     def test_unload_plugin(self):
         bot = MockBot()
 
@@ -78,12 +88,24 @@ class TestPlugins:
 
         plugins = bot.plugins.load_folder("tests.crescent.plugins.plugin_folder")
 
-        from tests.crescent.plugins.plugin_folder.plugin import plugin as plugin
+        from tests.crescent.plugins.plugin_folder.plugin import plugin
         from tests.crescent.plugins.plugin_folder.plugin_subfolder.plugin import (
             plugin as nested_plugin,
         )
 
         assert arrays_contain_same_elements([plugin, nested_plugin], plugins)
+
+    def test_load_folder_with_non_plugins(self):
+        bot = MockBot()
+
+        with raises(ValueError):
+            bot.plugins.load_folder("tests.crescent.plugins.plugin_folder_not_strict")
+
+        plugins = bot.plugins.load_folder("tests.crescent.plugins.plugin_folder_not_strict", strict=False)
+
+        from tests.crescent.plugins.plugin_folder_not_strict.plugin import plugin
+
+        assert arrays_contain_same_elements([plugin], plugins)
 
     def test_load_hook(self):
         bot = MockBot()
