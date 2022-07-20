@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from importlib import import_module, reload
 from logging import getLogger
@@ -111,11 +110,11 @@ class PluginManager:
             A list of plugins that were loaded.
         """
 
-        pathlib_path = Path(path.replace(".", os.sep))
+        pathlib_path = Path(*path.split("."))
         loaded_plugins: list[Plugin] = []
 
         for glob_path in pathlib_path.glob(r"**/[!_]*.py"):
-            mod_name = ".".join(glob_path.as_posix()[:-3].split(os.sep))
+            mod_name = ".".join(glob_path.as_posix()[:-3].split("/"))
             if maybe_plugin := self.load(mod_name, strict=strict):
                 loaded_plugins.append(maybe_plugin)
 
