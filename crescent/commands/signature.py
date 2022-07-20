@@ -42,10 +42,7 @@ def _unwrap_optional(origin: type[Any]) -> Any:
     if get_origin(origin) is not Union:
         return origin
 
-    if len(args) != 2 or NoneType not in args:
-        return args
-
-    return args[1]
+    return args
 
 
 def _get_arg(t: type[Arg] | type[Any], metadata: Iterable[Any]) -> Any | None:
