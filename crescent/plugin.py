@@ -115,17 +115,25 @@ class PluginManager:
         loaded_paths: list[str] = []
 
         for glob_path in pathlib_path.glob(r"**/[!_]*.py"):
-            mod_name = ".".join(glob_path.as_posix()[:-3].split("/"))
-            try:
-                maybe_plugin = self.load(mod_name, strict=strict)
-            except ValueError as e:
-                for plugin_path in loaded_paths:
-                    self.unload(plugin_path)
-                raise e
-            if maybe_plugin:
-                loaded_paths.append(mod_name)
-                loaded_plugins.append(maybe_plugin)
+            self._load_plugin_from_filepath(glob_path, strict, loaded_plugins, loaded_paths)
         return loaded_plugins
+
+    def _load_plugin_from_filepath(
+        self,
+        path: Path,
+        strict: bool,
+        plugins: list[Plugin],
+        paths: list[str],
+    ) -> None:
+        mod_name = ".".join(path.as_posix()[:-3].split("/"))
+        try:
+            if maybe_plugin := self.load(mod_name, strict=strict):
+                plugins.append(maybe_plugin)
+                paths.append(mod_name)
+        except ValueError as e:
+            for plugin_path in paths:
+                self.unload(plugin_path)
+            raise e
 
     def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
         if path in self.plugins and not refresh:
