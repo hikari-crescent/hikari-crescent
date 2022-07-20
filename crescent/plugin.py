@@ -40,15 +40,11 @@ class PluginManager:
         plugin._unload()
 
     @overload
-    def load(self, path: str, /, *, refresh: bool = ...) -> Plugin:
-        ...
-
-    @overload
     def load(self, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
         ...
 
     @overload
-    def load(self, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
+    def load(self, path: str, *, strict: Literal[False] = False, refresh: bool = ...) -> Plugin | None:
         ...
 
     @overload
@@ -112,12 +108,19 @@ class PluginManager:
 
         pathlib_path = Path(*path.split("."))
         loaded_plugins: list[Plugin] = []
+        loaded_paths: list[str] = []
 
         for glob_path in pathlib_path.glob(r"**/[!_]*.py"):
             mod_name = ".".join(glob_path.as_posix()[:-3].split("/"))
-            if maybe_plugin := self.load(mod_name, strict=strict):
-                loaded_plugins.append(maybe_plugin)
-
+            try:
+                if maybe_plugin := self.load(mod_name, strict=strict):
+                    loaded_paths.append(mod_name)
+                    loaded_plugins.append(maybe_plugin)
+            except ValueError as e:
+                print(loaded_paths)
+                for plugin_path in loaded_paths:
+                    self.unload(plugin_path)
+                raise e
         return loaded_plugins
 
     def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:

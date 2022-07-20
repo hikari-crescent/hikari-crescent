@@ -101,7 +101,8 @@ class TestPlugins:
         with raises(ValueError):
             bot.plugins.load_folder("tests.crescent.plugins.plugin_folder_not_strict")
 
-        # bot.plugins.unload("tests.crescent.plugins.plugin_folder_not_strict.plugin")
+        # Plugins should be empty after loading fails
+        assert not bot.plugins.plugins
 
         plugins = bot.plugins.load_folder(
             "tests.crescent.plugins.plugin_folder_not_strict", strict=False
