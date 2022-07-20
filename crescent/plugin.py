@@ -121,14 +121,14 @@ class PluginManager:
         for glob_path in pathlib_path.glob(r"**/[!_]*.py"):
             mod_name = ".".join(glob_path.as_posix()[:-3].split("/"))
             try:
-                if maybe_plugin := self.load(mod_name, strict=strict):
-                    loaded_paths.append(mod_name)
-                    loaded_plugins.append(maybe_plugin)
+                maybe_plugin = self.load(mod_name, strict=strict)
             except ValueError as e:
-                print(loaded_paths)
                 for plugin_path in loaded_paths:
                     self.unload(plugin_path)
                 raise e
+            if maybe_plugin:
+                loaded_paths.append(mod_name)
+                loaded_plugins.append(maybe_plugin)
         return loaded_plugins
 
     def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
