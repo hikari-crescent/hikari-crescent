@@ -95,7 +95,7 @@ class TestPlugins:
 
         assert arrays_contain_same_elements([plugin, nested_plugin], plugins)
 
-    def test_load_folder_with_non_plugins(self):
+    def test_load_folder_with_not_plugins(self):
         bot = MockBot()
 
         with raises(ValueError):
