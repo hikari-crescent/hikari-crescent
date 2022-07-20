@@ -119,11 +119,7 @@ class PluginManager:
         return loaded_plugins
 
     def _load_plugin_from_filepath(
-        self,
-        path: Path,
-        strict: bool,
-        plugins: list[Plugin],
-        paths: list[str],
+        self, path: Path, strict: bool, plugins: list[Plugin], paths: list[str]
     ) -> None:
         mod_name = ".".join(path.as_posix()[:-3].split("/"))
         try:
