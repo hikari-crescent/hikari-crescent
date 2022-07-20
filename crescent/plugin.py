@@ -40,23 +40,19 @@ class PluginManager:
         plugin._unload()
 
     @overload
-    @classmethod
-    def _from_module(cls, path: str, /, *, refresh: bool = ...) -> Plugin:
+    def load(self, path: str, /, *, refresh: bool = ...) -> Plugin:
         ...
 
     @overload
-    @classmethod
-    def _from_module(cls, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
+    def load(self, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
         ...
 
     @overload
-    @classmethod
-    def _from_module(cls, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
+    def load(self, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
         ...
 
     @overload
-    @classmethod
-    def _from_module(cls, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin | None:
+    def load(self, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin | None:
         ...
 
     def load(self, path: str, refresh: bool = False, strict: bool = True) -> Plugin | None:
