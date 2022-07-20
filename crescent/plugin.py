@@ -44,7 +44,9 @@ class PluginManager:
         ...
 
     @overload
-    def load(self, path: str, *, strict: Literal[False] = False, refresh: bool = ...) -> Plugin | None:
+    def load(
+        self, path: str, *, strict: Literal[False] = False, refresh: bool = ...
+    ) -> Plugin | None:
         ...
 
     @overload
