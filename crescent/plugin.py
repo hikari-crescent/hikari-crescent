@@ -51,7 +51,9 @@ class PluginManager:
 
     @overload
     @classmethod
-    def _from_module(cls, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
+    def _from_module(
+        cls, path: str, *, strict: Literal[False], refresh: bool = ...
+    ) -> Plugin | None:
         ...
 
     @overload
