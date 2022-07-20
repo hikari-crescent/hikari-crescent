@@ -95,7 +95,7 @@ class Say:
 | Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
 | `Union[Channel Types]` (functions only) | Channel. ^ |
 | `List[Channel Types]` (classes only) | Channel. ^ |
-| `hikari.Attachment` (classes only) | Attachment |
+| `hikari.Attachment` | Attachment |
 
 
 ### Error Handling
