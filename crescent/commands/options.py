@@ -17,13 +17,13 @@ from hikari import (
     GuildTextChannel,
     GuildVoiceChannel,
     InteractionChannel,
+    Member,
     OptionType,
     PartialChannel,
     Role,
     UndefinedNoneOr,
     UndefinedOr,
     User,
-    Member,
 )
 
 from crescent.mentionable import Mentionable

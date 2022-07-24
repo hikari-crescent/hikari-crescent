@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
 from hikari import CommandOption, OptionType
 
-from logging import getLogger
 from crescent.commands.args import (
     Arg,
     Autocomplete,

@@ -1,7 +1,9 @@
-from contextlib import suppress
-from pytest import LogCaptureFixture, raises
 import logging
+from contextlib import suppress
+
 import hikari
+from pytest import LogCaptureFixture, raises
+
 import crescent
 
 
