@@ -123,6 +123,6 @@ def verify_member_type(
         _LOG.warning(f"`hikari.User` can be typed as `hikari.Member` in `{name}`")
     if is_member and dm_enabled:
         raise TypeError(
-            f"`{name}` must be typed with `hikari.User` or set `dm_enabled` to `True` in "
+            f"`{name}` must be typed with `hikari.User` or set `dm_enabled` to `False` in "
             "the command decorator."
         )
