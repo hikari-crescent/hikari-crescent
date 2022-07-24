@@ -8,7 +8,11 @@ from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflake
 
 from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
-from crescent.commands.signature import gen_command_option, get_autocomplete_func
+from crescent.commands.signature import (
+    gen_command_option,
+    get_autocomplete_func,
+    verify_member_type,
+)
 from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
 
@@ -144,6 +148,9 @@ def command(
     else:
         raise NotImplementedError("This function only works with classes and functions")
 
+    for option in options:
+        verify_member_type(callback.__name__, option.type, dm_enabled)
+
     return register_command(
         callback=callback_func,
         command_type=CommandType.SLASH,
@@ -207,6 +214,9 @@ def user_command(
             dm_enabled=dm_enabled,
             deprecated=deprecated,
         )
+
+    for param in get_parameters(callback):
+        verify_member_type(callback.__name__, param.annotation, dm_enabled)
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),

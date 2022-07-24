@@ -23,12 +23,14 @@ from hikari import (
     UndefinedNoneOr,
     UndefinedOr,
     User,
+    Member,
 )
 
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
     from crescent.typedefs import AutocompleteCallbackT, OptionTypesT
+
 
 __all__ = (
     "OPTIONS_TYPE_MAP",
@@ -39,7 +41,12 @@ __all__ = (
     "ClassCommandOption",
 )
 
-OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType] = {
+
+class MemberInt(int):
+    ...
+
+
+OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType | MemberInt] = {
     str: OptionType.STRING,
     bool: OptionType.BOOLEAN,
     int: OptionType.INTEGER,
@@ -47,6 +54,7 @@ OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType] = {
     PartialChannel: OptionType.CHANNEL,
     Role: OptionType.ROLE,
     User: OptionType.USER,
+    Member: MemberInt(OptionType.USER),
     Mentionable: OptionType.MENTIONABLE,
     Attachment: OptionType.ATTACHMENT,
 }
@@ -89,7 +97,7 @@ Self = TypeVar("Self")
 @dataclass
 class ClassCommandOption(Generic[T]):
     name: str | None
-    type: OptionType
+    type: OptionType | MemberInt
     description: str
     default: UndefinedNoneOr[Any]
     choices: Sequence[CommandChoice] | None

@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
 from hikari import CommandOption, OptionType
 
+from logging import getLogger
 from crescent.commands.args import (
     Arg,
     Autocomplete,
@@ -14,7 +15,7 @@ from crescent.commands.args import (
     MinValue,
     Name,
 )
-from crescent.commands.options import OPTIONS_TYPE_MAP, get_channel_types
+from crescent.commands.options import OPTIONS_TYPE_MAP, MemberInt, get_channel_types
 from crescent.context import Context
 
 if TYPE_CHECKING:
@@ -24,6 +25,8 @@ if TYPE_CHECKING:
     from crescent.typedefs import AutocompleteCallbackT
 
     T = TypeVar("T")
+
+_LOG = getLogger(__name__)
 
 __all__: Sequence[str] = ("gen_command_option", "get_autocomplete_func")
 
@@ -109,3 +112,17 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 def get_autocomplete_func(param: Parameter) -> AutocompleteCallbackT | None:
     _, metadata = _get_origin_and_metadata(param)
     return _get_arg(Autocomplete, metadata)
+
+
+def verify_member_type(
+    name: str, option_type: OptionType | MemberInt | int, dm_enabled: bool
+) -> None:
+    is_member = isinstance(option_type, MemberInt)
+
+    if not is_member and not dm_enabled:
+        _LOG.warning(f"`hikari.User` can be typed as `hikari.Member` in `{name}`")
+    if is_member and dm_enabled:
+        raise TypeError(
+            f"`{name}` must be typed with `hikari.User` or set `dm_enabled` to `True` in "
+            "the command decorator."
+        )
