@@ -119,7 +119,7 @@ def verify_member_type(
 ) -> None:
     is_member = isinstance(option_type, MemberInt)
 
-    if not is_member and not dm_enabled:
+    if not (is_member or dm_enabled):
         _LOG.warning(f"`hikari.User` can be typed as `hikari.Member` in `{name}`")
     if is_member and dm_enabled:
         raise TypeError(
