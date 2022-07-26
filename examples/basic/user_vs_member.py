@@ -13,6 +13,7 @@ bot = crescent.Bot(token="...")
 # object.
 # Crescent will prevent you from typing this command with `hikari.Member` because that
 # violates type safety.
+@bot.include
 @crescent.command(dm_enabled=True)  # `dm_enabled=True` is default.
 async def slash_command(ctx: crescent.Context, user: hikari.User):
     ...
@@ -20,6 +21,7 @@ async def slash_command(ctx: crescent.Context, user: hikari.User):
 
 # This slash command can only be used in guilds. That ensures that every user will be a
 # `hikari.Member` object.
+@bot.include
 @crescent.command(dm_enabled=False)
 async def guild_only_slash_command(ctx: crescent.Context, user: hikari.Member):
     ...
@@ -31,11 +33,16 @@ async def guild_only_slash_command(ctx: crescent.Context, user: hikari.Member):
 # object.
 # Crescent will not prevent you from typing a user command with `hikari.Member` but it is
 # not type safe so your type checker will complain.
+@bot.include
 @crescent.user_command(dm_enabled=True)  # `dm_enabled=True` is default.
 async def user_command(ctx: crescent.Context, user: hikari.User):
     ...
 
 
+@bot.include
 @crescent.user_command(dm_enabled=False)
 async def guild_only_user_command(ctx: crescent.Context, user: hikari.User):
     ...
+
+
+bot.run()
