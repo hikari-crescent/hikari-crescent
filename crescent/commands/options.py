@@ -47,6 +47,7 @@ class MemberInt(int):
     A version of `hikari.OptionType` that shows that the option type was created with
     a `hikari.Member` object.
     """
+
     ...
 
 
