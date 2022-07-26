@@ -48,8 +48,6 @@ class MemberInt(int):
     a `hikari.Member` object.
     """
 
-    ...
-
 
 OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType | MemberInt] = {
     str: OptionType.STRING,
