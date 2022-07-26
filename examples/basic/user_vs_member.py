@@ -2,9 +2,9 @@
 # can either receive a `hikari.User` or `hikari.Member` object for users respectively.
 # `hikari.Member` is a subclass of `hikari.User`.
 
-import crescent
 import hikari
 
+import crescent
 
 bot = crescent.Bot(token="...")
 
