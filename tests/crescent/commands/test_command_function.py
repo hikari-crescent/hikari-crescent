@@ -24,6 +24,7 @@ class TestCommandFunction:
             pass
 
         assert callback.metadata == AppCommandMeta(
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="test",
@@ -45,6 +46,7 @@ class TestCommandFunction:
             pass
 
         assert callback.metadata == AppCommandMeta(
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
@@ -84,6 +86,7 @@ class TestCommandFunction:
         print(callback.metadata.app.options[2].channel_types)
 
         assert callback.metadata == AppCommandMeta(
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
@@ -123,6 +126,7 @@ class TestCommandFunction:
             pass
 
         assert callback.metadata == AppCommandMeta(
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.MESSAGE,
                 name="callback",
@@ -138,6 +142,7 @@ class TestCommandFunction:
             pass
 
         assert callback.metadata == AppCommandMeta(
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.USER,
                 name="callback",
