@@ -4,7 +4,7 @@ from datetime import timedelta as _timedelta
 from typing import Callable, Sequence, overload
 
 from crescent.ext.tasks.task import Task, TaskCallbackT
-from crescent.internal import MetaStruct
+from crescent.internal import Includable
 
 __all__: Sequence[str] = ("loop", "Loop")
 
@@ -29,7 +29,7 @@ class Loop(Task):
         self.first_loop = False
 
 
-retT = Callable[[TaskCallbackT], MetaStruct[TaskCallbackT, Loop]]
+retT = Callable[[TaskCallbackT], Includable[Loop]]
 
 
 @overload
@@ -54,9 +54,9 @@ def loop(
     else:
         time = timedelta
 
-    def inner(callback: TaskCallbackT) -> MetaStruct[TaskCallbackT, Loop]:
-        meta = MetaStruct(callback, Loop(callback, time.total_seconds()))
-        Loop._link(meta)
-        return meta
+    def inner(callback: TaskCallbackT) -> Includable[Loop]:
+        includable = Includable(Loop(callback, time.total_seconds()))
+        Loop._link(includable)
+        return includable
 
     return inner

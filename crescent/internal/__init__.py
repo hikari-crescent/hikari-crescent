@@ -2,14 +2,14 @@ from typing import Sequence
 
 from .app_command import *
 from .handle_resp import *
-from .meta_struct import *
+from .includable import *
 from .registry import *
 
 __all__: Sequence[str] = (
     "AppCommandMeta",
     "AppCommand",
     "Unique",
-    "MetaStruct",
+    "Includable",
     "register_command",
     "CommandHandler",
 )

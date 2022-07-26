@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from hikari.api.rest import RESTClient
 
     from crescent.commands.groups import Group, SubGroup
-    from crescent.internal.meta_struct import MetaStruct
+    from crescent.internal.includable import Includable
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
 
     Self = TypeVar("Self")
@@ -49,7 +49,7 @@ class Unique:
 
     @classmethod
     def from_meta_struct(
-        cls: Type[Unique], command: MetaStruct[CommandCallbackT, AppCommandMeta]
+        cls: Type[Unique], command: Includable[AppCommandMeta]
     ) -> Unique:
         return cls(
             name=command.metadata.app.name,
@@ -164,6 +164,7 @@ class AppCommand(CommandBuilder):
 @define
 class AppCommandMeta:
     app: AppCommand
+    callback: CommandCallbackT
     autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
