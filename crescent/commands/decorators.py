@@ -55,9 +55,7 @@ def _class_command_callback(
 
 
 @overload
-def command(
-    callback: CommandCallbackT | type[ClassCommandProto], /
-) -> Includable[AppCommandMeta]:
+def command(callback: CommandCallbackT | type[ClassCommandProto], /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -70,9 +68,7 @@ def command(
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     deprecated: bool = ...,
-) -> Callable[
-    [CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta],
-]:
+) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta],]:
     ...
 
 
@@ -175,9 +171,7 @@ def _kwargs_to_args_callback(
 
 
 @overload
-def user_command(
-    callback: UserCommandCallbackT, /
-) -> Includable[AppCommandMeta]:
+def user_command(callback: UserCommandCallbackT, /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -202,9 +196,7 @@ def user_command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     deprecated: bool = False,
-) -> Callable[
-    [UserCommandCallbackT], Includable[AppCommandMeta]
-] | Includable[AppCommandMeta]:
+) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
             user_command,
@@ -230,9 +222,7 @@ def user_command(
 
 
 @overload
-def message_command(
-    callback: MessageCommandCallbackT, /
-) -> Includable[AppCommandMeta]:
+def message_command(callback: MessageCommandCallbackT, /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -257,9 +247,7 @@ def message_command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     deprecated: bool = False,
-) -> Callable[
-    [MessageCommandCallbackT], Includable[AppCommandMeta],
-] | Includable[AppCommandMeta]:
+) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta],] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
             message_command,

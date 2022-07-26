@@ -29,9 +29,7 @@ def _make_catch_function(
 
         def decorator(callback: T) -> Includable[Any]:
             includable = Includable(
-                callback,
-                app_set_hooks=[app_set_hook],
-                plugin_unload_hooks=[plugin_unload_hook],
+                callback, app_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
             )
 
             return includable
@@ -52,24 +50,19 @@ _catch_autocomplete = _make_catch_function("_autocomplete_error_handler")
 
 def catch_command(
     *exceptions: type[Exception],
-) -> Callable[
-    [CommandErrorHandlerCallbackT[Any]], Includable[CommandErrorHandlerCallbackT[Any]],
-]:
+) -> Callable[[CommandErrorHandlerCallbackT[Any]], Includable[CommandErrorHandlerCallbackT[Any]],]:
     return _catch_command(*exceptions)
 
 
 def catch_event(
     *exceptions: type[Exception],
-) -> Callable[
-    [EventErrorHandlerCallbackT[Any]], Includable[EventErrorHandlerCallbackT[Any]],
-]:
+) -> Callable[[EventErrorHandlerCallbackT[Any]], Includable[EventErrorHandlerCallbackT[Any]],]:
     return _catch_event(*exceptions)
 
 
 def catch_autocomplete(
     *exceptions: type[Exception],
 ) -> Callable[
-    [AutocompleteErrorHandlerCallbackT[Any]],
-    Includable[AutocompleteErrorHandlerCallbackT[Any]],
+    [AutocompleteErrorHandlerCallbackT[Any]], Includable[AutocompleteErrorHandlerCallbackT[Any]],
 ]:
     return _catch_autocomplete(*exceptions)

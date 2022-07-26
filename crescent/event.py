@@ -58,7 +58,7 @@ def event(
 
 
 def _event_callback(
-    self: Includable[CallbackT[Any]]
+    self: Includable[CallbackT[Any]],
 ) -> Callable[[Event], Coroutine[None, None, None]]:
     async def func(event: Event) -> None:
         try:
