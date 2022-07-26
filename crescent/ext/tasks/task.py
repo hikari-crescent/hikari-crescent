@@ -63,7 +63,7 @@ class Task(ABC):
 
     @staticmethod
     def _link(includable: Includable[_TaskType]) -> None:
-        """Sets hooks on MetaStruct required for Task to function properly."""
+        """Sets hooks on Includable required for Task to function properly."""
         includable.app_set_hooks.append(_on_app_set)
         includable.plugin_unload_hooks.append(_unload)
 
