@@ -148,14 +148,6 @@ def _get_command(
     return None
 
 
-_VALUE_TYPE_LINK: dict[OptionType | int, str] = {
-    OptionType.ROLE: "roles",
-    OptionType.USER: "users",
-    OptionType.CHANNEL: "channels",
-    OptionType.ATTACHMENT: "attachments",
-}
-
-
 def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
     name: str = interaction.command_name
     group: str | None = None
@@ -200,6 +192,23 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
     )
 
 
+_VALUE_TYPE_LINK: dict[OptionType | int, str] = {
+    OptionType.ROLE: "roles",
+    OptionType.USER: "users",
+    OptionType.CHANNEL: "channels",
+    OptionType.ATTACHMENT: "attachments",
+}
+
+
+def _get_option_resolved_key(option_type: OptionType | int, in_guild: bool) -> str | None:
+    option_str = _VALUE_TYPE_LINK.get(option_type)
+
+    if in_guild and option_str == "users":
+        return "members"
+
+    return option_str
+
+
 def _options_to_kwargs(
     interaction: CommandInteraction, options: Sequence[CommandInteractionOption] | None
 ) -> dict[str, Any]:
@@ -213,7 +222,7 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 
-    resolved_type: str | None = _VALUE_TYPE_LINK.get(option.type)
+    resolved_type: str | None = _get_option_resolved_key(option.type, bool(interaction.guild_id))
 
     if resolved_type is None:
         return option.value
