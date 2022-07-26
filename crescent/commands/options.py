@@ -42,14 +42,14 @@ __all__ = (
 )
 
 
-class MemberInt(int):
+class MemberOptionType(int):
     """
     A version of `hikari.OptionType` that shows that the option type was created by
     using a `hikari.Member` object.
     """
 
 
-OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType | MemberInt] = {
+OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType | MemberOptionType] = {
     str: OptionType.STRING,
     bool: OptionType.BOOLEAN,
     int: OptionType.INTEGER,
@@ -57,7 +57,7 @@ OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType | MemberInt] = {
     PartialChannel: OptionType.CHANNEL,
     Role: OptionType.ROLE,
     User: OptionType.USER,
-    Member: MemberInt(OptionType.USER),
+    Member: MemberOptionType(OptionType.USER),
     Mentionable: OptionType.MENTIONABLE,
     Attachment: OptionType.ATTACHMENT,
 }
@@ -100,7 +100,7 @@ Self = TypeVar("Self")
 @dataclass
 class ClassCommandOption(Generic[T]):
     name: str | None
-    type: OptionType | MemberInt
+    type: OptionType | MemberOptionType
     description: str
     default: UndefinedNoneOr[Any]
     choices: Sequence[CommandChoice] | None

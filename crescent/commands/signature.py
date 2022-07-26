@@ -15,7 +15,7 @@ from crescent.commands.args import (
     MinValue,
     Name,
 )
-from crescent.commands.options import OPTIONS_TYPE_MAP, MemberInt, get_channel_types
+from crescent.commands.options import OPTIONS_TYPE_MAP, MemberOptionType, get_channel_types
 from crescent.context import Context
 
 if TYPE_CHECKING:
@@ -115,9 +115,9 @@ def get_autocomplete_func(param: Parameter) -> AutocompleteCallbackT | None:
 
 
 def verify_member_type(
-    name: str, option_type: OptionType | MemberInt | int, dm_enabled: bool
+    name: str, option_type: OptionType | MemberOptionType | int, dm_enabled: bool
 ) -> None:
-    is_member = isinstance(option_type, MemberInt)
+    is_member = isinstance(option_type, MemberOptionType)
 
     if not (is_member or dm_enabled):
         _LOG.warning(f"`hikari.User` can be typed as `hikari.Member` in `{name}`")
