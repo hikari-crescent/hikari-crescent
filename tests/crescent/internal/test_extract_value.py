@@ -42,17 +42,11 @@ def test_extract_user():
 
 
 def test_extract_member():
-    USER = object()
     MEMBER = object()
 
     command_interaction = MockInteraction(
         resolved=ResolvedOptionData(
-            users={"12345": USER},
-            members={"12345": MEMBER},
-            roles={},
-            channels={},
-            messages={},
-            attachments={},
+            users={}, members={"12345": MEMBER}, roles={}, channels={}, messages={}, attachments={}
         ),
         guild_id=12345,
     )
