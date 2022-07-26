@@ -215,9 +215,6 @@ def user_command(
             deprecated=deprecated,
         )
 
-    for param in get_parameters(callback):
-        verify_member_type(callback.__name__, param.annotation, dm_enabled)
-
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         command_type=CommandType.USER,
