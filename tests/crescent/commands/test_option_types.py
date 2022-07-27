@@ -40,11 +40,3 @@ def test_option_types():
     assert options[7].type == OptionType.CHANNEL
     assert options[8].type == OptionType.CHANNEL
     assert options[9].type == OptionType.ATTACHMENT
-
-
-def test_member():
-    @command(name="member-type", dm_enabled=False)
-    class MemberType:
-        member = option(Member)
-
-    assert MemberType.metadata.app.options[0].type == OptionType.USER

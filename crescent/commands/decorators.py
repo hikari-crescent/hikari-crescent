@@ -8,11 +8,7 @@ from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflake
 
 from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
-from crescent.commands.signature import (
-    gen_command_option,
-    get_autocomplete_func,
-    verify_member_type,
-)
+from crescent.commands.signature import gen_command_option, get_autocomplete_func
 from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
 
@@ -55,9 +51,7 @@ def _class_command_callback(
 
 
 @overload
-def command(
-    callback: CommandCallbackT | type[ClassCommandProto], /
-) -> Includable[AppCommandMeta]:
+def command(callback: CommandCallbackT | type[ClassCommandProto], /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -70,9 +64,7 @@ def command(
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     deprecated: bool = ...,
-) -> Callable[
-    [CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta],
-]:
+) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]:
     ...
 
 
@@ -148,9 +140,6 @@ def command(
     else:
         raise NotImplementedError("This function only works with classes and functions")
 
-    for option in options:
-        verify_member_type(callback.__name__, option.type, dm_enabled)
-
     return register_command(
         callback=callback_func,
         command_type=CommandType.SLASH,
@@ -175,9 +164,7 @@ def _kwargs_to_args_callback(
 
 
 @overload
-def user_command(
-    callback: UserCommandCallbackT, /
-) -> Includable[AppCommandMeta]:
+def user_command(callback: UserCommandCallbackT, /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -202,9 +189,7 @@ def user_command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     deprecated: bool = False,
-) -> Callable[
-    [UserCommandCallbackT], Includable[AppCommandMeta]
-] | Includable[AppCommandMeta]:
+) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
             user_command,
@@ -214,9 +199,6 @@ def user_command(
             dm_enabled=dm_enabled,
             deprecated=deprecated,
         )
-
-    for param in get_parameters(callback):
-        verify_member_type(callback.__name__, param.annotation, dm_enabled)
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
@@ -230,9 +212,7 @@ def user_command(
 
 
 @overload
-def message_command(
-    callback: MessageCommandCallbackT, /
-) -> Includable[AppCommandMeta]:
+def message_command(callback: MessageCommandCallbackT, /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -257,9 +237,7 @@ def message_command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     deprecated: bool = False,
-) -> Callable[
-    [MessageCommandCallbackT], Includable[AppCommandMeta],
-] | Includable[AppCommandMeta]:
+) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
             message_command,
