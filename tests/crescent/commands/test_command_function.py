@@ -1,3 +1,4 @@
+from types import FunctionType
 from typing import Optional
 
 from hikari import (
@@ -23,7 +24,10 @@ class TestCommandFunction:
         async def callback(ctx: Context):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="test",
@@ -44,7 +48,10 @@ class TestCommandFunction:
         ):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
@@ -81,9 +88,10 @@ class TestCommandFunction:
         ):
             pass
 
-        print(callback.metadata.app.options[2].channel_types)
+        assert isinstance(callback.metadata.owner, FunctionType)
 
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
@@ -123,6 +131,7 @@ class TestCommandFunction:
             pass
 
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             app=AppCommand(
                 type=CommandType.MESSAGE,
                 name="callback",
@@ -137,7 +146,10 @@ class TestCommandFunction:
         async def callback(ctx: Context, user: User):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             app=AppCommand(
                 type=CommandType.USER,
                 name="callback",
