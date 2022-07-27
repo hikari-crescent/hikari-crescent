@@ -125,9 +125,7 @@ class CommandHandler:
         self.guilds: Sequence[Snowflakeish] = guilds
         self.application_id: Snowflake | None = None
 
-        self.registry: dict[
-            Unique, Includable[AppCommandMeta]
-        ] = {}
+        self.registry: dict[Unique, Includable[AppCommandMeta]] = {}
 
     def register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild

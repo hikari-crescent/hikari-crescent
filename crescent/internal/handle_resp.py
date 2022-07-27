@@ -82,9 +82,7 @@ async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
     return True
 
 
-async def _handle_slash_resp(
-    bot: Bot, command: Includable[AppCommandMeta], ctx: Context
-) -> None:
+async def _handle_slash_resp(bot: Bot, command: Includable[AppCommandMeta], ctx: Context) -> None:
 
     if not await _handle_hooks(command.metadata.hooks, ctx):
         return
@@ -97,9 +95,7 @@ async def _handle_slash_resp(
         await bot.on_crescent_command_error(exc, ctx, handled)
 
 
-async def _handle_autocomplete_resp(
-    command: Includable[AppCommandMeta], ctx: Context
-) -> None:
+async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: Context) -> None:
     interaction = cast(AutocompleteInteraction, ctx.interaction)
 
     if not command.metadata.autocomplete:

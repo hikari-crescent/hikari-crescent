@@ -48,9 +48,7 @@ class Unique:
             self.sub_group = None
 
     @classmethod
-    def from_meta_struct(
-        cls: Type[Unique], command: Includable[AppCommandMeta]
-    ) -> Unique:
+    def from_meta_struct(cls: Type[Unique], command: Includable[AppCommandMeta]) -> Unique:
         return cls(
             name=command.metadata.app.name,
             type=command.metadata.app.type,
