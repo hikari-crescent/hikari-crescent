@@ -35,7 +35,7 @@ class TestCommandFunction:
                 default_member_permissions=UNDEFINED,
                 is_dm_enabled=True,
                 description="1234",
-            )
+            ),
         )
 
     def test_annotated_command(self):
@@ -73,7 +73,7 @@ class TestCommandFunction:
                         is_required=False,
                     ),
                 ],
-            )
+            ),
         )
 
     def test_crescent_annotations(self):
@@ -122,7 +122,7 @@ class TestCommandFunction:
                         channel_types=[ChannelType.GUILD_TEXT],
                     ),
                 ],
-            )
+            ),
         )
 
     def test_message_command(self):
@@ -138,7 +138,7 @@ class TestCommandFunction:
                 default_member_permissions=UNDEFINED,
                 is_dm_enabled=True,
                 guild_id=None,
-            )
+            ),
         )
 
     def test_user_command(self):
@@ -156,7 +156,7 @@ class TestCommandFunction:
                 default_member_permissions=UNDEFINED,
                 is_dm_enabled=True,
                 guild_id=None,
-            )
+            ),
         )
 
     def test_autocomplete_exists(self):
