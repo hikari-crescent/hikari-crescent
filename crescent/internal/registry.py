@@ -47,6 +47,7 @@ def _command_app_set_hook(self: MetaStruct[T, AppCommandMeta]) -> None:
 
 def register_command(
     callback: T,
+    owner: Any,
     command_type: CommandType,
     name: str,
     guild: Snowflakeish | None = None,
@@ -66,6 +67,7 @@ def register_command(
         app_set_hooks=[_command_app_set_hook],
         plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
+            owner=owner,
             deprecated=deprecated,
             autocomplete=autocomplete,
             app=AppCommand(
