@@ -2,7 +2,6 @@ from hikari import (
     Attachment,
     GuildTextChannel,
     GuildVoiceChannel,
-    Member,
     OptionType,
     PartialChannel,
     Role,
