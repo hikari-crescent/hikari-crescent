@@ -54,7 +54,6 @@ def register_command(
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
-    deprecated: bool = False,
     autocomplete: dict[str, AutocompleteCallbackT] = {},
 ) -> MetaStruct[T, AppCommandMeta]:
 
@@ -66,7 +65,6 @@ def register_command(
         app_set_hooks=[_command_app_set_hook],
         plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
-            deprecated=deprecated,
             autocomplete=autocomplete,
             app=AppCommand(
                 type=command_type,
@@ -147,10 +145,7 @@ class CommandHandler:
         built_commands: dict[Unique, AppCommand] = {}
 
         for command in self.registry.values():
-            if command.metadata.deprecated:
-                continue
-
-            elif command.metadata.sub_group:
+            if command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
                 #
                 # command
