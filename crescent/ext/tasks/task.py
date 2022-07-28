@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import TimerHandle, ensure_future, get_event_loop
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Sequence, TypeVar
+from typing import TYPE_CHECKING, Awaitable, Callable, Sequence, TypeVar
 
 from crescent.bot import Bot
 from crescent.exceptions import CrescentException
-from crescent.internal.meta_struct import MetaStruct
+from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
@@ -62,19 +62,19 @@ class Task(ABC):
         ...
 
     @staticmethod
-    def _link(meta: MetaStruct[Any, _TaskType]) -> None:
-        """Sets hooks on MetaStruct required for Task to function properly."""
-        meta.app_set_hooks.append(_on_app_set)
-        meta.plugin_unload_hooks.append(_unload)
+    def _link(includable: Includable[_TaskType]) -> None:
+        """Sets hooks on Includable required for Task to function properly."""
+        includable.app_set_hooks.append(_on_app_set)
+        includable.plugin_unload_hooks.append(_unload)
 
 
 _TaskType = TypeVar("_TaskType", bound=Task)
 
 
-def _on_app_set(self: MetaStruct[TaskCallbackT, _TaskType]) -> None:
+def _on_app_set(self: Includable[_TaskType]) -> None:
     self.metadata.app = self.app
     self.metadata.start()
 
 
-def _unload(self: MetaStruct[TaskCallbackT, _TaskType]) -> None:
+def _unload(self: Includable[_TaskType]) -> None:
     self.metadata.stop()

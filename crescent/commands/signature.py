@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
 from hikari import CommandOption, OptionType
@@ -24,6 +25,8 @@ if TYPE_CHECKING:
     from crescent.typedefs import AutocompleteCallbackT
 
     T = TypeVar("T")
+
+_LOG = getLogger(__name__)
 
 __all__: Sequence[str] = ("gen_command_option", "get_autocomplete_func")
 

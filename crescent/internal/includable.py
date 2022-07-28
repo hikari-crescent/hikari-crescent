@@ -7,27 +7,25 @@ from attr import define, field
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, Sequence
+    from typing import Any, Callable, Sequence
 
     from crescent.bot import Bot
 
-T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
-U = TypeVar("U")
+T = TypeVar("T")
 
-__all__: Sequence[str] = ("MetaStruct",)
+__all__: Sequence[str] = ("Includable",)
 
 
 @define
-class MetaStruct(Generic[T, U]):
+class Includable(Generic[T]):
 
-    callback: T
-    metadata: U
+    metadata: T
 
     manager: Any | None = None
     _app: Bot | None = None
 
-    app_set_hooks: list[Callable[[MetaStruct[T, U]], None]] = field(factory=list)
-    plugin_unload_hooks: list[Callable[[MetaStruct[T, U]], None]] = field(factory=list)
+    app_set_hooks: list[Callable[[Includable[T]], None]] = field(factory=list)
+    plugin_unload_hooks: list[Callable[[Includable[T]], None]] = field(factory=list)
 
     @property
     def app(self) -> Bot:

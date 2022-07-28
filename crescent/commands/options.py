@@ -30,6 +30,7 @@ from crescent.mentionable import Mentionable
 if TYPE_CHECKING:
     from crescent.typedefs import AutocompleteCallbackT, OptionTypesT
 
+
 __all__ = (
     "OPTIONS_TYPE_MAP",
     "VALID_CHANNEL_TYPES",

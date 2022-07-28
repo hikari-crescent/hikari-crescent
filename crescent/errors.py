@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
-from crescent.internal.meta_struct import MetaStruct
+from crescent.internal.includable import Includable
 from crescent.typedefs import (
     AutocompleteErrorHandlerCallbackT,
     CommandErrorHandlerCallbackT,
@@ -17,25 +17,22 @@ T = TypeVar("T", bound=Callable[..., Awaitable[Any]])
 
 def _make_catch_function(
     error_handler_var: str,
-) -> Callable[[type[Exception]], Callable[[T], MetaStruct[T, Any]]]:
-    def func(*exceptions: type[Exception]) -> Callable[[T], MetaStruct[T, Any]]:
-        def app_set_hook(meta: MetaStruct[T, Any]) -> None:
+) -> Callable[[type[Exception]], Callable[[T], Includable[T]]]:
+    def func(*exceptions: type[Exception]) -> Callable[[T], Includable[T]]:
+        def app_set_hook(includable: Includable[Any]) -> None:
             for exc in exceptions:
-                getattr(meta.app, error_handler_var).register(meta, exc)
+                getattr(includable.app, error_handler_var).register(includable, exc)
 
-        def plugin_unload_hook(meta: MetaStruct[T, Any]) -> None:
+        def plugin_unload_hook(includable: Includable[Any]) -> None:
             for exc in exceptions:
-                getattr(meta.app, error_handler_var).remove(exc)
+                getattr(includable.app, error_handler_var).remove(exc)
 
-        def decorator(callback: T) -> MetaStruct[T, Any]:
-            meta = MetaStruct(
-                callback,
-                None,
-                app_set_hooks=[app_set_hook],
-                plugin_unload_hooks=[plugin_unload_hook],
+        def decorator(callback: T) -> Includable[Any]:
+            includable = Includable(
+                callback, app_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
             )
 
-            return meta
+            return includable
 
         return decorator
 
@@ -53,24 +50,19 @@ _catch_autocomplete = _make_catch_function("_autocomplete_error_handler")
 
 def catch_command(
     *exceptions: type[Exception],
-) -> Callable[
-    [CommandErrorHandlerCallbackT[Any]], MetaStruct[CommandErrorHandlerCallbackT[Any], Any],
-]:
+) -> Callable[[CommandErrorHandlerCallbackT[Any]], Includable[CommandErrorHandlerCallbackT[Any]]]:
     return _catch_command(*exceptions)
 
 
 def catch_event(
     *exceptions: type[Exception],
-) -> Callable[
-    [EventErrorHandlerCallbackT[Any]], MetaStruct[EventErrorHandlerCallbackT[Any], Any],
-]:
+) -> Callable[[EventErrorHandlerCallbackT[Any]], Includable[EventErrorHandlerCallbackT[Any]]]:
     return _catch_event(*exceptions)
 
 
 def catch_autocomplete(
     *exceptions: type[Exception],
 ) -> Callable[
-    [AutocompleteErrorHandlerCallbackT[Any]],
-    MetaStruct[AutocompleteErrorHandlerCallbackT[Any], Any],
+    [AutocompleteErrorHandlerCallbackT[Any]], Includable[AutocompleteErrorHandlerCallbackT[Any]],
 ]:
     return _catch_autocomplete(*exceptions)

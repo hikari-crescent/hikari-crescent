@@ -28,6 +28,7 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="test",
@@ -35,7 +36,7 @@ class TestCommandFunction:
                 default_member_permissions=UNDEFINED,
                 is_dm_enabled=True,
                 description="1234",
-            )
+            ),
         )
 
     def test_annotated_command(self):
@@ -52,6 +53,7 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
@@ -73,7 +75,7 @@ class TestCommandFunction:
                         is_required=False,
                     ),
                 ],
-            )
+            ),
         )
 
     def test_crescent_annotations(self):
@@ -92,6 +94,7 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
@@ -122,7 +125,7 @@ class TestCommandFunction:
                         channel_types=[ChannelType.GUILD_TEXT],
                     ),
                 ],
-            )
+            ),
         )
 
     def test_message_command(self):
@@ -132,13 +135,14 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.MESSAGE,
                 name="callback",
                 default_member_permissions=UNDEFINED,
                 is_dm_enabled=True,
                 guild_id=None,
-            )
+            ),
         )
 
     def test_user_command(self):
@@ -150,13 +154,14 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
             app=AppCommand(
                 type=CommandType.USER,
                 name="callback",
                 default_member_permissions=UNDEFINED,
                 is_dm_enabled=True,
                 guild_id=None,
-            )
+            ),
         )
 
     def test_autocomplete_exists(self):

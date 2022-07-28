@@ -31,8 +31,8 @@ if TYPE_CHECKING:
     )
 
     from crescent.bot import Bot
-    from crescent.internal import AppCommandMeta, MetaStruct
-    from crescent.typedefs import CommandCallbackT, HookCallbackT, OptionTypesT
+    from crescent.internal import AppCommandMeta, Includable
+    from crescent.typedefs import HookCallbackT, OptionTypesT
 
 
 _log = getLogger(__name__)
@@ -82,24 +82,20 @@ async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
     return True
 
 
-async def _handle_slash_resp(
-    bot: Bot, command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
-) -> None:
+async def _handle_slash_resp(bot: Bot, command: Includable[AppCommandMeta], ctx: Context) -> None:
 
     if not await _handle_hooks(command.metadata.hooks, ctx):
         return
 
     try:
-        await command.callback(ctx, **ctx.options)
+        await command.metadata.callback(ctx, **ctx.options)
         await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
         handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
         await bot.on_crescent_command_error(exc, ctx, handled)
 
 
-async def _handle_autocomplete_resp(
-    command: MetaStruct[CommandCallbackT, AppCommandMeta], ctx: Context
-) -> None:
+async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: Context) -> None:
     interaction = cast(AutocompleteInteraction, ctx.interaction)
 
     if not command.metadata.autocomplete:
@@ -137,7 +133,7 @@ def _get_command(
     guild_id: Snowflake | None,
     group: str | None,
     sub_group: str | None,
-) -> MetaStruct[CommandCallbackT, AppCommandMeta] | None:
+) -> Includable[AppCommandMeta] | None:
 
     kwargs: dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
 

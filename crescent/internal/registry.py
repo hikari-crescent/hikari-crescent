@@ -20,7 +20,7 @@ from hikari.api import CommandBuilder
 
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
-from crescent.internal.meta_struct import MetaStruct
+from crescent.internal.includable import Includable
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
@@ -29,25 +29,23 @@ if TYPE_CHECKING:
     from hikari import Snowflakeish
 
     from crescent.bot import Bot
-    from crescent.typedefs import AutocompleteCallbackT
-
-    T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
+    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT
 
 
 _log = getLogger(__name__)
 
 
-def _plugin_unload_callback(self: MetaStruct[Any, Any]) -> None:
+def _plugin_unload_callback(self: Includable[Any]) -> None:
     self.app._command_handler.remove(self)
 
 
-def _command_app_set_hook(self: MetaStruct[T, AppCommandMeta]) -> None:
+def _command_app_set_hook(self: Includable[AppCommandMeta]) -> None:
     self.app._command_handler.register(self)
 
 
 def register_command(
-    callback: T,
     owner: Any,
+    callback: CommandCallbackT,
     command_type: CommandType,
     name: str,
     guild: Snowflakeish | None = None,
@@ -57,17 +55,17 @@ def register_command(
     dm_enabled: bool = True,
     deprecated: bool = False,
     autocomplete: dict[str, AutocompleteCallbackT] = {},
-) -> MetaStruct[T, AppCommandMeta]:
+) -> Includable[AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
-    meta: MetaStruct[T, AppCommandMeta] = MetaStruct(
-        callback=callback,
+    includable: Includable[AppCommandMeta] = Includable(
         app_set_hooks=[_command_app_set_hook],
         plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
             owner=owner,
+            callback=callback,
             deprecated=deprecated,
             autocomplete=autocomplete,
             app=AppCommand(
@@ -82,7 +80,7 @@ def register_command(
         ),
     )
 
-    return meta
+    return includable
 
 
 _E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
@@ -93,17 +91,17 @@ class ErrorHandler(Generic[_E]):
 
     def __init__(self, bot: Bot):
         self.bot: Bot = bot
-        self.registry: dict[type[Exception], MetaStruct[_E, Any]] = {}
+        self.registry: dict[type[Exception], Includable[_E]] = {}
 
-    def register(self, meta: MetaStruct[_E, Any], exc: type[Exception]) -> None:
-        if reg_meta := self.registry.get(exc):
+    def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
+        if reg_includable := self.registry.get(exc):
             raise AlreadyRegisteredError(
-                f"`{getattr(meta.callback, '__name__')}` can not catch `{exc.__name__}`."
+                f"`{getattr(includable.metadata, '__name__')}` can not catch `{exc.__name__}`."
                 f" `{exc.__name__}` is already registered to"
-                f" `{reg_meta.callback.__name__}`."
+                f" `{reg_includable.metadata.__name__}`."
             )
 
-        self.registry[exc] = meta
+        self.registry[exc] = includable
 
     def remove(self, exc: type[Exception]) -> None:
         self.registry.pop(exc)
@@ -114,7 +112,7 @@ class ErrorHandler(Generic[_E]):
         was handled.
         """
         if func := self.registry.get(exc.__class__):
-            await func.callback(*args)
+            await func.metadata(*args)
             return True
 
         return False
@@ -129,19 +127,14 @@ class CommandHandler:
         self.guilds: Sequence[Snowflakeish] = guilds
         self.application_id: Snowflake | None = None
 
-        self.registry: dict[
-            Unique, MetaStruct["Callable[..., Awaitable[Any]]", AppCommandMeta]
-        ] = {}
+        self.registry: dict[Unique, Includable[AppCommandMeta]] = {}
 
-    def register(self, command: MetaStruct[T, AppCommandMeta]) -> MetaStruct[T, AppCommandMeta]:
+    def register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
         command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
-        # NOTE: T is bound to Callable[..., Awaitable[Any]], so we can cast it safely. Mypy's
-        # support for TypeVars is bad, so it doesn't understand this.
-        _command = cast("MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]", command)
-        self.registry[command.metadata.unique] = _command
+        self.registry[command.metadata.unique] = command
         return command
 
-    def remove(self, command: MetaStruct[T, AppCommandMeta]) -> None:
+    def remove(self, command: Includable[AppCommandMeta]) -> None:
         self.registry.pop(command.metadata.unique)
 
     def build_commands(self) -> Sequence[AppCommand]:
