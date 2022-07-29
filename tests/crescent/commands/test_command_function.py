@@ -25,7 +25,7 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="test",
                 guild_id=12345678,
@@ -47,7 +47,7 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
                 guild_id=None,
@@ -83,11 +83,11 @@ class TestCommandFunction:
         ):
             pass
 
-        print(callback.metadata.app.options[2].channel_types)
+        print(callback.metadata.app_command.options[2].channel_types)
 
         assert callback.metadata == AppCommandMeta(
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
                 default_member_permissions=UNDEFINED,
@@ -127,7 +127,7 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.MESSAGE,
                 name="callback",
                 default_member_permissions=UNDEFINED,
@@ -143,7 +143,7 @@ class TestCommandFunction:
 
         assert callback.metadata == AppCommandMeta(
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.USER,
                 name="callback",
                 default_member_permissions=UNDEFINED,
