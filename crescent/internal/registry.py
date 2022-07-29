@@ -66,7 +66,7 @@ def register_command(
             callback=callback,
             deprecated=deprecated,
             autocomplete=autocomplete,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=command_type,
                 description=description,
                 guild_id=guild,
@@ -128,7 +128,9 @@ class CommandHandler:
         self.registry: dict[Unique, Includable[AppCommandMeta]] = {}
 
     def register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
-        command.metadata.app.guild_id = command.metadata.app.guild_id or self.bot.default_guild
+        command.metadata.app_command.guild_id = (
+            command.metadata.app_command.guild_id or self.bot.default_guild
+        )
         self.registry[command.metadata.unique] = command
         return command
 
@@ -161,8 +163,8 @@ class CommandHandler:
                 # hold the subcommand.
                 key = Unique(
                     name=unwrap(command.metadata.group).name,
-                    type=command.metadata.app.type,
-                    guild_id=command.metadata.app.guild_id,
+                    type=command.metadata.app_command.type,
+                    guild_id=command.metadata.app_command.guild_id,
                     group=None,
                     sub_group=None,
                 )
@@ -171,11 +173,13 @@ class CommandHandler:
                     built_commands[key] = AppCommand(
                         name=unwrap(command.metadata.group).name,
                         description=unwrap(command.metadata.group).description or "No Description",
-                        type=command.metadata.app.type,
-                        guild_id=command.metadata.app.guild_id,
+                        type=command.metadata.app_command.type,
+                        guild_id=command.metadata.app_command.guild_id,
                         options=[],
-                        default_member_permissions=command.metadata.app.default_member_permissions,
-                        is_dm_enabled=command.metadata.app.is_dm_enabled,
+                        default_member_permissions=(
+                            command.metadata.app_command.default_member_permissions
+                        ),
+                        is_dm_enabled=command.metadata.app_command.is_dm_enabled,
                     )
 
                 # The top-level command now exists. A subcommand group now if placed
@@ -206,10 +210,10 @@ class CommandHandler:
 
                 cast("list[CommandOption]", sub_command_group.options).append(
                     CommandOption(
-                        name=command.metadata.app.name,
-                        description=unwrap(command.metadata.app.description),
+                        name=command.metadata.app_command.name,
+                        description=unwrap(command.metadata.app_command.description),
                         type=OptionType.SUB_COMMAND,
-                        options=command.metadata.app.options,
+                        options=command.metadata.app_command.options,
                         is_required=False,
                     )
                 )
@@ -227,8 +231,8 @@ class CommandHandler:
                 # hold the subcommand.
                 key = Unique(
                     name=command.metadata.group.name,
-                    type=command.metadata.app.type,
-                    guild_id=command.metadata.app.guild_id,
+                    type=command.metadata.app_command.type,
+                    guild_id=command.metadata.app_command.guild_id,
                     group=None,
                     sub_group=None,
                 )
@@ -237,27 +241,29 @@ class CommandHandler:
                     built_commands[key] = AppCommand(
                         name=command.metadata.group.name,
                         description=unwrap(command.metadata.group).description or "No Description",
-                        type=command.metadata.app.type,
-                        guild_id=command.metadata.app.guild_id,
+                        type=command.metadata.app_command.type,
+                        guild_id=command.metadata.app_command.guild_id,
                         options=[],
-                        default_member_permissions=command.metadata.app.default_member_permissions,
-                        is_dm_enabled=command.metadata.app.is_dm_enabled,
+                        default_member_permissions=(
+                            command.metadata.app_command.default_member_permissions
+                        ),
+                        is_dm_enabled=command.metadata.app_command.is_dm_enabled,
                     )
 
                 # No checking has to be done before appending `command` since it is the
                 # lowest level.
                 cast("list[CommandOption]", built_commands[key].options).append(
                     CommandOption(
-                        name=command.metadata.app.name,
-                        description=unwrap(command.metadata.app.description),
-                        type=command.metadata.app.type,
-                        options=command.metadata.app.options,
+                        name=command.metadata.app_command.name,
+                        description=unwrap(command.metadata.app_command.description),
+                        type=command.metadata.app_command.type,
+                        options=command.metadata.app_command.options,
                         is_required=False,
                     )
                 )
 
             else:
-                built_commands[Unique.from_meta_struct(command)] = command.metadata.app
+                built_commands[Unique.from_meta_struct(command)] = command.metadata.app_command
 
         return tuple(built_commands.values())
 

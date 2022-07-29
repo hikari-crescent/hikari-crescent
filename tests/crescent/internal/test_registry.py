@@ -51,9 +51,9 @@ class TestRegistry:
         await bot.wait_until_ready()
 
         assert self.posted_commands[GUILD_ID] == [
-            slash_command.metadata.app,
-            user_command.metadata.app,
-            message_command.metadata.app,
+            slash_command.metadata.app_command,
+            user_command.metadata.app_command,
+            message_command.metadata.app_command,
         ]
 
     @mark.asyncio
@@ -95,9 +95,9 @@ class TestRegistry:
         print(self.posted_commands[GUILD_ID])
 
         assert self.posted_commands[GUILD_ID] == [
-            slash_command.metadata.app,
-            user_command.metadata.app,
-            message_command.metadata.app,
+            slash_command.metadata.app_command,
+            user_command.metadata.app_command,
+            message_command.metadata.app_command,
         ]
 
     @mark.asyncio
