@@ -128,7 +128,9 @@ class CommandHandler:
         self.registry: dict[Unique, Includable[AppCommandMeta]] = {}
 
     def register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
-        command.metadata.app_command.guild_id = command.metadata.app_command.guild_id or self.bot.default_guild
+        command.metadata.app_command.guild_id = (
+            command.metadata.app_command.guild_id or self.bot.default_guild
+        )
         self.registry[command.metadata.unique] = command
         return command
 
