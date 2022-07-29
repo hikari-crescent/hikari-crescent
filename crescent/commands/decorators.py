@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
-    from crescent.internal.meta_struct import MetaStruct
+    from crescent.internal.includable import Includable
     from crescent.typedefs import (
         AutocompleteCallbackT,
         ClassCommandProto,
@@ -51,9 +51,7 @@ def _class_command_callback(
 
 
 @overload
-def command(
-    callback: CommandCallbackT | type[ClassCommandProto], /
-) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
+def command(callback: CommandCallbackT | type[ClassCommandProto], /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -66,9 +64,7 @@ def command(
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     deprecated: bool = ...,
-) -> Callable[
-    [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
-]:
+) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]:
     ...
 
 
@@ -82,8 +78,8 @@ def command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     deprecated: bool = False,
-) -> MetaStruct[CommandCallbackT, AppCommandMeta] | Callable[
-    [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
+) -> Includable[AppCommandMeta] | Callable[
+    [CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta],
 ]:
     if not callback:
         return partial(
@@ -168,9 +164,7 @@ def _kwargs_to_args_callback(
 
 
 @overload
-def user_command(
-    callback: UserCommandCallbackT, /
-) -> MetaStruct[UserCommandCallbackT, AppCommandMeta]:
+def user_command(callback: UserCommandCallbackT, /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -182,7 +176,7 @@ def user_command(
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     deprecated: bool = ...,
-) -> Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]]:
+) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]]:
     ...
 
 
@@ -195,9 +189,7 @@ def user_command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     deprecated: bool = False,
-) -> Callable[
-    [UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]
-] | MetaStruct[UserCommandCallbackT, AppCommandMeta]:
+) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
             user_command,
@@ -220,9 +212,7 @@ def user_command(
 
 
 @overload
-def message_command(
-    callback: MessageCommandCallbackT, /
-) -> MetaStruct[MessageCommandCallbackT, AppCommandMeta]:
+def message_command(callback: MessageCommandCallbackT, /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -234,7 +224,7 @@ def message_command(
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     deprecated: bool = ...,
-) -> Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta]]:
+) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]]:
     ...
 
 
@@ -247,9 +237,7 @@ def message_command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     deprecated: bool = False,
-) -> Callable[
-    [MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],
-] | MetaStruct[MessageCommandCallbackT, AppCommandMeta]:
+) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
             message_command,

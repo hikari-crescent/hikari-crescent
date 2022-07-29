@@ -7,13 +7,11 @@ from typing import TYPE_CHECKING, Sequence, overload
 from attrs import define
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, TypeVar
+    from typing import Callable
 
     from crescent.internal.app_command import AppCommandMeta
-    from crescent.internal.meta_struct import MetaStruct
+    from crescent.internal.includable import Includable
     from crescent.typedefs import HookCallbackT
-
-    T = TypeVar("T", bound="MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]")
 
 __all__: Sequence[str] = ("HookResult", "hook")
 
@@ -26,18 +24,20 @@ class HookResult:
 @overload
 def hook(
     callback: HookCallbackT, *, after: bool = False
-) -> Callable[..., MetaStruct[Callable[..., Awaitable[Any]], AppCommandMeta]]:
+) -> Callable[..., Includable[AppCommandMeta]]:
     ...
 
 
 @overload
-def hook(callback: HookCallbackT, *, command: T) -> T:
+def hook(
+    callback: HookCallbackT, *, command: Includable[AppCommandMeta]
+) -> Includable[AppCommandMeta]:
     ...
 
 
 def hook(
-    callback: HookCallbackT, after: bool = False, command: T | None = None
-) -> T | Callable[..., T]:
+    callback: HookCallbackT, after: bool = False, command: Includable[AppCommandMeta] | None = None
+) -> Includable[AppCommandMeta] | Callable[..., Includable[AppCommandMeta]]:
     if command is None:
         return partial(hook, callback, after)  # type: ignore
     if not iscoroutinefunction(callback):
