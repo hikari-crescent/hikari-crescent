@@ -176,7 +176,7 @@ class CommandHandler:
                         type=command.metadata.app_command.type,
                         guild_id=command.metadata.app_command.guild_id,
                         options=[],
-                        default_member_permissions=command.metadata.app_command.default_member_permissions,
+                        default_member_permissions=command.metadata.app_command.default_member_permissions,  # noqa
                         is_dm_enabled=command.metadata.app_command.is_dm_enabled,
                     )
 
@@ -242,7 +242,7 @@ class CommandHandler:
                         type=command.metadata.app_command.type,
                         guild_id=command.metadata.app_command.guild_id,
                         options=[],
-                        default_member_permissions=command.metadata.app_command.default_member_permissions,
+                        default_member_permissions=command.metadata.app_command.default_member_permissions,  # noqa
                         is_dm_enabled=command.metadata.app_command.is_dm_enabled,
                     )
 
