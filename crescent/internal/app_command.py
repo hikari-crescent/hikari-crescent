@@ -50,9 +50,9 @@ class Unique:
     @classmethod
     def from_meta_struct(cls: Type[Unique], command: Includable[AppCommandMeta]) -> Unique:
         return cls(
-            name=command.metadata.app.name,
-            type=command.metadata.app.type,
-            guild_id=command.metadata.app.guild_id,
+            name=command.metadata.app_command.name,
+            type=command.metadata.app_command.type,
+            guild_id=command.metadata.app_command.guild_id,
             group=command.metadata.group.name if command.metadata.group else None,
             sub_group=command.metadata.sub_group.name if command.metadata.sub_group else None,
         )
@@ -60,9 +60,9 @@ class Unique:
     @classmethod
     def from_app_command_meta(cls: Type[Unique], command: AppCommandMeta) -> Unique:
         return cls(
-            name=command.app.name,
-            type=command.app.type,
-            guild_id=command.app.guild_id,
+            name=command.app_command.name,
+            type=command.app_command.type,
+            guild_id=command.app_command.guild_id,
             group=command.group.name if command.group else None,
             sub_group=command.sub_group.name if command.sub_group else None,
         )
@@ -161,7 +161,7 @@ class AppCommand(CommandBuilder):
 
 @define
 class AppCommandMeta:
-    app: AppCommand
+    app_command: AppCommand
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
@@ -175,9 +175,9 @@ class AppCommandMeta:
     @property
     def unique(self) -> Unique:
         return Unique(
-            self.app.name,
-            self.app.type,
-            self.app.guild_id,
+            self.app_command.name,
+            self.app_command.type,
+            self.app_command.guild_id,
             self.group.name if self.group else None,
             self.sub_group.name if self.sub_group else None,
         )

@@ -29,7 +29,7 @@ class TestCommandFunction:
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="test",
                 guild_id=12345678,
@@ -54,7 +54,7 @@ class TestCommandFunction:
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
                 guild_id=None,
@@ -95,7 +95,7 @@ class TestCommandFunction:
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
                 default_member_permissions=UNDEFINED,
@@ -136,7 +136,7 @@ class TestCommandFunction:
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.MESSAGE,
                 name="callback",
                 default_member_permissions=UNDEFINED,
@@ -155,7 +155,7 @@ class TestCommandFunction:
         assert callback.metadata == AppCommandMeta(
             owner=callback.metadata.owner,
             callback=callback.metadata.callback,
-            app=AppCommand(
+            app_command=AppCommand(
                 type=CommandType.USER,
                 name="callback",
                 default_member_permissions=UNDEFINED,
