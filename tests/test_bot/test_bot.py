@@ -183,12 +183,6 @@ async def error_autocomplete_command(
     await ctx.respond(option)
 
 
-@bot.include
-@crescent.command(deprecated=True)
-async def deprecated_command(ctx: crescent.Context) -> None:
-    pass
-
-
 async def autocomplete_response(
     ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[hikari.CommandChoice]:

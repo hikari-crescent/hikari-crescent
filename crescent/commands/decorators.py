@@ -63,7 +63,6 @@ def command(
     description: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
-    deprecated: bool = ...,
 ) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]:
     ...
 
@@ -77,7 +76,6 @@ def command(
     description: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
-    deprecated: bool = False,
 ) -> Includable[AppCommandMeta] | Callable[
     [CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta],
 ]:
@@ -89,7 +87,6 @@ def command(
             description=description,
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
-            deprecated=deprecated,
         )
 
     autocomplete: dict[str, AutocompleteCallbackT] = {}
@@ -150,7 +147,6 @@ def command(
         options=options,
         default_member_permissions=default_member_permissions,
         dm_enabled=dm_enabled,
-        deprecated=deprecated,
         autocomplete=autocomplete,
     )
 
@@ -176,7 +172,6 @@ def user_command(
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
-    deprecated: bool = ...,
 ) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]]:
     ...
 
@@ -189,7 +184,6 @@ def user_command(
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
-    deprecated: bool = False,
 ) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
@@ -198,7 +192,6 @@ def user_command(
             name=name,
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
-            deprecated=deprecated,
         )
 
     return register_command(
@@ -209,7 +202,6 @@ def user_command(
         guild=guild,
         default_member_permissions=default_member_permissions,
         dm_enabled=dm_enabled,
-        deprecated=deprecated,
     )
 
 
@@ -225,7 +217,6 @@ def message_command(
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
-    deprecated: bool = ...,
 ) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]]:
     ...
 
@@ -238,7 +229,6 @@ def message_command(
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
-    deprecated: bool = False,
 ) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
@@ -247,7 +237,6 @@ def message_command(
             name=name,
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
-            deprecated=deprecated,
         )
 
     return register_command(
@@ -258,5 +247,4 @@ def message_command(
         guild=guild,
         default_member_permissions=default_member_permissions,
         dm_enabled=dm_enabled,
-        deprecated=deprecated,
     )

@@ -57,50 +57,6 @@ class TestRegistry:
         ]
 
     @mark.asyncio
-    async def test_post_deprecated_commands(self):
-        bot = MockBot(default_guild=GUILD_ID)
-
-        @bot.include
-        @command(deprecated=True)
-        async def slash_command_deprecated(ctx: Context):
-            pass
-
-        @bot.include
-        @_user_command(deprecated=True)
-        async def user_command_deprecated(ctx: Context, user: User):
-            pass
-
-        @bot.include
-        @_message_command(deprecated=True)
-        async def message_command_deprecated(ctx: Context, message: Message):
-            pass
-
-        @bot.include
-        @command
-        async def slash_command(ctx: Context):
-            pass
-
-        @bot.include
-        @_user_command
-        async def user_command(ctx: Context, user: User):
-            pass
-
-        @bot.include
-        @_message_command
-        async def message_command(ctx: Context, message: Message):
-            pass
-
-        bot.run()
-        await bot.wait_until_ready()
-        print(self.posted_commands[GUILD_ID])
-
-        assert self.posted_commands[GUILD_ID] == [
-            slash_command.metadata.app_command,
-            user_command.metadata.app_command,
-            message_command.metadata.app_command,
-        ]
-
-    @mark.asyncio
     async def test_dont_register_commands(self):
         stack = ExitStack()
         register_commands = stack.enter_context(patch.object(CommandHandler, "register_commands"))

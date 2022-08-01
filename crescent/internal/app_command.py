@@ -168,7 +168,6 @@ class AppCommandMeta:
     autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
-    deprecated: bool = False
     hooks: list[HookCallbackT] = field(factory=list)
     after_hooks: list[HookCallbackT] = field(factory=list)
 

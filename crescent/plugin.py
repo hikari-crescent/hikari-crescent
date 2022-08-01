@@ -30,11 +30,6 @@ class PluginManager:
         self.plugins: dict[str, Plugin] = {}
         self._bot = bot
 
-    def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
-        _LOG.warning("`add_plugin` is deprecated and will be removed in a future release.")
-
-        self._add_plugin("", plugin, refresh=force)
-
     def unload(self, path: str) -> None:
         plugin = self.plugins.pop(path)
         plugin._unload()
@@ -145,16 +140,10 @@ class PluginManager:
 class Plugin:
     def __init__(
         self,
-        name: str | None = None,
         *,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
     ) -> None:
-        if name is not None:
-            _LOG.warning(
-                "Plugin option `name` is deprecated and will be removed in a future release."
-            )
-
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
         self._app: Bot | None = None
