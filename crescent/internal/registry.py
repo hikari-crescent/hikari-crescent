@@ -44,6 +44,7 @@ def _command_app_set_hook(self: Includable[AppCommandMeta]) -> None:
 
 
 def register_command(
+    owner: Any,
     callback: CommandCallbackT,
     command_type: CommandType,
     name: str,
@@ -63,6 +64,7 @@ def register_command(
         app_set_hooks=[_command_app_set_hook],
         plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
+            owner=owner,
             callback=callback,
             deprecated=deprecated,
             autocomplete=autocomplete,

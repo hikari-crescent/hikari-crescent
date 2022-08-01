@@ -162,6 +162,8 @@ class AppCommand(CommandBuilder):
 @define
 class AppCommandMeta:
     app_command: AppCommand
+    owner: Any
+    """The function or class that was used to create the command"""
     callback: CommandCallbackT
     autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
     group: Group | None = None

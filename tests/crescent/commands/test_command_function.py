@@ -1,3 +1,4 @@
+from types import FunctionType
 from typing import Optional
 
 from hikari import (
@@ -23,7 +24,10 @@ class TestCommandFunction:
         async def callback(ctx: Context):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             callback=callback.metadata.callback,
             app_command=AppCommand(
                 type=CommandType.SLASH,
@@ -45,7 +49,10 @@ class TestCommandFunction:
         ):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             callback=callback.metadata.callback,
             app_command=AppCommand(
                 type=CommandType.SLASH,
@@ -83,9 +90,10 @@ class TestCommandFunction:
         ):
             pass
 
-        print(callback.metadata.app_command.options[2].channel_types)
+        assert isinstance(callback.metadata.owner, FunctionType)
 
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             callback=callback.metadata.callback,
             app_command=AppCommand(
                 type=CommandType.SLASH,
@@ -126,6 +134,7 @@ class TestCommandFunction:
             pass
 
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             callback=callback.metadata.callback,
             app_command=AppCommand(
                 type=CommandType.MESSAGE,
@@ -141,7 +150,10 @@ class TestCommandFunction:
         async def callback(ctx: Context, user: User):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
+            owner=callback.metadata.owner,
             callback=callback.metadata.callback,
             app_command=AppCommand(
                 type=CommandType.USER,

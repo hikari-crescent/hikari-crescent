@@ -142,6 +142,7 @@ def command(
 
     return register_command(
         callback=callback_func,
+        owner=callback,
         command_type=CommandType.SLASH,
         name=name or callback.__name__,
         guild=guild,
@@ -202,6 +203,7 @@ def user_command(
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
+        owner=callback,
         command_type=CommandType.USER,
         name=name or callback.__name__,
         guild=guild,
@@ -250,6 +252,7 @@ def message_command(
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
+        owner=callback,
         command_type=CommandType.MESSAGE,
         name=name or callback.__name__,
         guild=guild,
