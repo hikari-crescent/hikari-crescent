@@ -183,7 +183,6 @@ async def error_autocomplete_command(
     await ctx.respond(option)
 
 
-
 async def autocomplete_response(
     ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[hikari.CommandChoice]:
