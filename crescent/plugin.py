@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, overload
 import hikari
 
 from crescent.exceptions import PluginAlreadyLoadedError
-from crescent.internal.meta_struct import MetaStruct
+from crescent.internal.includable import Includable
 from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from crescent.bot import Bot
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
-    T = TypeVar("T", bound="MetaStruct[Any, Any]")
+    T = TypeVar("T", bound="Includable[Any]")
 
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
@@ -147,7 +147,7 @@ class Plugin:
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
         self._app: Bot | None = None
-        self._children: list[MetaStruct[Any, Any]] = []
+        self._children: list[Includable[Any]] = []
 
         self._load_hooks: list[PluginCallbackT] = []
         self._unload_hooks: list[PluginCallbackT] = []

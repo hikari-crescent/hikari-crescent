@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
-    from crescent.internal.meta_struct import MetaStruct
+    from crescent.internal.includable import Includable
     from crescent.typedefs import (
         AutocompleteCallbackT,
         ClassCommandProto,
@@ -51,9 +51,7 @@ def _class_command_callback(
 
 
 @overload
-def command(
-    callback: CommandCallbackT | type[ClassCommandProto], /
-) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
+def command(callback: CommandCallbackT | type[ClassCommandProto], /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -65,9 +63,7 @@ def command(
     description: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
-) -> Callable[
-    [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
-]:
+) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]:
     ...
 
 
@@ -80,8 +76,8 @@ def command(
     description: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
-) -> MetaStruct[CommandCallbackT, AppCommandMeta] | Callable[
-    [CommandCallbackT | type[ClassCommandProto]], MetaStruct[CommandCallbackT, AppCommandMeta],
+) -> Includable[AppCommandMeta] | Callable[
+    [CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta],
 ]:
     if not callback:
         return partial(
@@ -143,6 +139,7 @@ def command(
 
     return register_command(
         callback=callback_func,
+        owner=callback,
         command_type=CommandType.SLASH,
         name=name or callback.__name__,
         guild=guild,
@@ -164,9 +161,7 @@ def _kwargs_to_args_callback(
 
 
 @overload
-def user_command(
-    callback: UserCommandCallbackT, /
-) -> MetaStruct[UserCommandCallbackT, AppCommandMeta]:
+def user_command(callback: UserCommandCallbackT, /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -177,7 +172,7 @@ def user_command(
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
-) -> Callable[[UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]]:
+) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]]:
     ...
 
 
@@ -189,9 +184,7 @@ def user_command(
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
-) -> Callable[
-    [UserCommandCallbackT], MetaStruct[UserCommandCallbackT, AppCommandMeta]
-] | MetaStruct[UserCommandCallbackT, AppCommandMeta]:
+) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
             user_command,
@@ -203,6 +196,7 @@ def user_command(
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
+        owner=callback,
         command_type=CommandType.USER,
         name=name or callback.__name__,
         guild=guild,
@@ -212,9 +206,7 @@ def user_command(
 
 
 @overload
-def message_command(
-    callback: MessageCommandCallbackT, /
-) -> MetaStruct[MessageCommandCallbackT, AppCommandMeta]:
+def message_command(callback: MessageCommandCallbackT, /) -> Includable[AppCommandMeta]:
     ...
 
 
@@ -225,7 +217,7 @@ def message_command(
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
-) -> Callable[[MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta]]:
+) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]]:
     ...
 
 
@@ -237,9 +229,7 @@ def message_command(
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
-) -> Callable[
-    [MessageCommandCallbackT], MetaStruct[MessageCommandCallbackT, AppCommandMeta],
-] | MetaStruct[MessageCommandCallbackT, AppCommandMeta]:
+) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
             message_command,
@@ -251,6 +241,7 @@ def message_command(
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
+        owner=callback,
         command_type=CommandType.MESSAGE,
         name=name or callback.__name__,
         guild=guild,

@@ -8,11 +8,11 @@ def test_defaults():
     async def test_command(ctx: Context):
         ...
 
-    assert test_command.metadata.app.name == "test_command"
-    assert test_command.metadata.app.guild_id is None
-    assert test_command.metadata.app.description == "No Description"
-    assert test_command.metadata.app.default_member_permissions is UNDEFINED
-    assert test_command.metadata.app.is_dm_enabled
+    assert test_command.metadata.app_command.name == "test_command"
+    assert test_command.metadata.app_command.guild_id is None
+    assert test_command.metadata.app_command.description == "No Description"
+    assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
+    assert test_command.metadata.app_command.is_dm_enabled
 
 
 def test_user_command_defaults():
@@ -20,10 +20,10 @@ def test_user_command_defaults():
     async def test_command(ctx: Context, user: User):
         ...
 
-    assert test_command.metadata.app.name == "test_command"
-    assert test_command.metadata.app.guild_id is None
-    assert test_command.metadata.app.default_member_permissions is UNDEFINED
-    assert test_command.metadata.app.is_dm_enabled
+    assert test_command.metadata.app_command.name == "test_command"
+    assert test_command.metadata.app_command.guild_id is None
+    assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
+    assert test_command.metadata.app_command.is_dm_enabled
 
 
 def test_message_command_defaults():
@@ -31,10 +31,10 @@ def test_message_command_defaults():
     async def test_command(ctx: Context, user: Message):
         ...
 
-    assert test_command.metadata.app.name == "test_command"
-    assert test_command.metadata.app.guild_id is None
-    assert test_command.metadata.app.default_member_permissions is UNDEFINED
-    assert test_command.metadata.app.is_dm_enabled
+    assert test_command.metadata.app_command.name == "test_command"
+    assert test_command.metadata.app_command.guild_id is None
+    assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
+    assert test_command.metadata.app_command.is_dm_enabled
 
 
 def test_not_default():
@@ -48,11 +48,11 @@ def test_not_default():
     async def test_command(ctx: Context):
         ...
 
-    assert test_command.metadata.app.name == "test_name"
-    assert test_command.metadata.app.guild_id == 123456
-    assert test_command.metadata.app.description == "test description"
-    assert test_command.metadata.app.default_member_permissions is Permissions.BAN_MEMBERS
-    assert not test_command.metadata.app.is_dm_enabled
+    assert test_command.metadata.app_command.name == "test_name"
+    assert test_command.metadata.app_command.guild_id == 123456
+    assert test_command.metadata.app_command.description == "test description"
+    assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
+    assert not test_command.metadata.app_command.is_dm_enabled
 
 
 def test_message_command_not_default():
@@ -65,10 +65,10 @@ def test_message_command_not_default():
     async def test_command(ctx: Context):
         ...
 
-    assert test_command.metadata.app.name == "Test Name"
-    assert test_command.metadata.app.guild_id == 123456
-    assert test_command.metadata.app.default_member_permissions is Permissions.BAN_MEMBERS
-    assert not test_command.metadata.app.is_dm_enabled
+    assert test_command.metadata.app_command.name == "Test Name"
+    assert test_command.metadata.app_command.guild_id == 123456
+    assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
+    assert not test_command.metadata.app_command.is_dm_enabled
 
 
 def test_user_command_not_default():
@@ -81,7 +81,7 @@ def test_user_command_not_default():
     async def test_command(ctx: Context):
         ...
 
-    assert test_command.metadata.app.name == "Test Name"
-    assert test_command.metadata.app.guild_id == 123456
-    assert test_command.metadata.app.default_member_permissions is Permissions.BAN_MEMBERS
-    assert not test_command.metadata.app.is_dm_enabled
+    assert test_command.metadata.app_command.name == "Test Name"
+    assert test_command.metadata.app_command.guild_id == 123456
+    assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
+    assert not test_command.metadata.app_command.is_dm_enabled

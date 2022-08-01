@@ -25,7 +25,7 @@ def test_option_types():
         channel_list = option([GuildTextChannel, GuildVoiceChannel])
         attachment = option(Attachment)
 
-    options = AllOptionTypes.metadata.app.options
+    options = AllOptionTypes.metadata.app_command.options
 
     assert options
 
