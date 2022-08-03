@@ -14,13 +14,13 @@ from hikari import (
     Snowflake,
 )
 
-from crescent.context import Context
+from crescent.context import Context, BaseContext, AutocompleteContext
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence
+    from typing import Any, Sequence, TypeVar
 
     from hikari import (
         CommandInteraction,
@@ -33,6 +33,8 @@ if TYPE_CHECKING:
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, Includable
     from crescent.typedefs import HookCallbackT, OptionTypesT
+
+    ContextT = TypeVar("ContextT", bound=BaseContext)
 
 
 _log = getLogger(__name__)
@@ -51,7 +53,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         interaction = cast(CommandInteraction, interaction)
         bot = cast(Bot, bot)
 
-    ctx = _context_from_interaction_resp(interaction)
+    ctx = _base_context_from_interaction_resp(interaction)
 
     command = _get_command(
         bot, ctx.command, int(ctx.command_type), ctx.guild_id, ctx.group, ctx.sub_group
@@ -66,10 +68,12 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         return
 
     if interaction.type is InteractionType.AUTOCOMPLETE:
-        await _handle_autocomplete_resp(command, ctx)
+        await _handle_autocomplete_resp(
+            command, _base_context_to_subclass(ctx, AutocompleteContext)
+        )
         return
 
-    await _handle_slash_resp(bot, command, ctx)
+    await _handle_slash_resp(bot, command, _base_context_to_subclass(ctx, Context))
 
 
 async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
@@ -95,7 +99,9 @@ async def _handle_slash_resp(bot: Bot, command: Includable[AppCommandMeta], ctx:
         await bot.on_crescent_command_error(exc, ctx, handled)
 
 
-async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: Context) -> None:
+async def _handle_autocomplete_resp(
+    command: Includable[AppCommandMeta], ctx: AutocompleteContext
+) -> None:
     interaction = cast(AutocompleteInteraction, ctx.interaction)
 
     if not command.metadata.autocomplete:
@@ -152,7 +158,7 @@ _VALUE_TYPE_LINK: dict[OptionType | int, str] = {
 }
 
 
-def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
+def _base_context_from_interaction_resp(interaction: CommandInteraction) -> BaseContext:
     name: str = interaction.command_name
     group: str | None = None
     sub_group: str | None = None
@@ -176,7 +182,7 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
     else:
         callback_options = _resolved_data_to_kwargs(interaction)
 
-    return Context(
+    return BaseContext(
         interaction=interaction,
         app=cast("Bot", interaction.app),
         application_id=interaction.application_id,
@@ -193,6 +199,27 @@ def _context_from_interaction_resp(interaction: CommandInteraction) -> Context:
         sub_group=sub_group,
         command_type=CommandType(interaction.command_type),
         options=callback_options,
+    )
+
+
+def _base_context_to_subclass(ctx: BaseContext, ctx_type: type[ContextT]) -> ContextT:
+    return ctx_type(
+        interaction=ctx.interaction,
+        app=ctx.app,
+        application_id=ctx.application_id,
+        type=ctx.type,
+        token=ctx.token,
+        id=ctx.id,
+        version=ctx.version,
+        channel_id=ctx.channel_id,
+        guild_id=ctx.guild_id,
+        user=ctx.user,
+        member=ctx.member,
+        command=ctx.command,
+        group=ctx.group,
+        sub_group=ctx.sub_group,
+        command_type=ctx.command_type,
+        options=ctx.options,
     )
 
 

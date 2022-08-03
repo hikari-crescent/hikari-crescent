@@ -26,7 +26,7 @@ from hikari import (
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
-    from crescent.context import Context
+    from crescent.context import Context, AutocompleteContext
     from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (
@@ -49,7 +49,7 @@ OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mention
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
 AutocompleteCallbackT = Callable[
-    ["Context", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
+    ["AutocompleteContext", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
 ]
 
 PluginCallbackT = Callable[[], None]

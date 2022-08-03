@@ -29,7 +29,7 @@ from crescent.utils import add_hooks
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, TypeVar
 
-    from crescent.context import Context
+    from crescent.context import Context, AutocompleteContext
     from crescent.typedefs import (
         AutocompleteErrorHandlerCallbackT,
         CommandErrorHandlerCallbackT,
@@ -220,7 +220,7 @@ class Bot(GatewayBot):
     async def on_crescent_autocomplete_error(
         self,
         exc: Exception,
-        ctx: Context,
+        ctx: AutocompleteContext,
         option: AutocompleteInteractionOption,
         was_handled: bool,
     ) -> None:

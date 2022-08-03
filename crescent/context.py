@@ -37,31 +37,51 @@ if TYPE_CHECKING:
     from crescent.bot import Bot
 
 
-__all__: Sequence[str] = ("Context",)
+__all__: Sequence[str] = ("Context", "AutocompleteContext")
 
 
 @define
-class Context:
-    """Represents the context for interactions"""
+class BaseContext:
+    """Represents the context for command interactions"""
 
     interaction: CommandInteraction
+    """The interaction object."""
     app: Bot
+    """The client application."""
     application_id: Snowflake
+    """The ID for the client that this interaction belongs to."""
     type: int
+    """The type of the interaction."""
     token: str
+    """The token for the interaction."""
     id: Snowflake
+    """The ID of the interaction."""
     version: int
+    """Version of the interaction system this interaction is under."""
 
     channel_id: Snowflake
+    """The channel ID of the channel that the interaction was used in."""
     guild_id: Snowflake | None
+    """The guild ID of the guild that this interaction was used in."""
     user: User
+    """The user who triggered this command interaction."""
     member: Member | None
+    """The member object for the user that triggered this interaction, if used in a guild."""
 
     command: str
+    """The name of the command that was used."""
     command_type: hikari.CommandType
     group: str | None
     sub_group: str | None
     options: dict[str, Any]
+    """The options that were provided by the user."""
+
+
+@define
+class Context(BaseContext):
+    """Represents the context for command interactions"""
+
+    interaction: CommandInteraction
 
     _has_replied: bool = False
     _used_first_resp: bool = False
@@ -259,3 +279,7 @@ class Context:
         await self.app.rest.delete_interaction_response(
             application=self.application_id, token=self.token
         )
+
+
+class AutocompleteContext(BaseContext):
+    """Represents the context for autocomplete interactions"""
