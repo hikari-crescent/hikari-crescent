@@ -26,7 +26,7 @@ from hikari import (
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
-    from crescent.context import Context, AutocompleteContext
+    from crescent.context import AutocompleteContext, Context
     from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (
