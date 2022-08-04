@@ -29,7 +29,7 @@ from crescent.utils import add_hooks
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, TypeVar
 
-    from crescent.context import Context, AutocompleteContext
+    from crescent.context import AutocompleteContext, Context
     from crescent.typedefs import (
         AutocompleteErrorHandlerCallbackT,
         CommandErrorHandlerCallbackT,

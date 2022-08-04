@@ -14,7 +14,7 @@ from hikari import (
     Snowflake,
 )
 
-from crescent.context import Context, BaseContext, AutocompleteContext
+from crescent.context import AutocompleteContext, BaseContext, Context
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
