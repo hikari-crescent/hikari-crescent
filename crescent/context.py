@@ -81,8 +81,6 @@ class BaseContext:
 class Context(BaseContext):
     """Represents the context for command interactions"""
 
-    interaction: CommandInteraction
-
     _has_replied: bool = False
     _used_first_resp: bool = False
 
