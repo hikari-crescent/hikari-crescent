@@ -19,7 +19,7 @@ from hikari import (
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Sequence
+    from typing import Any, Literal, Sequence, TypeVar, Type
 
     from hikari import (
         CommandInteraction,
@@ -36,6 +36,8 @@ if TYPE_CHECKING:
     from hikari.api import ComponentBuilder
 
     from crescent.bot import Bot
+
+    ContextT = TypeVar("ContextT", bound="BaseContext")
 
 
 __all__: Sequence[str] = ("Context", "AutocompleteContext")
@@ -76,6 +78,27 @@ class BaseContext:
     sub_group: str | None
     options: dict[str, Any]
     """The options that were provided by the user."""
+
+    # Mypy is too dumb for lowercase type to work here
+    def _into_subclass(self, ctx_type: Type[ContextT]) -> ContextT:
+        return ctx_type(
+            interaction=self.interaction,
+            app=self.app,
+            application_id=self.application_id,
+            type=self.type,
+            token=self.token,
+            id=self.id,
+            version=self.version,
+            channel_id=self.channel_id,
+            guild_id=self.guild_id,
+            user=self.user,
+            member=self.member,
+            command=self.command,
+            group=self.group,
+            sub_group=self.sub_group,
+            command_type=self.command_type,
+            options=self.options,
+        )
 
 
 @define

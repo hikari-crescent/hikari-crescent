@@ -20,7 +20,7 @@ from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, TypeVar
+    from typing import Any, Sequence
 
     from hikari import (
         CommandInteraction,
@@ -33,8 +33,6 @@ if TYPE_CHECKING:
     from crescent.bot import Bot
     from crescent.internal import AppCommandMeta, Includable
     from crescent.typedefs import HookCallbackT, OptionTypesT
-
-    ContextT = TypeVar("ContextT", bound=BaseContext)
 
 
 _log = getLogger(__name__)
@@ -68,12 +66,11 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         return
 
     if interaction.type is InteractionType.AUTOCOMPLETE:
-        await _handle_autocomplete_resp(
-            command, _base_context_to_subclass(ctx, AutocompleteContext)
-        )
+        await _handle_autocomplete_resp(command, ctx._into_subclass(AutocompleteContext))
+
         return
 
-    await _handle_slash_resp(bot, command, _base_context_to_subclass(ctx, Context))
+    await _handle_slash_resp(bot, command, ctx._into_subclass(Context))
 
 
 async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
@@ -199,27 +196,6 @@ def _base_context_from_interaction_resp(interaction: CommandInteraction) -> Base
         sub_group=sub_group,
         command_type=CommandType(interaction.command_type),
         options=callback_options,
-    )
-
-
-def _base_context_to_subclass(ctx: BaseContext, ctx_type: type[ContextT]) -> ContextT:
-    return ctx_type(
-        interaction=ctx.interaction,
-        app=ctx.app,
-        application_id=ctx.application_id,
-        type=ctx.type,
-        token=ctx.token,
-        id=ctx.id,
-        version=ctx.version,
-        channel_id=ctx.channel_id,
-        guild_id=ctx.guild_id,
-        user=ctx.user,
-        member=ctx.member,
-        command=ctx.command,
-        group=ctx.group,
-        sub_group=ctx.sub_group,
-        command_type=ctx.command_type,
-        options=ctx.options,
     )
 
 
