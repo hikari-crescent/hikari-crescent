@@ -10,6 +10,7 @@ from hikari import (
     GuildChannel,
     Member,
     MessageFlag,
+    PartialInteraction,
     ResponseType,
     Snowflake,
     User,
@@ -42,9 +43,9 @@ __all__: Sequence[str] = ("Context", "AutocompleteContext")
 
 @define
 class BaseContext:
-    """Represents the context for command interactions"""
+    """Represents the context for interactions"""
 
-    interaction: CommandInteraction
+    interaction: PartialInteraction
     """The interaction object."""
     app: Bot
     """The application instance."""
@@ -80,6 +81,8 @@ class BaseContext:
 @define
 class Context(BaseContext):
     """Represents the context for command interactions"""
+
+    interaction: CommandInteraction
 
     _has_replied: bool = False
     _used_first_resp: bool = False
@@ -281,3 +284,5 @@ class Context(BaseContext):
 
 class AutocompleteContext(BaseContext):
     """Represents the context for autocomplete interactions"""
+
+    interaction: CommandInteraction
