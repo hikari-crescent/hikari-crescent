@@ -47,7 +47,7 @@ class BaseContext:
     interaction: CommandInteraction
     """The interaction object."""
     app: Bot
-    """The client application."""
+    """The application instance."""
     application_id: Snowflake
     """The ID for the client that this interaction belongs to."""
     type: int
@@ -69,7 +69,7 @@ class BaseContext:
     """The member object for the user that triggered this interaction, if used in a guild."""
 
     command: str
-    """The name of the command that was used."""
+    """The name of the command."""
     command_type: hikari.CommandType
     group: str | None
     sub_group: str | None
