@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 from logging import getLogger
-from typing import TYPE_CHECKING, Mapping, cast
+from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
 
 from hikari import (
     UNDEFINED,
@@ -14,7 +14,7 @@ from hikari import (
     Snowflake,
 )
 
-from crescent.context import AutocompleteContext, BaseContext, Context
+from crescent.context import AutocompleteContext, Context
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
@@ -31,8 +31,11 @@ if TYPE_CHECKING:
     )
 
     from crescent.bot import Bot
+    from crescent.context import BaseContext
     from crescent.internal import AppCommandMeta, Includable
-    from crescent.typedefs import HookCallbackT, OptionTypesT
+    from crescent.typedefs import HookCallbackT
+
+    ContextT = TypeVar("ContextT", bound=BaseContext)
 
 
 _log = getLogger(__name__)
@@ -51,26 +54,28 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         interaction = cast(CommandInteraction, interaction)
         bot = cast(Bot, bot)
 
-    ctx = _base_context_from_interaction_resp(interaction)
+    command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
 
     command = _get_command(
-        bot, ctx.command, int(ctx.command_type), ctx.guild_id, ctx.group, ctx.sub_group
+        bot, command_name, interaction.command_type, interaction.guild_id, group, sub_group
     )
 
     if not command:
         if not bot.allow_unknown_interactions:
             _log.warning(
-                f"Handler for command `{ctx.command}` does not exist locally. (If this is"
+                f"Handler for command `{command_name}` does not exist locally. (If this is"
                 " intended, add `allow_unknown_interactions=True` to the Bot's constructor.)"
             )
         return
 
     if interaction.type is InteractionType.AUTOCOMPLETE:
-        await _handle_autocomplete_resp(command, ctx._into_subclass(AutocompleteContext))
+        await _handle_autocomplete_resp(
+            command, _context_from_interaction_resp(AutocompleteContext, interaction)
+        )
 
         return
 
-    await _handle_slash_resp(bot, command, ctx._into_subclass(Context))
+    await _handle_slash_resp(bot, command, _context_from_interaction_resp(Context, interaction))
 
 
 async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
@@ -132,7 +137,7 @@ def _get_option_recursive(
 def _get_command(
     bot: Bot,
     name: str,
-    type: int,
+    type: CommandType | int,
     guild_id: Snowflake | None,
     group: str | None,
     sub_group: str | None,
@@ -155,8 +160,17 @@ _VALUE_TYPE_LINK: dict[OptionType | int, str] = {
 }
 
 
-def _base_context_from_interaction_resp(interaction: CommandInteraction) -> BaseContext:
-    name: str = interaction.command_name
+class CrescentCommandData(NamedTuple):
+    """ "Represents the information format crescent needs to understand commands"""
+
+    command_name: str
+    group: str | None
+    sub_group: str | None
+    options: Sequence[CommandInteractionOption] | None
+
+
+def _get_crescent_command_data(interaction: CommandInteraction) -> CrescentCommandData:
+    command_name: str = interaction.command_name
     group: str | None = None
     sub_group: str | None = None
     options = interaction.options
@@ -164,22 +178,32 @@ def _base_context_from_interaction_resp(interaction: CommandInteraction) -> Base
     if options:
         option = options[0]
         if option.type == 1:
-            group = name
-            name = option.name
+            group = command_name
+            command_name = option.name
             options = option.options
         elif option.type == 2:
             group = interaction.command_name
             sub_group = option.name
-            name = unwrap(option.options)[0].name
+            command_name = unwrap(option.options)[0].name
             options = unwrap(option.options)[0].options
 
-    callback_options: Mapping[str, OptionTypesT | Message | User]
+    return CrescentCommandData(
+        command_name=command_name, group=group, sub_group=sub_group, options=options
+    )
+
+
+def _context_from_interaction_resp(
+    context_t: type[ContextT], interaction: CommandInteraction
+) -> ContextT:
+
+    command_name, group, sub_group, options = _get_crescent_command_data(interaction)
+
     if interaction.command_type is CommandType.SLASH:
         callback_options = _options_to_kwargs(interaction, options)
     else:
         callback_options = _resolved_data_to_kwargs(interaction)
 
-    return BaseContext(
+    return context_t(
         interaction=interaction,
         app=cast("Bot", interaction.app),
         application_id=interaction.application_id,
@@ -191,7 +215,7 @@ def _base_context_from_interaction_resp(interaction: CommandInteraction) -> Base
         guild_id=interaction.guild_id,
         user=interaction.user,
         member=interaction.member,
-        command=name,
+        command=command_name,
         group=group,
         sub_group=sub_group,
         command_type=CommandType(interaction.command_type),
