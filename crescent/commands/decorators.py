@@ -8,7 +8,7 @@ from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflake
 
 from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
-from crescent.commands.signature import gen_command_option, get_autocomplete_func
+from crescent.commands.signature import gen_command_option, get_autocomplete_func, get_context_type
 from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
 
@@ -117,11 +117,14 @@ def command(
             defaults[generated.name] = v.default
 
         callback_func = _class_command_callback(callback, defaults, name_map)
+        context_type = get_context_type(get_parameters(callback.callback))
 
     elif isfunction(callback):
         callback_func = callback
+        params = get_parameters(callback_func)
+        context_type = get_context_type(params)
 
-        for param in get_parameters(callback_func):
+        for param in params:
             if param is None:
                 continue
 
@@ -141,6 +144,7 @@ def command(
         callback=callback_func,
         owner=callback,
         command_type=CommandType.SLASH,
+        custom_context=context_type,
         name=name or callback.__name__,
         guild=guild,
         description=description or "No Description",
@@ -194,10 +198,14 @@ def user_command(
             dm_enabled=dm_enabled,
         )
 
+
+    context_type = get_context_type(get_parameters(callback))
+
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.USER,
+        custom_context=context_type,
         name=name or callback.__name__,
         guild=guild,
         default_member_permissions=default_member_permissions,
@@ -239,10 +247,13 @@ def message_command(
             dm_enabled=dm_enabled,
         )
 
+    context_type = get_context_type(get_parameters(callback))
+
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.MESSAGE,
+        custom_context=context_type,
         name=name or callback.__name__,
         guild=guild,
         default_member_permissions=default_member_permissions,

@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
+    from crescent.context import BaseContext
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
 
     Self = TypeVar("Self")
@@ -166,6 +167,7 @@ class AppCommandMeta:
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
     autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
+    custom_context: type[BaseContext] | None = None
     group: Group | None = None
     sub_group: SubGroup | None = None
     hooks: list[HookCallbackT] = field(factory=list)

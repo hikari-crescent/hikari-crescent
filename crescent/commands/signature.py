@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from logging import getLogger
-from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
+from typing import TYPE_CHECKING, Iterable, Union, cast, get_args, get_origin
 
 from hikari import CommandOption, OptionType
 
@@ -16,7 +16,7 @@ from crescent.commands.args import (
     Name,
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, get_channel_types
-from crescent.context import Context
+from crescent.context import BaseContext
 
 if TYPE_CHECKING:
     from inspect import Parameter
@@ -69,7 +69,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin in {Context, param.empty}:
+    if origin is param.empty or issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
@@ -112,3 +112,12 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 def get_autocomplete_func(param: Parameter) -> AutocompleteCallbackT | None:
     _, metadata = _get_origin_and_metadata(param)
     return _get_arg(Autocomplete, metadata)
+
+
+def get_context_type(params: Sequence[Parameter]) -> type[BaseContext] | None:
+    """Returns the Context or `None` if there is no ctx"""
+    for param in params:
+        print("Annotation:", param.annotation)
+        if issubclass(param.annotation, BaseContext):
+            return cast("type[BaseContext]", param.annotation)
+    return None
