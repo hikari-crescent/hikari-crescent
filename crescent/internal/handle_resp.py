@@ -161,7 +161,7 @@ _VALUE_TYPE_LINK: dict[OptionType | int, str] = {
 
 
 class CrescentCommandData(NamedTuple):
-    """ "Represents the information format crescent needs to understand commands"""
+    """Represents the information crescent needs to understand commands"""
 
     command_name: str
     group: str | None
