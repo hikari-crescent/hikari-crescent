@@ -6,6 +6,7 @@ from crescent.context.base_context import BaseContext
 
 __all__: Sequence[str] = ("AutocompleteContext",)
 
+
 class AutocompleteContext(BaseContext):
     """Represents the context for autocomplete interactions"""
 

@@ -3,16 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, overload
 
 from attr import define
-from hikari import (
-    UNDEFINED,
-    Guild,
-    GuildChannel,
-    MessageFlag,
-    ResponseType,
-)
+from hikari import UNDEFINED, Guild, GuildChannel, MessageFlag, ResponseType
 
-from crescent.utils import map_or
 from crescent.context.base_context import BaseContext
+from crescent.utils import map_or
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence
