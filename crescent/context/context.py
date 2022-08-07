@@ -2,21 +2,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-import hikari
 from attr import define
 from hikari import (
     UNDEFINED,
     Guild,
     GuildChannel,
-    Member,
     MessageFlag,
-    PartialInteraction,
     ResponseType,
-    Snowflake,
-    User,
 )
 
 from crescent.utils import map_or
+from crescent.context.base_context import BaseContext
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence
@@ -35,47 +31,8 @@ if TYPE_CHECKING:
     )
     from hikari.api import ComponentBuilder
 
-    from crescent.bot import Bot
 
-
-__all__: Sequence[str] = ("Context", "AutocompleteContext")
-
-
-@define
-class BaseContext:
-    """Represents the context for interactions"""
-
-    interaction: PartialInteraction
-    """The interaction object."""
-    app: Bot
-    """The application instance."""
-    application_id: Snowflake
-    """The ID for the client that this interaction belongs to."""
-    type: int
-    """The type of the interaction."""
-    token: str
-    """The token for the interaction."""
-    id: Snowflake
-    """The ID of the interaction."""
-    version: int
-    """Version of the interaction system this interaction is under."""
-
-    channel_id: Snowflake
-    """The channel ID of the channel that the interaction was used in."""
-    guild_id: Snowflake | None
-    """The guild ID of the guild that this interaction was used in."""
-    user: User
-    """The user who triggered this command interaction."""
-    member: Member | None
-    """The member object for the user that triggered this interaction, if used in a guild."""
-
-    command: str
-    """The name of the command."""
-    command_type: hikari.CommandType
-    group: str | None
-    sub_group: str | None
-    options: dict[str, Any]
-    """The options that were provided by the user."""
+__all__: Sequence[str] = ("Context",)
 
 
 @define
@@ -280,9 +237,3 @@ class Context(BaseContext):
         await self.app.rest.delete_interaction_response(
             application=self.application_id, token=self.token
         )
-
-
-class AutocompleteContext(BaseContext):
-    """Represents the context for autocomplete interactions"""
-
-    interaction: CommandInteraction
