@@ -7,9 +7,11 @@ from attr import define
 from hikari import Member, PartialInteraction, Snowflake, User
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence
+    from typing import Any, Sequence, TypeVar, Type
 
     from crescent.bot import Bot
+
+    ContextT = TypeVar("ContextT", bound="BaseContext")
 
 
 __all__: Sequence[str] = ("BaseContext",)
@@ -50,3 +52,24 @@ class BaseContext:
     sub_group: str | None
     options: dict[str, Any]
     """The options that were provided by the user."""
+
+    def into(self, context_t: Type[ContextT]) -> ContextT:
+        """Convert to a context of a different type."""
+        return context_t(
+            interaction=self.interaction,
+            app=self.app,
+            application_id=self.application_id,
+            type=self.type,
+            token=self.token,
+            id=self.id,
+            version=self.version,
+            channel_id=self.channel_id,
+            guild_id=self.guild_id,
+            user=self.user,
+            member=self.member,
+            command=self.command,
+            command_type=self.command_type,
+            group=self.group,
+            sub_group=self.sub_group,
+            options=self.options,
+        )
