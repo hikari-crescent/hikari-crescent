@@ -22,6 +22,7 @@ from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
 from crescent.utils import gather_iter, unwrap
+from crescent.context.utils import call_with_context
 
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, DefaultDict, Sequence
@@ -113,7 +114,7 @@ class ErrorHandler(Generic[_E]):
         was handled.
         """
         if func := self.registry.get(exc.__class__):
-            await func.metadata(*args)
+            await call_with_context(func.metadata, *args)
             return True
 
         return False

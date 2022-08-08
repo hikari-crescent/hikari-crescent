@@ -26,7 +26,7 @@ from hikari import (
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
-    from crescent.context import AutocompleteContext, Context
+    from crescent.context import AutocompleteContext
     from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (
@@ -42,12 +42,12 @@ __all__: Sequence[str] = (
 )
 
 CommandCallbackT = Callable[..., Awaitable[Any]]
-UserCommandCallbackT = Callable[["Context", User], Awaitable[None]]
-MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]
+UserCommandCallbackT = Callable[[Any, User], Awaitable[None]]
+MessageCommandCallbackT = Callable[[Any, Message], Awaitable[None]]
 
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable", Attachment]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
-HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
+HookCallbackT = Callable[[Any], Awaitable[Optional["HookResult"]]]
 AutocompleteCallbackT = Callable[
     ["AutocompleteContext", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
 ]
@@ -56,14 +56,14 @@ PluginCallbackT = Callable[[], None]
 
 
 class ClassCommandProto(Protocol):
-    async def callback(self, ctx: Context) -> Any:
+    async def callback(self, ctx: Any) -> Any:
         ...
 
 
 ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
 
-CommandErrorHandlerCallbackT = Callable[[ERROR, "Context"], Awaitable[None]]
+CommandErrorHandlerCallbackT = Callable[[ERROR, Any], Awaitable[None]]
 EventErrorHandlerCallbackT = Callable[[ERROR, Event], Awaitable[None]]
 AutocompleteErrorHandlerCallbackT = Callable[
-    [ERROR, "Context", AutocompleteInteractionOption], Awaitable[None]
+    [ERROR, "AutocompleteContext", AutocompleteInteractionOption], Awaitable[None]
 ]

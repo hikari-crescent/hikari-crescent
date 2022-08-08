@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from logging import getLogger
-from typing import TYPE_CHECKING, Iterable, Union, cast, get_args, get_origin
+from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
 from hikari import CommandOption, OptionType
 
@@ -112,12 +112,3 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 def get_autocomplete_func(param: Parameter) -> AutocompleteCallbackT | None:
     _, metadata = _get_origin_and_metadata(param)
     return _get_arg(Autocomplete, metadata)
-
-
-def get_context_type(params: Sequence[Parameter]) -> type[BaseContext] | None:
-    """Returns the Context or `None` if there is no ctx"""
-    for param in params:
-        print("Annotation:", param.annotation)
-        if issubclass(param.annotation, BaseContext):
-            return cast("type[BaseContext]", param.annotation)
-    return None
