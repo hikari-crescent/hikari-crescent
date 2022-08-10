@@ -1,4 +1,5 @@
 from __future__ import annotations
+from inspect import isclass
 
 from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
@@ -69,7 +70,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin is param.empty or issubclass(origin, BaseContext):
+    if origin is param.empty or (isclass(origin) and issubclass(origin, BaseContext)):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
