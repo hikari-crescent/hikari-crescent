@@ -2,19 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-import hikari
 from attr import define
-from hikari import (
-    UNDEFINED,
-    Guild,
-    GuildChannel,
-    Member,
-    MessageFlag,
-    ResponseType,
-    Snowflake,
-    User,
-)
+from hikari import UNDEFINED, Guild, GuildChannel, MessageFlag, ResponseType
 
+from crescent.context.base_context import BaseContext
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
@@ -34,34 +25,15 @@ if TYPE_CHECKING:
     )
     from hikari.api import ComponentBuilder
 
-    from crescent.bot import Bot
-
 
 __all__: Sequence[str] = ("Context",)
 
 
 @define
-class Context:
-    """Represents the context for interactions"""
+class Context(BaseContext):
+    """Represents the context for command interactions"""
 
     interaction: CommandInteraction
-    app: Bot
-    application_id: Snowflake
-    type: int
-    token: str
-    id: Snowflake
-    version: int
-
-    channel_id: Snowflake
-    guild_id: Snowflake | None
-    user: User
-    member: Member | None
-
-    command: str
-    command_type: hikari.CommandType
-    group: str | None
-    sub_group: str | None
-    options: dict[str, Any]
 
     _has_replied: bool = False
     _used_first_resp: bool = False

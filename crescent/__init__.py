@@ -31,6 +31,7 @@ __all__: Sequence[str] = (
     "SubGroup",
     "Bot",
     "Context",
+    "AutocompleteContext",
     "catch_command",
     "catch_event",
     "catch_autocomplete",
