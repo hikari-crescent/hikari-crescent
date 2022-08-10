@@ -1,7 +1,8 @@
 from hikari import CommandInteraction, CommandType, InteractionCreateEvent, InteractionType
 from pytest import mark
 
-from crescent import Context, command
+from crescent import Context, command, hook
+from crescent.context.base_context import BaseContext
 from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockBot
 
@@ -17,6 +18,7 @@ async def test_handle_resp():
     async def test_command(ctx: Context):
         nonlocal command_was_run
         command_was_run = True
+        assert isinstance(ctx, test_command.metadata.custom_context)
 
     event = InteractionCreateEvent(
         shard=None,
@@ -43,4 +45,52 @@ async def test_handle_resp():
 
     await handle_resp(event)
 
+    assert command_was_run
+
+
+@mark.asyncio
+async def test_hooks():
+    bot = MockBot()
+    command_was_run = False
+    hook_was_run = False
+
+    async def hook_(ctx: BaseContext):
+        nonlocal hook_was_run
+        hook_was_run = True
+        assert isinstance(ctx, BaseContext)
+
+    @bot.include
+    @hook(hook_)
+    @command
+    async def test_command(ctx: Context):
+        nonlocal command_was_run
+        command_was_run = True
+        assert isinstance(ctx, Context)
+
+    event = InteractionCreateEvent(
+        shard=None,
+        interaction=CommandInteraction(
+            app=bot,
+            id=None,
+            application_id=...,
+            type=InteractionType.APPLICATION_COMMAND,
+            token=bot._token,
+            version=0,
+            channel_id=0,
+            guild_id=None,
+            guild_locale=None,
+            member=None,
+            user=None,
+            locale=None,
+            command_id=None,
+            command_name="test_command",
+            command_type=CommandType.SLASH,
+            resolved=None,
+            options=None,
+        ),
+    )
+
+    await handle_resp(event)
+
+    assert hook_was_run
     assert command_was_run
