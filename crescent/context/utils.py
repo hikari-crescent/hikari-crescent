@@ -25,16 +25,20 @@ async def call_with_context(
     Calls a function with the context type it is annotated with.
     """
 
-    ctx_t = get_function_context(func)
+    ctx_t = get_function_context(func) or Context
 
     ctx, index = get_ctx(args)
-    new_ctx = ctx.into(ctx_t or Context)
 
-    args_list = list(args)
-    args_list[index] = new_ctx
+    argv: Sequence[Any]
+    if not isinstance(ctx, ctx_t):
+        ctx = ctx.into(ctx_t)
+        argv = list(args)
+        argv[index] = ctx
+    else:
+        argv = args
 
-    result = await func(*args_list, **kwargs)
-    return result, new_ctx
+    result = await func(*argv, **kwargs)
+    return result, ctx
 
 def get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
     for index, arg in enumerate(args):
