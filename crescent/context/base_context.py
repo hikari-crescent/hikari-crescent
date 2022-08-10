@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("BaseContext",)
 
 
-@define
+@define(slots=True)
 class BaseContext:
     """Represents the context for interactions"""
 
@@ -53,6 +53,22 @@ class BaseContext:
     options: dict[str, Any]
     """The options that were provided by the user."""
 
+    _has_created_message: bool
+    """
+    Whether the user has responded to this interaction.
+
+    To maintain compatibility with `crescent.Context`, set to `True` when
+    creating or editing an interaction response.
+    """
+
+    _has_deferred_response: bool
+    """
+    Whether the user has deferred this interaction.
+
+    To maintain compatibility with `crescent.Context`, set to `True` when
+    deferring an interaction response.
+    """
+
     def into(self, context_t: Type[ContextT]) -> ContextT:
         """Convert to a context of a different type."""
         return context_t(
@@ -72,4 +88,7 @@ class BaseContext:
             group=self.group,
             sub_group=self.sub_group,
             options=self.options,
+            # Pyright expects these arguments to start with an underscore but attrs removes that.
+            has_created_message=self._has_created_message,  # pyright: ignore
+            has_deferred_response=self._has_deferred_response,  # pyright: ignore
         )
