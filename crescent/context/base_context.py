@@ -7,7 +7,7 @@ from attr import define
 from hikari import Member, PartialInteraction, Snowflake, User
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, TypeVar, Type
+    from typing import Any, Sequence, Type, TypeVar
 
     from crescent.bot import Bot
 

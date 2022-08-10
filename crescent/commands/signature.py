@@ -1,6 +1,6 @@
 from __future__ import annotations
-from inspect import isclass
 
+from inspect import isclass
 from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
@@ -63,6 +63,7 @@ def _get_origin_and_metadata(param: Parameter) -> tuple[Any, Iterable[Any]]:
         origin = _unwrap_optional(origin.__origin__)
 
     return origin, metadata
+
 
 def _any_issubclass(obj: Any, cls: type) -> bool:
     if not isclass(obj):

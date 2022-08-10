@@ -103,7 +103,9 @@ async def _handle_slash_resp(
         await command.metadata.callback(ctx, **ctx.options)
         await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
-        handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx], has_ctx=True)
+        handled = await command.app._command_error_handler.try_handle(
+            exc, [exc, ctx], has_ctx=True
+        )
         await bot.on_crescent_command_error(exc, ctx.into(Context), handled)
 
 

@@ -1,15 +1,14 @@
 from __future__ import annotations
-from functools import lru_cache
 
+from functools import lru_cache
 from typing import TYPE_CHECKING, Awaitable, cast
 
-from crescent.context.context import Context
 from crescent.context.base_context import BaseContext
+from crescent.context.context import Context
 
 if TYPE_CHECKING:
-    from typing import Callable, Any, Sequence, TypeVar
-
     from inspect import Parameter
+    from typing import Any, Callable, Sequence, TypeVar
 
     T = TypeVar("T")
 
@@ -40,11 +39,13 @@ async def call_with_context(
     result = await func(*argv, **kwargs)
     return result, ctx
 
+
 def get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
     for index, arg in enumerate(args):
         if isinstance(arg, BaseContext):
             return arg, index
     raise ValueError("Args do not include a `BaseContext` object.")
+
 
 @lru_cache
 def get_function_context(func: Callable[..., Any]) -> type[BaseContext] | None:

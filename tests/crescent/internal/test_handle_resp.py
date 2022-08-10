@@ -6,6 +6,7 @@ from crescent.context.base_context import BaseContext
 from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockBot
 
+
 def MockEvent(name, bot):
     return InteractionCreateEvent(
         shard=None,
@@ -47,6 +48,7 @@ async def test_handle_resp():
     await handle_resp(MockEvent("test_command", bot))
 
     assert command_was_run
+
 
 @mark.asyncio
 async def test_hooks():

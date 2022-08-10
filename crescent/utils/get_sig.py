@@ -1,6 +1,6 @@
 from __future__ import annotations
-from functools import lru_cache
 
+from functools import lru_cache
 from inspect import Parameter, signature
 from sys import version_info
 from typing import TYPE_CHECKING, get_type_hints
@@ -19,6 +19,7 @@ def convert_signiture(param: Parameter, type_hints: dict[str, type[Any]]) -> Par
         default=param.default,
         kind=param.kind,
     )
+
 
 @lru_cache
 def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:

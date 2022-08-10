@@ -8,8 +8,8 @@ from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflake
 
 from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
-from crescent.context.utils import get_function_context
 from crescent.commands.signature import gen_command_option, get_autocomplete_func
+from crescent.context.utils import get_function_context
 from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
 
@@ -198,7 +198,6 @@ def user_command(
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
         )
-
 
     context_type = get_function_context(callback)
 
