@@ -50,7 +50,7 @@ def register_command(
     callback: CommandCallbackT,
     command_type: CommandType,
     name: str,
-    custom_context: type[BaseContext] | None= None,
+    custom_context: type[BaseContext] | None = None,
     guild: Snowflakeish | None = None,
     description: str | None = None,
     options: Sequence[CommandOption] | None = None,
@@ -108,13 +108,18 @@ class ErrorHandler(Generic[_E]):
     def remove(self, exc: type[Exception]) -> None:
         self.registry.pop(exc)
 
-    async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
+    async def try_handle(
+        self, exc: Exception, args: Sequence[Any], *, has_ctx: bool = False
+    ) -> bool:
         """
         Attempts to run a function to handle an exception. Returns whether the exception
         was handled.
         """
         if func := self.registry.get(exc.__class__):
-            await call_with_context(func.metadata, *args)
+            if has_ctx:
+                await call_with_context(func.metadata, *args)
+            else:
+                await func.metadata(*args)
             return True
 
         return False

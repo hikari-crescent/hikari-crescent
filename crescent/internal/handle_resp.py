@@ -92,7 +92,9 @@ async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: BaseContext) -> boo
     return True
 
 
-async def _handle_slash_resp(bot: Bot, command: Includable[AppCommandMeta], ctx: BaseContext) -> None:
+async def _handle_slash_resp(
+    bot: Bot, command: Includable[AppCommandMeta], ctx: BaseContext
+) -> None:
 
     if not await _handle_hooks(command.metadata.hooks, ctx):
         return
@@ -101,7 +103,7 @@ async def _handle_slash_resp(bot: Bot, command: Includable[AppCommandMeta], ctx:
         await command.metadata.callback(ctx, **ctx.options)
         await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
-        handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
+        handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx], has_ctx=True)
         await bot.on_crescent_command_error(exc, ctx.into(Context), handled)
 
 
@@ -121,7 +123,9 @@ async def _handle_autocomplete_resp(
     try:
         await interaction.create_response(await autocomplete(ctx, option))
     except Exception as exc:
-        handled = await command.app._autocomplete_error_handler.try_handle(exc, [exc, ctx, option])
+        handled = await command.app._autocomplete_error_handler.try_handle(
+            exc, [exc, ctx, option], has_ctx=True
+        )
         await command.app.on_crescent_autocomplete_error(exc, ctx, option, handled)
 
 
