@@ -23,7 +23,6 @@ async def call_with_context(
 ) -> tuple[T, BaseContext]:
     """
     Calls a function with the context type it is annotated with.
-    The function must have `Context` as its first parameter.
     """
 
     ctx_t = get_function_context(func)
