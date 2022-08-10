@@ -1,6 +1,7 @@
 from crescent.context import BaseContext, call_with_context
 from pytest import mark
 
+
 def test_into():
     ctx = BaseContext(
         interaction=1,
@@ -44,9 +45,9 @@ def test_into():
     assert ctx._has_created_message == ctx2._has_created_message
     assert ctx._has_deferred_response == ctx2._has_deferred_response
 
+
 @mark.asyncio
 async def test_call_with_context():
-
     class CustomContext(BaseContext):
         ...
 

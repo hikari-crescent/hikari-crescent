@@ -199,7 +199,6 @@ def user_command(
             dm_enabled=dm_enabled,
         )
 
-
     context_type = get_function_context(callback)
 
     return register_command(

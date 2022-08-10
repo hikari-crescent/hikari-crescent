@@ -64,6 +64,7 @@ def _get_origin_and_metadata(param: Parameter) -> tuple[Any, Iterable[Any]]:
 
     return origin, metadata
 
+
 def _any_issubclass(obj: Any, cls: type) -> bool:
     if not isclass(obj):
         return False

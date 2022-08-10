@@ -40,11 +40,13 @@ async def call_with_context(
     result = await func(*argv, **kwargs)
     return result, ctx
 
+
 def get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
     for index, arg in enumerate(args):
         if isinstance(arg, BaseContext):
             return arg, index
     raise ValueError("Args do not include a `BaseContext` object.")
+
 
 @lru_cache
 def get_function_context(func: Callable[..., Any]) -> type[BaseContext] | None:

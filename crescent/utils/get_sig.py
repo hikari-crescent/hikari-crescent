@@ -20,6 +20,7 @@ def convert_signiture(param: Parameter, type_hints: dict[str, type[Any]]) -> Par
         kind=param.kind,
     )
 
+
 @lru_cache
 def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
     # NOTE: type: ignore is used because mypy and pyright are on python version 3.8
