@@ -64,13 +64,18 @@ def _get_origin_and_metadata(param: Parameter) -> tuple[Any, Iterable[Any]]:
 
     return origin, metadata
 
+def _any_issubclass(obj: Any, cls: type) -> bool:
+    if not isclass(obj):
+        return False
+    return issubclass(obj, cls)
+
 
 def gen_command_option(param: Parameter) -> CommandOption | None:
     name = param.name
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin is param.empty or (isclass(origin) and issubclass(origin, BaseContext)):
+    if origin is param.empty or _any_issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
