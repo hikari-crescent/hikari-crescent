@@ -1,5 +1,5 @@
-from crescent.context import BaseContext
-
+from crescent.context import BaseContext, call_with_context
+from pytest import mark
 
 def test_into():
     ctx = BaseContext(
@@ -43,3 +43,37 @@ def test_into():
     assert ctx.options == ctx2.options
     assert ctx._has_created_message == ctx2._has_created_message
     assert ctx._has_deferred_response == ctx2._has_deferred_response
+
+@mark.asyncio
+async def test_call_with_context():
+
+    class CustomContext(BaseContext):
+        ...
+
+    async def callback(ctx: CustomContext, arg, kwarg=None):
+        assert isinstance(ctx, CustomContext)
+        assert arg == 5
+        assert kwarg == 10
+
+    ctx = BaseContext(
+        interaction=None,
+        app=None,
+        application_id=None,
+        type=None,
+        token=None,
+        id=None,
+        version=None,
+        channel_id=None,
+        guild_id=None,
+        user=None,
+        member=None,
+        command=None,
+        command_type=None,
+        group=None,
+        sub_group=None,
+        options=None,
+        has_created_message=None,
+        has_deferred_response=None,
+    )
+
+    await call_with_context(callback, ctx, 5, kwarg=10)
