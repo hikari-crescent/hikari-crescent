@@ -21,3 +21,13 @@ async def my_command(ctx: CustomContext) -> None:
 
     # Methods on `crescent.Context` can now be used.
     await crescent_ctx.respond(message)
+
+
+# A custom context type can be provided to command error handlers
+@bot.include
+@crescent.catch_command(Exception)
+async def error_handle(exc: Exception, ctx: CustomContext) -> None:
+    ...
+
+
+bot.run()

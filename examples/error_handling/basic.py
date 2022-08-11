@@ -32,7 +32,7 @@ async def on_event_random_error(exc: RandomError, event: hikari.Event) -> None:
 @bot.include
 @crescent.catch_autocomplete(RandomError)
 async def on_autocomplete_random_error(
-    exc: RandomError, ctx: crescent.Context, inter: hikari.AutocompleteInteractionOption
+    exc: RandomError, ctx: crescent.AutocompleteContext, inter: hikari.AutocompleteInteractionOption
 ) -> None:
     print(f"{exc} raised in autocomplete for {ctx.command}!")
 
