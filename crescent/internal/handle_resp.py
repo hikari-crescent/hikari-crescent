@@ -124,7 +124,7 @@ async def _handle_autocomplete_resp(
         await interaction.create_response(await autocomplete(ctx, option))
     except Exception as exc:
         handled = await command.app._autocomplete_error_handler.try_handle(
-            exc, [exc, ctx, option], has_ctx=True
+            exc, [exc, ctx, option]
         )
         await command.app.on_crescent_autocomplete_error(exc, ctx, option, handled)
 

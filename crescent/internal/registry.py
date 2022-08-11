@@ -110,7 +110,7 @@ class ErrorHandler(Generic[_E]):
         self.registry.pop(exc)
 
     async def try_handle(
-        self, exc: Exception, args: Sequence[Any], *, has_ctx: bool = False
+        self, exc: Exception, args: Sequence[Any],
     ) -> bool:
         """
         Attempts to run a function to handle an exception. Returns whether the exception
