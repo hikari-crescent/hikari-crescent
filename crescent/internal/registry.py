@@ -109,9 +109,7 @@ class ErrorHandler(Generic[_E]):
     def remove(self, exc: type[Exception]) -> None:
         self.registry.pop(exc)
 
-    async def try_handle(
-        self, exc: Exception, args: Sequence[Any],
-    ) -> bool:
+    async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
         """
         Attempts to run a function to handle an exception. Returns whether the exception
         was handled.
