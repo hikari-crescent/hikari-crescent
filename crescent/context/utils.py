@@ -44,8 +44,7 @@ async def call_with_context(
     else:
         argv = args
 
-    result = await func(*argv, **kwargs)
-    return result, ctx
+    return await func(*argv, **kwargs), ctx
 
 
 @lru_cache
