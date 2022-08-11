@@ -1,6 +1,7 @@
 # type: ignore
 
 import hikari
+
 import crescent
 
 # To maintain compatibility with `crescent.Context`, certain variables must be set in certain places.
