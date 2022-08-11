@@ -17,6 +17,14 @@ from crescent.utils import get_parameters
 __all__: Sequence[str] = ("call_with_context", "get_function_context", "get_context_type")
 
 
+def _get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
+    """Get a variable of type `BaseContext` from a list."""
+    for index, arg in enumerate(args):
+        if isinstance(arg, BaseContext):
+            return arg, index
+    raise ValueError("Args do not include a `BaseContext` object.")
+
+
 async def call_with_context(
     func: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any
 ) -> tuple[T, BaseContext]:
@@ -26,7 +34,7 @@ async def call_with_context(
 
     ctx_t = get_function_context(func) or Context
 
-    ctx, index = get_ctx(args)
+    ctx, index = _get_ctx(args)
 
     argv: Sequence[Any]
     if not isinstance(ctx, ctx_t):
@@ -40,15 +48,12 @@ async def call_with_context(
     return result, ctx
 
 
-def get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
-    for index, arg in enumerate(args):
-        if isinstance(arg, BaseContext):
-            return arg, index
-    raise ValueError("Args do not include a `BaseContext` object.")
-
-
 @lru_cache
 def get_function_context(func: Callable[..., Any]) -> type[BaseContext] | None:
+    """
+    Gets the context type used in a function. Returns `None` if no parameters are
+    annotated with a context.
+    """
     return get_context_type(get_parameters(func))
 
 
