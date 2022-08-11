@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     from hikari.api.rest import RESTClient
 
     from crescent.commands.groups import Group, SubGroup
-    from crescent.internal.includable import Includable
     from crescent.context import BaseContext
+    from crescent.internal.includable import Includable
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
 
     Self = TypeVar("Self")

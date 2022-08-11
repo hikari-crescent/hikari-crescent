@@ -1,5 +1,6 @@
-from crescent.context import BaseContext, call_with_context
 from pytest import mark
+
+from crescent.context import BaseContext, call_with_context
 
 
 def test_into():

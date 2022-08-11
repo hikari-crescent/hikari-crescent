@@ -1,6 +1,6 @@
 from __future__ import annotations
-from functools import lru_cache
 
+from functools import lru_cache
 from inspect import Parameter, signature
 from sys import version_info
 from typing import TYPE_CHECKING, get_type_hints
