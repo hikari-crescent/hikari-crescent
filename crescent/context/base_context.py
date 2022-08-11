@@ -71,6 +71,9 @@ class BaseContext:
 
     def into(self, context_t: Type[ContextT]) -> ContextT:
         """Convert to a context of a different type."""
+        if isinstance(self, context_t):
+            return self
+
         return context_t(
             interaction=self.interaction,
             app=self.app,
