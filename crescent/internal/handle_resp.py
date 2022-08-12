@@ -78,7 +78,6 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     await _handle_slash_resp(
         bot,
         command,
-        # _context_from_interaction_resp(command.metadata.custom_context or Context, interaction),
         _context_from_interaction_resp(Context, interaction),
     )
 
