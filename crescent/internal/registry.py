@@ -86,12 +86,12 @@ _E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
 
 
 class ErrorHandler(Generic[_E]):
-    __slots__: Sequence[str] = ("bot", "registry", "call_with_ctx")
+    __slots__: Sequence[str] = ("bot", "registry", "supports_custom_ctx")
 
-    def __init__(self, bot: Bot, *, call_with_ctx: bool = False):
+    def __init__(self, bot: Bot, *, supports_custom_ctx: bool = False):
         self.bot: Bot = bot
         self.registry: dict[type[Exception], Includable[_E]] = {}
-        self.call_with_ctx: bool = call_with_ctx
+        self.supports_custom_ctx: bool = supports_custom_ctx
 
     def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
         if reg_includable := self.registry.get(exc):
@@ -112,7 +112,7 @@ class ErrorHandler(Generic[_E]):
         was handled.
         """
         if func := self.registry.get(exc.__class__):
-            if self.call_with_ctx:
+            if self.supports_custom_ctx:
                 await call_with_context(func.metadata, *args)
             else:
                 await func.metadata(*args)
