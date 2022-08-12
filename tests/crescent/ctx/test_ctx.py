@@ -53,7 +53,7 @@ async def test_call_with_context():
         ...
 
     async def callback(ctx: CustomContext, arg, kwarg=None):
-        assert isinstance(ctx, CustomContext)
+        assert type(ctx) is CustomContext
         assert arg == 5
         assert kwarg == 10
 

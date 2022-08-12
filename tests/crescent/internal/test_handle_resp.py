@@ -33,7 +33,7 @@ def MockEvent(name, bot):
 
 
 @mark.asyncio
-async def test_handle_resp():
+async def test_handle_resp_slash_function():
     bot = MockBot()
 
     command_was_run = False
@@ -43,11 +43,31 @@ async def test_handle_resp():
     async def test_command(ctx: Context):
         nonlocal command_was_run
         command_was_run = True
-        assert isinstance(ctx, test_command.metadata.custom_context)
+        assert type(ctx) is test_command.metadata.custom_context
 
     await handle_resp(MockEvent("test_command", bot))
 
     assert command_was_run
+
+@mark.asyncio
+async def test_handle_resp_slash_class():
+    bot = MockBot()
+
+    command_was_run = False
+
+    @bot.include
+    @command
+    class test_command:
+        async def callback(self, ctx: Context):
+            nonlocal command_was_run
+            command_was_run = True
+            assert type(ctx) is test_command.metadata.custom_context
+
+    await handle_resp(MockEvent("test_command", bot))
+
+    assert command_was_run
+
+
 
 
 @mark.asyncio
@@ -60,12 +80,12 @@ async def test_hooks():
     async def hook_(ctx: BaseContext):
         nonlocal hook_was_run
         hook_was_run = True
-        assert isinstance(ctx, BaseContext)
+        assert type(ctx) is BaseContext
 
     async def hook_no_annotations(ctx):
         nonlocal hook_no_annotations_was_run
         hook_no_annotations_was_run = True
-        assert isinstance(ctx, Context)
+        assert type(ctx) is Context
 
     @bot.include
     @hook(hook_no_annotations)
@@ -74,7 +94,7 @@ async def test_hooks():
     async def test_command(ctx: Context):
         nonlocal command_was_run
         command_was_run = True
-        assert isinstance(ctx, Context)
+        assert type(ctx) is Context
 
     await handle_resp(MockEvent("test_command", bot))
 
