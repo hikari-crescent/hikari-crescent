@@ -75,11 +75,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
 
         return
 
-    await _handle_slash_resp(
-        bot,
-        command,
-        _context_from_interaction_resp(Context, interaction),
-    )
+    await _handle_slash_resp(bot, command, _context_from_interaction_resp(Context, interaction))
 
 
 async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: BaseContext) -> bool:
