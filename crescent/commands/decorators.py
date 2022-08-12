@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from functools import partial
+from functools import partial, wraps
 from inspect import isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
@@ -9,7 +9,6 @@ from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflake
 from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
 from crescent.commands.signature import gen_command_option, get_autocomplete_func
-from crescent.context.utils import get_function_context
 from crescent.internal.registry import register_command
 from crescent.utils import get_parameters
 
@@ -34,6 +33,7 @@ __all__: Sequence[str] = ("command", "user_command", "message_command")
 def _class_command_callback(
     cls: type[ClassCommandProto], defaults: dict[str, Any], name_map: dict[str, str]
 ) -> CommandCallbackT:
+    @wraps(cls.callback)
     async def callback(*args: Any, **kwargs: Any) -> Any:
         values = defaults.copy()
         values.update(kwargs)
@@ -118,12 +118,10 @@ def command(
             defaults[generated.name] = v.default
 
         callback_func = _class_command_callback(callback, defaults, name_map)
-        context_type = get_function_context(callback.callback)
 
     elif isfunction(callback):
         callback_func = callback
         params = get_parameters(callback_func)
-        context_type = get_function_context(callback)
 
         for param in params:
             if param is None:
@@ -145,7 +143,6 @@ def command(
         callback=callback_func,
         owner=callback,
         command_type=CommandType.SLASH,
-        custom_context=context_type,
         name=name or callback.__name__,
         guild=guild,
         description=description or "No Description",
@@ -199,13 +196,10 @@ def user_command(
             dm_enabled=dm_enabled,
         )
 
-    context_type = get_function_context(callback)
-
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.USER,
-        custom_context=context_type,
         name=name or callback.__name__,
         guild=guild,
         default_member_permissions=default_member_permissions,
@@ -247,13 +241,10 @@ def message_command(
             dm_enabled=dm_enabled,
         )
 
-    context_type = get_function_context(callback)
-
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.MESSAGE,
-        custom_context=context_type,
         name=name or callback.__name__,
         guild=guild,
         default_member_permissions=default_member_permissions,

@@ -30,7 +30,6 @@ if TYPE_CHECKING:
     from hikari import Snowflakeish
 
     from crescent.bot import Bot
-    from crescent.context import BaseContext
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT
 
 
@@ -50,7 +49,6 @@ def register_command(
     callback: CommandCallbackT,
     command_type: CommandType,
     name: str,
-    custom_context: type[BaseContext] | None = None,
     guild: Snowflakeish | None = None,
     description: str | None = None,
     options: Sequence[CommandOption] | None = None,
@@ -68,7 +66,6 @@ def register_command(
         metadata=AppCommandMeta(
             owner=owner,
             callback=callback,
-            custom_context=custom_context,
             autocomplete=autocomplete,
             app_command=AppCommand(
                 type=command_type,

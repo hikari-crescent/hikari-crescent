@@ -78,7 +78,8 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     await _handle_slash_resp(
         bot,
         command,
-        _context_from_interaction_resp(command.metadata.custom_context or Context, interaction),
+        # _context_from_interaction_resp(command.metadata.custom_context or Context, interaction),
+        _context_from_interaction_resp(Context, interaction),
     )
 
 
@@ -100,7 +101,7 @@ async def _handle_slash_resp(
         return
 
     try:
-        await command.metadata.callback(ctx, **ctx.options)
+        await call_with_context(command.metadata.callback, ctx, **ctx.options)
         await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
         handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])

@@ -71,8 +71,9 @@ class BaseContext:
 
     def into(self, context_t: Type[ContextT]) -> ContextT:
         """Convert to a context of a different type."""
-        if isinstance(self, context_t):
-            return self
+        if type(self) is context_t:
+            # pyright can't tell this is of type `context_t`
+            return self  # pyright: ignore
 
         return context_t(
             interaction=self.interaction,

@@ -37,7 +37,7 @@ async def call_with_context(
     ctx, index = _get_ctx(args)
 
     argv: Sequence[Any]
-    if not isinstance(ctx, ctx_t):
+    if type(ctx) is not ctx_t:
         ctx = ctx.into(ctx_t)
         argv = list(args)
         argv[index] = ctx
