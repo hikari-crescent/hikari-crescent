@@ -49,6 +49,7 @@ async def test_handle_resp_slash_function():
 
     assert command_was_run
 
+
 @mark.asyncio
 async def test_handle_resp_slash_class():
     bot = MockBot()
@@ -66,8 +67,6 @@ async def test_handle_resp_slash_class():
     await handle_resp(MockEvent("test_command", bot))
 
     assert command_was_run
-
-
 
 
 @mark.asyncio
