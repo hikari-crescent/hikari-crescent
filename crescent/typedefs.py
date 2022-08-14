@@ -9,6 +9,7 @@ from typing import (
     Optional,
     Protocol,
     Sequence,
+    Tuple,
     TypeVar,
     Union,
 )
@@ -26,7 +27,7 @@ from hikari import (
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
-    from crescent.context import AutocompleteContext
+    from crescent.context import AutocompleteContext, BaseContext
     from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (
@@ -48,6 +49,7 @@ MessageCommandCallbackT = Callable[[Any, Message], Awaitable[None]]
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable", Attachment]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[[Any], Awaitable[Optional["HookResult"]]]
+_TransformedHookCallbackT = Callable[[Any], Awaitable[Tuple[Optional["HookResult"], "BaseContext"]]]
 AutocompleteCallbackT = Callable[
     ["AutocompleteContext", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
 ]

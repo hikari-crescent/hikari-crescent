@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
 
-from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
 from crescent.commands.signature import gen_command_option, get_autocomplete_func
 from crescent.internal.registry import register_command
@@ -37,9 +36,6 @@ def _class_command_callback(
     async def callback(*args: Any, **kwargs: Any) -> Any:
         values = defaults.copy()
         values.update(kwargs)
-
-        if isinstance(args[0], Bot):
-            args = args[1:]
 
         cmd = cls()
         for k, v in values.items():
@@ -155,6 +151,7 @@ def command(
 def _kwargs_to_args_callback(
     callback: Callable[..., Awaitable[Any]]
 ) -> Callable[..., Awaitable[Any]]:
+    @wraps(callback)
     async def inner(*args: Any, **kwargs: Any) -> Any:
         return await callback(*args, *kwargs.values())
 

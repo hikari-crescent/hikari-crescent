@@ -18,11 +18,11 @@ from hikari import (
 )
 from hikari.api import CommandBuilder
 
-from crescent.context.utils import call_with_context
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
 from crescent.utils import gather_iter, unwrap
+from crescent.context.utils import supports_custom_context
 
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, DefaultDict, Sequence
@@ -65,7 +65,7 @@ def register_command(
         plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
             owner=owner,
-            callback=callback,
+            callback=supports_custom_context(callback),
             autocomplete=autocomplete,
             app_command=AppCommand(
                 type=command_type,
@@ -113,7 +113,7 @@ class ErrorHandler(Generic[_E]):
         """
         if func := self.registry.get(exc.__class__):
             if self.supports_custom_ctx:
-                await call_with_context(func.metadata, *args)
+                await func.metadata(*args)
             else:
                 await func.metadata(*args)
             return True

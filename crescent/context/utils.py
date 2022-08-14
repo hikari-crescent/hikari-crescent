@@ -9,12 +9,15 @@ from crescent.context.context import Context
 if TYPE_CHECKING:
     from inspect import Parameter
     from typing import Any, Callable, Sequence, TypeVar
+    from typing_extensions import ParamSpec
 
     T = TypeVar("T")
+    P = ParamSpec("P")
+
 
 from crescent.utils import get_parameters
 
-__all__: Sequence[str] = ("call_with_context", "get_function_context", "get_context_type")
+__all__: Sequence[str] = ("supports_custom_context", "get_function_context", "get_context_type")
 
 
 def _get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
@@ -25,26 +28,29 @@ def _get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
     raise ValueError("Args do not include a `BaseContext` object.")
 
 
-async def call_with_context(
-    func: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any
-) -> tuple[T, BaseContext]:
+def supports_custom_context(
+    func: Callable[P, Awaitable[T]]
+) -> Callable[P, Awaitable[tuple[T, BaseContext]]]:
     """
-    Calls a function with the context type it is annotated with.
+    Returns a function that is called with the context type it is annotated with.
     """
 
     ctx_t = get_function_context(func)
 
-    ctx, index = _get_ctx(args)
+    async def inner(*args: P.args, **kwargs: P.kwargs) -> tuple[T, BaseContext]:
 
-    argv: Sequence[Any]
-    if type(ctx) is not ctx_t:
-        ctx = ctx.into(ctx_t)
-        argv = list(args)
-        argv[index] = ctx
-    else:
-        argv = args
+        ctx, index = _get_ctx(args)
 
-    return await func(*argv, **kwargs), ctx
+        argv: Sequence[Any]
+        if type(ctx) is not ctx_t:
+            ctx = ctx.into(ctx_t)
+            argv = list(args)
+            argv[index] = ctx
+        else:
+            argv = args
+
+        return await func(*argv, **kwargs), ctx  # pyright: ignore
+    return inner
 
 
 @lru_cache

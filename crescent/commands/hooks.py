@@ -2,9 +2,12 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Sequence, overload
+from typing import TYPE_CHECKING, Sequence, overload, Any, Protocol
 
 from attrs import define
+
+from crescent.internal.app_command import AppCommandMeta
+from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
     from typing import Callable
@@ -13,7 +16,7 @@ if TYPE_CHECKING:
     from crescent.internal.includable import Includable
     from crescent.typedefs import HookCallbackT
 
-__all__: Sequence[str] = ("HookResult", "hook")
+__all__: Sequence[str] = ("HookResult", "hook", "add_hooks")
 
 
 @define
@@ -42,9 +45,19 @@ def hook(
         return partial(hook, callback, after)  # type: ignore
     if not iscoroutinefunction(callback):
         raise ValueError(f"Function `{callback.__name__}` must be async.")
-    if after:
-        command.metadata.after_hooks.insert(0, callback)
-    else:
-        command.metadata.hooks.insert(0, callback)
+    command.metadata.add_hooks([callback], prepend=True, after=after)
 
     return command
+
+class HasHooks(Protocol):
+    command_hooks: list[HookCallbackT] | None
+    command_after_hooks: list[HookCallbackT] | None
+
+
+def add_hooks(obj: HasHooks, command: Includable[Any]) -> None:
+    if not isinstance(command.metadata, AppCommandMeta):
+        return
+    if obj.command_hooks:
+        command.metadata.add_hooks(obj.command_hooks, after=False)
+    if obj.command_after_hooks:
+        command.metadata.add_hooks(obj.command_after_hooks, after=True)

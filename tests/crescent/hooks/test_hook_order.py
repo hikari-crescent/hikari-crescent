@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from types import MethodType
 from typing import TYPE_CHECKING, Any
+from unittest.mock import patch
 
 from crescent import Bot, Group, Plugin, command, hook
 

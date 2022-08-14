@@ -14,7 +14,7 @@ from hikari import (
     Snowflake,
 )
 
-from crescent.context import AutocompleteContext, Context, call_with_context
+from crescent.context import AutocompleteContext, Context
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
@@ -81,7 +81,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
 async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: BaseContext) -> bool:
     """Returns `False` if the command should not be run."""
     for hook in hooks:
-        hook_res, ctx = await call_with_context(hook, ctx)
+        hook_res, ctx = await hook(ctx)
 
         if hook_res and hook_res.exit:
             return False
@@ -96,7 +96,7 @@ async def _handle_slash_resp(
         return
 
     try:
-        await call_with_context(command.metadata.callback, ctx, **ctx.options)
+        await command.metadata.callback(ctx, **ctx.options)
         await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
         handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])

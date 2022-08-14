@@ -24,7 +24,7 @@ from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
-from crescent.utils import add_hooks
+from crescent.commands.hooks import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, TypeVar
