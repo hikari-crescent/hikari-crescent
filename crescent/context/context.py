@@ -43,8 +43,8 @@ class Context(BaseContext):
 
     async def defer(self, ephemeral: bool = False) -> None:
         """
-        Defer this interaction response.
-        Deferring allows you to respond within 15 minutes instead of 3 seconds.
+        Defer this interaction response, allowing you to respond within the next 15
+        minutes.
         """
         self._has_deferred_response = True
         await self.app.rest.create_interaction_response(

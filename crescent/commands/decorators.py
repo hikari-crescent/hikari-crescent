@@ -121,9 +121,8 @@ def command(
 
     elif isfunction(callback):
         callback_func = callback
-        params = get_parameters(callback_func)
 
-        for param in params:
+        for param in get_parameters(callback_func):
             if param is None:
                 continue
 

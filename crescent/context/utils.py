@@ -32,7 +32,7 @@ async def call_with_context(
     Calls a function with the context type it is annotated with.
     """
 
-    ctx_t = get_function_context(func) or Context
+    ctx_t = get_function_context(func)
 
     ctx, index = _get_ctx(args)
 
@@ -48,12 +48,11 @@ async def call_with_context(
 
 
 @lru_cache
-def get_function_context(func: Callable[..., Any]) -> type[BaseContext] | None:
+def get_function_context(func: Callable[..., Any]) -> type[BaseContext]:
     """
-    Gets the context type used in a function. Returns `None` if no parameters are
-    annotated with a context.
+    Gets the context type used in a function.
     """
-    return get_context_type(get_parameters(func))
+    return get_context_type(get_parameters(func)) or Context
 
 
 def get_context_type(params: Sequence[Parameter]) -> type[BaseContext] | None:
