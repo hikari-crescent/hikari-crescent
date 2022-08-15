@@ -18,7 +18,7 @@ from hikari import (
 )
 from hikari.api import CommandBuilder
 
-from crescent.context.utils import supports_custom_context
+from crescent.context.utils import support_custom_context
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
@@ -65,7 +65,7 @@ def register_command(
         plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
             owner=owner,
-            callback=supports_custom_context(callback),
+            callback=support_custom_context(callback),
             autocomplete=autocomplete,
             app_command=AppCommand(
                 type=command_type,

@@ -6,7 +6,7 @@ from attr import define, field
 from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
 
-from crescent.context.utils import supports_custom_context
+from crescent.context.utils import support_custom_context
 from crescent.exceptions import HikariMoment
 
 if TYPE_CHECKING:
@@ -179,7 +179,7 @@ class AppCommandMeta:
 
     def add_hooks(self, hooks: list[HookCallbackT], prepend: bool = False, *, after: bool) -> None:
         transformed_hooks: list[TransformedHookCallbackT] = [
-            supports_custom_context(hook) for hook in hooks
+            support_custom_context(hook) for hook in hooks
         ]
 
         def extend_or_prepend(list_to_edit: list[TransformedHookCallbackT]) -> None:

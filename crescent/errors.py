@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
 from crescent.internal.includable import Includable
+from crescent.context.utils import support_custom_context
 from crescent.typedefs import (
     AutocompleteErrorHandlerCallbackT,
     CommandErrorHandlerCallbackT,
@@ -16,7 +17,7 @@ T = TypeVar("T", bound=Callable[..., Awaitable[Any]])
 
 
 def _make_catch_function(
-    error_handler_var: str,
+    error_handler_var: str, supports_custom_ctx: bool = False,
 ) -> Callable[[type[Exception]], Callable[[T], Includable[T]]]:
     def func(*exceptions: type[Exception]) -> Callable[[T], Includable[T]]:
         def app_set_hook(includable: Includable[Any]) -> None:
@@ -28,6 +29,9 @@ def _make_catch_function(
                 getattr(includable.app, error_handler_var).remove(exc)
 
         def decorator(callback: T) -> Includable[Any]:
+            if supports_custom_ctx:
+                callback = support_custom_context(callback)
+
             includable = Includable(
                 callback, app_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
             )
@@ -39,7 +43,7 @@ def _make_catch_function(
     return func
 
 
-_catch_command = _make_catch_function("_command_error_handler")
+_catch_command = _make_catch_function("_command_error_handler", supports_custom_ctx=True)
 _catch_event = _make_catch_function("_event_error_handler")
 _catch_autocomplete = _make_catch_function("_autocomplete_error_handler")
 

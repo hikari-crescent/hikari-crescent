@@ -4,7 +4,7 @@ from types import MethodType
 from typing import TYPE_CHECKING, Any
 
 from crescent import Bot, Group, Plugin, command, hook
-from crescent.context.utils import supports_custom_context
+from crescent.context.utils import support_custom_context
 
 
 async def async_func(*a, **k) -> None:
@@ -43,7 +43,7 @@ def unwrap_hooks(hooks: list[Any]):
 
 def assert_all_supports_custom_ctx(hooks: list[Any]):
     for hook in hooks:
-        assert "supports_custom_context.<locals>.inner" in str(hook)
+        assert f"{support_custom_context.__name__}.<locals>.inner" in str(hook)
 
 
 def test_hook_order():

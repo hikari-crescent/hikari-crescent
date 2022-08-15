@@ -1,6 +1,6 @@
 from pytest import mark
 
-from crescent.context import BaseContext, supports_custom_context
+from crescent.context import BaseContext, support_custom_context
 
 
 def test_into():
@@ -78,4 +78,4 @@ async def test_supports_context():
         has_deferred_response=None,
     )
 
-    await supports_custom_context(callback)(ctx, 5, kwarg=10)
+    await support_custom_context(callback)(ctx, 5, kwarg=10)

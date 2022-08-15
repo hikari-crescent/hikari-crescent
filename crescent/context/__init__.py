@@ -9,7 +9,7 @@ __all__: Sequence[str] = (
     "BaseContext",
     "Context",
     "AutocompleteContext",
-    "supports_custom_context",
+    "support_custom_context",
     "get_function_context",
     "get_context_type",
 )

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 from crescent.utils import get_parameters
 
-__all__: Sequence[str] = ("supports_custom_context", "get_function_context", "get_context_type")
+__all__: Sequence[str] = ("support_custom_context", "get_function_context", "get_context_type")
 
 
 def _get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
@@ -29,7 +29,7 @@ def _get_ctx(args: Sequence[Any]) -> tuple[BaseContext, int]:
     raise ValueError("Args do not include a `BaseContext` object.")
 
 
-def supports_custom_context(
+def support_custom_context(
     func: Callable[P, Awaitable[T]]
 ) -> Callable[P, Awaitable[tuple[T, BaseContext]]]:
     """
