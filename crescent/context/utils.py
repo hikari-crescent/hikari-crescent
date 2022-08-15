@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from functools import lru_cache
+from functools import lru_cache, wraps
 from typing import TYPE_CHECKING, Awaitable, cast
 
 from crescent.context.base_context import BaseContext
@@ -37,6 +37,7 @@ def supports_custom_context(
 
     ctx_t = get_function_context(func)
 
+    @wraps(func)
     async def inner(*args: P.args, **kwargs: P.kwargs) -> tuple[T, BaseContext]:
 
         ctx, index = _get_ctx(args)

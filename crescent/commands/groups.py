@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from attr import define
+from crescent.commands.hooks import add_hooks
 
 if TYPE_CHECKING:
     from typing import Sequence
@@ -35,11 +36,7 @@ class Group:
     def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
         includable.metadata.group = self
 
-        if self.hooks:
-            includable.metadata.hooks = self.hooks + includable.metadata.hooks
-
-        if self.after_hooks:
-            includable.metadata.after_hooks = self.after_hooks + includable.metadata.after_hooks
+        add_hooks(self, includable)
 
         return includable
 
@@ -56,16 +53,7 @@ class SubGroup:
         includable.metadata.group = self.parent
         includable.metadata.sub_group = self
 
-        if self.hooks:
-            includable.metadata.hooks = self.hooks + includable.metadata.hooks
-        if self.parent.hooks:
-            includable.metadata.hooks = includable.metadata.hooks + self.parent.hooks
-
-        if self.after_hooks:
-            includable.metadata.after_hooks = self.after_hooks + includable.metadata.after_hooks
-        if self.parent.after_hooks:
-            includable.metadata.after_hooks = (
-                includable.metadata.after_hooks + self.parent.after_hooks
-            )
+        add_hooks(self, includable)
+        add_hooks(self.parent, includable)
 
         return includable
