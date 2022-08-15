@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Sequence, overload, Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol, Sequence, overload
 
 from attrs import define
 

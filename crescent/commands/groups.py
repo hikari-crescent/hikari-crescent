@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from attr import define
+
 from crescent.commands.hooks import add_hooks
 
 if TYPE_CHECKING:

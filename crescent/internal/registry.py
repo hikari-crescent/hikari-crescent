@@ -18,11 +18,11 @@ from hikari import (
 )
 from hikari.api import CommandBuilder
 
+from crescent.context.utils import supports_custom_context
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
 from crescent.utils import gather_iter, unwrap
-from crescent.context.utils import supports_custom_context
 
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, DefaultDict, Sequence

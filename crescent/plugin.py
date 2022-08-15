@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING, overload
 
 import hikari
 
+from crescent.commands.hooks import add_hooks
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.includable import Includable
-from crescent.commands.hooks import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence, TypeVar
