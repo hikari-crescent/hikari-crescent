@@ -9,6 +9,7 @@ from crescent.context.context import Context
 if TYPE_CHECKING:
     from inspect import Parameter
     from typing import Any, Callable, Sequence, TypeVar
+
     from typing_extensions import ParamSpec
 
     T = TypeVar("T")
@@ -51,6 +52,7 @@ def supports_custom_context(
             argv = args
 
         return await func(*argv, **kwargs), ctx  # pyright: ignore
+
     return inner
 
 

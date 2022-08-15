@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 from crescent import Bot, Group, Plugin, command, hook
 from crescent.context.utils import supports_custom_context
 
+
 async def async_func(*a, **k) -> None:
     ...
 
@@ -34,15 +35,16 @@ if TYPE_CHECKING:
 else:
     MockHook = _MockHook
 
+
 def unwrap_hooks(hooks: list[Any]):
     print(hooks)
-    return [
-        hook.__wrapped__ for hook in hooks
-    ]
+    return [hook.__wrapped__ for hook in hooks]
+
 
 def assert_all_supports_custom_ctx(hooks: list[Any]):
     for hook in hooks:
         assert "supports_custom_context.<locals>.inner" in str(hook)
+
 
 def test_hook_order():
     bot = Bot("NO TOKEN", command_hooks=[MockHook("bot")])
@@ -167,4 +169,10 @@ def test_after_hook_order():
     assert unwrap_hooks(c3.metadata.after_hooks) == ["command", "subgroup", "group", "bot"]
     assert unwrap_hooks(c4.metadata.after_hooks) == ["command", "plugin", "bot"]
     assert unwrap_hooks(c5.metadata.after_hooks) == ["command", "group", "plugin", "bot"]
-    assert unwrap_hooks(c6.metadata.after_hooks) == ["command", "subgroup", "group", "plugin", "bot"]
+    assert unwrap_hooks(c6.metadata.after_hooks) == [
+        "command",
+        "subgroup",
+        "group",
+        "plugin",
+        "bot",
+    ]

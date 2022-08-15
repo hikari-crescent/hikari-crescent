@@ -49,7 +49,9 @@ MessageCommandCallbackT = Callable[[Any, Message], Awaitable[None]]
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable", Attachment]
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[[Any], Awaitable[Optional["HookResult"]]]
-_TransformedHookCallbackT = Callable[[Any], Awaitable[Tuple[Optional["HookResult"], "BaseContext"]]]
+_TransformedHookCallbackT = Callable[
+    [Any], Awaitable[Tuple[Optional["HookResult"], "BaseContext"]]
+]
 AutocompleteCallbackT = Callable[
     ["AutocompleteContext", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
 ]

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Sequence, overload, Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol, Sequence, overload
 
 from attrs import define
 
@@ -49,9 +49,11 @@ def hook(
 
     return command
 
+
 class HasHooksA(Protocol):
     command_hooks: list[HookCallbackT] | None
     command_after_hooks: list[HookCallbackT] | None
+
 
 class HasHooksB(Protocol):
     hooks: list[HookCallbackT] | None
@@ -63,7 +65,9 @@ def add_hooks(obj: HasHooksA | HasHooksB, command: Includable[Any]) -> None:
         return
 
     command_hooks = getattr(obj, "hooks", None) or getattr(obj, "command_hooks", None)
-    command_after_hooks = getattr(obj, "after_hooks", None) or getattr(obj, "command_after_hooks", None)
+    command_after_hooks = getattr(obj, "after_hooks", None) or getattr(
+        obj, "command_after_hooks", None
+    )
 
     if command_hooks:
         command.metadata.add_hooks(command_hooks, after=False)
