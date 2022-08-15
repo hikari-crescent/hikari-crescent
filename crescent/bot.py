@@ -118,7 +118,7 @@ class Bot(GatewayBot):
 
         self._command_error_handler: ErrorHandler[
             CommandErrorHandlerCallbackT[Any]
-        ] = ErrorHandler(self, supports_custom_ctx=True)
+        ] = ErrorHandler(self)
         self._event_error_handler: ErrorHandler[EventErrorHandlerCallbackT[Any]] = ErrorHandler(
             self
         )
