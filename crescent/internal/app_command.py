@@ -31,7 +31,7 @@ if TYPE_CHECKING:
         AutocompleteCallbackT,
         CommandCallbackT,
         HookCallbackT,
-        _TransformedHookCallbackT,
+        TransformedHookCallbackT,
     )
 
     Self = TypeVar("Self")
@@ -174,19 +174,19 @@ class AppCommandMeta:
     autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[_TransformedHookCallbackT] = field(factory=list)
-    after_hooks: list[_TransformedHookCallbackT] = field(factory=list)
+    hooks: list[TransformedHookCallbackT] = field(factory=list)
+    after_hooks: list[TransformedHookCallbackT] = field(factory=list)
 
     def add_hooks(self, hooks: list[HookCallbackT], prepend: bool = False, *, after: bool) -> None:
-        transformed_hooks: list[_TransformedHookCallbackT] = [
+        transformed_hooks: list[TransformedHookCallbackT] = [
             supports_custom_context(hook) for hook in hooks
         ]
 
-        def extend_or_prepend(l: list[_TransformedHookCallbackT]) -> None:
+        def extend_or_prepend(list_to_edit: list[TransformedHookCallbackT]) -> None:
             if prepend:
-                l[:0] = transformed_hooks
+                list_to_edit[:0] = transformed_hooks
             else:
-                l.extend(transformed_hooks)
+                list_to_edit.extend(transformed_hooks)
 
         if not after:
             extend_or_prepend(self.hooks)

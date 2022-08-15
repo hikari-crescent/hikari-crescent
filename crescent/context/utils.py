@@ -51,6 +51,7 @@ def supports_custom_context(
             argv = args
 
         return await func(*argv, **kwargs), ctx  # pyright: ignore
+
     return inner
 
 
