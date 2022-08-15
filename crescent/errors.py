@@ -30,10 +30,12 @@ def _make_catch_function(
 
         def decorator(callback: T) -> Includable[Any]:
             if supports_custom_ctx:
-                callback = support_custom_context(callback)
+                maybe_supports_custom_ctx: Callable[..., Awaitable[Any]] = support_custom_context(callback)
+            else:
+                maybe_supports_custom_ctx = callback
 
             includable = Includable(
-                callback, app_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
+                maybe_supports_custom_ctx, app_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
             )
 
             return includable
