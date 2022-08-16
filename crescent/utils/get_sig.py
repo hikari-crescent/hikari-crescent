@@ -29,7 +29,7 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
     if version_info >= (3, 10):
         return signature(func, eval_str=True).parameters.values()  # type: ignore
 
-    localns = {"list": List, "type": Type, "dict": Dict}
+    localns: dict[str, Any] = {"list": List, "type": Type, "dict": Dict}
 
     if version_info >= (3, 9):
         type_hints: dict[str, Any] = get_type_hints(func, include_extras=True, localns=localns)  # type: ignore
