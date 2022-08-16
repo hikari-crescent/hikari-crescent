@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from functools import lru_cache, wraps
+from functools import wraps
 from typing import TYPE_CHECKING, Awaitable, cast
 
 from crescent.context.base_context import BaseContext
@@ -56,7 +56,6 @@ def support_custom_context(
     return inner
 
 
-@lru_cache
 def get_function_context(func: Callable[..., Any]) -> type[BaseContext]:
     """
     Gets the context type used in a function.
