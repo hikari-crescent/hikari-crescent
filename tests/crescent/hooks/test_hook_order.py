@@ -24,7 +24,8 @@ class _MockHook:
     def __eq__(self, ot: object) -> bool:
         return self.name == ot
 
-    __call__ = lambda _: ...
+    def __call__(self):
+        ...
 
     def __hash__(self) -> int:
         return 0
@@ -42,8 +43,8 @@ def unwrap_hooks(hooks: list[Any]):
 
 
 def assert_all_supports_custom_ctx(hooks: list[Any]):
-    for hook in hooks:
-        assert f"{support_custom_context.__name__}.<locals>.inner" in str(hook)
+    for callable in hooks:
+        assert f"{support_custom_context.__name__}.<locals>.inner" in str(callable)
 
 
 def test_hook_order():

@@ -166,7 +166,8 @@ class TestCommandFunction:
 
     def test_autocomplete_exists(self):
 
-        autocomplete_response = lambda _: ...
+        async def autocomplete_response(ctx, option):
+            ...
 
         @command
         async def callback(
