@@ -27,7 +27,7 @@ from hikari import (
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
-    from crescent.context import AutocompleteContext, BaseContext
+    from crescent.context import BaseContext
     from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (
@@ -51,7 +51,10 @@ CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[[Any], Awaitable[Optional["HookResult"]]]
 TransformedHookCallbackT = Callable[[Any], Awaitable[Tuple[Optional["HookResult"], "BaseContext"]]]
 AutocompleteCallbackT = Callable[
-    ["AutocompleteContext", AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
+    [Any, AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]],
+]
+TransformedAutocompleteCallbackT = Callable[
+    [Any, AutocompleteInteractionOption], Awaitable[Tuple[Sequence[CommandChoice], "BaseContext"]],
 ]
 
 PluginCallbackT = Callable[[], None]
@@ -67,5 +70,5 @@ ERROR = TypeVar("ERROR", bound=Exception, contravariant=True)
 CommandErrorHandlerCallbackT = Callable[[ERROR, Any], Awaitable[None]]
 EventErrorHandlerCallbackT = Callable[[ERROR, Event], Awaitable[None]]
 AutocompleteErrorHandlerCallbackT = Callable[
-    [ERROR, "AutocompleteContext", AutocompleteInteractionOption], Awaitable[None]
+    [ERROR, Any, AutocompleteInteractionOption], Awaitable[None]
 ]

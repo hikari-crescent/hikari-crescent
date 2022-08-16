@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
-from crescent.internal.includable import Includable
 from crescent.context.utils import support_custom_context
+from crescent.internal.includable import Includable
 from crescent.typedefs import (
     AutocompleteErrorHandlerCallbackT,
     CommandErrorHandlerCallbackT,
@@ -17,7 +17,7 @@ T = TypeVar("T", bound=Callable[..., Awaitable[Any]])
 
 
 def _make_catch_function(
-    error_handler_var: str, supports_custom_ctx: bool = False,
+    error_handler_var: str, supports_custom_ctx: bool = False
 ) -> Callable[[type[Exception]], Callable[[T], Includable[T]]]:
     def func(*exceptions: type[Exception]) -> Callable[[T], Includable[T]]:
         def app_set_hook(includable: Includable[Any]) -> None:
@@ -30,12 +30,16 @@ def _make_catch_function(
 
         def decorator(callback: T) -> Includable[Any]:
             if supports_custom_ctx:
-                maybe_supports_custom_ctx: Callable[..., Awaitable[Any]] = support_custom_context(callback)
+                maybe_supports_custom_ctx: Callable[..., Awaitable[Any]] = support_custom_context(
+                    callback
+                )
             else:
                 maybe_supports_custom_ctx = callback
 
             includable = Includable(
-                maybe_supports_custom_ctx, app_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
+                maybe_supports_custom_ctx,
+                app_set_hooks=[app_set_hook],
+                plugin_unload_hooks=[plugin_unload_hook],
             )
 
             return includable
@@ -47,7 +51,7 @@ def _make_catch_function(
 
 _catch_command = _make_catch_function("_command_error_handler", supports_custom_ctx=True)
 _catch_event = _make_catch_function("_event_error_handler")
-_catch_autocomplete = _make_catch_function("_autocomplete_error_handler")
+_catch_autocomplete = _make_catch_function("_autocomplete_error_handler", supports_custom_ctx=True)
 
 
 # NOTE: These functions are defined to help properly type the user facings functions and

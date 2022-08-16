@@ -103,9 +103,7 @@ async def _handle_slash_resp(
         await bot.on_crescent_command_error(exc, ctx.into(Context), handled)
 
 
-async def _handle_autocomplete_resp(
-    command: Includable[AppCommandMeta], ctx: AutocompleteContext
-) -> None:
+async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: BaseContext) -> None:
     interaction = cast(AutocompleteInteraction, ctx.interaction)
 
     if not command.metadata.autocomplete:
@@ -117,10 +115,13 @@ async def _handle_autocomplete_resp(
     autocomplete = command.metadata.autocomplete[option.name]
 
     try:
-        await interaction.create_response(await autocomplete(ctx, option))
+        res, ctx = await autocomplete(ctx, option)
+        await interaction.create_response(res)
     except Exception as exc:
         handled = await command.app._autocomplete_error_handler.try_handle(exc, [exc, ctx, option])
-        await command.app.on_crescent_autocomplete_error(exc, ctx, option, handled)
+        await command.app.on_crescent_autocomplete_error(
+            exc, ctx.into(AutocompleteContext), option, handled
+        )
 
 
 def _get_option_recursive(

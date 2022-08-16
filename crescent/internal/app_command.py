@@ -28,9 +28,9 @@ if TYPE_CHECKING:
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
     from crescent.typedefs import (
-        AutocompleteCallbackT,
         CommandCallbackT,
         HookCallbackT,
+        TransformedAutocompleteCallbackT,
         TransformedHookCallbackT,
     )
 
@@ -171,7 +171,7 @@ class AppCommandMeta:
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
-    autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
+    autocomplete: dict[str, TransformedAutocompleteCallbackT] = field(factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
     hooks: list[TransformedHookCallbackT] = field(factory=list)

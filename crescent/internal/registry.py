@@ -66,7 +66,7 @@ def register_command(
         metadata=AppCommandMeta(
             owner=owner,
             callback=support_custom_context(callback),
-            autocomplete=autocomplete,
+            autocomplete={k: support_custom_context(v) for k, v in autocomplete.items()},
             app_command=AppCommand(
                 type=command_type,
                 description=description,
