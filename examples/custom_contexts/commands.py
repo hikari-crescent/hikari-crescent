@@ -1,3 +1,6 @@
+import typing
+
+import hikari
 import crescent
 
 bot = crescent.Bot("...")
@@ -28,6 +31,22 @@ async def my_command(ctx: CustomContext) -> None:
 @crescent.catch_command(Exception)
 async def error_handle(exc: Exception, ctx: CustomContext) -> None:
     ...
+
+
+# Autocomplete callbacks also support custom contexts.
+async def autocomplete_callback(
+    ctx: CustomContext, option: hikari.AutocompleteInteractionOption
+) -> typing.List[hikari.CommandChoice]:
+    return []
+
+
+@bot.include
+@crescent.command(name="has_autocomplete")
+class HasAutocomplete:
+    option = crescent.option(str, autocomplete=autocomplete_callback)
+
+    async def callback(self, ctx: CustomContext) -> None:
+        ...
 
 
 bot.run()
