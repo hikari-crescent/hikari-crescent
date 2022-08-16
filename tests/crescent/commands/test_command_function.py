@@ -165,7 +165,6 @@ class TestCommandFunction:
         )
 
     def test_autocomplete_exists(self):
-
         async def autocomplete_response(ctx, option):
             ...
 
