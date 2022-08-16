@@ -31,7 +31,9 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
     localns: dict[str, Any] = {"list": List, "type": Type, "dict": Dict}
 
     if version_info >= (3, 9):
-        type_hints: dict[str, Any] = get_type_hints(func, include_extras=True, localns=localns)  # type: ignore
+        type_hints: dict[str, Any] = get_type_hints(
+            func, include_extras=True, localns=localns  # type: ignore
+        )
     else:
         type_hints = get_type_hints(func, localns=localns)
 
