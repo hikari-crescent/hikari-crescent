@@ -40,6 +40,15 @@ async def autocomplete_callback(
     return []
 
 
+# Autocomplete error handlers also support custom contexts.
+@bot.include
+@crescent.catch_autocomplete(Exception)
+async def autocomplete_error_handler(
+    exc: Exception, ctx: CustomContext, option: hikari.AutocompleteInteractionOption
+) -> None:
+    ...
+
+
 @bot.include
 @crescent.command(name="has_autocomplete")
 class HasAutocomplete:
