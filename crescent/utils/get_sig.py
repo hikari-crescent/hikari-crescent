@@ -5,7 +5,6 @@ from inspect import Parameter, signature
 from sys import version_info
 from typing import TYPE_CHECKING, Dict, List, Type, get_type_hints
 
-
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence
 
