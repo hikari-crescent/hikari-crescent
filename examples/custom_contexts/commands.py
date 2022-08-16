@@ -1,6 +1,7 @@
 import typing
 
 import hikari
+
 import crescent
 
 bot = crescent.Bot("...")
