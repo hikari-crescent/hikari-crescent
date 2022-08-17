@@ -46,13 +46,13 @@ class Context(BaseContext):
         Defer this interaction response, allowing you to respond within the next 15
         minutes.
         """
-        self._has_deferred_response = True
         await self.app.rest.create_interaction_response(
             interaction=self.id,
             token=self.token,
             flags=MessageFlag.EPHEMERAL if ephemeral else UNDEFINED,
             response_type=ResponseType.DEFERRED_MESSAGE_CREATE,
         )
+        self._has_deferred_response = True
 
     @overload
     async def respond(
@@ -135,7 +135,6 @@ class Context(BaseContext):
         )
 
         if not (self._has_deferred_response or self._has_created_message):
-            self._has_created_message = True
             await self.app.rest.create_interaction_response(
                 **kwargs,
                 interaction=self.id,
@@ -145,14 +144,17 @@ class Context(BaseContext):
                 tts=tts,
             )
 
+            self._has_created_message = True
+
             if not ensure_message:
                 return None
 
             return await self.app.rest.fetch_interaction_response(self.application_id, self.token)
 
         if self._has_deferred_response and not self._has_created_message:
+            res = await self.edit(**kwargs)
             self._has_created_message = True
-            return await self.edit(**kwargs)
+            return res
 
         return await self.followup(**kwargs)
 
