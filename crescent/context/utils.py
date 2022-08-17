@@ -64,7 +64,10 @@ def get_function_context(func: Callable[..., Any]) -> type[BaseContext]:
 
 
 def get_context_type(params: Sequence[Parameter]) -> type[BaseContext] | None:
-    """Returns the Context or `None` if there is no ctx"""
+    """
+    Returns the Context type the function uses or `None` if the function is not annotated with
+    a subclass of `BaseContext`
+    """
     for param in params:
         if issubclass(param.annotation, BaseContext):
             return cast("type[BaseContext]", param.annotation)
