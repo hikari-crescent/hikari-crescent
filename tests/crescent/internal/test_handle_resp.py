@@ -38,6 +38,7 @@ async def test_handle_resp():
             command_type=CommandType.SLASH,
             resolved=None,
             options=None,
+            app_permissions=None,
         ),
     )
 
