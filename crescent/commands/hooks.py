@@ -48,17 +48,17 @@ def hook(
     return command
 
 
-class HasHooksA(Protocol):
-    command_hooks: list[HookCallbackT] | None
-    command_after_hooks: list[HookCallbackT] | None
-
-
-class HasHooksB(Protocol):
+class HasHooks(Protocol):
     hooks: list[HookCallbackT] | None
     after_hooks: list[HookCallbackT] | None
 
 
-def add_hooks(obj: HasHooksA | HasHooksB, command: Includable[Any]) -> None:
+class HasHooksLongName(Protocol):
+    command_hooks: list[HookCallbackT] | None
+    command_after_hooks: list[HookCallbackT] | None
+
+
+def add_hooks(obj: HasHooks | HasHooksLongName, command: Includable[Any]) -> None:
     if not isinstance(command.metadata, AppCommandMeta):
         return
 
