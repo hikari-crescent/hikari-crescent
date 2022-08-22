@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-from attr import define
 from hikari import UNDEFINED, Guild, GuildChannel, MessageFlag, ResponseType
 
 from crescent.context.base_context import BaseContext
@@ -29,14 +28,10 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("Context",)
 
 
-@define
 class Context(BaseContext):
     """Represents the context for command interactions"""
 
     interaction: CommandInteraction
-
-    _has_replied: bool = False
-    _used_first_resp: bool = False
 
     @property
     def channel(self) -> GuildChannel | None:
@@ -47,22 +42,17 @@ class Context(BaseContext):
         return map_or(self.guild_id, self.app.cache.get_available_guild)
 
     async def defer(self, ephemeral: bool = False) -> None:
-        self._has_replied = True
+        """
+        Defer this interaction response, allowing you to respond within the next 15
+        minutes.
+        """
         await self.app.rest.create_interaction_response(
             interaction=self.id,
             token=self.token,
             flags=MessageFlag.EPHEMERAL if ephemeral else UNDEFINED,
             response_type=ResponseType.DEFERRED_MESSAGE_CREATE,
         )
-
-    async def defer_update(self, ephemeral: bool = False) -> None:
-        self._has_replied = True
-        await self.app.rest.create_interaction_response(
-            interaction=self.id,
-            token=self.token,
-            flags=MessageFlag.EPHEMERAL if ephemeral else UNDEFINED,
-            response_type=ResponseType.DEFERRED_MESSAGE_UPDATE,
-        )
+        self._has_deferred_response = True
 
     @overload
     async def respond(
@@ -144,9 +134,7 @@ class Context(BaseContext):
             role_mentions=role_mentions,
         )
 
-        if not self._has_replied:
-            self._has_replied = True
-            self._used_first_resp = True
+        if not (self._has_deferred_response or self._has_created_message):
             await self.app.rest.create_interaction_response(
                 **kwargs,
                 interaction=self.id,
@@ -156,14 +144,17 @@ class Context(BaseContext):
                 tts=tts,
             )
 
+            self._has_created_message = True
+
             if not ensure_message:
                 return None
 
             return await self.app.rest.fetch_interaction_response(self.application_id, self.token)
 
-        if not self._used_first_resp:
-            self._used_first_resp = True
-            return await self.edit(**kwargs)
+        if self._has_deferred_response and not self._has_created_message:
+            res = await self.edit(**kwargs)
+            self._has_created_message = True
+            return res
 
         return await self.followup(**kwargs)
 

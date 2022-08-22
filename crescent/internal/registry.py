@@ -18,6 +18,7 @@ from hikari import (
 )
 from hikari.api import CommandBuilder
 
+from crescent.context.utils import support_custom_context
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
@@ -64,8 +65,8 @@ def register_command(
         plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
             owner=owner,
-            callback=callback,
-            autocomplete=autocomplete,
+            callback=support_custom_context(callback),
+            autocomplete={k: support_custom_context(v) for k, v in autocomplete.items()},
             app_command=AppCommand(
                 type=command_type,
                 description=description,
@@ -85,7 +86,7 @@ _E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
 
 
 class ErrorHandler(Generic[_E]):
-    __slots__: Sequence[str] = ("bot", "registry")
+    __slots__: Sequence[str] = ("bot", "registry", "supports_custom_ctx")
 
     def __init__(self, bot: Bot):
         self.bot: Bot = bot

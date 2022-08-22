@@ -6,6 +6,7 @@ from attr import define, field
 from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
 
+from crescent.context.utils import support_custom_context
 from crescent.exceptions import HikariMoment
 
 if TYPE_CHECKING:
@@ -26,7 +27,12 @@ if TYPE_CHECKING:
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
-    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
+    from crescent.typedefs import (
+        CommandCallbackT,
+        HookCallbackT,
+        TransformedAutocompleteCallbackT,
+        TransformedHookCallbackT,
+    )
 
     Self = TypeVar("Self")
 
@@ -165,11 +171,27 @@ class AppCommandMeta:
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
-    autocomplete: dict[str, AutocompleteCallbackT] = field(factory=dict)
+    autocomplete: dict[str, TransformedAutocompleteCallbackT] = field(factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[HookCallbackT] = field(factory=list)
-    after_hooks: list[HookCallbackT] = field(factory=list)
+    hooks: list[TransformedHookCallbackT] = field(factory=list)
+    after_hooks: list[TransformedHookCallbackT] = field(factory=list)
+
+    def add_hooks(self, hooks: list[HookCallbackT], prepend: bool = False, *, after: bool) -> None:
+        transformed_hooks: list[TransformedHookCallbackT] = [
+            support_custom_context(hook) for hook in hooks
+        ]
+
+        def extend_or_prepend(list_to_edit: list[TransformedHookCallbackT]) -> None:
+            if prepend:
+                list_to_edit[:0] = transformed_hooks
+            else:
+                list_to_edit.extend(transformed_hooks)
+
+        if not after:
+            extend_or_prepend(self.hooks)
+        else:
+            extend_or_prepend(self.after_hooks)
 
     @property
     def unique(self) -> Unique:

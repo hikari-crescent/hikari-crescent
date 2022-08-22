@@ -32,7 +32,7 @@ class Bot(crescent.Bot):
     async def on_crescent_autocomplete_error(
         self,
         exc: Exception,
-        ctx: crescent.Context,
+        ctx: crescent.AutocompleteContext,
         inter: hikari.AutocompleteInteractionOption,
         was_handled: bool,
     ) -> None:
@@ -129,7 +129,7 @@ async def handle_event_err(exc: HandledErr, event: hikari.Event) -> None:
 @bot.include
 @crescent.catch_autocomplete(HandledErr)
 async def handle_autocomplete_err(
-    exc: HandledErr, ctx: crescent.Context, inter: hikari.AutocompleteInteractionOption
+    exc: HandledErr, ctx: crescent.AutocompleteContext, inter: hikari.AutocompleteInteractionOption
 ) -> None:
     print(f"HandledErr raised in {ctx.command}: {exc!r}")
 
@@ -162,7 +162,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
 
 
 async def error_autocomplete(
-    ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
+    ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[hikari.CommandChoice]:
     if option.value == "error":
         raise HandledErr()
@@ -184,7 +184,7 @@ async def error_autocomplete_command(
 
 
 async def autocomplete_response(
-    ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
+    ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[hikari.CommandChoice]:
     return [hikari.CommandChoice(name="Some Option", value="1234")]
 
