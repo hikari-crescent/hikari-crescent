@@ -13,6 +13,7 @@ class CustomContext(crescent.BaseContext):
     def a_custom_method(self) -> str:
         return "Hello there"
 
+
 class CustomContext2(crescent.Context):
     ...
 
