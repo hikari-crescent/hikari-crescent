@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING, overload
 
 import hikari
 
+from crescent.commands.hooks import add_hooks
 from crescent.exceptions import PluginAlreadyLoadedError
-from crescent.internal.meta_struct import MetaStruct
-from crescent.utils import add_hooks
+from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence, TypeVar
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from crescent.bot import Bot
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
-    T = TypeVar("T", bound="MetaStruct[Any, Any]")
+    T = TypeVar("T", bound="Includable[Any]")
 
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
@@ -29,11 +29,6 @@ class PluginManager:
     def __init__(self, bot: Bot) -> None:
         self.plugins: dict[str, Plugin] = {}
         self._bot = bot
-
-    def add_plugin(self, plugin: Plugin, force: bool = False) -> None:
-        _LOG.warning("`add_plugin` is deprecated and will be removed in a future release.")
-
-        self._add_plugin("", plugin, refresh=force)
 
     def unload(self, path: str) -> None:
         plugin = self.plugins.pop(path)
@@ -145,20 +140,14 @@ class PluginManager:
 class Plugin:
     def __init__(
         self,
-        name: str | None = None,
         *,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
     ) -> None:
-        if name is not None:
-            _LOG.warning(
-                "Plugin option `name` is deprecated and will be removed in a future release."
-            )
-
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
         self._app: Bot | None = None
-        self._children: list[MetaStruct[Any, Any]] = []
+        self._children: list[Includable[Any]] = []
 
         self._load_hooks: list[PluginCallbackT] = []
         self._unload_hooks: list[PluginCallbackT] = []

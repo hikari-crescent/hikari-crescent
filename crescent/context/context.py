@@ -2,19 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-import hikari
-from attr import define
-from hikari import (
-    UNDEFINED,
-    Guild,
-    GuildChannel,
-    Member,
-    MessageFlag,
-    ResponseType,
-    Snowflake,
-    User,
-)
+from hikari import UNDEFINED, Guild, GuildChannel, MessageFlag, ResponseType
 
+from crescent.context.base_context import BaseContext
 from crescent.utils import map_or
 
 if TYPE_CHECKING:
@@ -34,37 +24,14 @@ if TYPE_CHECKING:
     )
     from hikari.api import ComponentBuilder
 
-    from crescent.bot import Bot
-
 
 __all__: Sequence[str] = ("Context",)
 
 
-@define
-class Context:
-    """Represents the context for interactions"""
+class Context(BaseContext):
+    """Represents the context for command interactions"""
 
     interaction: CommandInteraction
-    app: Bot
-    application_id: Snowflake
-    type: int
-    token: str
-    id: Snowflake
-    version: int
-
-    channel_id: Snowflake
-    guild_id: Snowflake | None
-    user: User
-    member: Member | None
-
-    command: str
-    command_type: hikari.CommandType
-    group: str | None
-    sub_group: str | None
-    options: dict[str, Any]
-
-    _has_replied: bool = False
-    _used_first_resp: bool = False
 
     @property
     def channel(self) -> GuildChannel | None:
@@ -75,22 +42,17 @@ class Context:
         return map_or(self.guild_id, self.app.cache.get_available_guild)
 
     async def defer(self, ephemeral: bool = False) -> None:
-        self._has_replied = True
+        """
+        Defer this interaction response, allowing you to respond within the next 15
+        minutes.
+        """
         await self.app.rest.create_interaction_response(
             interaction=self.id,
             token=self.token,
             flags=MessageFlag.EPHEMERAL if ephemeral else UNDEFINED,
             response_type=ResponseType.DEFERRED_MESSAGE_CREATE,
         )
-
-    async def defer_update(self, ephemeral: bool = False) -> None:
-        self._has_replied = True
-        await self.app.rest.create_interaction_response(
-            interaction=self.id,
-            token=self.token,
-            flags=MessageFlag.EPHEMERAL if ephemeral else UNDEFINED,
-            response_type=ResponseType.DEFERRED_MESSAGE_UPDATE,
-        )
+        self._has_deferred_response = True
 
     @overload
     async def respond(
@@ -101,6 +63,8 @@ class Context:
         ephemeral: bool = False,
         flags: int | MessageFlag | UndefinedType = UNDEFINED,
         tts: UndefinedOr[bool] = UNDEFINED,
+        attachment: UndefinedOr[Resourceish] = UNDEFINED,
+        attachments: UndefinedOr[Sequence[Resourceish]] = UNDEFINED,
         component: UndefinedOr[ComponentBuilder] = UNDEFINED,
         components: UndefinedOr[Sequence[ComponentBuilder]] = UNDEFINED,
         embed: UndefinedOr[Embed] = UNDEFINED,
@@ -119,6 +83,8 @@ class Context:
         ephemeral: bool = False,
         flags: int | MessageFlag | UndefinedType = UNDEFINED,
         tts: UndefinedOr[bool] = UNDEFINED,
+        attachment: UndefinedOr[Resourceish] = UNDEFINED,
+        attachments: UndefinedOr[Sequence[Resourceish]] = UNDEFINED,
         component: UndefinedOr[ComponentBuilder] = UNDEFINED,
         components: UndefinedOr[Sequence[ComponentBuilder]] = UNDEFINED,
         embed: UndefinedOr[Embed] = UNDEFINED,
@@ -137,6 +103,8 @@ class Context:
         ephemeral: bool = False,
         flags: int | MessageFlag | UndefinedType = UNDEFINED,
         tts: UndefinedOr[bool] = UNDEFINED,
+        attachment: UndefinedOr[Resourceish] = UNDEFINED,
+        attachments: UndefinedOr[Sequence[Resourceish]] = UNDEFINED,
         component: UndefinedOr[ComponentBuilder] = UNDEFINED,
         components: UndefinedOr[Sequence[ComponentBuilder]] = UNDEFINED,
         embed: UndefinedOr[Embed] = UNDEFINED,
@@ -155,6 +123,8 @@ class Context:
 
         kwargs: dict[str, Any] = dict(
             content=content,
+            attachment=attachment,
+            attachments=attachments,
             component=component,
             components=components,
             embed=embed,
@@ -164,9 +134,7 @@ class Context:
             role_mentions=role_mentions,
         )
 
-        if not self._has_replied:
-            self._has_replied = True
-            self._used_first_resp = True
+        if not (self._has_deferred_response or self._has_created_message):
             await self.app.rest.create_interaction_response(
                 **kwargs,
                 interaction=self.id,
@@ -176,14 +144,17 @@ class Context:
                 tts=tts,
             )
 
+            self._has_created_message = True
+
             if not ensure_message:
                 return None
 
             return await self.app.rest.fetch_interaction_response(self.application_id, self.token)
 
-        if not self._used_first_resp:
-            self._used_first_resp = True
-            return await self.edit(**kwargs)
+        if self._has_deferred_response and not self._has_created_message:
+            res = await self.edit(**kwargs)
+            self._has_created_message = True
+            return res
 
         return await self.followup(**kwargs)
 

@@ -32,7 +32,9 @@ async def on_event_random_error(exc: RandomError, event: hikari.Event) -> None:
 @bot.include
 @crescent.catch_autocomplete(RandomError)
 async def on_autocomplete_random_error(
-    exc: RandomError, ctx: crescent.Context, inter: hikari.AutocompleteInteractionOption
+    exc: RandomError,
+    ctx: crescent.AutocompleteContext,
+    inter: hikari.AutocompleteInteractionOption,
 ) -> None:
     print(f"{exc} raised in autocomplete for {ctx.command}!")
 
@@ -63,7 +65,7 @@ async def raise_error_event(event: hikari.MessageCreateEvent) -> None:
 
 
 async def autocomplete(
-    ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
+    ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> list[hikari.CommandChoice]:
     assert isinstance(option.value, str)
     if option.value == "unhandled":
