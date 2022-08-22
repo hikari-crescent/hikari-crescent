@@ -78,7 +78,9 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     await _handle_slash_resp(bot, command, _context_from_interaction_resp(Context, interaction))
 
 
-async def _handle_hooks(hooks: Sequence[TransformedHookCallbackT], ctx: BaseContext) -> tuple[bool, BaseContext]:
+async def _handle_hooks(
+    hooks: Sequence[TransformedHookCallbackT], ctx: BaseContext
+) -> tuple[bool, BaseContext]:
     """Returns `False` if the command should not be run."""
     for hook in hooks:
         hook_res, ctx = await hook(ctx)
