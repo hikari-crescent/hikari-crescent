@@ -1,4 +1,5 @@
 from typing import List
+from unittest.mock import Mock
 
 from hikari import (
     AutocompleteInteraction,
@@ -131,9 +132,14 @@ async def test_hooks():
     hook_was_run = False
     hook_no_annotations_was_run = False
 
+    mock_id = Mock()
+
     async def hook_(ctx: CustomContext):
         nonlocal hook_was_run
         hook_was_run = True
+
+        ctx.id = mock_id
+
         assert type(ctx) is CustomContext
 
     async def hook_no_annotations(ctx):
@@ -148,6 +154,7 @@ async def test_hooks():
     async def test_command(ctx: CustomContext):
         nonlocal command_was_run
         command_was_run = True
+        assert ctx.id is mock_id
         assert type(ctx) is CustomContext
 
     await handle_resp(MockEvent("test_command", bot))

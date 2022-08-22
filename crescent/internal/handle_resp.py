@@ -78,26 +78,28 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     await _handle_slash_resp(bot, command, _context_from_interaction_resp(Context, interaction))
 
 
-async def _handle_hooks(hooks: Sequence[TransformedHookCallbackT], ctx: BaseContext) -> bool:
+async def _handle_hooks(hooks: Sequence[TransformedHookCallbackT], ctx: BaseContext) -> tuple[bool, BaseContext]:
     """Returns `False` if the command should not be run."""
     for hook in hooks:
         hook_res, ctx = await hook(ctx)
 
         if hook_res and hook_res.exit:
-            return False
-    return True
+            return True, ctx
+    return False, ctx
 
 
 async def _handle_slash_resp(
     bot: Bot, command: Includable[AppCommandMeta], ctx: BaseContext
 ) -> None:
 
-    if not await _handle_hooks(command.metadata.hooks, ctx):
+    should_exit, ctx = await _handle_hooks(command.metadata.hooks, ctx)
+
+    if should_exit:
         return
 
     try:
         await command.metadata.callback(ctx, **ctx.options)
-        await _handle_hooks(command.metadata.after_hooks, ctx)
+        _, ctx = await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
         handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
         await bot.on_crescent_command_error(exc, ctx.into(Context), handled)
