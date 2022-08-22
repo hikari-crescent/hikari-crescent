@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from crescent.bot import Bot
     from crescent.context import BaseContext
     from crescent.internal import AppCommandMeta, Includable
-    from crescent.typedefs import HookCallbackT
+    from crescent.typedefs import TransformedHookCallbackT
 
     ContextT = TypeVar("ContextT", bound=BaseContext)
 
@@ -78,32 +78,36 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     await _handle_slash_resp(bot, command, _context_from_interaction_resp(Context, interaction))
 
 
-async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
+async def _handle_hooks(
+    hooks: Sequence[TransformedHookCallbackT], ctx: BaseContext
+) -> tuple[bool, BaseContext]:
     """Returns `False` if the command should not be run."""
     for hook in hooks:
-        hook_res = await hook(ctx)
+        hook_res, ctx = await hook(ctx)
 
         if hook_res and hook_res.exit:
-            return False
-    return True
+            return True, ctx
+    return False, ctx
 
 
-async def _handle_slash_resp(bot: Bot, command: Includable[AppCommandMeta], ctx: Context) -> None:
+async def _handle_slash_resp(
+    bot: Bot, command: Includable[AppCommandMeta], ctx: BaseContext
+) -> None:
 
-    if not await _handle_hooks(command.metadata.hooks, ctx):
+    should_exit, ctx = await _handle_hooks(command.metadata.hooks, ctx)
+
+    if should_exit:
         return
 
     try:
         await command.metadata.callback(ctx, **ctx.options)
-        await _handle_hooks(command.metadata.after_hooks, ctx)
+        _, ctx = await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
         handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
-        await bot.on_crescent_command_error(exc, ctx, handled)
+        await bot.on_crescent_command_error(exc, ctx.into(Context), handled)
 
 
-async def _handle_autocomplete_resp(
-    command: Includable[AppCommandMeta], ctx: AutocompleteContext
-) -> None:
+async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: BaseContext) -> None:
     interaction = cast(AutocompleteInteraction, ctx.interaction)
 
     if not command.metadata.autocomplete:
@@ -115,10 +119,13 @@ async def _handle_autocomplete_resp(
     autocomplete = command.metadata.autocomplete[option.name]
 
     try:
-        await interaction.create_response(await autocomplete(ctx, option))
+        res, ctx = await autocomplete(ctx, option)
+        await interaction.create_response(res)
     except Exception as exc:
         handled = await command.app._autocomplete_error_handler.try_handle(exc, [exc, ctx, option])
-        await command.app.on_crescent_autocomplete_error(exc, ctx, option, handled)
+        await command.app.on_crescent_autocomplete_error(
+            exc, ctx.into(AutocompleteContext), option, handled
+        )
 
 
 def _get_option_recursive(
@@ -220,6 +227,9 @@ def _context_from_interaction_resp(
         sub_group=sub_group,
         command_type=CommandType(interaction.command_type),
         options=callback_options,
+        # See crescent/context/base_context.py
+        has_created_message=False,  # pyright: ignore
+        has_deferred_response=False,  # pyright: ignore
     )
 
 

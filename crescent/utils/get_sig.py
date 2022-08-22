@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from inspect import Parameter, signature
 from sys import version_info
-from typing import TYPE_CHECKING, get_type_hints
+from typing import TYPE_CHECKING, Dict, List, Tuple, Type, get_type_hints
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence
@@ -26,10 +26,14 @@ def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
     if version_info >= (3, 10):
         return signature(func, eval_str=True).parameters.values()  # type: ignore
 
+    localns: dict[str, Any] = {"list": List, "type": Type, "dict": Dict, "tuple": Tuple}
+
     if version_info >= (3, 9):
-        type_hints: dict[str, Any] = get_type_hints(func, include_extras=True)  # type: ignore
+        type_hints: dict[str, Any] = get_type_hints(
+            func, include_extras=True, localns=localns  # type: ignore
+        )
     else:
-        type_hints = get_type_hints(func)
+        type_hints = get_type_hints(func, localns=localns)
 
     sig = signature(func)
 

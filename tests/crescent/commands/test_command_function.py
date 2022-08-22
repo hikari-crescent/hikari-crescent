@@ -165,8 +165,8 @@ class TestCommandFunction:
         )
 
     def test_autocomplete_exists(self):
-
-        autocomplete_response = object()
+        async def autocomplete_response(ctx, option):
+            ...
 
         @command
         async def callback(
@@ -174,4 +174,4 @@ class TestCommandFunction:
         ):
             pass
 
-        assert callback.metadata.autocomplete == {"parameter": autocomplete_response}
+        assert callback.metadata.autocomplete["parameter"].__wrapped__ == autocomplete_response

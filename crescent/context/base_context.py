@@ -7,15 +7,17 @@ from attr import define
 from hikari import Member, PartialInteraction, Snowflake, User
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence
+    from typing import Any, Sequence, Type, TypeVar
 
     from crescent.bot import Bot
+
+    ContextT = TypeVar("ContextT", bound="BaseContext")
 
 
 __all__: Sequence[str] = ("BaseContext",)
 
 
-@define
+@define(slots=True)
 class BaseContext:
     """Represents the context for interactions"""
 
@@ -50,3 +52,47 @@ class BaseContext:
     sub_group: str | None
     options: dict[str, Any]
     """The options that were provided by the user."""
+
+    _has_created_message: bool
+    """
+    Whether the user has responded to this interaction.
+
+    To maintain compatibility with `crescent.Context`, set to `True` when
+    creating or editing an interaction response.
+    """
+
+    _has_deferred_response: bool
+    """
+    Whether the user has deferred this interaction.
+
+    To maintain compatibility with `crescent.Context`, set to `True` when
+    deferring an interaction response.
+    """
+
+    def into(self, context_t: Type[ContextT]) -> ContextT:
+        """Convert to a context of a different type."""
+        if type(self) is context_t:
+            # pyright can't tell this is of type `context_t`
+            return self  # pyright: ignore
+
+        return context_t(
+            interaction=self.interaction,
+            app=self.app,
+            application_id=self.application_id,
+            type=self.type,
+            token=self.token,
+            id=self.id,
+            version=self.version,
+            channel_id=self.channel_id,
+            guild_id=self.guild_id,
+            user=self.user,
+            member=self.member,
+            command=self.command,
+            command_type=self.command_type,
+            group=self.group,
+            sub_group=self.sub_group,
+            options=self.options,
+            # Pyright expects these arguments to start with an underscore but attrs removes that.
+            has_created_message=self._has_created_message,  # pyright: ignore
+            has_deferred_response=self._has_deferred_response,  # pyright: ignore
+        )

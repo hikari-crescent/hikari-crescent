@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from functools import partial
+from functools import partial, wraps
 from inspect import isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
 
-from crescent.bot import Bot
 from crescent.commands.options import ClassCommandOption
 from crescent.commands.signature import gen_command_option, get_autocomplete_func
 from crescent.internal.registry import register_command
@@ -33,12 +32,10 @@ __all__: Sequence[str] = ("command", "user_command", "message_command")
 def _class_command_callback(
     cls: type[ClassCommandProto], defaults: dict[str, Any], name_map: dict[str, str]
 ) -> CommandCallbackT:
+    @wraps(cls.callback)
     async def callback(*args: Any, **kwargs: Any) -> Any:
         values = defaults.copy()
         values.update(kwargs)
-
-        if isinstance(args[0], Bot):
-            args = args[1:]
 
         cmd = cls()
         for k, v in values.items():
@@ -154,6 +151,7 @@ def command(
 def _kwargs_to_args_callback(
     callback: Callable[..., Awaitable[Any]]
 ) -> Callable[..., Awaitable[Any]]:
+    @wraps(callback)
     async def inner(*args: Any, **kwargs: Any) -> Any:
         return await callback(*args, *kwargs.values())
 

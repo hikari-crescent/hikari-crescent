@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from inspect import isclass
 from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
@@ -16,7 +17,7 @@ from crescent.commands.args import (
     Name,
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, get_channel_types
-from crescent.context import Context
+from crescent.context import BaseContext
 
 if TYPE_CHECKING:
     from inspect import Parameter
@@ -64,12 +65,18 @@ def _get_origin_and_metadata(param: Parameter) -> tuple[Any, Iterable[Any]]:
     return origin, metadata
 
 
+def _any_issubclass(obj: Any, cls: type) -> bool:
+    if not isclass(obj):
+        return False
+    return issubclass(obj, cls)
+
+
 def gen_command_option(param: Parameter) -> CommandOption | None:
     name = param.name
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin in {Context, param.empty}:
+    if origin is param.empty or _any_issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
