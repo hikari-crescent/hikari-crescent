@@ -125,9 +125,20 @@ def test_gen_channel_options():
         (PrivateChannel, [ChannelType.DM, ChannelType.GROUP_DM]),
         (DMChannel, [ChannelType.DM]),
         (GroupDMChannel, [ChannelType.GROUP_DM]),
-        (TextableChannel, [ChannelType.GUILD_TEXT, ChannelType.DM, ChannelType.GUILD_NEWS, ChannelType.GUILD_VOICE]),
+        (
+            TextableChannel,
+            [
+                ChannelType.GUILD_TEXT,
+                ChannelType.DM,
+                ChannelType.GUILD_NEWS,
+                ChannelType.GUILD_VOICE,
+            ],
+        ),
         (GuildCategory, [ChannelType.GUILD_CATEGORY]),
-        (TextableGuildChannel, [ChannelType.GUILD_TEXT, ChannelType.GUILD_NEWS, ChannelType.GUILD_VOICE]),
+        (
+            TextableGuildChannel,
+            [ChannelType.GUILD_TEXT, ChannelType.GUILD_NEWS, ChannelType.GUILD_VOICE],
+        ),
         (GuildTextChannel, [ChannelType.GUILD_TEXT]),
         (GuildNewsChannel, [ChannelType.GUILD_NEWS]),
         (GuildVoiceChannel, [ChannelType.GUILD_VOICE]),
@@ -149,7 +160,12 @@ def test_gen_channel_options():
         ),
         (
             Union[TextableChannel, TextableGuildChannel],
-            [ChannelType.GUILD_TEXT, ChannelType.DM, ChannelType.GUILD_NEWS, ChannelType.GUILD_VOICE],
+            [
+                ChannelType.GUILD_TEXT,
+                ChannelType.DM,
+                ChannelType.GUILD_NEWS,
+                ChannelType.GUILD_VOICE,
+            ],
         ),
         (
             Union[GuildChannel, TextableChannel],
