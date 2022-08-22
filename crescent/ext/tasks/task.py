@@ -77,16 +77,14 @@ _TaskType = TypeVar("_TaskType", bound=Task)
 def _on_app_set(self: Includable[_TaskType]) -> None:
     self.metadata.app = self.app
 
-    has_subbed = False
-
     async def callback(_: StartedEvent) -> None:
         self.metadata.start()
-        if has_subbed:
-            self.app.unsubscribe(StartedEvent, callback)
+        self.app.unsubscribe(StartedEvent, callback)
 
     if not self.app.started.is_set():
-        has_subbed = True
         self.app.subscribe(StartedEvent, callback)
+    else:
+        self.metadata.start()
 
 
 def _unload(self: Includable[_TaskType]) -> None:
