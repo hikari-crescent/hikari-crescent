@@ -48,6 +48,7 @@ def MockEvent(name, bot):
             command_type=CommandType.SLASH,
             resolved=None,
             options=None,
+            app_permissions=None,
         ),
     )
 
