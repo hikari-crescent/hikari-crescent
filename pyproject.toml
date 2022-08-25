@@ -33,7 +33,7 @@ python-dotenv = "^0.20.0"
 pytest = "^7.0.0"
 pytest-asyncio = "^0.19.0"
 pytest-cov = "^3.0.0"
-pyright = "^1.1.266"
+pyright = "^1.1.268"
 nox = "^2022.8.7"
 
 [tool.black]
