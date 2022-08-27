@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from hikari import Snowflakeish
 
     from crescent.bot import Bot
-    from crescent.typedefs import AutocompleteCallbackT, CanBuild
+    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, CanBuild
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 
