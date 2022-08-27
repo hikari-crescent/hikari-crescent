@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from hikari import Snowflakeish
 
     from crescent.bot import Bot
-    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, CanBuild
+    from crescent.typedefs import AutocompleteCallbackT, CanBuild, CommandCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 
@@ -265,9 +265,7 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def post_guild_commands(
-        self, commands: Sequence[CanBuild], guild: Snowflakeish
-    ) -> None:
+    async def post_guild_commands(self, commands: Sequence[CanBuild], guild: Snowflakeish) -> None:
         try:
             if self.application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
