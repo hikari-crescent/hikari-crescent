@@ -16,7 +16,6 @@ from hikari import (
     Snowflake,
     UndefinedType,
 )
-from hikari.api import CommandBuilder
 
 from crescent.context.utils import support_custom_context
 from crescent.exceptions import AlreadyRegisteredError
@@ -30,8 +29,9 @@ if TYPE_CHECKING:
     from hikari import Snowflakeish
 
     from crescent.bot import Bot
-    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT
+    from crescent.typedefs import AutocompleteCallbackT, CanBuild
 
+    T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 
 _log = getLogger(__name__)
 
@@ -266,13 +266,16 @@ class CommandHandler:
         return tuple(built_commands.values())
 
     async def post_guild_commands(
-        self, commands: Sequence[CommandBuilder], guild: Snowflakeish
+        self, commands: Sequence[CanBuild], guild: Snowflakeish
     ) -> None:
         try:
             if self.application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
             await self.bot.rest.set_application_commands(
-                application=self.application_id, commands=commands, guild=guild
+                application=self.application_id,
+                # The only method that is called has been implemented.
+                commands=commands,  # type: ignore
+                guild=guild,
             )
         except ForbiddenError:
             if guild in self.bot.cache.get_guilds_view().keys():
@@ -307,7 +310,9 @@ class CommandHandler:
         assert self.application_id is not None
         await gather(
             self.bot.rest.set_application_commands(
-                application=self.application_id, commands=global_commands
+                application=self.application_id,
+                # The only method that is called has been implemented.
+                commands=global_commands,  # type: ignore
             ),
             gather_iter(
                 self.post_guild_commands(commands, guild)

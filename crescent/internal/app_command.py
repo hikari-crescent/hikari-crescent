@@ -7,7 +7,6 @@ from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import CommandBuilder, EntityFactory
 
 from crescent.context.utils import support_custom_context
-from crescent.exceptions import HikariMoment
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
@@ -78,7 +77,7 @@ __all__: Sequence[str] = ("AppCommandMeta", "AppCommand")
 
 
 @define
-class AppCommand(CommandBuilder):
+class AppCommand:
     """Local representation of an Application Command"""
 
     type: CommandType
@@ -139,30 +138,6 @@ class AppCommand(CommandBuilder):
         out["dm_permission"] = self.is_dm_enabled
 
         return out
-
-    def set_id(self, _id: UndefinedOr[Snowflakeish]) -> AppCommand:
-        if isinstance(_id, int):
-            _id = Snowflake(_id)
-        self.id = _id
-        return self
-
-    def set_is_dm_enabled(self: Self, state: UndefinedOr[bool], /) -> Self:  # noqa
-        raise HikariMoment()
-
-    async def create(  # noqa
-        self,
-        rest: RESTClient,
-        application: SnowflakeishOr[PartialApplication],
-        /,
-        *,
-        guild: UndefinedOr[SnowflakeishOr[PartialGuild]] = UNDEFINED,
-    ) -> PartialCommand:
-        raise HikariMoment()
-
-    def set_default_member_permissions(  # noqa
-        self: Self, default_member_permissions: UndefinedType | int | Permissions, /
-    ) -> Self:
-        raise HikariMoment()
 
 
 @define
