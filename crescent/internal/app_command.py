@@ -11,13 +11,7 @@ from crescent.context.utils import support_custom_context
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
 
-    from hikari import (
-        CommandType,
-        Snowflake,
-        UndefinedNoneOr,
-        UndefinedOr,
-        UndefinedType,
-    )
+    from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr, UndefinedType
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
