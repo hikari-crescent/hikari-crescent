@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from attr import define, field
 from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
-from hikari.api import CommandBuilder, EntityFactory
+from hikari.api import EntityFactory
 
 from crescent.context.utils import support_custom_context
 
@@ -13,16 +13,11 @@ if TYPE_CHECKING:
 
     from hikari import (
         CommandType,
-        PartialApplication,
-        PartialCommand,
-        PartialGuild,
         Snowflake,
-        SnowflakeishOr,
         UndefinedNoneOr,
         UndefinedOr,
         UndefinedType,
     )
-    from hikari.api.rest import RESTClient
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
