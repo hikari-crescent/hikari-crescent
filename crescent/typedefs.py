@@ -24,6 +24,7 @@ from hikari import (
     Role,
     User,
 )
+from hikari.api import EntityFactory
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
@@ -72,3 +73,8 @@ EventErrorHandlerCallbackT = Callable[[ERROR, Event], Awaitable[None]]
 AutocompleteErrorHandlerCallbackT = Callable[
     [ERROR, Any, AutocompleteInteractionOption], Awaitable[None]
 ]
+
+
+class CanBuild(Protocol):
+    def build(self, encoder: EntityFactory) -> dict[str, Any]:
+        ...
