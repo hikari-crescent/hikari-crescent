@@ -140,10 +140,7 @@ Crescent has 2 builtin extensions.
 These extensions can be installed with pip.
 
 - [crescent-ext-docstrings](https://github.com/Lunarmagpie/crescent-ext-docstrings) - Lets you use docstrings to write descriptions for commands and options.
-<<<<<<< HEAD
 - [crescent-ext-kebabify](https://github.com/Lunarmagpie/crescent-ext-kebabify) - Turns your command names into kebabs!
-=======
->>>>>>> origin/main
 
 # Support
 Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!
