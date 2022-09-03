@@ -22,31 +22,20 @@ class HookResult:
     exit: bool = False
 
 
-@overload
-def hook(
-    *callbacks: HookCallbackT, after: bool = False
-) -> Callable[..., Includable[AppCommandMeta]]:
-    ...
+class hook:
+    def __init__(self, *callbacks: HookCallbackT, after: bool = False):
+        self.callbacks = callbacks
+        self.after = after
 
+    def __call__(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        if command is None:
+            return partial(hook, callbacks, after)  # type: ignore
+        for callback in self.callbacks:
+            if not iscoroutinefunction(callback):
+                raise ValueError(f"Function `{callback.__name__}` must be async.")
+        command.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
 
-@overload
-def hook(
-    *callbacks: HookCallbackT, command: Includable[AppCommandMeta]
-) -> Includable[AppCommandMeta]:
-    ...
-
-
-def hook(
-    *callbacks: HookCallbackT, after: bool = False, command: Includable[AppCommandMeta] | None = None
-) -> Includable[AppCommandMeta] | Callable[..., Includable[AppCommandMeta]]:
-    if command is None:
-        return partial(hook, callback, after)  # type: ignore
-    for callback in callbacks:
-        if not iscoroutinefunction(callback):
-            raise ValueError(f"Function `{callback.__name__}` must be async.")
-    command.metadata.add_hooks(callbacks, prepend=True, after=after)
-
-    return command
+        return command
 
 
 class HasHooks(Protocol):
