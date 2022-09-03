@@ -177,3 +177,19 @@ def test_after_hook_order():
         "plugin",
         "bot",
     ]
+
+def test_vargs_hooks():
+
+    @hook(MockHook("a"))
+    @hook(MockHook("b"))
+    @hook(MockHook("c"))
+    @command
+    async def command_a(ctx):
+        ...
+
+    @hook(MockHook("a"), MockHook("b"), MockHook("c"))
+    @command
+    async def command_b(ctx):
+        ...
+
+    assert unwrap_hooks(command_a.metadata.hooks) == unwrap_hooks(command_b.metadata.hooks)
