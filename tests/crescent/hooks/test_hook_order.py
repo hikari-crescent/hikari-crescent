@@ -178,8 +178,8 @@ def test_after_hook_order():
         "bot",
     ]
 
-def test_vargs_hooks():
 
+def test_vargs_hooks():
     @hook(MockHook("a"))
     @hook(MockHook("b"))
     @hook(MockHook("c"))

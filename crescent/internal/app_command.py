@@ -141,7 +141,9 @@ class AppCommandMeta:
     hooks: list[TransformedHookCallbackT] = field(factory=list)
     after_hooks: list[TransformedHookCallbackT] = field(factory=list)
 
-    def add_hooks(self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool) -> None:
+    def add_hooks(
+        self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool
+    ) -> None:
         transformed_hooks: list[TransformedHookCallbackT] = [
             support_custom_context(hook) for hook in hooks
         ]

@@ -1,16 +1,13 @@
 from __future__ import annotations
 
-from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Any, Protocol, Sequence, overload
+from typing import TYPE_CHECKING, Any, Protocol, Sequence
 
 from attrs import define
 
 from crescent.internal.app_command import AppCommandMeta
 
 if TYPE_CHECKING:
-    from typing import Callable
-
     from crescent.internal.includable import Includable
     from crescent.typedefs import HookCallbackT
 
