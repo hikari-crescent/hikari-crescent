@@ -28,8 +28,6 @@ class hook:
         self.after = after
 
     def __call__(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
-        if command is None:
-            return partial(hook, callbacks, after)  # type: ignore
         for callback in self.callbacks:
             if not iscoroutinefunction(callback):
                 raise ValueError(f"Function `{callback.__name__}` must be async.")
