@@ -1,16 +1,13 @@
 from __future__ import annotations
 
-from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Any, Protocol, Sequence, overload
+from typing import TYPE_CHECKING, Any, Protocol, Sequence
 
 from attrs import define
 
 from crescent.internal.app_command import AppCommandMeta
 
 if TYPE_CHECKING:
-    from typing import Callable
-
     from crescent.internal.includable import Includable
     from crescent.typedefs import HookCallbackT
 
@@ -22,30 +19,18 @@ class HookResult:
     exit: bool = False
 
 
-@overload
-def hook(
-    callback: HookCallbackT, *, after: bool = False
-) -> Callable[..., Includable[AppCommandMeta]]:
-    ...
+class hook:
+    def __init__(self, *callbacks: HookCallbackT, after: bool = False):
+        self.callbacks = callbacks
+        self.after = after
 
+    def __call__(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        for callback in self.callbacks:
+            if not iscoroutinefunction(callback):
+                raise ValueError(f"Function `{callback.__name__}` must be async.")
+        command.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
 
-@overload
-def hook(
-    callback: HookCallbackT, *, command: Includable[AppCommandMeta]
-) -> Includable[AppCommandMeta]:
-    ...
-
-
-def hook(
-    callback: HookCallbackT, after: bool = False, command: Includable[AppCommandMeta] | None = None
-) -> Includable[AppCommandMeta] | Callable[..., Includable[AppCommandMeta]]:
-    if command is None:
-        return partial(hook, callback, after)  # type: ignore
-    if not iscoroutinefunction(callback):
-        raise ValueError(f"Function `{callback.__name__}` must be async.")
-    command.metadata.add_hooks([callback], prepend=True, after=after)
-
-    return command
+        return command
 
 
 class HasHooks(Protocol):
