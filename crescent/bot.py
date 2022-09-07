@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 from asyncio import Event as aio_Event
 from asyncio import Task, create_task
@@ -7,6 +7,19 @@ from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, overload
+
+
+
+from crescent.internal.includable import Includable
+from crescent.internal.registry import CommandHandler, ErrorHandler
+from crescent.plugin import PluginManager
+
+
+from __future__ import annotations
+
+from crescent.commands.hooks import add_hooks
+from crescent.internal.handle_resp import handle_resp
+
 
 from hikari import AutocompleteInteractionOption
 from hikari import Event as hk_Event
@@ -20,12 +33,6 @@ from hikari import (
 )
 from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
-from crescent.commands.hooks import add_hooks
-from crescent.internal.handle_resp import handle_resp
-from crescent.internal.includable import Includable
-from crescent.internal.registry import CommandHandler, ErrorHandler
-from crescent.plugin import PluginManager
-
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, TypeVar
 
@@ -38,7 +45,6 @@ if TYPE_CHECKING:
     )
 
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
-
 
 __all___: Sequence[str] = ("Bot",)
 
