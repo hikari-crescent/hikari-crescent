@@ -31,9 +31,10 @@ def pip_session(*args: str, name: str | None = None) -> typing.Callable[[nox.Ses
     return inner
 
 
-@pip_session("black", "codespell", name="apply-lint")
+@pip_session("black", "isort", "codespell", name="apply-lint")
 def apply_lint(session: nox.Session) -> None:
     session.run("black", "crescent")
+    session.run("isort", "crescent")
     session.run("codespell", "crescent", "-i", "2")
 
 
@@ -55,7 +56,6 @@ def mypy(session: nox.Session) -> None:
 @poetry_session
 def pyright(session: nox.Session) -> None:
     session.run("poetry", "run", "pyright")
-    session.run("poetry", "run", "isort", "crescent")
     session.run("poetry", "run", "pyright", "--verifytypes", "crescent")
 
 
