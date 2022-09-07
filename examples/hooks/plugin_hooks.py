@@ -13,7 +13,6 @@ async def second_hook(ctx: crescent.Context) -> None:
 
 
 plugin = crescent.Plugin(
-    "example",
     command_hooks=[first_hook],  # Hooks to execute before the command
     command_after_hooks=[first_hook],  # Hooks to execute after the command
 )

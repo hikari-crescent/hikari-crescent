@@ -4,6 +4,7 @@ from types import MethodType
 from typing import TYPE_CHECKING, Any
 
 from crescent import Bot, Group, Plugin, command, hook
+from crescent.context.utils import support_custom_context
 
 
 async def async_func(*a, **k) -> None:
@@ -23,6 +24,12 @@ class _MockHook:
     def __eq__(self, ot: object) -> bool:
         return self.name == ot
 
+    def __call__(self):
+        ...
+
+    def __hash__(self) -> int:
+        return 0
+
 
 if TYPE_CHECKING:
     MockHook = Any
@@ -30,9 +37,19 @@ else:
     MockHook = _MockHook
 
 
+def unwrap_hooks(hooks: list[Any]):
+    print(hooks)
+    return [hook.__wrapped__ for hook in hooks]
+
+
+def assert_all_supports_custom_ctx(hooks: list[Any]):
+    for callable in hooks:
+        assert f"{support_custom_context.__name__}.<locals>.inner" in str(callable)
+
+
 def test_hook_order():
     bot = Bot("NO TOKEN", command_hooks=[MockHook("bot")])
-    plugin = Plugin("PLUGIN", command_hooks=[MockHook("plugin")])
+    plugin = Plugin(command_hooks=[MockHook("plugin")])
     group = Group("BOT_GROUP", hooks=[MockHook("group")])
     subgroup = group.sub_group("SUBGROUP", hooks=[MockHook("subgroup")])
 
@@ -76,19 +93,26 @@ def test_hook_order():
     async def c6(ctx) -> None:
         ...
 
-    bot.plugins.add_plugin(plugin)
+    bot.plugins._add_plugin("", plugin)
 
-    assert c1.metadata.hooks == ["command", "bot"]
-    assert c2.metadata.hooks == ["command", "group", "bot"]
-    assert c3.metadata.hooks == ["command", "subgroup", "group", "bot"]
-    assert c4.metadata.hooks == ["command", "plugin", "bot"]
-    assert c5.metadata.hooks == ["command", "group", "plugin", "bot"]
-    assert c6.metadata.hooks == ["command", "subgroup", "group", "plugin", "bot"]
+    assert_all_supports_custom_ctx(c1.metadata.hooks)
+    assert_all_supports_custom_ctx(c2.metadata.hooks)
+    assert_all_supports_custom_ctx(c3.metadata.hooks)
+    assert_all_supports_custom_ctx(c4.metadata.hooks)
+    assert_all_supports_custom_ctx(c5.metadata.hooks)
+    assert_all_supports_custom_ctx(c6.metadata.hooks)
+
+    assert unwrap_hooks(c1.metadata.hooks) == ["command", "bot"]
+    assert unwrap_hooks(c2.metadata.hooks) == ["command", "group", "bot"]
+    assert unwrap_hooks(c3.metadata.hooks) == ["command", "subgroup", "group", "bot"]
+    assert unwrap_hooks(c4.metadata.hooks) == ["command", "plugin", "bot"]
+    assert unwrap_hooks(c5.metadata.hooks) == ["command", "group", "plugin", "bot"]
+    assert unwrap_hooks(c6.metadata.hooks) == ["command", "subgroup", "group", "plugin", "bot"]
 
 
 def test_after_hook_order():
     bot = Bot("NO TOKEN", command_after_hooks=[MockHook("bot")])
-    plugin = Plugin("PLUGIN", command_after_hooks=[MockHook("plugin")])
+    plugin = Plugin(command_after_hooks=[MockHook("plugin")])
     group = Group("BOT_GROUP", after_hooks=[MockHook("group")])
     subgroup = group.sub_group("SUBGROUP", after_hooks=[MockHook("subgroup")])
 
@@ -116,7 +140,7 @@ def test_after_hook_order():
     @hook(MockHook("command"), after=True)
     @command
     async def c4(ctx) -> None:
-        ...  # *pytest explodes*
+        ...
 
     @plugin.include
     @hook(MockHook("command"), after=True)
@@ -132,11 +156,40 @@ def test_after_hook_order():
     async def c6(ctx) -> None:
         ...
 
-    bot.plugins.add_plugin(plugin)
+    bot.plugins._add_plugin("", plugin)
 
-    assert c1.metadata.after_hooks == ["command", "bot"]
-    assert c2.metadata.after_hooks == ["command", "group", "bot"]
-    assert c3.metadata.after_hooks == ["command", "subgroup", "group", "bot"]
-    assert c4.metadata.after_hooks == ["command", "plugin", "bot"]
-    assert c5.metadata.after_hooks == ["command", "group", "plugin", "bot"]
-    assert c6.metadata.after_hooks == ["command", "subgroup", "group", "plugin", "bot"]
+    assert_all_supports_custom_ctx(c1.metadata.hooks)
+    assert_all_supports_custom_ctx(c2.metadata.hooks)
+    assert_all_supports_custom_ctx(c3.metadata.hooks)
+    assert_all_supports_custom_ctx(c4.metadata.hooks)
+    assert_all_supports_custom_ctx(c5.metadata.hooks)
+    assert_all_supports_custom_ctx(c6.metadata.hooks)
+
+    assert unwrap_hooks(c1.metadata.after_hooks) == ["command", "bot"]
+    assert unwrap_hooks(c2.metadata.after_hooks) == ["command", "group", "bot"]
+    assert unwrap_hooks(c3.metadata.after_hooks) == ["command", "subgroup", "group", "bot"]
+    assert unwrap_hooks(c4.metadata.after_hooks) == ["command", "plugin", "bot"]
+    assert unwrap_hooks(c5.metadata.after_hooks) == ["command", "group", "plugin", "bot"]
+    assert unwrap_hooks(c6.metadata.after_hooks) == [
+        "command",
+        "subgroup",
+        "group",
+        "plugin",
+        "bot",
+    ]
+
+
+def test_vargs_hooks():
+    @hook(MockHook("a"))
+    @hook(MockHook("b"))
+    @hook(MockHook("c"))
+    @command
+    async def command_a(ctx):
+        ...
+
+    @hook(MockHook("a"), MockHook("b"), MockHook("c"))
+    @command
+    async def command_b(ctx):
+        ...
+
+    assert unwrap_hooks(command_a.metadata.hooks) == unwrap_hooks(command_b.metadata.hooks)

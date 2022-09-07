@@ -4,12 +4,14 @@ from typing import TYPE_CHECKING
 
 from attr import define
 
+from crescent.commands.hooks import add_hooks
+
 if TYPE_CHECKING:
     from typing import Sequence
 
     from crescent.internal.app_command import AppCommandMeta
-    from crescent.internal.meta_struct import MetaStruct
-    from crescent.typedefs import CommandCallbackT, HookCallbackT
+    from crescent.internal.includable import Includable
+    from crescent.typedefs import HookCallbackT
 
 __all__: Sequence[str] = ("Group", "SubGroup")
 
@@ -32,18 +34,12 @@ class Group:
             name=name, parent=self, description=description, hooks=hooks, after_hooks=after_hooks
         )
 
-    def child(
-        self, meta: MetaStruct[CommandCallbackT, AppCommandMeta]
-    ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
-        meta.metadata.group = self
+    def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        includable.metadata.group = self
 
-        if self.hooks:
-            meta.metadata.hooks = self.hooks + meta.metadata.hooks
+        add_hooks(self, includable)
 
-        if self.after_hooks:
-            meta.metadata.after_hooks = self.after_hooks + meta.metadata.after_hooks
-
-        return meta
+        return includable
 
 
 @define
@@ -54,20 +50,11 @@ class SubGroup:
     hooks: list[HookCallbackT] | None = None
     after_hooks: list[HookCallbackT] | None = None
 
-    def child(
-        self, meta: MetaStruct[CommandCallbackT, AppCommandMeta]
-    ) -> MetaStruct[CommandCallbackT, AppCommandMeta]:
-        meta.metadata.group = self.parent
-        meta.metadata.sub_group = self
+    def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        includable.metadata.group = self.parent
+        includable.metadata.sub_group = self
 
-        if self.hooks:
-            meta.metadata.hooks = self.hooks + meta.metadata.hooks
-        if self.parent.hooks:
-            meta.metadata.hooks = meta.metadata.hooks + self.parent.hooks
+        add_hooks(self, includable)
+        add_hooks(self.parent, includable)
 
-        if self.after_hooks:
-            meta.metadata.after_hooks = self.after_hooks + meta.metadata.after_hooks
-        if self.parent.after_hooks:
-            meta.metadata.after_hooks = meta.metadata.after_hooks + self.parent.after_hooks
-
-        return meta
+        return includable

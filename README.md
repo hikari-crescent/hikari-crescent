@@ -21,6 +21,7 @@
  - Command groups.
  - Hooks to run function before or after a command (or any command from a group!)
  - Plugin system to easily split bot into different modules.
+ - Easily use a custom context class.
  - Makes typehinting easy.
 
 ### Links
@@ -95,7 +96,7 @@ class Say:
 | Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
 | `Union[Channel Types]` (functions only) | Channel. ^ |
 | `List[Channel Types]` (classes only) | Channel. ^ |
-| `hikari.Attachment` (classes only) | Attachment |
+| `hikari.Attachment` | Attachment |
 
 
 ### Error Handling
@@ -139,6 +140,7 @@ Crescent has 2 builtin extensions.
 These extensions can be installed with pip.
 
 - [crescent-ext-docstrings](https://github.com/Lunarmagpie/crescent-ext-docstrings) - Lets you use docstrings to write descriptions for commands and options.
+- [crescent-ext-kebabify](https://github.com/Lunarmagpie/crescent-ext-kebabify) - Turns your command names into kebabs!
 
 # Support
 Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!

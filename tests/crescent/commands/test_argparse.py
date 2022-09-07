@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from inspect import _empty, _ParameterKind
+from sys import version_info
 from typing import Any, Union
 
 from hikari import (
@@ -22,6 +23,7 @@ from hikari import (
     TextableChannel,
     TextableGuildChannel,
 )
+from pytest import mark
 from typing_extensions import Annotated
 
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
@@ -106,15 +108,37 @@ def test_annotations():
         ) == CommandOption(**kwargs)
 
 
+@mark.skipif(version_info < (3, 10), reason="Syntax introduced in python 3.10")
+def test_310_annotation_syntax():
+    assert gen_command_option(
+        Parameter(name="1234", annotation=int | None, default=None, kind=POSITIONAL_OR_KEYWORD)
+    ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
+
+    assert gen_command_option(
+        Parameter(name="1234", annotation=None | int, default=None, kind=POSITIONAL_OR_KEYWORD)
+    ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
+
+
 def test_gen_channel_options():
     channels = (
         # Test single channels
         (PrivateChannel, [ChannelType.DM, ChannelType.GROUP_DM]),
         (DMChannel, [ChannelType.DM]),
         (GroupDMChannel, [ChannelType.GROUP_DM]),
-        (TextableChannel, [ChannelType.GUILD_TEXT, ChannelType.DM, ChannelType.GUILD_NEWS]),
+        (
+            TextableChannel,
+            [
+                ChannelType.GUILD_TEXT,
+                ChannelType.DM,
+                ChannelType.GUILD_NEWS,
+                ChannelType.GUILD_VOICE,
+            ],
+        ),
         (GuildCategory, [ChannelType.GUILD_CATEGORY]),
-        (TextableGuildChannel, [ChannelType.GUILD_TEXT, ChannelType.GUILD_NEWS]),
+        (
+            TextableGuildChannel,
+            [ChannelType.GUILD_TEXT, ChannelType.GUILD_NEWS, ChannelType.GUILD_VOICE],
+        ),
         (GuildTextChannel, [ChannelType.GUILD_TEXT]),
         (GuildNewsChannel, [ChannelType.GUILD_NEWS]),
         (GuildVoiceChannel, [ChannelType.GUILD_VOICE]),
@@ -136,7 +160,12 @@ def test_gen_channel_options():
         ),
         (
             Union[TextableChannel, TextableGuildChannel],
-            [ChannelType.GUILD_TEXT, ChannelType.DM, ChannelType.GUILD_NEWS],
+            [
+                ChannelType.GUILD_TEXT,
+                ChannelType.DM,
+                ChannelType.GUILD_NEWS,
+                ChannelType.GUILD_VOICE,
+            ],
         ),
         (
             Union[GuildChannel, TextableChannel],

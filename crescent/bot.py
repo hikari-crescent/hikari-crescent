@@ -20,16 +20,16 @@ from hikari import (
 )
 from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
+from crescent.commands.hooks import add_hooks
 from crescent.internal.handle_resp import handle_resp
-from crescent.internal.meta_struct import MetaStruct
+from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
-from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, TypeVar
 
-    from crescent.context import Context
+    from crescent.context import AutocompleteContext, Context
     from crescent.typedefs import (
         AutocompleteErrorHandlerCallbackT,
         CommandErrorHandlerCallbackT,
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
         HookCallbackT,
     )
 
-    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
+    INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
 
 
 __all___: Sequence[str] = ("Bot",)
@@ -155,16 +155,16 @@ class Bot(GatewayBot):
         return self._started
 
     @overload
-    def include(self, command: META_STRUCT) -> META_STRUCT:
+    def include(self, command: INCLUDABLE) -> INCLUDABLE:
         ...
 
     @overload
-    def include(self, command: None = ...) -> Callable[[META_STRUCT], META_STRUCT]:
+    def include(self, command: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
         ...
 
     def include(
-        self, command: META_STRUCT | None = None
-    ) -> META_STRUCT | Callable[[META_STRUCT], META_STRUCT]:
+        self, command: INCLUDABLE | None = None
+    ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
         if command is None:
             return self.include
 
@@ -220,7 +220,7 @@ class Bot(GatewayBot):
     async def on_crescent_autocomplete_error(
         self,
         exc: Exception,
-        ctx: Context,
+        ctx: AutocompleteContext,
         option: AutocompleteInteractionOption,
         was_handled: bool,
     ) -> None:
