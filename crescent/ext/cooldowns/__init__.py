@@ -6,6 +6,7 @@ from hikari import Snowflake
 from pycooldown import FixedCooldown
 
 from crescent import Context, HookResult
+from crescent.context.utils import support_custom_context
 
 __all__ = ("CooldownCallbackT", "BucketCallbackT", "cooldown")
 
@@ -48,6 +49,7 @@ def cooldown(
         bucket:
             Callback that returns a key for a bucket.
     """
+    transformed_callback = support_custom_context(callback)
     cooldown: FixedCooldown[Any] = FixedCooldown(period=period, capacity=capacity)
 
     async def inner(ctx: Context) -> HookResult | None:
@@ -56,7 +58,7 @@ def cooldown(
         if not retry_after:
             return None
 
-        await callback(ctx, retry_after)
+        await transformed_callback(ctx, retry_after)
         return HookResult(exit=True)
 
     return inner
