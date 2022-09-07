@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 import nox
@@ -16,9 +18,9 @@ def poetry_session(
     return inner
 
 
-def pip_session(*args: str) -> typing.Callable[[nox.Session], None]:
+def pip_session(*args: str, name: str | None = None) -> typing.Callable[[nox.Session], None]:
     def inner(callback: typing.Callable[[nox.Session], None]):
-        @nox.session(name=callback.__name__)
+        @nox.session(name=name or callback.__name__)
         def inner(session: nox.Session):
             for arg in args:
                 session.install(arg)
@@ -27,6 +29,13 @@ def pip_session(*args: str) -> typing.Callable[[nox.Session], None]:
         return inner
 
     return inner
+
+
+@pip_session("black", "isort", "codespell", name="apply-lint")
+def apply_lint(session: nox.Session) -> None:
+    session.run("black", "crescent")
+    session.run("isort", "crescent")
+    session.run("codespell", "crescent", "-i", "2")
 
 
 @pip_session("flake8")

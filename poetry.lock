@@ -74,18 +74,6 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "cloudpickle"]
 
 [[package]]
-name = "autopep8"
-version = "1.7.0"
-description = "A tool that automatically formats Python code to conform to the PEP 8 style guide"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-pycodestyle = ">=2.9.1"
-toml = "*"
-
-[[package]]
 name = "black"
 version = "22.8.0"
 description = "The uncompromising code formatter."
@@ -106,14 +94,6 @@ colorama = ["colorama (>=0.4.3)"]
 d = ["aiohttp (>=3.7.4)"]
 jupyter = ["ipython (>=7.8.0)", "tokenize-rt (>=3.2.0)"]
 uvloop = ["uvloop (>=0.15.2)"]
-
-[[package]]
-name = "cfgv"
-version = "3.3.1"
-description = "Validate configuration and produce human readable error messages."
-category = "dev"
-optional = false
-python-versions = ">=3.6.1"
 
 [[package]]
 name = "charset-normalizer"
@@ -187,7 +167,7 @@ toml = ["tomli"]
 
 [[package]]
 name = "croniter"
-version = "1.3.5"
+version = "1.3.7"
 description = "croniter provides iteration for datetime object with cron like format"
 category = "main"
 optional = false
@@ -254,17 +234,6 @@ multidict = ">=6.0,<7.0"
 [package.extras]
 server = ["pynacl (>=1.5,<2.0)"]
 speedups = ["aiodns (>=3.0,<4.0)", "cchardet (>=2.1,<3.0)", "Brotli (>=1.0,<2.0)", "ciso8601 (>=2.2,<3.0)"]
-
-[[package]]
-name = "identify"
-version = "2.5.3"
-description = "File identification library for Python"
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[package.extras]
-license = ["ukkonen"]
 
 [[package]]
 name = "idna"
@@ -447,22 +416,6 @@ testing = ["pytest-benchmark", "pytest"]
 dev = ["tox", "pre-commit"]
 
 [[package]]
-name = "pre-commit"
-version = "2.20.0"
-description = "A framework for managing and maintaining multi-language pre-commit hooks."
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-cfgv = ">=2.0.0"
-identify = ">=1.0.0"
-nodeenv = ">=0.11.1"
-pyyaml = ">=5.1"
-toml = "*"
-virtualenv = ">=20.0.8"
-
-[[package]]
 name = "py"
 version = "1.11.0"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
@@ -521,7 +474,7 @@ diagrams = ["railroad-diagrams", "jinja2"]
 
 [[package]]
 name = "pyright"
-version = "1.1.269"
+version = "1.1.270"
 description = "Command line wrapper for pyright"
 category = "dev"
 optional = false
@@ -606,28 +559,12 @@ python-versions = ">=3.5"
 cli = ["click (>=5.0)"]
 
 [[package]]
-name = "pyyaml"
-version = "6.0"
-description = "YAML parser and emitter for Python"
-category = "dev"
-optional = false
-python-versions = ">=3.6"
-
-[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
-
-[[package]]
-name = "toml"
-version = "0.10.2"
-description = "Python Library for Tom's Obvious, Minimal Language"
-category = "dev"
-optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "tomli"
@@ -685,7 +622,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "8e2ecc5d20faf7aa6b9bd68810256ba2f55c1026e13ffb7395948ff41589864a"
+content-hash = "f2b8a3a55a28a37583ffd1f6500dedd9018cd27f79ac010e8c6f5669f0ca8e1d"
 
 [metadata.files]
 aiohttp = []
@@ -694,9 +631,7 @@ argcomplete = []
 astunparse = []
 async-timeout = []
 attrs = []
-autopep8 = []
 black = []
-cfgv = []
 charset-normalizer = []
 click = []
 codespell = []
@@ -709,7 +644,6 @@ filelock = []
 flake8 = []
 frozenlist = []
 hikari = []
-identify = []
 idna = []
 iniconfig = []
 isort = []
@@ -726,7 +660,6 @@ pathspec = []
 pdoc = []
 platformdirs = []
 pluggy = []
-pre-commit = []
 py = []
 pycodestyle = []
 pycooldown = []
@@ -739,9 +672,7 @@ pytest-asyncio = []
 pytest-cov = []
 python-dateutil = []
 python-dotenv = []
-pyyaml = []
 six = []
-toml = []
 tomli = []
 types-croniter = []
 typing-extensions = []
