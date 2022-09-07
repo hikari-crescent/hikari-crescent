@@ -1,5 +1,8 @@
 import crescent
 
+# Hooks allow you to execute functions before or after command
+# They execute in this order: command -> subgroup -> group -> plugin -> bot
+
 
 async def first_hook(ctx: crescent.Context) -> crescent.HookResult:  # you can also return None
     print("Here first.")
@@ -21,11 +24,19 @@ bot = crescent.Bot(token="...")
 
 
 @bot.include
+@crescent.hook(first_hook, second_hook(5))
+@crescent.command
+async def test_command(ctx: crescent.Context, number: int) -> None:
+    # This code will never be reached due to `first_hook`
+    await ctx.respond("Done!")
+
+
+# This code is equlivent to equivalent to the previous function.
+@bot.include
 @crescent.hook(first_hook)
 @crescent.hook(second_hook(5))
 @crescent.command
-async def test_command(ctx: crescent.Context, number: int):
-    # This code will never be reached due to `second_hook`
+async def test_command2(ctx: crescent.Context, number: int) -> None:
     await ctx.respond("Done!")
 
 

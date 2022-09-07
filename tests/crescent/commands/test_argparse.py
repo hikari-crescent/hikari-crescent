@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from inspect import _empty, _ParameterKind
-from typing import Any, Type
+from sys import version_info
+from typing import Any, Union
 
 from hikari import (
     ChannelType,
@@ -20,20 +23,22 @@ from hikari import (
     TextableChannel,
     TextableGuildChannel,
 )
+from pytest import mark
 from typing_extensions import Annotated
 
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
 from crescent.commands.signature import gen_command_option
+from tests.utils import arrays_contain_same_elements
 
 
 @dataclass
 class Parameter:
     name: str
-    annotation: Type
+    annotation: type
     default: Any
     kind: _ParameterKind
 
-    empty: Type[_empty] = _empty
+    empty: type[_empty] = _empty
 
 
 POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD
@@ -103,15 +108,37 @@ def test_annotations():
         ) == CommandOption(**kwargs)
 
 
+@mark.skipif(version_info < (3, 10), reason="Syntax introduced in python 3.10")
+def test_310_annotation_syntax():
+    assert gen_command_option(
+        Parameter(name="1234", annotation=int | None, default=None, kind=POSITIONAL_OR_KEYWORD)
+    ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
+
+    assert gen_command_option(
+        Parameter(name="1234", annotation=None | int, default=None, kind=POSITIONAL_OR_KEYWORD)
+    ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
+
+
 def test_gen_channel_options():
     channels = (
-        (PartialChannel, None),
+        # Test single channels
         (PrivateChannel, [ChannelType.DM, ChannelType.GROUP_DM]),
         (DMChannel, [ChannelType.DM]),
         (GroupDMChannel, [ChannelType.GROUP_DM]),
-        (TextableChannel, [ChannelType.GUILD_TEXT, ChannelType.DM, ChannelType.GUILD_NEWS]),
+        (
+            TextableChannel,
+            [
+                ChannelType.GUILD_TEXT,
+                ChannelType.DM,
+                ChannelType.GUILD_NEWS,
+                ChannelType.GUILD_VOICE,
+            ],
+        ),
         (GuildCategory, [ChannelType.GUILD_CATEGORY]),
-        (TextableGuildChannel, [ChannelType.GUILD_TEXT, ChannelType.GUILD_NEWS]),
+        (
+            TextableGuildChannel,
+            [ChannelType.GUILD_TEXT, ChannelType.GUILD_NEWS, ChannelType.GUILD_VOICE],
+        ),
         (GuildTextChannel, [ChannelType.GUILD_TEXT]),
         (GuildNewsChannel, [ChannelType.GUILD_NEWS]),
         (GuildVoiceChannel, [ChannelType.GUILD_VOICE]),
@@ -126,17 +153,53 @@ def test_gen_channel_options():
                 ChannelType.GUILD_STAGE,
             ],
         ),
+        # Test channel combonation
+        (
+            Union[GuildTextChannel, GuildVoiceChannel],
+            [ChannelType.GUILD_TEXT, ChannelType.GUILD_VOICE],
+        ),
+        (
+            Union[TextableChannel, TextableGuildChannel],
+            [
+                ChannelType.GUILD_TEXT,
+                ChannelType.DM,
+                ChannelType.GUILD_NEWS,
+                ChannelType.GUILD_VOICE,
+            ],
+        ),
+        (
+            Union[GuildChannel, TextableChannel],
+            [
+                ChannelType.GUILD_TEXT,
+                ChannelType.GUILD_VOICE,
+                ChannelType.GUILD_CATEGORY,
+                ChannelType.GUILD_NEWS,
+                ChannelType.GUILD_STAGE,
+                ChannelType.DM,
+            ],
+        ),
     )
 
     for channel_in, channel_types in channels:
-        assert gen_command_option(
-            Parameter(
-                name="1234", annotation=channel_in, default=12345, kind=POSITIONAL_OR_KEYWORD
-            )
-        ) == CommandOption(
-            name="1234",
-            type=OptionType.CHANNEL,
-            description="No Description",
-            is_required=False,
-            channel_types=channel_types,
+        assert arrays_contain_same_elements(
+            gen_command_option(
+                Parameter(
+                    name="1234", annotation=channel_in, default=12345, kind=POSITIONAL_OR_KEYWORD
+                )
+            ).channel_types,
+            channel_types,
         )
+
+
+def test_partial_channel_has_no_type():
+    assert gen_command_option(
+        Parameter(
+            name="1234", annotation=PartialChannel, default=12345, kind=POSITIONAL_OR_KEYWORD
+        )
+    ) == CommandOption(
+        name="1234",
+        type=OptionType.CHANNEL,
+        description="No Description",
+        is_required=False,
+        channel_types=None,
+    )

@@ -4,7 +4,9 @@ from typing import Sequence
 from crescent.bot import *
 from crescent.commands import *
 from crescent.context import *
+from crescent.errors import *
 from crescent.event import *
+from crescent.exceptions import *
 from crescent.mentionable import *
 from crescent.plugin import *
 from crescent.typedefs import *
@@ -29,10 +31,14 @@ __all__: Sequence[str] = (
     "SubGroup",
     "Bot",
     "Context",
+    "AutocompleteContext",
+    "catch_command",
+    "catch_event",
+    "catch_autocomplete",
     "event",
     "CrescentException",
     "AlreadyRegisteredError",
-    "CommandNotFoundError",
+    "PluginAlreadyLoadedError",
     "Mentionable",
     "CommandCallbackT",
     "CommandOptionsT",
@@ -43,6 +49,4 @@ __all__: Sequence[str] = (
     "Plugin",
     "PluginManager",
     "ClassCommandOption",
-    "ErrorHandlerCallbackT",
-    "catch",
 )

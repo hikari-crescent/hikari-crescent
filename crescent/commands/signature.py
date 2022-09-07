@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, Tuple, Type, Union, get_args, get_origin
+from inspect import isclass
+from logging import getLogger
+from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
 from hikari import CommandOption, OptionType
 
@@ -15,45 +17,43 @@ from crescent.commands.args import (
     Name,
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, get_channel_types
-from crescent.context import Context
+from crescent.context import BaseContext
 
 if TYPE_CHECKING:
     from inspect import Parameter
-    from typing import Any, Optional, Sequence, TypeVar
+    from typing import Any, Sequence, TypeVar
 
     from crescent.typedefs import AutocompleteCallbackT
 
     T = TypeVar("T")
+
+_LOG = getLogger(__name__)
 
 __all__: Sequence[str] = ("gen_command_option", "get_autocomplete_func")
 
 NoneType = type(None)
 
 
-def _unwrap_optional(origin: Type[Any]) -> Any:
+def _unwrap_optional(origin: type[Any]) -> Any:
+    args = get_args(origin)
+
+    if len(args) == 2 and NoneType in args:
+        return next(filter(lambda x: x is not NoneType, args))
+
     if get_origin(origin) is not Union:
         return origin
 
-    args = get_args(origin)
-
-    if len(args) != 2 or NoneType not in args:
-        raise ValueError("Typehint must be `T`, `Optional[T]`, or `Union[T, None]`")
-
-    if args[1] is NoneType:
-        return args[0]
-
-    return args[1]
+    return args
 
 
-def _get_arg(t: Type[Arg] | Type[Any], metadata: Iterable[Any]) -> Optional[T]:
-    data: T
+def _get_arg(t: type[Arg] | type[Any], metadata: Iterable[Any]) -> Any | None:
     for data in metadata:
         if isinstance(data, t):
             return getattr(data, "payload", data)
     return None
 
 
-def _get_origin_and_metadata(param: Parameter) -> Tuple[Any, Iterable[Any]]:
+def _get_origin_and_metadata(param: Parameter) -> tuple[Any, Iterable[Any]]:
     typehint = param.annotation
     origin = _unwrap_optional(typehint)
     metadata = ()
@@ -65,12 +65,18 @@ def _get_origin_and_metadata(param: Parameter) -> Tuple[Any, Iterable[Any]]:
     return origin, metadata
 
 
-def gen_command_option(param: Parameter) -> Optional[CommandOption]:
+def _any_issubclass(obj: Any, cls: type) -> bool:
+    if not isclass(obj):
+        return False
+    return issubclass(obj, cls)
+
+
+def gen_command_option(param: Parameter) -> CommandOption | None:
     name = param.name
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin is Context or origin is param.empty:
+    if origin is param.empty or _any_issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
@@ -110,6 +116,6 @@ def gen_command_option(param: Parameter) -> Optional[CommandOption]:
     )
 
 
-def get_autocomplete_func(param: Parameter) -> Optional[AutocompleteCallbackT]:
+def get_autocomplete_func(param: Parameter) -> AutocompleteCallbackT | None:
     _, metadata = _get_origin_and_metadata(param)
     return _get_arg(Autocomplete, metadata)

@@ -1,3 +1,4 @@
+from types import FunctionType
 from typing import Optional
 
 from hikari import (
@@ -23,14 +24,19 @@ class TestCommandFunction:
         async def callback(ctx: Context):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
-            app=AppCommand(
+            owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="test",
                 guild_id=12345678,
-                default_permission=UNDEFINED,
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
                 description="1234",
-            )
+            ),
         )
 
     def test_annotated_command(self):
@@ -43,12 +49,17 @@ class TestCommandFunction:
         ):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
-            app=AppCommand(
+            owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
                 guild_id=None,
-                default_permission=UNDEFINED,
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
                 description="1234",
                 options=[
                     CommandOption(
@@ -64,7 +75,7 @@ class TestCommandFunction:
                         is_required=False,
                     ),
                 ],
-            )
+            ),
         )
 
     def test_crescent_annotations(self):
@@ -79,13 +90,16 @@ class TestCommandFunction:
         ):
             pass
 
-        print(callback.metadata.app.options[2].channel_types)
+        assert isinstance(callback.metadata.owner, FunctionType)
 
         assert callback.metadata == AppCommandMeta(
-            app=AppCommand(
+            owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
+            app_command=AppCommand(
                 type=CommandType.SLASH,
                 name="callback",
-                default_permission=UNDEFINED,
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
                 description="1234",
                 guild_id=None,
                 options=[
@@ -111,7 +125,7 @@ class TestCommandFunction:
                         channel_types=[ChannelType.GUILD_TEXT],
                     ),
                 ],
-            )
+            ),
         )
 
     def test_message_command(self):
@@ -120,12 +134,15 @@ class TestCommandFunction:
             pass
 
         assert callback.metadata == AppCommandMeta(
-            app=AppCommand(
+            owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
+            app_command=AppCommand(
                 type=CommandType.MESSAGE,
                 name="callback",
-                default_permission=UNDEFINED,
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
                 guild_id=None,
-            )
+            ),
         )
 
     def test_user_command(self):
@@ -133,15 +150,23 @@ class TestCommandFunction:
         async def callback(ctx: Context, user: User):
             pass
 
+        assert isinstance(callback.metadata.owner, FunctionType)
+
         assert callback.metadata == AppCommandMeta(
-            app=AppCommand(
-                type=CommandType.USER, name="callback", default_permission=UNDEFINED, guild_id=None
-            )
+            owner=callback.metadata.owner,
+            callback=callback.metadata.callback,
+            app_command=AppCommand(
+                type=CommandType.USER,
+                name="callback",
+                default_member_permissions=UNDEFINED,
+                is_dm_enabled=True,
+                guild_id=None,
+            ),
         )
 
     def test_autocomplete_exists(self):
-
-        autocomplete_response = object()
+        async def autocomplete_response(ctx, option):
+            ...
 
         @command
         async def callback(
@@ -149,4 +174,4 @@ class TestCommandFunction:
         ):
             pass
 
-        assert callback.metadata.autocomplete == {"parameter": autocomplete_response}
+        assert callback.metadata.autocomplete["parameter"].__wrapped__ == autocomplete_response

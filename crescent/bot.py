@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from asyncio import Event as aio_Event
 from asyncio import Task, create_task
 from concurrent.futures import Executor
+from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, overload
 
+from hikari import AutocompleteInteractionOption
+from hikari import Event as hk_Event
 from hikari import (
     GatewayBot,
     Intents,
@@ -16,22 +20,27 @@ from hikari import (
 )
 from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
-from crescent.internal.app_command import AppCommandMeta
+from crescent.commands.hooks import add_hooks
 from crescent.internal.handle_resp import handle_resp
-from crescent.internal.meta_struct import MetaStruct
+from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Optional, Sequence, TypeVar, Union
+    from typing import Any, Callable, Sequence, TypeVar
 
-    from crescent.context import Context
-    from crescent.typedefs import HookCallbackT
+    from crescent.context import AutocompleteContext, Context
+    from crescent.typedefs import (
+        AutocompleteErrorHandlerCallbackT,
+        CommandErrorHandlerCallbackT,
+        EventErrorHandlerCallbackT,
+        HookCallbackT,
+    )
 
-    META_STRUCT = TypeVar("META_STRUCT", bound=MetaStruct[Any, Any])
+    INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
 
 
-__all___: Sequence[str] = "Bot"
+__all___: Sequence[str] = ("Bot",)
 
 
 class Bot(GatewayBot):
@@ -43,22 +52,24 @@ class Bot(GatewayBot):
         token: str,
         *,
         tracked_guilds: Sequence[Snowflakeish] | None = None,
-        default_guild: Optional[Snowflakeish] = None,
+        default_guild: Snowflakeish | None = None,
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
         command_hooks: list[HookCallbackT] | None = None,
+        command_after_hooks: list[HookCallbackT] | None = None,
         allow_color: bool = True,
-        banner: Optional[str] = "crescent",
-        executor: Optional[Executor] = None,
+        banner: str | None = "crescent",
+        executor: Executor | None = None,
         force_color: bool = False,
-        cache_settings: Optional[CacheSettings] = None,
-        http_settings: Optional[HTTPSettings] = None,
+        cache_settings: CacheSettings | None = None,
+        http_settings: HTTPSettings | None = None,
         intents: Intents = Intents.ALL_UNPRIVILEGED,
-        logs: Union[None, int, str, Dict[str, Any]] = "INFO",
+        auto_chunk_members: bool = True,
+        logs: int | str | dict[str, Any] | None = "INFO",
         max_rate_limit: float = 300,
         max_retries: int = 3,
-        proxy_settings: Optional[ProxySettings] = None,
-        rest_url: Optional[str] = None,
+        proxy_settings: ProxySettings | None = None,
+        rest_url: str | None = None,
     ):
         """
         Crescent adds two parameters to Hikari's Gateway Bot. `tracked_guilds`
@@ -67,7 +78,7 @@ class Bot(GatewayBot):
         Args:
             default_guild:
                 The guild to post application commands to by default. If this is None,
-                slash commands will be posted globall.
+                slash commands will be posted globally.
             tracked_guilds:
                 The guilds to compare posted commands to. Commands will not be
                 automatically removed from guilds that aren't in this list. This should
@@ -82,6 +93,7 @@ class Bot(GatewayBot):
             cache_settings=cache_settings,
             http_settings=http_settings,
             intents=intents,
+            auto_chunk_members=auto_chunk_members,
             logs=logs,
             max_rate_limit=max_rate_limit,
             max_retries=max_retries,
@@ -98,16 +110,30 @@ class Bot(GatewayBot):
         self.allow_unknown_interactions = allow_unknown_interactions
         self.update_commands = update_commands
         self.command_hooks = command_hooks
+        self.command_after_hooks = command_after_hooks
+
+        self._started = aio_Event()
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
-        self._error_handler = ErrorHandler(self)
-        self.default_guild: Optional[Snowflakeish] = default_guild
+
+        self._command_error_handler: ErrorHandler[
+            CommandErrorHandlerCallbackT[Any]
+        ] = ErrorHandler(self)
+        self._event_error_handler: ErrorHandler[EventErrorHandlerCallbackT[Any]] = ErrorHandler(
+            self
+        )
+        self._autocomplete_error_handler: ErrorHandler[
+            AutocompleteErrorHandlerCallbackT[Any]
+        ] = ErrorHandler(self)
+
+        self.default_guild: Snowflakeish | None = default_guild
 
         self._plugins = PluginManager(self)
 
         self.subscribe(ShardReadyEvent, self._on_shard_ready)
 
         async def on_started(event: StartedEvent) -> None:
+            self._started.set()
             await self._on_started(event)
 
         self.subscribe(StartedEvent, on_started)
@@ -116,43 +142,49 @@ class Bot(GatewayBot):
     async def _on_shard_ready(self, event: ShardReadyEvent) -> None:
         self._command_handler.application_id = event.application_id
 
-    async def _on_started(self, _: StartedEvent) -> Optional[Task[None]]:
+    async def _on_started(self, _: StartedEvent) -> Task[None] | None:
         if self.update_commands:
             return create_task(self._command_handler.register_commands())
         return None
 
+    @property
+    def started(self) -> aio_Event:
+        """
+        Returns `asyncio.Event` that is set when `hikari.StartedEvent` is dispatched.
+        """
+        return self._started
+
     @overload
-    def include(self, command: META_STRUCT) -> META_STRUCT:
+    def include(self, command: INCLUDABLE) -> INCLUDABLE:
         ...
 
     @overload
-    def include(self, command: None = ...) -> Callable[[META_STRUCT], META_STRUCT]:
+    def include(self, command: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
         ...
 
     def include(
-        self, command: META_STRUCT | None = None
-    ) -> META_STRUCT | Callable[[META_STRUCT], META_STRUCT]:
+        self, command: INCLUDABLE | None = None
+    ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
         if command is None:
             return self.include
 
-        if isinstance(command.metadata, AppCommandMeta) and self.command_hooks:
-            command.metadata.hooks.extend(self.command_hooks)
+        add_hooks(self, command)
+
         command.register_to_app(self)
 
         return command
 
-    @classmethod
+    @staticmethod
     def print_banner(
-        cls,
-        banner: Optional[str],
+        banner: str | None,
         allow_color: bool,
         force_color: bool,
-        extra_args: Optional[Dict[str, str]] = None,
+        extra_args: dict[str, str] | None = None,
     ) -> None:
         from crescent import __version__
         from crescent._about import __copyright__, __license__
 
-        args: Dict[str, str] = {
+        args: dict[str, str] = {
             "crescent_version": __version__,
             "crescent_copyright": __copyright__,
             "crescent_license": __license__,
@@ -161,18 +193,41 @@ class Bot(GatewayBot):
         if extra_args:
             args.update(extra_args)
 
-        super().print_banner(banner, allow_color, force_color, extra_args=args)
+        super(Bot, Bot).print_banner(banner, allow_color, force_color, extra_args=args)
 
     @property
     def plugins(self) -> PluginManager:
         return self._plugins
 
-    async def on_crescent_error(self, exc: Exception, ctx: Context, was_handled: bool) -> None:
+    async def on_crescent_command_error(
+        self, exc: Exception, ctx: Context, was_handled: bool
+    ) -> None:
         if was_handled:
             return
-        try:
+        with suppress(Exception):
             await ctx.respond("An unexpected error occurred.", ephemeral=True)
-        except Exception:
-            pass
         print(f"Unhandled exception occurred in the command {ctx.command}:")
+        print_exception(exc.__class__, exc, exc.__traceback__)
+
+    async def on_crescent_event_error(
+        self, exc: Exception, event: hk_Event, was_handled: bool
+    ) -> None:
+        if was_handled:
+            return
+        print(f"Unhandled exception occurred for {type(event)}:")
+        print_exception(exc.__class__, exc, exc.__traceback__)
+
+    async def on_crescent_autocomplete_error(
+        self,
+        exc: Exception,
+        ctx: AutocompleteContext,
+        option: AutocompleteInteractionOption,
+        was_handled: bool,
+    ) -> None:
+        if was_handled:
+            return
+        print(
+            f"Unhandled exception occurred in the autocomplete interaction for {ctx.command}"
+            f" (option: {option.name}):"
+        )
         print_exception(exc.__class__, exc, exc.__traceback__)

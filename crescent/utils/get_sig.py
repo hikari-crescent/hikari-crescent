@@ -2,16 +2,16 @@ from __future__ import annotations
 
 from inspect import Parameter, signature
 from sys import version_info
-from typing import TYPE_CHECKING, get_type_hints
+from typing import TYPE_CHECKING, Dict, List, Tuple, Type, get_type_hints
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Sequence
+    from typing import Any, Callable, Sequence
 
 __all__: Sequence[str] = ("get_parameters",)
 
 
-def convert_signiture(param: Parameter, type_hints: Dict[str, type[Any]]) -> Parameter:
-    annotation = type_hints.get(param.name, None)
+def convert_signiture(param: Parameter, type_hints: dict[str, type[Any]]) -> Parameter:
+    annotation = type_hints.get(param.name)
     return Parameter(
         name=param.name,
         annotation=annotation or param.annotation,
@@ -21,15 +21,19 @@ def convert_signiture(param: Parameter, type_hints: Dict[str, type[Any]]) -> Par
 
 
 def get_parameters(func: Callable[..., Any]) -> Sequence[Parameter]:
-    # NOTE: type: ignore is used because mypy is on python version 3.8
+    # NOTE: type: ignore is used because mypy and pyright are on python version 3.8
 
     if version_info >= (3, 10):
         return signature(func, eval_str=True).parameters.values()  # type: ignore
 
+    localns: dict[str, Any] = {"list": List, "type": Type, "dict": Dict, "tuple": Tuple}
+
     if version_info >= (3, 9):
-        type_hints = get_type_hints(func, include_extras=True)  # type: ignore
+        type_hints: dict[str, Any] = get_type_hints(
+            func, include_extras=True, localns=localns  # type: ignore
+        )
     else:
-        type_hints = get_type_hints(func)
+        type_hints = get_type_hints(func, localns=localns)
 
     sig = signature(func)
 
