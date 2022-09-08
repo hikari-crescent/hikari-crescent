@@ -100,6 +100,9 @@ def test_annotations():
 
 
 def test_310_annotation_syntax():
+    import sigparse
+    sigparse.global_PEP604()
+
     assert gen_command_option(
         Parameter(name="1234", annotation=int | None, default=None, kind=POSITIONAL_OR_KEYWORD)
     ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
