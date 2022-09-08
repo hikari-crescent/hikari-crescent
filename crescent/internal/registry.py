@@ -119,33 +119,33 @@ class ErrorHandler(Generic[_E]):
 
 class CommandHandler:
 
-    __slots__: Sequence[str] = ("_bot", "_guilds", "_application_id", "__registry")
+    __slots__: Sequence[str] = ("_bot", "_guilds", "_application_id", "_registry")
 
     def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
         self._bot: Bot = bot
         self._guilds: Sequence[Snowflakeish] = guilds
         self._application_id: Snowflake | None = None
 
-        self.__registry: dict[Unique, Includable[AppCommandMeta]] = {}
+        self._registry: dict[Unique, Includable[AppCommandMeta]] = {}
 
     def _register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
         command.metadata.app_command.guild_id = (
             command.metadata.app_command.guild_id or self._bot.default_guild
         )
-        self.__registry[command.metadata.unique] = command
+        self._registry[command.metadata.unique] = command
         return command
 
     def _remove(self, command: Includable[AppCommandMeta]) -> None:
-        self.__registry.pop(command.metadata.unique)
+        self._registry.pop(command.metadata.unique)
 
     def _get(self, unique: Unique) -> Includable[AppCommandMeta]:
-        return self.__registry[unique]
+        return self._registry[unique]
 
     def __build_commands(self) -> Sequence[AppCommand]:
 
         built_commands: dict[Unique, AppCommand] = {}
 
-        for command in self.__registry.values():
+        for command in self._registry.values():
             if command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
                 #
@@ -335,7 +335,7 @@ class CommandHandler:
         """
         return (
             command.metadata for command in
-            self.__registry.values()
+            self._registry.values()
         )
 
     @property
@@ -345,5 +345,5 @@ class CommandHandler:
         """
         return (
             command.metadata.app_command for command in
-            self.__registry.values()
+            self._registry.values()
         )
