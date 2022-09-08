@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from inspect import _empty, isclass
+from inspect import isclass
 from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
