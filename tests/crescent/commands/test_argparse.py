@@ -24,21 +24,12 @@ from hikari import (
     TextableGuildChannel,
 )
 from pytest import mark
+from sigparse import Parameter
 from typing_extensions import Annotated
 
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
 from crescent.commands.signature import gen_command_option
 from tests.utils import arrays_contain_same_elements
-
-
-@dataclass
-class Parameter:
-    name: str
-    annotation: type
-    default: Any
-    kind: _ParameterKind
-
-    empty: type[_empty] = _empty
 
 
 POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD
