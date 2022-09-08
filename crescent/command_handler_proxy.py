@@ -18,6 +18,10 @@ class CommandHandlerProxy:
         self._command_handler = command_handler
 
     async def register_commands(self) -> None:
+        """
+        Register all commands to discord.
+        Note: This is done automatically when the bot starts.
+        """
         await self._command_handler.register_commands()
 
     @property
