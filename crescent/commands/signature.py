@@ -101,7 +101,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
     max_value = _get_arg(MaxValue, metadata)
     autocomplete = _get_arg(Autocomplete, metadata)
 
-    required = not param.has_default()
+    required = param is _empty
 
     return CommandOption(
         name=name,
