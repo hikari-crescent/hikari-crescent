@@ -20,6 +20,7 @@ from hikari import (
 )
 from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
+from crescent.command_handler_proxy import CommandHandlerProxy
 from crescent.commands.hooks import add_hooks
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
@@ -198,6 +199,10 @@ class Bot(GatewayBot):
     @property
     def plugins(self) -> PluginManager:
         return self._plugins
+
+    @property
+    def commands(self) -> CommandHandlerProxy:
+        return CommandHandlerProxy(self._command_handler)
 
     async def on_crescent_command_error(
         self, exc: Exception, ctx: Context, was_handled: bool
