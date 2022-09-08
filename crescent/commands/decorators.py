@@ -5,11 +5,11 @@ from inspect import isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
+from sigparse import sigparse
 
 from crescent.commands.options import ClassCommandOption
 from crescent.commands.signature import gen_command_option, get_autocomplete_func
 from crescent.internal.registry import register_command
-from sigparse import sigparse
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
