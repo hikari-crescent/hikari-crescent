@@ -1,8 +1,8 @@
 name: ci
 on: [push, pull_request]
 jobs:
-  ci:
-    name: ci
+  lint:
+    name: lint
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -12,3 +12,19 @@ jobs:
         packages: nox
     - run: nox -s lint mypy pyright docs
   
+  typechecking:
+    name: "typechecking and docs"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: 'x64'
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.1.3
+      - name: run
+        run: |
+          poetry install
+          poetry run nox -s mypy pyright docs
