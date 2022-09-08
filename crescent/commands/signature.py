@@ -73,11 +73,12 @@ def _any_issubclass(obj: Any, cls: type) -> bool:
 
 
 def gen_command_option(param: Parameter) -> CommandOption | None:
-    name = param.name
+    if not param.has_annotation:
+        return None
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if not param.has_annotation or _any_issubclass(origin, BaseContext):
+    if _any_issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
@@ -93,7 +94,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
             " `hikari.Role`, `hikari.User`, or `crescent.Mentionable`."
         )
 
-    name = _get_arg(Name, metadata) or name
+    name = _get_arg(Name, metadata) or param.name
     description = _get_arg(Description, metadata) or _get_arg(str, metadata) or "No Description"
     choices = _get_arg(Choices, metadata)
     channel_types = _channel_types or _get_arg(ChannelTypes, metadata)
