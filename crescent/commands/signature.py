@@ -77,7 +77,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin is _empty or _any_issubclass(origin, BaseContext):
+    if not param.has_annotation or _any_issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
@@ -101,7 +101,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
     max_value = _get_arg(MaxValue, metadata)
     autocomplete = _get_arg(Autocomplete, metadata)
 
-    required = param is _empty
+    required = not param.has_default
 
     return CommandOption(
         name=name,
