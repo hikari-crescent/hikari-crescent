@@ -21,7 +21,6 @@ from hikari import (
     TextableChannel,
     TextableGuildChannel,
 )
-from pytest import mark
 from sigparse import Parameter, global_PEP604
 from typing_extensions import Annotated
 
