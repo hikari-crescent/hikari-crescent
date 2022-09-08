@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from inspect import _empty, _ParameterKind
-from sys import version_info
-from typing import Any, Union
+from typing import Union
 
 from hikari import (
     ChannelType,
