@@ -16,4 +16,4 @@ jobs:
       - name: run Pytest
         run: |
           poetry install
-          poetry run nox -s flake8 codespell mypy pyright docs
+          poetry run nox -s lint mypy pyright docs

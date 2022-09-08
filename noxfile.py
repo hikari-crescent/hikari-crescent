@@ -38,14 +38,12 @@ def apply_lint(session: nox.Session) -> None:
     session.run("codespell", "crescent", "-i", "2")
 
 
-@pip_session("flake8")
-def flake8(session: nox.Session) -> None:
-    session.run("flake8", "crescent")
-
-
-@pip_session("codespell")
-def codespell(session: nox.Session) -> None:
+@pip_session("black", "codespell", "flake8", "isort")
+def lint(session: nox.Session) -> None:
+    session.run("black", "--check", "crescent")
     session.run("codespell", "crescent")
+    session.run("flake8", "crescent")
+    session.run("isort", "--check", "crescent")
 
 
 @poetry_session
