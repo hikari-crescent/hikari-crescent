@@ -20,8 +20,9 @@ from crescent.commands.options import OPTIONS_TYPE_MAP, get_channel_types
 from crescent.context import BaseContext
 
 if TYPE_CHECKING:
-    from inspect import Parameter
     from typing import Any, Sequence, TypeVar
+
+    from sigparse import Parameter
 
     from crescent.typedefs import AutocompleteCallbackT
 
@@ -72,11 +73,12 @@ def _any_issubclass(obj: Any, cls: type) -> bool:
 
 
 def gen_command_option(param: Parameter) -> CommandOption | None:
-    name = param.name
+    if not param.has_annotation:
+        return None
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin is param.empty or _any_issubclass(origin, BaseContext):
+    if _any_issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
@@ -92,7 +94,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
             " `hikari.Role`, `hikari.User`, or `crescent.Mentionable`."
         )
 
-    name = _get_arg(Name, metadata) or name
+    name = _get_arg(Name, metadata) or param.name
     description = _get_arg(Description, metadata) or _get_arg(str, metadata) or "No Description"
     choices = _get_arg(Choices, metadata)
     channel_types = _channel_types or _get_arg(ChannelTypes, metadata)
@@ -100,7 +102,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
     max_value = _get_arg(MaxValue, metadata)
     autocomplete = _get_arg(Autocomplete, metadata)
 
-    required = param.default is param.empty
+    required = not param.has_default
 
     return CommandOption(
         name=name,

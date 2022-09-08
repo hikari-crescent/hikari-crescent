@@ -5,11 +5,11 @@ from inspect import isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
+from sigparse import sigparse
 
 from crescent.commands.options import ClassCommandOption
 from crescent.commands.signature import gen_command_option, get_autocomplete_func
 from crescent.internal.registry import register_command
-from crescent.utils import get_parameters
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
@@ -118,7 +118,7 @@ def command(
     elif isfunction(callback):
         callback_func = callback
 
-        for param in get_parameters(callback_func):
+        for param in sigparse(callback_func):
             if param is None:
                 continue
 

@@ -3,11 +3,12 @@ from __future__ import annotations
 from functools import wraps
 from typing import TYPE_CHECKING, Awaitable, cast
 
+from sigparse import Parameter, sigparse
+
 from crescent.context.base_context import BaseContext
 from crescent.context.context import Context
 
 if TYPE_CHECKING:
-    from inspect import Parameter
     from typing import Any, Callable, Sequence, TypeVar
 
     from typing_extensions import ParamSpec
@@ -15,8 +16,6 @@ if TYPE_CHECKING:
     T = TypeVar("T")
     P = ParamSpec("P")
 
-
-from crescent.utils import get_parameters
 
 __all__: Sequence[str] = ("support_custom_context", "get_function_context", "get_context_type")
 
@@ -60,7 +59,7 @@ def get_function_context(func: Callable[..., Any]) -> type[BaseContext]:
     """
     Gets the context type used in a function.
     """
-    return get_context_type(get_parameters(func)) or Context
+    return get_context_type(sigparse(func)) or Context
 
 
 def get_context_type(params: Sequence[Parameter]) -> type[BaseContext] | None:

@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from inspect import _empty, _ParameterKind
-from sys import version_info
-from typing import Any, Union
+from typing import Union
 
 from hikari import (
     ChannelType,
@@ -23,7 +21,7 @@ from hikari import (
     TextableChannel,
     TextableGuildChannel,
 )
-from pytest import mark
+from sigparse import Parameter, global_PEP604
 from typing_extensions import Annotated
 
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
@@ -31,15 +29,7 @@ from crescent.commands.signature import gen_command_option
 from tests.utils import arrays_contain_same_elements
 
 
-@dataclass
-class Parameter:
-    name: str
-    annotation: type
-    default: Any
-    kind: _ParameterKind
-
-    empty: type[_empty] = _empty
-
+global_PEP604()
 
 POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD
 
@@ -108,7 +98,6 @@ def test_annotations():
         ) == CommandOption(**kwargs)
 
 
-@mark.skipif(version_info < (3, 10), reason="Syntax introduced in python 3.10")
 def test_310_annotation_syntax():
     assert gen_command_option(
         Parameter(name="1234", annotation=int | None, default=None, kind=POSITIONAL_OR_KEYWORD)
