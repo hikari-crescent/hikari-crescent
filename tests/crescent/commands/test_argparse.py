@@ -108,7 +108,6 @@ def test_annotations():
         ) == CommandOption(**kwargs)
 
 
-@mark.skipif(version_info < (3, 10), reason="Syntax introduced in python 3.10")
 def test_310_annotation_syntax():
     assert gen_command_option(
         Parameter(name="1234", annotation=int | None, default=None, kind=POSITIONAL_OR_KEYWORD)

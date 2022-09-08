@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from inspect import isclass
+from inspect import _empty, isclass
 from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
@@ -20,8 +20,9 @@ from crescent.commands.options import OPTIONS_TYPE_MAP, get_channel_types
 from crescent.context import BaseContext
 
 if TYPE_CHECKING:
-    from inspect import Parameter
     from typing import Any, Sequence, TypeVar
+
+    from sigparse import Parameter
 
     from crescent.typedefs import AutocompleteCallbackT
 
@@ -76,7 +77,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin is param.empty or _any_issubclass(origin, BaseContext):
+    if origin is _empty or _any_issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
@@ -100,7 +101,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
     max_value = _get_arg(MaxValue, metadata)
     autocomplete = _get_arg(Autocomplete, metadata)
 
-    required = param.default is param.empty
+    required = param.default is _empty
 
     return CommandOption(
         name=name,
