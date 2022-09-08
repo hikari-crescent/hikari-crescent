@@ -24,7 +24,7 @@ from crescent.internal.includable import Includable
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, DefaultDict, Sequence, Iterable
+    from typing import Any, Awaitable, Callable, DefaultDict, Iterable, Sequence
 
     from hikari import Snowflakeish
 
@@ -268,7 +268,9 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def __post_guild_commands(self, commands: Sequence[CanBuild], guild: Snowflakeish) -> None:
+    async def __post_guild_commands(
+        self, commands: Sequence[CanBuild], guild: Snowflakeish
+    ) -> None:
         try:
             if self._application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
@@ -333,17 +335,11 @@ class CommandHandler:
         Returns the information crescent stores for all the commands registered
         to the bot.
         """
-        return (
-            command.metadata for command in
-            self._registry.values()
-        )
+        return (command.metadata for command in self._registry.values())
 
     @property
     def app_commands(self) -> Iterable[AppCommand]:
         """
         Returns the app commands registered to this bot.
         """
-        return (
-            command.metadata.app_command for command in
-            self._registry.values()
-        )
+        return (command.metadata.app_command for command in self._registry.values())
