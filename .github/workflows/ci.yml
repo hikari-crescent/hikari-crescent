@@ -1,8 +1,19 @@
 name: ci
 on: [push, pull_request]
 jobs:
-  ci:
-    name: ci
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+    - uses: BSFishy/pip-action@v1
+      with:
+        packages: nox
+    - run: nox -s lint
+  
+  typechecking:
+    name: "typechecking and docs"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,7 +24,7 @@ jobs:
           architecture: 'x64'
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.3
-      - name: run Pytest
+      - name: run
         run: |
           poetry install
-          poetry run nox -s flake8 codespell mypy pyright docs
+          poetry run nox -s mypy pyright docs
