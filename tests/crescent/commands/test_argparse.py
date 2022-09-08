@@ -24,13 +24,15 @@ from hikari import (
     TextableGuildChannel,
 )
 from pytest import mark
-from sigparse import Parameter
+from sigparse import Parameter, global_PEP604
 from typing_extensions import Annotated
 
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
 from crescent.commands.signature import gen_command_option
 from tests.utils import arrays_contain_same_elements
 
+
+global_PEP604()
 
 POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD
 
@@ -100,9 +102,6 @@ def test_annotations():
 
 
 def test_310_annotation_syntax():
-    import sigparse
-    sigparse.global_PEP604()
-
     assert gen_command_option(
         Parameter(name="1234", annotation=int | None, default=None, kind=POSITIONAL_OR_KEYWORD)
     ) == CommandOption(name="1234", type=OptionType.INTEGER, description="No Description")
