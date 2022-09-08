@@ -5,15 +5,10 @@ jobs:
     name: ci
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: 'x64'
-      - name: Setup Poetry
-        uses: abatilo/actions-poetry@v2.1.3
-      - name: run Pytest
-        run: |
-          poetry install
-          poetry run nox -s lint mypy pyright docs
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+    - uses: BSFishy/pip-action@v1
+      with:
+        packages: nox
+    - run: nox -s lint mypy pyright docs
+  
