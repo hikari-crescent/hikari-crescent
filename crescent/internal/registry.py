@@ -24,7 +24,7 @@ from crescent.internal.includable import Includable
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, DefaultDict, Sequence
+    from typing import Any, Awaitable, Callable, DefaultDict, Iterable, Sequence
 
     from hikari import Snowflakeish
 
@@ -37,11 +37,11 @@ _log = getLogger(__name__)
 
 
 def _plugin_unload_callback(self: Includable[Any]) -> None:
-    self.app._command_handler.remove(self)
+    self.app._command_handler._remove(self)
 
 
 def _command_app_set_hook(self: Includable[AppCommandMeta]) -> None:
-    self.app._command_handler.register(self)
+    self.app._command_handler._register(self)
 
 
 def register_command(
@@ -119,30 +119,33 @@ class ErrorHandler(Generic[_E]):
 
 class CommandHandler:
 
-    __slots__: Sequence[str] = ("registry", "bot", "guilds", "application_id")
+    __slots__: Sequence[str] = ("_bot", "_guilds", "_application_id", "_registry")
 
     def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
-        self.bot: Bot = bot
-        self.guilds: Sequence[Snowflakeish] = guilds
-        self.application_id: Snowflake | None = None
+        self._bot: Bot = bot
+        self._guilds: Sequence[Snowflakeish] = guilds
+        self._application_id: Snowflake | None = None
 
-        self.registry: dict[Unique, Includable[AppCommandMeta]] = {}
+        self._registry: dict[Unique, Includable[AppCommandMeta]] = {}
 
-    def register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+    def _register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
         command.metadata.app_command.guild_id = (
-            command.metadata.app_command.guild_id or self.bot.default_guild
+            command.metadata.app_command.guild_id or self._bot.default_guild
         )
-        self.registry[command.metadata.unique] = command
+        self._registry[command.metadata.unique] = command
         return command
 
-    def remove(self, command: Includable[AppCommandMeta]) -> None:
-        self.registry.pop(command.metadata.unique)
+    def _remove(self, command: Includable[AppCommandMeta]) -> None:
+        self._registry.pop(command.metadata.unique)
 
-    def build_commands(self) -> Sequence[AppCommand]:
+    def _get(self, unique: Unique) -> Includable[AppCommandMeta]:
+        return self._registry[unique]
+
+    def __build_commands(self) -> Sequence[AppCommand]:
 
         built_commands: dict[Unique, AppCommand] = {}
 
-        for command in self.registry.values():
+        for command in self._registry.values():
             if command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
                 #
@@ -265,18 +268,20 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def post_guild_commands(self, commands: Sequence[CanBuild], guild: Snowflakeish) -> None:
+    async def __post_guild_commands(
+        self, commands: Sequence[CanBuild], guild: Snowflakeish
+    ) -> None:
         try:
-            if self.application_id is None:
+            if self._application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
-            await self.bot.rest.set_application_commands(
-                application=self.application_id,
+            await self._bot.rest.set_application_commands(
+                application=self._application_id,
                 # The only method that is called has been implemented.
                 commands=commands,  # type: ignore
                 guild=guild,
             )
         except ForbiddenError:
-            if guild in self.bot.cache.get_guilds_view().keys():
+            if guild in self._bot.cache.get_guilds_view().keys():
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
@@ -290,9 +295,9 @@ class CommandHandler:
             )
 
     async def register_commands(self) -> None:
-        guilds = list(self.guilds)
+        guilds = list(self._guilds)
 
-        commands = self.build_commands()
+        commands = self.__build_commands()
 
         command_guilds: DefaultDict[Snowflakeish, list[AppCommand]] = defaultdict(list)
         global_commands: list[AppCommand] = []
@@ -305,21 +310,36 @@ class CommandHandler:
             else:
                 global_commands.append(command)
 
-        assert self.application_id is not None
+        assert self._application_id is not None
         await gather(
-            self.bot.rest.set_application_commands(
-                application=self.application_id,
+            self._bot.rest.set_application_commands(
+                application=self._application_id,
                 # The only method that is called has been implemented.
                 commands=global_commands,  # type: ignore
             ),
             gather_iter(
-                self.post_guild_commands(commands, guild)
+                self.__post_guild_commands(commands, guild)
                 for guild, commands in command_guilds.items()
             ),
             gather_iter(
-                self.bot.rest.set_application_commands(
-                    application=self.application_id, commands=[], guild=guild
+                self._bot.rest.set_application_commands(
+                    application=self._application_id, commands=[], guild=guild
                 )
                 for guild in guilds
             ),
         )
+
+    @property
+    def crescent_commands(self) -> Iterable[AppCommandMeta]:
+        """
+        Returns the information crescent stores for all the commands registered
+        to the bot.
+        """
+        return (command.metadata for command in self._registry.values())
+
+    @property
+    def app_commands(self) -> Iterable[AppCommand]:
+        """
+        Returns the app commands registered to this bot.
+        """
+        return (command.metadata.app_command for command in self._registry.values())

@@ -22,7 +22,7 @@ class TestPlugins:
         assert _plugin is plugin
 
         assert plugin_command in _plugin._children
-        assert plugin_command.metadata.unique in bot._command_handler.registry
+        assert plugin_command.metadata.unique in bot._command_handler._registry
 
         assert plugin_event in _plugin._children
         # Length is one because only one event is listened to
@@ -46,7 +46,7 @@ class TestPlugins:
         bot.plugins.load("tests.crescent.plugins.plugin")
         bot.plugins.unload("tests.crescent.plugins.plugin")
 
-        assert plugin_command.metadata.unique not in bot._command_handler.registry
+        assert plugin_command.metadata.unique not in bot._command_handler._registry
         assert len(bot._event_manager.get_listeners(MessageCreateEvent)) == 0
         assert plugin_catch_command not in bot._command_error_handler.registry.values()
 
@@ -60,7 +60,7 @@ class TestPlugins:
         assert _plugin is plugin
 
         assert plugin_command in _plugin._children
-        assert plugin_command.metadata.unique in bot._command_handler.registry
+        assert plugin_command.metadata.unique in bot._command_handler._registry
 
         assert plugin_event in _plugin._children
         assert len(bot._event_manager.get_listeners(MessageCreateEvent)) == 1

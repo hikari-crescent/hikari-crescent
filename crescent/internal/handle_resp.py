@@ -153,9 +153,9 @@ def _get_command(
     kwargs: dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
 
     with suppress(KeyError):
-        return bot._command_handler.registry[Unique(guild_id=guild_id, **kwargs)]
+        return bot._command_handler._get(Unique(guild_id=guild_id, **kwargs))
     with suppress(KeyError):
-        return bot._command_handler.registry[Unique(guild_id=UNDEFINED, **kwargs)]
+        return bot._command_handler._get(Unique(guild_id=UNDEFINED, **kwargs))
     return None
 
 

@@ -140,7 +140,7 @@ class Bot(GatewayBot):
         self.subscribe(InteractionCreateEvent, handle_resp)
 
     async def _on_shard_ready(self, event: ShardReadyEvent) -> None:
-        self._command_handler.application_id = event.application_id
+        self._command_handler._application_id = event.application_id
 
     async def _on_started(self, _: StartedEvent) -> Task[None] | None:
         if self.update_commands:
@@ -198,6 +198,10 @@ class Bot(GatewayBot):
     @property
     def plugins(self) -> PluginManager:
         return self._plugins
+
+    @property
+    def commands(self) -> CommandHandler:
+        return self._command_handler
 
     async def on_crescent_command_error(
         self, exc: Exception, ctx: Context, was_handled: bool
