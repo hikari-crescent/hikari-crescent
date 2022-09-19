@@ -35,7 +35,7 @@ class Context(BaseContext):
 
     @property
     def channel(self) -> GuildChannel | None:
-        return map_or(self.guild_id, self.app.cache.get_guild_channel)
+        return self.app.cache.get_guild_channel(self.channel_id)
 
     @property
     def guild(self) -> Guild | None:
