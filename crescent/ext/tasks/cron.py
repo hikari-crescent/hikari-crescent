@@ -29,7 +29,9 @@ class Cronjob(Task):
         self.first_loop = False
 
 
-def cronjob(cron: str, /, on_start: bool=False) -> Callable[[TaskCallbackT], Includable[Cronjob]]:
+def cronjob(
+    cron: str, /, on_start: bool = False
+) -> Callable[[TaskCallbackT], Includable[Cronjob]]:
     """
     Run a task at the time specified by the cron schedule expression.
     """
