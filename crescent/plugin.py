@@ -111,6 +111,12 @@ class PluginManager:
 
         for glob_path in pathlib_path.glob(r"**/[!_]*.py"):
             self._load_plugin_from_filepath(glob_path, strict, loaded_plugins, loaded_paths)
+
+        if not loaded_plugins:
+            _LOG.warning(
+                "No plugins were loaded! Are you sure `%s` is the correct directory?", pathlib_path
+            )
+
         return loaded_plugins
 
     def _load_plugin_from_filepath(
