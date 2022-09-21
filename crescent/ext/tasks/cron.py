@@ -34,6 +34,13 @@ def cronjob(
 ) -> Callable[[TaskCallbackT], Includable[Cronjob]]:
     """
     Run a task at the time specified by the cron schedule expression.
+
+    Args:
+        cron:
+            The cronjob used to schedule when this bot is run. `croniter` is used
+            for parsing cron expressions.
+        on_startup:
+            If `True`, run the callback when this task is started.
     """
 
     def inner(callback: TaskCallbackT) -> Includable[Cronjob]:
