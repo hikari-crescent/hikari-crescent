@@ -110,7 +110,13 @@ class PluginManager:
         loaded_paths: list[str] = []
 
         for glob_path in pathlib_path.glob(r"**/[!_]*.py"):
-            self._load_plugin_from_filepath(glob_path, strict, loaded_plugins, loaded_paths)
+            self._load_plugin_from_filepath(
+                path=glob_path,
+                plugins=loaded_plugins,
+                paths=loaded_paths,
+                refresh=refresh,
+                strict=strict,
+            )
 
         if not loaded_plugins:
             _LOG.warning(
@@ -120,11 +126,11 @@ class PluginManager:
         return loaded_plugins
 
     def _load_plugin_from_filepath(
-        self, path: Path, strict: bool, plugins: list[Plugin], paths: list[str]
+        self, path: Path, plugins: list[Plugin], paths: list[str], *, strict: bool, refresh: bool
     ) -> None:
         mod_name = ".".join(path.as_posix()[:-3].split("/"))
         try:
-            if maybe_plugin := self.load(mod_name, strict=strict):
+            if maybe_plugin := self.load(mod_name, refresh=refresh, strict=strict):
                 plugins.append(maybe_plugin)
                 paths.append(mod_name)
         except ValueError as e:

@@ -98,6 +98,16 @@ class TestPlugins:
         assert arrays_contain_same_elements([plugin, nested_plugin], plugins)
         assert arrays_contain_same_elements([plugin, nested_plugin], bot.plugins.plugins.values())
 
+    def test_load_folder_refresh(self):
+        bot = MockBot()
+
+        bot.plugins.load_folder("tests.crescent.plugins.plugin_folder")
+
+        with raises(PluginAlreadyLoadedError):
+            bot.plugins.load_folder("tests.crescent.plugins.plugin_folder", refresh=False)
+
+        bot.plugins.load_folder("tests.crescent.plugins.plugin_folder", refresh=True)
+
     def test_load_folder_with_not_plugins(self):
         bot = MockBot()
 
