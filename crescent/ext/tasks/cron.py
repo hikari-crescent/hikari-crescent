@@ -37,7 +37,7 @@ def cronjob(
 
     Args:
         cron:
-            The cronjob used to schedule when this bot is run. `croniter` is used
+            The cronjob used to schedule when the callback is run. `croniter` is used
             for parsing cron expressions.
         on_startup:
             If `True`, run the callback when this task is started.
