@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from hikari import MessageCreateEvent
-from pytest import raises
+from pytest import raises, LogCaptureFixture
 
 from crescent.exceptions import PluginAlreadyLoadedError
 from tests.crescent.plugins.plugin import (
@@ -82,7 +82,7 @@ class TestPlugins:
         assert orig is orig2
         assert orig is not new
 
-    def test_load_folder(self):
+    def test_load_folder(self, caplog: LogCaptureFixture):
         bot = MockBot()
 
         plugins = bot.plugins.load_folder("tests.crescent.plugins.plugin_folder")
@@ -91,6 +91,9 @@ class TestPlugins:
         from tests.crescent.plugins.plugin_folder.plugin_subfolder.plugin import (
             plugin as nested_plugin,
         )
+
+        # No messages should be logged if plugins are loaded successfully.
+        assert len(caplog.messages) == 0
 
         assert arrays_contain_same_elements([plugin, nested_plugin], plugins)
         assert arrays_contain_same_elements([plugin, nested_plugin], bot.plugins.plugins.values())
@@ -111,6 +114,13 @@ class TestPlugins:
         from tests.crescent.plugins.plugin_folder_not_strict.plugin import plugin
 
         assert arrays_contain_same_elements([plugin], plugins)
+
+    def test_load_dir_not_exists(self, caplog: LogCaptureFixture):
+        bot = MockBot()
+
+        bot.plugins.load_folder("does.not.exist")
+
+        assert len(caplog.messages) == 1
 
     def test_load_hook(self):
         bot = MockBot()
