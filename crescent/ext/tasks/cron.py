@@ -10,14 +10,14 @@ __all__: Sequence[str] = ("cronjob", "Cronjob")
 
 
 class Cronjob(Task):
-    def __init__(self, cron: str, callback: TaskCallbackT, *, on_start: bool) -> None:
+    def __init__(self, cron: str, callback: TaskCallbackT, *, on_startup: bool) -> None:
         self.cron: croniter = croniter(cron, datetime.now())
-        self.first_loop = on_start
+        self.on_startup = on_startup
 
         super().__init__(callback)
 
     def _next_iteration(self) -> float:
-        if self.first_loop:
+        if self.on_startup:
             return 0
 
         call_next_at: datetime = self.cron.get_next(datetime)
@@ -26,18 +26,18 @@ class Cronjob(Task):
 
     def _call_next(self) -> None:
         super()._call_next()
-        self.first_loop = False
+        self.on_startup = False
 
 
 def cronjob(
-    cron: str, /, on_start: bool = False
+    cron: str, /, on_startup: bool = False
 ) -> Callable[[TaskCallbackT], Includable[Cronjob]]:
     """
     Run a task at the time specified by the cron schedule expression.
     """
 
     def inner(callback: TaskCallbackT) -> Includable[Cronjob]:
-        includable = Includable(Cronjob(cron, callback, on_start=on_start))
+        includable = Includable(Cronjob(cron, callback, on_startup=on_startup))
         Cronjob._link(includable)
         return includable
 
