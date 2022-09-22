@@ -105,8 +105,8 @@ async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
 | `hikari.Role` | Role |
 | `crescent.Mentionable` | Role or User |
 | Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
-| `Union[Channel Types]` (functions only) | Channel. ^ |
 | `List[Channel Types]` (classes only) | Channel. ^ |
+| `Union[Channel Types]` (functions only) | Channel. ^ |
 | `hikari.Attachment` | Attachment |
 
 
