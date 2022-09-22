@@ -242,20 +242,27 @@ def _options_to_kwargs(
     return {option.name: _extract_value(option, interaction) for option in options}
 
 
+def _get_resolved(interaction: CommandInteraction, option_type: int) -> Any | None:
+    attrs: Sequence[str] | None = _VALUE_TYPE_LINK.get(option_type)
+
+    if attrs is None:
+        return None
+
+    for resolved_type in attrs:
+        if data := getattr(interaction.resolved, resolved_type, None):
+            return data
+
+    return None
+
+
 def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 
-    resolved_keywords: Sequence[str] | None = _VALUE_TYPE_LINK.get(option.type)
+    resolved = _get_resolved(interaction, option.type)
 
-    if resolved_keywords is None:
+    if resolved is None:
         return option.value
-
-    resolved = None
-    for resolved_type in resolved_keywords:
-        resolved = getattr(interaction.resolved, resolved_type, None)
-        if resolved:
-            break
 
     # `option.value` is guaranteed to have a value because this is not a command group.
     assert option.value is not None
