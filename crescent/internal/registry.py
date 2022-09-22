@@ -300,12 +300,11 @@ class CommandHandler:
         skip_global: bool = False,
         purge_everything: bool = True,
     ) -> None:
-        """
-        Purge application commands for this Command Handler.
+        """Purge application commands for this Command Handler.
 
         Args:
-            *guilds:
-                The guilds to purge commands from, if any.
+            *guilds: The guilds to purge commands from, if any.
+
         Kwargs:
             skip_global:
                 If `True`, skip purging global commands.
