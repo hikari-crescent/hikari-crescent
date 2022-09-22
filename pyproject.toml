@@ -3,14 +3,25 @@ name = "hikari-crescent"
 version = "0"
 description = "🌕 A command handler for Hikari that keeps your project neat and tidy."
 readme = "README.md"
-authors = ["Lunarmagpie <Bambolambo0@gmail.com>"]
-maintainers = ["Circuit <circuitsacul@icloud.com>"]
-license = "MPL-2.0"
-include = ["crescent/banner.txt"]
-packages = [
-    { include = "crescent"},
-    { include = "cooldowns", from = "crescent/ext" },
+authors = ["Lunarmagpie <bambolambo0@gmail.com>"]
+maintainers = [
+    "Lunarmagpie <bambolambo0@gmail.com>",
+    "Circuit <circuitsacul@icloud.com>",
 ]
+license = "MPL-2.0"
+homepage = "https://github.com/magpie-dev/hikari-crescent"
+repository = "https://github.com/magpie-dev/hikari-crescent"
+documentation = "https://magpie-dev.github.io/hikari-crescent/crescent.html"
+keywords = [
+    "discord",
+    "hikari",
+    "command handler",
+    "slash commands",
+    "application commands",
+]
+classifiers = ["Development Status :: 5 - Production/Stable"]
+include = ["crescent/banner.txt"]
+packages = [{ include = "crescent" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
@@ -38,7 +49,7 @@ nox = "^2022.8.7"
 [tool.black]
 line-length = 99
 target-version = ['py38']
-skip-magic-trailing-comma=true
+skip-magic-trailing-comma = true
 
 [tool.mypy]
 python_version = 3.8
@@ -59,12 +70,12 @@ reportIncompatibleMethodOverride = false
 reportWildcardImportFromLibrary = false
 
 [tool.isort]
-profile="black"
+profile = "black"
 skip = "examples/basic/basic.py"
-line_length=99
+line_length = 99
 
 [tool.pytest.ini_options]
-asyncio_mode='strict'
+asyncio_mode = 'strict'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
