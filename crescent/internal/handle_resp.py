@@ -161,7 +161,7 @@ def _get_command(
 
 _VALUE_TYPE_LINK: dict[OptionType | int, Sequence[str]] = {
     OptionType.ROLE: ("roles",),
-    OptionType.USER: ("members","users"),
+    OptionType.USER: ("members", "users"),
     OptionType.CHANNEL: ("channels"),
     OptionType.ATTACHMENT: ("attachments"),
 }
@@ -252,7 +252,7 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
         return option.value
 
     resolved = None
-    for resolved_type in resolved_keywords: 
+    for resolved_type in resolved_keywords:
         resolved = getattr(interaction.resolved, resolved_type, None)
         if resolved:
             break
