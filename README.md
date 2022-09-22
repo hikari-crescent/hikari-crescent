@@ -61,7 +61,6 @@ class Say:
 bot.start()
 ```
 
-
 Simple commands can use functions instead of classes. It is recommended to use a function when your
 command does not have any options.
 
