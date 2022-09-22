@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 from logging import getLogger
-from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
+from typing import TYPE_CHECKING, Iterable, NamedTuple, TypeVar, cast
 
 from hikari import (
     UNDEFINED,
@@ -159,11 +159,11 @@ def _get_command(
     return None
 
 
-_VALUE_TYPE_LINK: dict[OptionType | int, str] = {
-    OptionType.ROLE: "roles",
-    OptionType.USER: "users",
-    OptionType.CHANNEL: "channels",
-    OptionType.ATTACHMENT: "attachments",
+_VALUE_TYPE_LINK: dict[OptionType | int, Iterable[str]] = {
+    OptionType.ROLE: ("roles",),
+    OptionType.USER: ("members","users"),
+    OptionType.CHANNEL: ("channels"),
+    OptionType.ATTACHMENT: ("attachments"),
 }
 
 
@@ -246,12 +246,16 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 
-    resolved_type: str | None = _VALUE_TYPE_LINK.get(option.type)
+    resolved_keywords: Iterable[str] | None = _VALUE_TYPE_LINK.get(option.type)
 
-    if resolved_type is None:
+    if resolved_keywords is None:
         return option.value
 
-    resolved = getattr(interaction.resolved, resolved_type, None)
+    resolved = None
+    for resolved_type in resolved_keywords: 
+        resolved = getattr(interaction.resolved, resolved_type, None)
+        if resolved:
+            break
 
     # `option.value` is guaranteed to have a value because this is not a command group.
     assert option.value is not None
