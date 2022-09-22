@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 from logging import getLogger
-from typing import TYPE_CHECKING, Iterable, NamedTuple, TypeVar, cast
+from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
 
 from hikari import (
     UNDEFINED,
@@ -159,7 +159,7 @@ def _get_command(
     return None
 
 
-_VALUE_TYPE_LINK: dict[OptionType | int, Iterable[str]] = {
+_VALUE_TYPE_LINK: dict[OptionType | int, Sequence[str]] = {
     OptionType.ROLE: ("roles",),
     OptionType.USER: ("members","users"),
     OptionType.CHANNEL: ("channels"),
@@ -246,7 +246,7 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 
-    resolved_keywords: Iterable[str] | None = _VALUE_TYPE_LINK.get(option.type)
+    resolved_keywords: Sequence[str] | None = _VALUE_TYPE_LINK.get(option.type)
 
     if resolved_keywords is None:
         return option.value
