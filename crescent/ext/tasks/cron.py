@@ -12,7 +12,7 @@ __all__: Sequence[str] = ("cronjob", "Cronjob")
 class Cronjob(Task):
     def __init__(self, cron: str, callback: TaskCallbackT, *, first_loop: bool) -> None:
         self.cron: croniter = croniter(cron, datetime.now())
-        self.first_loop = first_loop
+        self.first_loop: bool = first_loop
 
         super().__init__(callback)
 
