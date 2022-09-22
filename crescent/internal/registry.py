@@ -308,10 +308,10 @@ class CommandHandler:
         Kwargs:
             skip_global:
                 If `True`, skip purging global commands.
-                Defaults to `False`.
             purge_everything:
                 If `True`, purge all global commands and commands in
-                all `tracked_guilds`. Defaults to `True`.
+                all `tracked_guilds`. This option takes priority over
+                `skip_global`.
         """
         if self._application_id is None:
             raise AttributeError("Client `application_id` is not defined")
