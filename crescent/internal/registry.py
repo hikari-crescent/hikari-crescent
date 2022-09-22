@@ -26,7 +26,7 @@ from crescent.utils import gather_iter, unwrap
 if TYPE_CHECKING:
     from typing import Any, Awaitable, Callable, DefaultDict, Iterable, Sequence
 
-    from hikari import Snowflakeish
+    from hikari import PartialGuild, Snowflakeish, SnowflakeishOr
 
     from crescent.bot import Bot
     from crescent.typedefs import AutocompleteCallbackT, CanBuild, CommandCallbackT
@@ -293,6 +293,40 @@ class CommandHandler:
                 "Cannot post application commands to guild %s. Bot is not part of the guild.",
                 guild,
             )
+
+    async def purge_commands(
+        self,
+        *guilds: SnowflakeishOr[PartialGuild],
+        skip_global: bool = False,
+        purge_everything: bool = True,
+    ) -> None:
+        """
+        Purge application commands for this Command Handler.
+
+        Args:
+            *guilds:
+                The guilds to purge commands from, if any.
+        Kwargs:
+            skip_global:
+                If `True`, skip purging global commands.
+                Defaults to `False`.
+            purge_everything:
+                If `True`, purge all global commands and commands in
+                all `tracked_guilds`. Defaults to `True`.
+        """
+        if self._application_id is None:
+            raise AttributeError("Client `application_id` is not defined")
+
+        if not skip_global or purge_everything:
+            await self._bot.rest.set_application_commands(self._application_id, ())
+
+        if purge_everything:
+            guilds_to_purge = {*guilds, *self._guilds}
+        else:
+            guilds_to_purge = guilds
+
+        for guild in guilds_to_purge:
+            await self._bot.rest.set_application_commands(self._application_id, (), guild)
 
     async def register_commands(self) -> None:
         guilds = list(self._guilds)
