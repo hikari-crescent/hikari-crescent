@@ -35,7 +35,8 @@ pip install hikari-crescent
 ## Bots using Crescent
 
 - [mCodingBot](https://github.com/mcb-dev/mCodingBot) - The bot for the mCoding Discord server.
-- [Starboard 3](https://github.com/circuitsacul/starboard-3) - A starbord bot by @CircuitSacul in over 17k servers.
+- [Starboard 3](https://github.com/circuitsacul/starboard-3) - A starbord bot by [@CircuitSacul](https://github.com/CircuitSacul)
+in over 17k servers.
 
 
 ## Usage
@@ -154,7 +155,8 @@ These extensions can be installed with pip.
 - [crescent-ext-kebabify](https://github.com/Lunarmagpie/crescent-ext-kebabify) - Turns your command names into kebabs!
 
 # Support
-Contact `Lunarmagpie❤#0001` on Discord or create an issue. All questions are welcome!
+You can ask questions in the `#crescent` channel in the [Hikari Discord server](https://discord.gg/Jx4cNGG).
+You can also message me. My Discord username is `Lunarmagpie❤#0001`.
 
 # Contributing
 Create an issue for your feature. There aren't any guidelines right now so just don't be rude.
