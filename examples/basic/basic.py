@@ -1,7 +1,3 @@
-# Classes are an alternitive syntax for commands. When you have a lot of arguments
-# you can use them if you think its easier to read. Decorators above `@crescent.command`
-# will work exactly the same as any other command.
-
 import hikari
 
 import crescent
