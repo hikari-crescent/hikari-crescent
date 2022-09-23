@@ -319,6 +319,7 @@ class CommandHandler:
         if not skip_global or purge_everything:
             await self._bot.rest.set_application_commands(self._application_id, ())
 
+        guilds_to_purge: Iterable[PartialGuild | Snowflake | int]
         if purge_everything:
             guilds_to_purge = {*guilds, *self._guilds}
         else:
