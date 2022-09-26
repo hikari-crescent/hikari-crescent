@@ -1,6 +1,5 @@
-from typing import Sequence, Any
 from inspect import isclass
-
+from typing import Any, Sequence
 
 __all__: Sequence[str] = ("any_issubclass",)
 
