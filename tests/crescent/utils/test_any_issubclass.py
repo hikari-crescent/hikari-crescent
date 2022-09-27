@@ -19,3 +19,4 @@ def test_any_issubclass_with_cls():
 
 def test_any_issubclass_with_cls_false():
     assert not any_issubclass(A, B)
+    assert not any_issubclass(object(), A)
