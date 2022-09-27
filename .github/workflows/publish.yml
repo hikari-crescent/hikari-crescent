@@ -26,7 +26,6 @@ jobs:
 
   publish-docs:
     runs-on: ubuntu-latest
-    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -41,9 +40,10 @@ jobs:
           ./docs/build.sh
       - name: Setup Node
         uses: actions/setup-node@v2
-      - name: Publish Docs
-        run: |
-          git config user.name "Github Actions"
-          git config user.email "actions@magpie.dev"
-          npm install gh-pages
-          node docs/publish.js
+      - name: Publish
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.PAGES_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./docs/_build
