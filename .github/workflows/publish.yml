@@ -1,30 +1,28 @@
 name: pypi
 
-# on:
-#   release:
-#     types: [published]
-
-on: [push]
+on:
+  release:
+    types: [published]
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: '3.8'
-  #     - name: Install Dependencies
-  #       run: pip install poetry
-  #     - name: Build & Upload
-  #       env:
-  #         PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-  #       run: |
-  #         poetry config pypi-token.pypi $PYPI_TOKEN
-  #         poetry version $(git describe --tags --abbrev=0)
-  #         poetry build
-  #         poetry publish
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: Install Dependencies
+        run: pip install poetry
+      - name: Build & Upload
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          poetry config pypi-token.pypi $PYPI_TOKEN
+          poetry version $(git describe --tags --abbrev=0)
+          poetry build
+          poetry publish
 
   publish-docs:
     runs-on: ubuntu-latest
@@ -33,7 +31,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: "3.10"
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.3
       - name: Build docs
@@ -44,7 +42,7 @@ jobs:
         uses: actions/setup-node@v2
       - name: Publish
         uses: peaceiris/actions-gh-pages@v3
-        # if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.PAGES_TOKEN }}
           publish_branch: gh-pages
