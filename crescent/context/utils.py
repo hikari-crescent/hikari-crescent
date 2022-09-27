@@ -7,6 +7,7 @@ from sigparse import Parameter, sigparse
 
 from crescent.context.base_context import BaseContext
 from crescent.context.context import Context
+from crescent.utils import any_issubclass
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, TypeVar
@@ -68,6 +69,6 @@ def get_context_type(params: Sequence[Parameter]) -> type[BaseContext] | None:
     a subclass of `BaseContext`
     """
     for param in params:
-        if issubclass(param.annotation, BaseContext):
+        if any_issubclass(param.annotation, BaseContext):
             return cast("type[BaseContext]", param.annotation)
     return None
