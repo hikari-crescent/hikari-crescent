@@ -155,8 +155,7 @@ These extensions can be installed with pip.
 - [crescent-ext-kebabify](https://github.com/Lunarmagpie/crescent-ext-kebabify) - Turns your command names into kebabs!
 
 # Support
-You can ask questions in the `#crescent` channel in the [Hikari Discord server](https://discord.gg/Jx4cNGG).
-You can also message me. My Discord username is `Lunarmagpie❤#0001`.
+You can ask questions in the `#crescent` channel in the [Hikari Discord server](https://discord.gg/Jx4cNGG). My Discord username is `Lunarmagpie❤#0001`.
 
 # Contributing
 Create an issue for your feature. There aren't any guidelines right now so just don't be rude.
