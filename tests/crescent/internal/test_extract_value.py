@@ -49,7 +49,7 @@ def test_extract_channel():
     )
     option = MockOption(type=OptionType.CHANNEL, value="12345")
 
-    assert _extract_value(option, command_interaction) is USER
+    assert _extract_value(option, command_interaction) is CHANNEL
 
 
 def test_extract_attachment():
