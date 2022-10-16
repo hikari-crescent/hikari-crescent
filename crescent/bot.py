@@ -43,7 +43,8 @@ if TYPE_CHECKING:
 __all___: Sequence[str] = ("Bot",)
 
 
-from hikari.api import RESTClient, EventManager
+from hikari.api import EventManager, RESTClient
+
 
 class CrescentAware:
     @property
@@ -102,8 +103,7 @@ class Mixin(CrescentAware):
         self._command_error_handler: ErrorHandler[
             CommandErrorHandlerCallbackT[Any]
         ] = ErrorHandler()
-        self._event_error_handler: ErrorHandler[EventErrorHandlerCallbackT[Any]] = ErrorHandler(
-        )
+        self._event_error_handler: ErrorHandler[EventErrorHandlerCallbackT[Any]] = ErrorHandler()
         self._autocomplete_error_handler: ErrorHandler[
             AutocompleteErrorHandlerCallbackT[Any]
         ] = ErrorHandler()
@@ -258,7 +258,6 @@ class Bot(Mixin, GatewayBot):
             proxy_settings=proxy_settings,
             rest_url=rest_url,
         )
-
 
     @staticmethod
     def print_banner(
