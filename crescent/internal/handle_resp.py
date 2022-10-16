@@ -162,8 +162,8 @@ def _get_command(
 _VALUE_TYPE_LINK: dict[OptionType | int, Sequence[str]] = {
     OptionType.ROLE: ("roles",),
     OptionType.USER: ("members", "users"),
-    OptionType.CHANNEL: ("channels"),
-    OptionType.ATTACHMENT: ("attachments"),
+    OptionType.CHANNEL: ("channels",),
+    OptionType.ATTACHMENT: ("attachments",),
 }
 
 
