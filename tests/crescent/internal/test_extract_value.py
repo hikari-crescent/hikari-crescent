@@ -44,7 +44,12 @@ def test_extract_channel():
 
     command_interaction = MockInteraction(
         resolved=ResolvedOptionData(
-            users={}, members={}, roles={}, channels={"12345": CHANNEL}, messages={}, attachments={}
+            users={},
+            members={},
+            roles={},
+            channels={"12345": CHANNEL},
+            messages={},
+            attachments={},
         )
     )
     option = MockOption(type=OptionType.CHANNEL, value="12345")
@@ -57,7 +62,12 @@ def test_extract_attachment():
 
     command_interaction = MockInteraction(
         resolved=ResolvedOptionData(
-            users={}, members={}, roles={}, channels={}, messages={}, attachments={"12345": ATTACHMENT}
+            users={},
+            members={},
+            roles={},
+            channels={},
+            messages={},
+            attachments={"12345": ATTACHMENT},
         )
     )
     option = MockOption(type=OptionType.ATTACHMENT, value="12345")

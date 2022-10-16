@@ -249,6 +249,8 @@ def _get_resolved(interaction: CommandInteraction, option_type: int) -> Any | No
         return None
 
     for resolved_type in attrs:
+        if not hasattr(interaction, "resolved"):
+            continue
         if data := getattr(interaction.resolved, resolved_type, None):
             return data
 
