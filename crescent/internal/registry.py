@@ -16,6 +16,7 @@ from hikari import (
     Snowflake,
     UndefinedType,
 )
+from hikari.traits import CacheAware
 
 from crescent.context.utils import support_custom_context
 from crescent.exceptions import AlreadyRegisteredError
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
 
     from hikari import PartialGuild, Snowflakeish, SnowflakeishOr
 
-    from crescent.bot import Bot
+    from crescent.bot import Mixin
     from crescent.typedefs import AutocompleteCallbackT, CanBuild, CommandCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
@@ -88,8 +89,7 @@ _E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
 class ErrorHandler(Generic[_E]):
     __slots__: Sequence[str] = ("bot", "registry", "supports_custom_ctx")
 
-    def __init__(self, bot: Bot):
-        self.bot: Bot = bot
+    def __init__(self) -> None:
         self.registry: dict[type[Exception], Includable[_E]] = {}
 
     def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
@@ -121,8 +121,8 @@ class CommandHandler:
 
     __slots__: Sequence[str] = ("_bot", "_guilds", "_application_id", "_registry")
 
-    def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
-        self._bot: Bot = bot
+    def __init__(self, bot: Mixin, guilds: Sequence[Snowflakeish]) -> None:
+        self._bot: Mixin = bot
         self._guilds: Sequence[Snowflakeish] = guilds
         self._application_id: Snowflake | None = None
 
@@ -281,7 +281,10 @@ class CommandHandler:
                 guild=guild,
             )
         except ForbiddenError:
-            if guild in self._bot.cache.get_guilds_view().keys():
+            if not isinstance(self._bot, CacheAware):
+                return
+
+            if guild in self._bot.cache.get_guilds_view():
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
