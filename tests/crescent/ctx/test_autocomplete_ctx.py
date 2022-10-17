@@ -2,7 +2,7 @@ from copy import copy
 from unittest.mock import AsyncMock, Mock
 from crescent import AutocompleteContext
 from hikari import AutocompleteInteraction, InteractionType, CommandInteractionOption, OptionType
-from hikari.impl import RESTClientImpl
+from hikari.impl import RESTClientImpl, CacheImpl
 from crescent.mentionable import Mentionable
 from tests.utils import MockBot
 from pytest import mark
@@ -71,7 +71,7 @@ guild_ctx.interaction.options = options_with_role
 
 
 @mark.asyncio
-async def test_fetch_options():
+async def test_fetch_options_not_cached():
     fetch_member_mock = AsyncMock(return_value="member")
     fetch_user_mock = AsyncMock(return_value="user")
     fetch_channel_mock = AsyncMock(return_value="channel")
@@ -81,12 +81,25 @@ async def test_fetch_options():
     RESTClientImpl.fetch_user = fetch_user_mock
     RESTClientImpl.fetch_channel = fetch_channel_mock
 
+    get_member_mock = Mock(return_value=None)
+    get_user_mock = Mock(return_value=None)
+    get_guild_channel_mock = Mock(return_value=None)
+
+    CacheImpl.get_member = get_member_mock
+    CacheImpl.get_user = get_user_mock
+    CacheImpl.get_guild_channel = get_guild_channel_mock
+
     res = await ctx.fetch_options()
 
     fetch_member_mock.assert_not_called()
     fetch_user_mock.assert_called_with(12345)
+    assert fetch_user_mock.call_count == 2
     fetch_channel_mock.assert_called_once_with(12345)
 
+    get_member_mock.assert_not_called()
+    get_user_mock.assert_called_with(12345)
+    assert get_user_mock.call_count == 2
+    get_guild_channel_mock.assert_called_once_with(12345)
 
     assert res == {
         "user": "user",
@@ -97,7 +110,7 @@ async def test_fetch_options():
 
 
 @mark.asyncio
-async def test_fetch_options_guild():
+async def test_fetch_options_guild_not_cached():
     fetch_member_mock = AsyncMock(return_value="member")
     fetch_user_mock = AsyncMock(return_value="user")
 
@@ -113,12 +126,29 @@ async def test_fetch_options_guild():
     RESTClientImpl.fetch_roles = fetch_roles_mock
     RESTClientImpl.fetch_channel = fetch_channel_mock
 
+    get_member_mock = Mock(return_value=None)
+    get_user_mock = Mock(return_value=None)
+    get_guild_channel_mock = Mock(return_value=None)
+    get_role_mock = Mock(return_value=None)
+
+    CacheImpl.get_member = get_member_mock
+    CacheImpl.get_user = get_user_mock
+    CacheImpl.get_guild_channel = get_guild_channel_mock
+    CacheImpl.get_role =get_role_mock
+
     res = await guild_ctx.fetch_options()
 
-    fetch_member_mock.assert_called_with(12345, 12345)
+    fetch_member_mock.assert_called_with(guild_ctx.guild_id, 12345)
+    assert fetch_member_mock.call_count == 2
     fetch_user_mock.assert_not_called()
     fetch_roles_mock.assert_called_with(guild_ctx.guild_id)
     fetch_channel_mock.assert_called_once_with(12345)
+
+    get_member_mock.assert_called_with(guild_ctx.guild_id, 12345)
+    assert get_member_mock.call_count == 2
+    get_user_mock.assert_not_called()
+    get_guild_channel_mock.assert_called_once_with(12345)
+    get_role_mock.assert_called_once_with(12345)
 
     assert res == {
         "user": "member",
@@ -128,3 +158,57 @@ async def test_fetch_options_guild():
         "attachment": None,
     }
 
+@mark.asyncio
+async def test_fetch_options_cached():
+    get_member_mock = Mock(return_value="member")
+    get_user_mock = Mock(return_value="user")
+    get_guild_channel_mock = Mock(return_value="channel")
+
+    CacheImpl.get_member = get_member_mock
+    CacheImpl.get_user = get_user_mock
+    CacheImpl.get_guild_channel = get_guild_channel_mock
+
+    res = await ctx.fetch_options()
+
+    get_member_mock.assert_not_called()
+    get_user_mock.assert_called_with(12345)
+    assert get_user_mock.call_count == 2
+    get_guild_channel_mock.assert_called_once_with(12345)
+
+    assert res == {
+        "user": "user",
+        "channel": "channel",
+        "mentionable": Mentionable(user="user", role=None),
+        "attachment": None,
+    }
+
+@mark.asyncio
+async def test_fetch_options_guild_cached():
+    role_mock = Mock()
+    role_mock.id = 12345
+
+    get_member_mock = Mock(return_value="member")
+    get_user_mock = Mock(return_value="user")
+    get_guild_channel_mock = Mock(return_value="channel")
+    get_role_mock = Mock(return_value=role_mock)
+
+    CacheImpl.get_member = get_member_mock
+    CacheImpl.get_user = get_user_mock
+    CacheImpl.get_guild_channel = get_guild_channel_mock
+    CacheImpl.get_role = get_role_mock
+
+    res = await guild_ctx.fetch_options()
+
+    get_member_mock.assert_called_with(guild_ctx.guild_id, 12345)
+    assert get_member_mock.call_count == 2
+    get_user_mock.assert_not_called()
+    get_guild_channel_mock.assert_called_once_with(12345)
+    get_role_mock.assert_called_once_with(12345)
+
+    assert res == {
+        "user": "member",
+        "channel": "channel",
+        "mentionable": Mentionable(user="member", role=None),
+        "role": role_mock,
+        "attachment": None,
+    }
