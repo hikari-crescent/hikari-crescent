@@ -1,7 +1,7 @@
 from copy import copy
 from unittest.mock import AsyncMock, Mock
 from crescent import AutocompleteContext
-from hikari import AutocompleteInteraction, InteractionType, CommandInteractionOption, OptionType
+from hikari import InteractionType, CommandInteractionOption, OptionType
 from hikari.impl import RESTClientImpl, CacheImpl
 from crescent.mentionable import Mentionable
 from tests.utils import MockBot
