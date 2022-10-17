@@ -23,6 +23,10 @@ options_with_role.append(
     CommandInteractionOption(name="role", type=OptionType.ROLE, value=12345, options=None)
 )
 
+interaction = Mock()
+interaction.type = InteractionType.AUTOCOMPLETE
+interaction.options = options
+
 ctx = AutocompleteContext(
     app=MockBot(),
     application_id=None,
@@ -41,24 +45,7 @@ ctx = AutocompleteContext(
     has_created_message=None,
     has_deferred_response=None,
     command=None,
-    interaction=AutocompleteInteraction(
-        app=MockBot(),
-        id=None,
-        application_id=None,
-        token=None,
-        version=None,
-        channel_id=None,
-        command_id=None,
-        command_name=None,
-        command_type=None,
-        options=options,
-        guild_id=None,
-        guild_locale=None,
-        locale=None,
-        member=None,
-        user=None,
-        type=InteractionType.AUTOCOMPLETE,
-    ),
+    interaction=interaction,
 )
 
 
