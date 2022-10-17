@@ -134,7 +134,7 @@ async def test_fetch_options_guild_not_cached():
     CacheImpl.get_member = get_member_mock
     CacheImpl.get_user = get_user_mock
     CacheImpl.get_guild_channel = get_guild_channel_mock
-    CacheImpl.get_role =get_role_mock
+    CacheImpl.get_role = get_role_mock
 
     res = await guild_ctx.fetch_options()
 
@@ -157,6 +157,7 @@ async def test_fetch_options_guild_not_cached():
         "mentionable": Mentionable(user="member", role=None),
         "attachment": None,
     }
+
 
 @mark.asyncio
 async def test_fetch_options_cached():
@@ -181,6 +182,7 @@ async def test_fetch_options_cached():
         "mentionable": Mentionable(user="user", role=None),
         "attachment": None,
     }
+
 
 @mark.asyncio
 async def test_fetch_options_guild_cached():
