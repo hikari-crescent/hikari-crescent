@@ -255,8 +255,6 @@ def _get_resolved(interaction: CommandInteraction, option_type: int) -> Any | No
         return None
 
     for resolved_type in attrs:
-        if not hasattr(interaction, "resolved"):
-            continue
         if data := getattr(interaction.resolved, resolved_type, None):
             return data
 
@@ -270,10 +268,7 @@ def _extract_value(
     assert option.value is not None
 
     if isinstance(interaction, AutocompleteInteraction):
-        if option.type in _VALUE_TYPE_LINK:
-            return Snowflake(option.value)
-        else:
-            return option.value
+        return option.value
 
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
