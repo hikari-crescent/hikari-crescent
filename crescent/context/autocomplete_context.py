@@ -4,19 +4,18 @@ from typing import Any, Callable, Sequence
 
 from hikari import (
     AutocompleteInteraction,
+    CommandInteractionOption,
+    Member,
+    NotFoundError,
     OptionType,
+    PartialChannel,
+    Role,
     Snowflake,
     User,
-    Member,
-    Role,
-    PartialChannel,
-    CommandInteractionOption,
 )
-from hikari import NotFoundError
 
 from crescent.context.base_context import BaseContext
 from crescent.mentionable import Mentionable
-
 from crescent.utils import gather_iter
 
 __all__: Sequence[str] = ("AutocompleteContext",)
