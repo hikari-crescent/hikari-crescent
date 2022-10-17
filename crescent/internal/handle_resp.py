@@ -176,7 +176,9 @@ class CrescentCommandData(NamedTuple):
     options: Sequence[CommandInteractionOption] | None
 
 
-def _get_crescent_command_data(interaction: CommandInteraction | AutocompleteInteraction) -> CrescentCommandData:
+def _get_crescent_command_data(
+    interaction: CommandInteraction | AutocompleteInteraction,
+) -> CrescentCommandData:
     command_name: str = interaction.command_name
     group: str | None = None
     sub_group: str | None = None
@@ -237,7 +239,8 @@ def _context_from_interaction_resp(
 
 
 def _options_to_kwargs(
-    interaction: CommandInteraction | AutocompleteInteraction, options: Sequence[CommandInteractionOption] | None
+    interaction: CommandInteraction | AutocompleteInteraction,
+    options: Sequence[CommandInteractionOption] | None,
 ) -> dict[str, Any]:
     if not options:
         return {}
@@ -260,7 +263,9 @@ def _get_resolved(interaction: CommandInteraction, option_type: int) -> Any | No
     return None
 
 
-def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction | AutocompleteInteraction) -> Any:
+def _extract_value(
+    option: CommandInteractionOption, interaction: CommandInteraction | AutocompleteInteraction
+) -> Any:
     # `option.value` is guaranteed to have a value because this is not a command group.
     assert option.value is not None
 

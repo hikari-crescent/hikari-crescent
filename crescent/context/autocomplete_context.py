@@ -74,7 +74,7 @@ async def _fetch_attachment(*_: Any) -> None:
     return None
 
 
-_serialization_map: dict[OptionType, Callable[[AutocompleteContext, Snowflake],Any]] = {
+_serialization_map: dict[OptionType, Callable[[AutocompleteContext, Snowflake], Any]] = {
     OptionType.USER: _fetch_user,
     OptionType.ROLE: _fetch_role,
     OptionType.MENTIONABLE: _fetch_mentionable,
@@ -95,7 +95,7 @@ class AutocompleteContext(BaseContext):
         out: dict[str, Any] = {}
 
         async def get_option(option: CommandInteractionOption) -> None:
-            if (func := _serialization_map.get(OptionType(option.type))):
+            if func := _serialization_map.get(OptionType(option.type)):
                 # `option.value` is a `Snowflake` or `int` for all option types
                 # in `_serialization_map`.
                 assert option.value
