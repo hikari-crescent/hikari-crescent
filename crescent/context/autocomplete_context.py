@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Sequence
+from typing import Any, Callable, Sequence
 
 from hikari import (
     AutocompleteInteraction,
@@ -9,9 +9,10 @@ from hikari import (
     User,
     Member,
     Role,
+    PartialChannel,
     CommandInteractionOption,
 )
-from hikari import NotFoundError, CacheAware
+from hikari import NotFoundError
 
 from crescent.context.base_context import BaseContext
 from crescent.mentionable import Mentionable
@@ -22,13 +23,12 @@ __all__: Sequence[str] = ("AutocompleteContext",)
 
 
 async def _fetch_user(ctx: AutocompleteContext, value: Snowflake) -> User | Member:
-    if isinstance(ctx.app, CacheAware):
-        if ctx.guild_id:
-            if member := ctx.app.cache.get_member(ctx.guild_id, value):
-                return member
-        else:
-            if user := ctx.app.cache.get_user(value):
-                return user
+    if ctx.guild_id:
+        if member := ctx.app.cache.get_member(ctx.guild_id, value):
+            return member
+    else:
+        if user := ctx.app.cache.get_user(value):
+            return user
 
     if ctx.guild_id:
         return await ctx.app.rest.fetch_member(ctx.guild_id, value)
@@ -39,9 +39,8 @@ async def _fetch_user(ctx: AutocompleteContext, value: Snowflake) -> User | Memb
 async def _fetch_role(ctx: AutocompleteContext, value: Snowflake) -> Role:
     assert ctx.guild_id
 
-    if isinstance(ctx.app, CacheAware):
-        if role := ctx.app.cache.get_role(value):
-            return role
+    if role := ctx.app.cache.get_role(value):
+        return role
 
     roles = await ctx.app.rest.fetch_roles(ctx.guild_id)
     return next(filter(lambda r: r.id == value, roles))
@@ -64,10 +63,9 @@ async def _fetch_mentionable(ctx: AutocompleteContext, value: Snowflake) -> Ment
     return Mentionable(user, role)
 
 
-async def _fetch_channel(ctx: AutocompleteContext, value: Snowflake):
-    if isinstance(ctx.app, CacheAware):
-        if channel := ctx.app.cache.get_guild_channel(value):
-            return channel
+async def _fetch_channel(ctx: AutocompleteContext, value: Snowflake) -> PartialChannel:
+    if channel := ctx.app.cache.get_guild_channel(value):
+        return channel
 
     return await ctx.app.rest.fetch_channel(value)
 
@@ -76,7 +74,7 @@ async def _fetch_attachment(*_: Any) -> None:
     return None
 
 
-_serialization_map = {
+_serialization_map: dict[OptionType, Callable[[AutocompleteContext, Snowflake],Any]] = {
     OptionType.USER: _fetch_user,
     OptionType.ROLE: _fetch_role,
     OptionType.MENTIONABLE: _fetch_mentionable,
@@ -96,7 +94,7 @@ class AutocompleteContext(BaseContext):
 
         out: dict[str, Any] = {}
 
-        async def get_option(option: CommandInteractionOption):
+        async def get_option(option: CommandInteractionOption) -> None:
             if (func := _serialization_map.get(OptionType(option.type))) and isinstance(
                 option.value, Snowflake
             ):
