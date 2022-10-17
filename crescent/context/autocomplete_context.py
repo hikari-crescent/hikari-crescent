@@ -95,10 +95,11 @@ class AutocompleteContext(BaseContext):
         out: dict[str, Any] = {}
 
         async def get_option(option: CommandInteractionOption) -> None:
-            if (func := _serialization_map.get(OptionType(option.type))) and isinstance(
-                option.value, Snowflake
-            ):
-                out[option.name] = await func(self, option.value)
+            if (func := _serialization_map.get(OptionType(option.type))):
+                # `option.value` is a `Snowflake` or `int` for all option types
+                # in `_serialization_map`.
+                assert option.value
+                out[option.name] = await func(self, Snowflake(option.value))
             else:
                 out[option.name] = option.value
 
