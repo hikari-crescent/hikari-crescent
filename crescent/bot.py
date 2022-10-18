@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from asyncio import Event as aio_Event
 from asyncio import Task, create_task
-from concurrent.futures import Executor
 from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
@@ -12,13 +11,11 @@ from hikari import AutocompleteInteractionOption
 from hikari import Event as hk_Event
 from hikari import (
     GatewayBot,
-    Intents,
     InteractionCreateEvent,
     ShardReadyEvent,
     Snowflakeish,
     StartedEvent,
 )
-from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
 
 from crescent.commands.hooks import add_hooks
 from crescent.internal.handle_resp import handle_resp
@@ -72,6 +69,7 @@ class Mixin(RESTAware, EventManagerAware):
                 be kept to as little guilds as possible to prevent rate limits.
         """
         kwargs["token"] = token
+
         super().__init__(**kwargs)
 
         if tracked_guilds is None:
@@ -188,65 +186,8 @@ class Mixin(RESTAware, EventManagerAware):
 
 
 class Bot(Mixin, GatewayBot):
-    def __init__(
-        self,
-        token: str,
-        *,
-        tracked_guilds: Sequence[Snowflakeish] | None = None,
-        default_guild: Snowflakeish | None = None,
-        update_commands: bool = True,
-        allow_unknown_interactions: bool = False,
-        command_hooks: list[HookCallbackT] | None = None,
-        command_after_hooks: list[HookCallbackT] | None = None,
-        allow_color: bool = True,
-        banner: str | None = "crescent",
-        executor: Executor | None = None,
-        force_color: bool = False,
-        cache_settings: CacheSettings | None = None,
-        http_settings: HTTPSettings | None = None,
-        intents: Intents = Intents.ALL_UNPRIVILEGED,
-        auto_chunk_members: bool = True,
-        logs: int | str | dict[str, Any] | None = "INFO",
-        max_rate_limit: float = 300,
-        max_retries: int = 3,
-        proxy_settings: ProxySettings | None = None,
-        rest_url: str | None = None,
-    ):
-        """
-        Crescent adds two parameters to Hikari's Gateway Bot. `tracked_guilds`
-        and `default_guild`.
-
-        Args:
-            default_guild:
-                The guild to post application commands to by default. If this is None,
-                slash commands will be posted globally.
-            tracked_guilds:
-                The guilds to compare posted commands to. Commands will not be
-                automatically removed from guilds that aren't in this list. This should
-                be kept to as little guilds as possible to prevent rate limits.
-        """
-        super().__init__(
-            token,
-            tracked_guilds=tracked_guilds,
-            default_guild=default_guild,
-            update_commands=update_commands,
-            allow_unknown_interactions=allow_unknown_interactions,
-            command_hooks=command_hooks,
-            command_after_hooks=command_after_hooks,
-            allow_color=allow_color,
-            banner=banner,
-            executor=executor,
-            force_color=force_color,
-            cache_settings=cache_settings,
-            http_settings=http_settings,
-            intents=intents,
-            auto_chunk_members=auto_chunk_members,
-            logs=logs,
-            max_rate_limit=max_rate_limit,
-            max_retries=max_retries,
-            proxy_settings=proxy_settings,
-            rest_url=rest_url,
-        )
+    def __init__(self, *args: Any, banner: str = "crescent", **kwargs: Any) -> None:
+        super().__init__(*args, banner=banner, **kwargs)
 
     @staticmethod
     def print_banner(
