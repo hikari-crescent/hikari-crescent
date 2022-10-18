@@ -59,6 +59,15 @@ class Mixin(RESTAware, EventManagerAware):
         **kwargs: Any,
     ):
         """
+        This class should be combined with a class that implements
+        `hikari.traits.RESTAware` and `hikari.traits.EventManagerAware`.
+
+        Example:
+        ```python
+        class Bot(crescent.Mixin, hikari.GatewayBot):
+            ...
+        ```
+
         Args:
             tracked_guilds:
                 The guilds to compare posted commands to. Commands will not be
