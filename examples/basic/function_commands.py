@@ -9,7 +9,6 @@ import crescent
 # from typing import Annotated
 
 
-
 bot = crescent.Bot(token="...")
 
 

@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
 
 
-__all___: Sequence[str] = ("Bot",  "Mixin")
+__all___: Sequence[str] = ("Bot", "Mixin")
 
 
 class Mixin(RESTAware, EventManagerAware):
