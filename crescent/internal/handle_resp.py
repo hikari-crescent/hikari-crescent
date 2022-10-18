@@ -51,7 +51,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         return
 
     if TYPE_CHECKING:
-        interaction = cast(CommandInteraction, interaction)
+        interaction = cast("CommandInteraction | AutocompleteInteraction", interaction)
         bot = cast(Bot, bot)
 
     command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
@@ -162,8 +162,8 @@ def _get_command(
 _VALUE_TYPE_LINK: dict[OptionType | int, Sequence[str]] = {
     OptionType.ROLE: ("roles",),
     OptionType.USER: ("members", "users"),
-    OptionType.CHANNEL: ("channels"),
-    OptionType.ATTACHMENT: ("attachments"),
+    OptionType.CHANNEL: ("channels",),
+    OptionType.ATTACHMENT: ("attachments",),
 }
 
 
@@ -176,7 +176,9 @@ class CrescentCommandData(NamedTuple):
     options: Sequence[CommandInteractionOption] | None
 
 
-def _get_crescent_command_data(interaction: CommandInteraction) -> CrescentCommandData:
+def _get_crescent_command_data(
+    interaction: CommandInteraction | AutocompleteInteraction,
+) -> CrescentCommandData:
     command_name: str = interaction.command_name
     group: str | None = None
     sub_group: str | None = None
@@ -200,7 +202,7 @@ def _get_crescent_command_data(interaction: CommandInteraction) -> CrescentComma
 
 
 def _context_from_interaction_resp(
-    context_t: type[ContextT], interaction: CommandInteraction
+    context_t: type[ContextT], interaction: CommandInteraction | AutocompleteInteraction
 ) -> ContextT:
 
     command_name, group, sub_group, options = _get_crescent_command_data(interaction)
@@ -208,6 +210,9 @@ def _context_from_interaction_resp(
     if interaction.command_type is CommandType.SLASH:
         callback_options = _options_to_kwargs(interaction, options)
     else:
+        # This will never be `AutocompleteInteraction` because message and user
+        # commands don't have autocomplete.
+        assert isinstance(interaction, CommandInteraction)
         callback_options = _resolved_data_to_kwargs(interaction)
 
     return context_t(
@@ -234,7 +239,8 @@ def _context_from_interaction_resp(
 
 
 def _options_to_kwargs(
-    interaction: CommandInteraction, options: Sequence[CommandInteractionOption] | None
+    interaction: CommandInteraction | AutocompleteInteraction,
+    options: Sequence[CommandInteractionOption] | None,
 ) -> dict[str, Any]:
     if not options:
         return {}
@@ -255,7 +261,15 @@ def _get_resolved(interaction: CommandInteraction, option_type: int) -> Any | No
     return None
 
 
-def _extract_value(option: CommandInteractionOption, interaction: CommandInteraction) -> Any:
+def _extract_value(
+    option: CommandInteractionOption, interaction: CommandInteraction | AutocompleteInteraction
+) -> Any:
+    # `option.value` is guaranteed to have a value because this is not a command group.
+    assert option.value is not None
+
+    if isinstance(interaction, AutocompleteInteraction):
+        return option.value
+
     if option.type is OptionType.MENTIONABLE:
         return Mentionable._from_interaction(interaction)
 
@@ -264,13 +278,6 @@ def _extract_value(option: CommandInteractionOption, interaction: CommandInterac
     if resolved is None:
         return option.value
 
-    # `option.value` is guaranteed to have a value because this is not a command group.
-    assert option.value is not None
-
-    # `resolved` is None when an autocomplete command has a user or role as a previous option.
-    # This should be refactored out in the autocomplete rewrite for 1.0.0
-    if resolved is None:
-        return Snowflake(option.value)
     return resolved[option.value]
 
 
