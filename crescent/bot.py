@@ -26,6 +26,8 @@ from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
 
+from hikari.traits import RESTAware, EventManagerAware
+
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, TypeVar
 
@@ -40,23 +42,10 @@ if TYPE_CHECKING:
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
 
 
-__all___: Sequence[str] = ("Bot",)
+__all___: Sequence[str] = ("Bot",  "Mixin")
 
 
-from hikari.api import EventManager, RESTClient
-
-
-class CrescentAware:
-    @property
-    def rest(self) -> RESTClient:
-        return super().rest  # type: ignore
-
-    @property
-    def event_manager(self) -> EventManager:
-        return super().event_manager  # type: ignore
-
-
-class Mixin(CrescentAware):
+class Mixin(RESTAware, EventManagerAware):
     def __init__(
         self,
         token: str,

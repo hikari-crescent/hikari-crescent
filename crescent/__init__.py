@@ -30,6 +30,7 @@ __all__: Sequence[str] = (
     "Group",
     "SubGroup",
     "Bot",
+    "Mixin",
     "Context",
     "AutocompleteContext",
     "catch_command",
