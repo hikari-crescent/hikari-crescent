@@ -59,17 +59,20 @@ class Mixin(RESTAware, EventManagerAware):
         **kwargs: Any,
     ):
         """
-        Crescent adds two parameters to Hikari's Gateway Bot. `tracked_guilds`
-        and `default_guild`.
-
         Args:
-            default_guild:
-                The guild to post application commands to by default. If this is None,
-                slash commands will be posted globally.
             tracked_guilds:
                 The guilds to compare posted commands to. Commands will not be
                 automatically removed from guilds that aren't in this list. This should
                 be kept to as little guilds as possible to prevent rate limits.
+            default_guild:
+                The guild to post application commands to by default. If this is None,
+                slash commands will be posted globally.
+            update_commands:
+                If `True` or not specified, update commands when the bot starts.
+            command_hooks:
+                List of hooks to run before all commands.
+            command_after_hooks:
+                List of hooks to run after all commands.
         """
         kwargs["token"] = token
         super().__init__(**kwargs)
