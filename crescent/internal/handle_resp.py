@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
 
 from hikari import (
     UNDEFINED,
+    CommandInteraction,
     AutocompleteInteraction,
     AutocompleteInteractionOption,
     CommandType,
@@ -23,7 +24,6 @@ if TYPE_CHECKING:
     from typing import Any, Sequence
 
     from hikari import (
-        CommandInteraction,
         CommandInteractionOption,
         InteractionCreateEvent,
         Message,
@@ -47,11 +47,10 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     interaction = event.interaction
     bot = event.app
 
-    if interaction.type is InteractionType.MESSAGE_COMPONENT:
+    if not isinstance(interaction, (CommandInteraction, AutocompleteInteraction)):
         return
 
     if TYPE_CHECKING:
-        interaction = cast("CommandInteraction | AutocompleteInteraction", interaction)
         bot = cast(Bot, bot)
 
     command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
