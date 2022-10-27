@@ -14,7 +14,7 @@ from crescent.internal.includable import Includable
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence, TypeVar
 
-    from crescent.bot import Bot
+    from crescent.bot import Mixin
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
     T = TypeVar("T", bound="Includable[Any]")
@@ -26,7 +26,7 @@ _LOG = getLogger(__name__)
 
 
 class PluginManager:
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: Mixin) -> None:
         self.plugins: dict[str, Plugin] = {}
         self._bot = bot
 
@@ -158,7 +158,7 @@ class Plugin:
     ) -> None:
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
-        self._app: Bot | None = None
+        self._app: Mixin | None = None
         self._children: list[Includable[Any]] = []
 
         self._load_hooks: list[PluginCallbackT] = []
@@ -176,12 +176,12 @@ class Plugin:
         self._unload_hooks.append(callback)
 
     @property
-    def app(self) -> Bot:
+    def app(self) -> Mixin:
         if not self._app:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
         return self._app
 
-    def _load(self, bot: Bot) -> None:
+    def _load(self, bot: Mixin) -> None:
         self._app = bot
 
         for callback in self._load_hooks:
@@ -190,11 +190,11 @@ class Plugin:
             add_hooks(bot, child)
             child.register_to_app(bot)
 
-        bot.subscribe(hikari.StoppedEvent, self._on_bot_close)
+        bot.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
 
     def _unload(self) -> None:
         assert self._app
-        self._app.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
+        self._app.event_manager.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
         self._app = None
 
         for callback in self._unload_hooks:
@@ -204,7 +204,7 @@ class Plugin:
             for hook in child.plugin_unload_hooks:
                 hook(child)
 
-    async def _on_bot_close(self, bot: Bot) -> None:
+    async def _on_bot_close(self, bot: Mixin) -> None:
         self._unload()
 
     @overload

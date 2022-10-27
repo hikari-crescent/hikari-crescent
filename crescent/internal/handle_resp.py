@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
     from hikari import CommandInteractionOption, InteractionCreateEvent, Message, User
 
-    from crescent.bot import Bot
+    from crescent.bot import Mixin
     from crescent.context import BaseContext
     from crescent.internal import AppCommandMeta, Includable
     from crescent.typedefs import TransformedHookCallbackT
@@ -46,7 +46,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         return
 
     if TYPE_CHECKING:
-        bot = cast(Bot, bot)
+        bot = cast(Mixin, bot)
 
     command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
 
@@ -85,7 +85,7 @@ async def _handle_hooks(
 
 
 async def _handle_slash_resp(
-    bot: Bot, command: Includable[AppCommandMeta], ctx: BaseContext
+    bot: Mixin, command: Includable[AppCommandMeta], ctx: BaseContext
 ) -> None:
 
     should_exit, ctx = await _handle_hooks(command.metadata.hooks, ctx)
@@ -136,7 +136,7 @@ def _get_option_recursive(
 
 
 def _get_command(
-    bot: Bot,
+    bot: Mixin,
     name: str,
     type: CommandType | int,
     guild_id: Snowflake | None,
@@ -211,7 +211,7 @@ def _context_from_interaction_resp(
 
     return context_t(
         interaction=interaction,
-        app=cast("Bot", interaction.app),
+        app=cast("Mixin", interaction.app),
         application_id=interaction.application_id,
         type=interaction.type,
         token=interaction.token,
