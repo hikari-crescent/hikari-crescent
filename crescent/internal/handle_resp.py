@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
 
 from hikari import (
     UNDEFINED,
-    CommandInteraction,
     AutocompleteInteraction,
     AutocompleteInteractionOption,
+    CommandInteraction,
     CommandType,
     InteractionType,
     OptionType,
