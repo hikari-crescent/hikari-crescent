@@ -23,12 +23,7 @@ from crescent.utils import unwrap
 if TYPE_CHECKING:
     from typing import Any, Sequence
 
-    from hikari import (
-        CommandInteractionOption,
-        InteractionCreateEvent,
-        Message,
-        User,
-    )
+    from hikari import CommandInteractionOption, InteractionCreateEvent, Message, User
 
     from crescent.bot import Bot
     from crescent.context import BaseContext
