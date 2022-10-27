@@ -1,5 +1,7 @@
-import crescent
 import hikari
+
+import crescent
+
 
 # Create a subclass of `crescent.Mixin` and your bot impl.
 # The bot impl must have the traits `RESTAware` and `EventManagerAware`.

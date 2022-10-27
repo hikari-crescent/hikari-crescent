@@ -19,14 +19,13 @@ from hikari import (
     StartedEvent,
 )
 from hikari.impl.config import CacheSettings, HTTPSettings, ProxySettings
+from hikari.traits import EventManagerAware, RESTAware
 
 from crescent.commands.hooks import add_hooks
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
-
-from hikari.traits import RESTAware, EventManagerAware
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence, TypeVar
