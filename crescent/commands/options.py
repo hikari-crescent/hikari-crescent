@@ -97,6 +97,8 @@ class ClassCommandOption(Generic[T]):
     channel_types: Sequence[ChannelType] | None
     min_value: int | float | None
     max_value: int | float | None
+    min_length: int | None
+    max_length: int | None
     autocomplete: AutocompleteCallbackT | None
 
     def _gen_option(self, name: str) -> CommandOption:
@@ -109,6 +111,8 @@ class ClassCommandOption(Generic[T]):
             channel_types=self.channel_types,
             min_value=self.min_value,
             max_value=self.max_value,
+            min_length=self.min_length,
+            max_length=self.max_length,
             autocomplete=bool(self.autocomplete),
         )
 
@@ -321,6 +325,8 @@ def option(
     option_type: type[str],
     description: str = ...,
     *,
+    min_length: int | None = ...,
+    max_length: int | None = ...,
     choices: Sequence[tuple[str, str]] | None = ...,
     autocomplete: AutocompleteCallbackT | None = ...,
     name: str | None = ...,
@@ -334,6 +340,8 @@ def option(
     description: str = ...,
     *,
     default: DEFAULT,
+    min_length: int | None = ...,
+    max_length: int | None = ...,
     choices: Sequence[tuple[str, str]] | None = ...,
     autocomplete: AutocompleteCallbackT | None = ...,
     name: str | None = ...,
@@ -349,6 +357,8 @@ def option(
     choices: Sequence[tuple[str, str | int | float]] | None = None,
     min_value: int | float | None = None,
     max_value: int | float | None = None,
+    min_length: int | None = None,
+    max_length: int | None = None,
     name: str | None = None,
     autocomplete: AutocompleteCallbackT | None = None,
 ) -> ClassCommandOption[Any]:
@@ -377,6 +387,8 @@ def option(
         channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,
+        min_length=min_length,
+        max_length=max_length,
         name=name,
         autocomplete=autocomplete,
     )

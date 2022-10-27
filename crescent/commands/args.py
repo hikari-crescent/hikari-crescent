@@ -87,6 +87,24 @@ class MinValue(Arg):
 
 
 @define(hash=True)
+class MinLength(Arg):
+    min_length: int
+
+    @property
+    def payload(self) -> int:
+        return self.min_length
+
+
+@define(hash=True)
+class MaxLength(Arg):
+    max_length: int
+
+    @property
+    def payload(self) -> int:
+        return self.max_length
+
+
+@define(hash=True)
 class Autocomplete(Arg):
     callback: AutocompleteCallbackT
 
