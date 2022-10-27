@@ -23,7 +23,8 @@
  - Makes typehinting easy.
 
 ### Links
-> 📝 | [Docs](https://magpie-dev.github.io/hikari-crescent/crescent.html)<br>
+> 📖 | [User Guide](https://magpie-dev.github.io/crescent-book)<br>
+> 🗃️ | [Docs](https://magpie-dev.github.io/hikari-crescent/crescent.html)<br>
 > 📦 | [Pypi](https://pypi.org/project/hikari-crescent/)
 
 ## Installation
