@@ -11,7 +11,9 @@ from crescent.commands.args import (
     ChannelTypes,
     Choices,
     Description,
+    MaxLength,
     MaxValue,
+    MinLength,
     MinValue,
     Name,
 )
@@ -94,6 +96,8 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
     channel_types = _channel_types or _get_arg(ChannelTypes, metadata)
     min_value = _get_arg(MinValue, metadata)
     max_value = _get_arg(MaxValue, metadata)
+    min_length = _get_arg(MinLength, metadata)
+    max_length = _get_arg(MaxLength, metadata)
     autocomplete = _get_arg(Autocomplete, metadata)
 
     required = not param.has_default
@@ -108,6 +112,8 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
         channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,
+        min_length=min_length,
+        max_length=max_length,
         is_required=required,
     )
 
