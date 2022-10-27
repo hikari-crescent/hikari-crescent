@@ -8,6 +8,7 @@ from hikari import (
     UNDEFINED,
     AutocompleteInteraction,
     AutocompleteInteractionOption,
+    CommandInteraction,
     CommandType,
     InteractionType,
     OptionType,
@@ -22,13 +23,7 @@ from crescent.utils import unwrap
 if TYPE_CHECKING:
     from typing import Any, Sequence
 
-    from hikari import (
-        CommandInteraction,
-        CommandInteractionOption,
-        InteractionCreateEvent,
-        Message,
-        User,
-    )
+    from hikari import CommandInteractionOption, InteractionCreateEvent, Message, User
 
     from crescent.bot import Mixin
     from crescent.context import BaseContext
@@ -47,11 +42,10 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     interaction = event.interaction
     bot = event.app
 
-    if interaction.type is InteractionType.MESSAGE_COMPONENT:
+    if not isinstance(interaction, (CommandInteraction, AutocompleteInteraction)):
         return
 
     if TYPE_CHECKING:
-        interaction = cast("CommandInteraction | AutocompleteInteraction", interaction)
         bot = cast(Mixin, bot)
 
     command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
