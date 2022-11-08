@@ -2,7 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-from hikari import UNDEFINED, Guild, GuildChannel, MessageFlag, ResponseType
+from hikari import (
+    UNDEFINED,
+    Guild,
+    GuildChannel,
+    MessageFlag,
+    ResponseType,
+    Resourceish,
+    Attachment,
+)
 from hikari.traits import CacheAware
 
 from crescent.context.base_context import BaseContext
@@ -167,13 +175,12 @@ class Context(BaseContext):
         self,
         content: UndefinedNoneOr[Any] = UNDEFINED,
         *,
-        attachment: UndefinedOr[Resourceish] = UNDEFINED,
-        attachments: UndefinedOr[Sequence[Resourceish]] = UNDEFINED,
+        attachment: UndefinedNoneOr[Resourceish | Attachment] = UNDEFINED,
+        attachments: UndefinedNoneOr[Sequence[Resourceish | Attachment]] = UNDEFINED,
         component: UndefinedNoneOr[ComponentBuilder] = UNDEFINED,
         components: UndefinedNoneOr[Sequence[ComponentBuilder]] = UNDEFINED,
         embed: UndefinedNoneOr[Embed] = UNDEFINED,
         embeds: UndefinedNoneOr[Sequence[Embed]] = UNDEFINED,
-        replace_attachments: bool = False,
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
         user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
@@ -188,7 +195,6 @@ class Context(BaseContext):
             components=components,
             embed=embed,
             embeds=embeds,
-            replace_attachments=replace_attachments,
             mentions_everyone=mentions_everyone,
             user_mentions=user_mentions,
             role_mentions=role_mentions,
