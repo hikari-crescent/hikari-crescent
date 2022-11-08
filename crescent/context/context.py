@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING, overload
 
 from hikari import (
     UNDEFINED,
+    Attachment,
     Guild,
     GuildChannel,
     MessageFlag,
-    ResponseType,
     Resourceish,
-    Attachment,
+    ResponseType,
 )
 from hikari.traits import CacheAware
 
