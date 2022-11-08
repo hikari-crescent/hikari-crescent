@@ -2,15 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-from hikari import (
-    UNDEFINED,
-    Attachment,
-    Guild,
-    GuildChannel,
-    MessageFlag,
-    Resourceish,
-    ResponseType,
-)
+from hikari import UNDEFINED, Guild, GuildChannel, MessageFlag, ResponseType
 from hikari.traits import CacheAware
 
 from crescent.context.base_context import BaseContext
@@ -20,6 +12,7 @@ if TYPE_CHECKING:
     from typing import Any, Literal, Sequence
 
     from hikari import (
+        Attachment,
         CommandInteraction,
         Embed,
         Message,
