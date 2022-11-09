@@ -22,6 +22,7 @@ from crescent.context.utils import support_custom_context
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
+from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
@@ -49,9 +50,9 @@ def register_command(
     owner: Any,
     callback: CommandCallbackT,
     command_type: CommandType,
-    name: str,
+    name: str | LocaleBuilder,
     guild: Snowflakeish | None = None,
-    description: str | None = None,
+    description: str | LocaleBuilder | None = None,
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
@@ -209,10 +210,18 @@ class CommandHandler:
                 else:
                     children.append(sub_command_group)
 
+                name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
+                assert command.metadata.app_command.description
+                description, description_localizations = str_or_build_locale(
+                    command.metadata.app_command.description
+                )
+
                 cast("list[CommandOption]", sub_command_group.options).append(
                     CommandOption(
-                        name=command.metadata.app_command.name,
-                        description=unwrap(command.metadata.app_command.description),
+                        name=name,
+                        name_localizations=name_localizations,
+                        description=description,
+                        description_localizations=description_localizations,
                         type=OptionType.SUB_COMMAND,
                         options=command.metadata.app_command.options,
                         is_required=False,
@@ -253,10 +262,18 @@ class CommandHandler:
 
                 # No checking has to be done before appending `command` since it is the
                 # lowest level.
+                name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
+                assert command.metadata.app_command.description
+                description, description_localizations = str_or_build_locale(
+                    command.metadata.app_command.description
+                )
+
                 cast("list[CommandOption]", built_commands[key].options).append(
                     CommandOption(
-                        name=command.metadata.app_command.name,
-                        description=unwrap(command.metadata.app_command.description),
+                        name=name,
+                        name_localizations=name_localizations,
+                        description=description,
+                        description_localizations=description_localizations,
                         type=command.metadata.app_command.type,
                         options=command.metadata.app_command.options,
                         is_required=False,

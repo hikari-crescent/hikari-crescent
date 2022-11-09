@@ -25,6 +25,7 @@ from hikari import (
     User,
 )
 
+from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
@@ -89,7 +90,7 @@ Self = TypeVar("Self")
 
 @dataclass
 class ClassCommandOption(Generic[T]):
-    name: str | None
+    name: str | LocaleBuilder | None
     type: OptionType
     description: str
     default: UndefinedNoneOr[Any]
@@ -102,10 +103,15 @@ class ClassCommandOption(Generic[T]):
     autocomplete: AutocompleteCallbackT | None
 
     def _gen_option(self, name: str) -> CommandOption:
+        name, name_localizations = str_or_build_locale(self.name or name)
+        description, description_localizations = str_or_build_locale(self.description)
+
         return CommandOption(
             type=self.type,
-            name=self.name or name,
-            description=self.description,
+            name=name,
+            name_localizations=name_localizations,
+            description=description,
+            description_localizations=description_localizations,
             is_required=self.default is UNDEFINED,
             choices=self.choices,
             channel_types=self.channel_types,

@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 from attr import define
 from hikari import ChannelType, CommandChoice
 
+from crescent.locale import LocaleBuilder
+
 if TYPE_CHECKING:
     from typing import Any, Sequence
 
@@ -34,19 +36,19 @@ class Arg(ABC):
 
 @define(hash=True)
 class Description(Arg):
-    description: str
+    description: str | LocaleBuilder
 
     @property
-    def payload(self) -> str:
+    def payload(self) -> str | LocaleBuilder:
         return self.description
 
 
 @define(hash=True)
 class Name(Arg):
-    name: str
+    name: str | LocaleBuilder
 
     @property
-    def payload(self) -> str:
+    def payload(self) -> str | LocaleBuilder:
         return self.name
 
 

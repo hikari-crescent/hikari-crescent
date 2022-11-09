@@ -3,8 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import MutableMapping, Sequence
 
-
-__all__: Sequence[str] = ("LocaleBuilder", "build_str_or_locale")
+__all__: Sequence[str] = ("LocaleBuilder", "str_or_build_locale")
 
 
 class LocaleBuilder(ABC):
@@ -14,7 +13,7 @@ class LocaleBuilder(ABC):
         Builds the locales for a command. Returns a `MutableMapping` of
         language codes to strings.
 
-        [Discord API Docs on Localization](https://discord.com/developers/docs/interactions/application-commands#localization)
+        [Discord API Docs Localization.](https://discord.com/developers/docs/interactions/application-commands#localization)
         """
 
     @abstractmethod
@@ -22,7 +21,7 @@ class LocaleBuilder(ABC):
         """Return the name used when there is no localization for a language."""
 
 
-def build_str_or_locale(
+def str_or_build_locale(
     string_or_locale: str | LocaleBuilder,
 ) -> tuple[str, MutableMapping[str, str]]:
     if isinstance(string_or_locale, LocaleBuilder):
