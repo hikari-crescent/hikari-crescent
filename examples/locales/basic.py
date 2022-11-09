@@ -31,7 +31,7 @@ class Locale(crescent.LocaleBuilder):
 @crescent.command(
     name=Locale("name", en_US="en-name"), description=Locale("description", en_US="en-description")
 )
-class command:
+class Command:
     # "en-option-name" and "en-option-description" will be used when the user is
     # using the `en-US` locale. Otherwise "option-name" and "option-description"
     # will be visible.
