@@ -16,6 +16,7 @@
 ## Features
  - Simple and intuitive API.
  - Slash, user, and message commands.
+ - Command localization.
  - Error handling for commands, events, and autocomplete.
  - Hooks to run function before or after a command (or any command from a group!)
  - Plugin system to easily split bot into different modules.
