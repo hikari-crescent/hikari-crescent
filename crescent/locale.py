@@ -17,7 +17,7 @@ class LocaleBuilder(ABC):
         """
 
     @abstractmethod
-    def default_name(self) -> str:
+    def default(self) -> str:
         """Return the name used when there is no localization for a language."""
 
 
@@ -25,6 +25,6 @@ def str_or_build_locale(
     string_or_locale: str | LocaleBuilder,
 ) -> tuple[str, MutableMapping[str, str]]:
     if isinstance(string_or_locale, LocaleBuilder):
-        return (string_or_locale.default_name(), string_or_locale.build())
+        return (string_or_locale.default(), string_or_locale.build())
     else:
         return (string_or_locale, {})
