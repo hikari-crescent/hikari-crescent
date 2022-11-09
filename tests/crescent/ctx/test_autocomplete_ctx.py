@@ -1,11 +1,13 @@
 from copy import copy
 from unittest.mock import AsyncMock, Mock
+
+from hikari import CommandInteractionOption, InteractionType, OptionType
+from hikari.impl import CacheImpl, RESTClientImpl
+from pytest import mark
+
 from crescent import AutocompleteContext
-from hikari import InteractionType, CommandInteractionOption, OptionType
-from hikari.impl import RESTClientImpl, CacheImpl
 from crescent.mentionable import Mentionable
 from tests.utils import MockBot
-from pytest import mark
 
 options = [
     CommandInteractionOption(name="user", type=OptionType.USER, value=12345, options=None),

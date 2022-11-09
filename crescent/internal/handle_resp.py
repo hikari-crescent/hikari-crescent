@@ -11,8 +11,8 @@ from hikari import (
     CommandInteraction,
     CommandType,
     InteractionType,
-    OptionType,
     Locale,
+    OptionType,
     Snowflake,
 )
 

@@ -1,20 +1,12 @@
-import crescent
 from crescent.locale import str_or_build_locale
-
-
-class TestBuilder(crescent.LocaleBuilder):
-    def build(self):
-        return "LOCALES"
-
-    def default(self):
-        return "DEFAULT"
+from tests.utils import Locale
 
 
 def test_str_or_build_locale():
-    default, locales = str_or_build_locale(TestBuilder())
+    default, locales = str_or_build_locale(Locale("default", en_US="en-localization"))
 
-    assert default == "DEFAULT"
-    assert locales == "LOCALES"
+    assert default == "default"
+    assert locales == {"en-US": "en-localization"}
 
     default, locales = str_or_build_locale("test")
 

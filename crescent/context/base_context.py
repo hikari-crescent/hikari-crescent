@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import hikari
 from attr import define
-from hikari import Member, PartialInteraction, Snowflake, User, Locale
+from hikari import Locale, Member, PartialInteraction, Snowflake, User
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type, TypeVar

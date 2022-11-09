@@ -27,8 +27,7 @@ from typing_extensions import Annotated
 from crescent import ChannelTypes, Choices, Description, MaxValue, MinValue, Name
 from crescent.commands.args import MaxLength, MinLength
 from crescent.commands.signature import gen_command_option
-from tests.utils import arrays_contain_same_elements
-
+from tests.utils import Locale, arrays_contain_same_elements
 
 global_PEP604()
 
@@ -63,6 +62,20 @@ def test_annotations():
         (
             Annotated[str, Name("different_name")],
             {"type": OptionType.STRING, "name": "different_name"},
+        ),
+        (
+            Annotated[
+                str,
+                Name(Locale("name", en_US="en-localization")),
+                Description(Locale("description", en_US="en-localization")),
+            ],
+            {
+                "type": OptionType.STRING,
+                "name": "name",
+                "name_localizations": {"en-US": "en-localization"},
+                "description": "description",
+                "description_localizations": {"en-US": "en-localization"},
+            },
         ),
         (
             Annotated[int, MinValue(10), MaxValue(15)],

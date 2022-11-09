@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from hikari import MessageCreateEvent
-from pytest import raises, LogCaptureFixture
+from pytest import LogCaptureFixture, raises
 
 from crescent.exceptions import PluginAlreadyLoadedError
 from tests.crescent.plugins.plugin import (
