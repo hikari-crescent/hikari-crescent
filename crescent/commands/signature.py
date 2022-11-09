@@ -100,7 +100,7 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
     )
 
     name, name_localizations = str_or_build_locale(name)
-    description, description_localizations = str_or_build_locale(name)
+    description, description_localizations = str_or_build_locale(description)
 
     choices = _get_arg(Choices, metadata)
     channel_types = _channel_types or _get_arg(ChannelTypes, metadata)

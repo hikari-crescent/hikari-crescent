@@ -12,8 +12,10 @@ def test_build():
         type=CommandType.SLASH, name="test_command", description="test description", guild_id=1234
     ).build(FACTORY) == {
         "name": "test_command",
+        "name_localizations": {},
         "type": CommandType.SLASH,
         "description": "test description",
+        "description_localizations": {},
         "default_member_permissions": None,
         "dm_permission": True,
     }
@@ -29,8 +31,10 @@ def test_build_with_perms():
         guild_id=1234,
     ).build(FACTORY) == {
         "name": "test_command",
+        "name_localizations": {},
         "type": CommandType.SLASH,
         "description": "test description",
+        "description_localizations": {},
         "default_member_permissions": str(Permissions.ATTACH_FILES.value),
         "dm_permission": False,
     }
@@ -44,8 +48,10 @@ def test_build_with_perms():
         guild_id=1234,
     ).build(FACTORY) == {
         "name": "test_command",
+        "name_localizations": {},
         "type": CommandType.SLASH,
         "description": "test description",
+        "description_localizations": {},
         "default_member_permissions": str(32768),
         "dm_permission": False,
     }

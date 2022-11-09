@@ -40,6 +40,7 @@ ctx = AutocompleteContext(
     group=None,
     sub_group=None,
     member=None,
+    locale=None,
     command_type=None,
     options=None,
     has_created_message=None,

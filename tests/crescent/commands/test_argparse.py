@@ -35,7 +35,7 @@ global_PEP604()
 POSITIONAL_OR_KEYWORD = _ParameterKind.POSITIONAL_OR_KEYWORD
 
 
-def testgen_command_option():
+def test_gen_command_option():
     assert (
         gen_command_option(
             Parameter(name="self", annotation=_empty, default=None, kind=POSITIONAL_OR_KEYWORD)

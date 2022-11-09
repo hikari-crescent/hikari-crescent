@@ -16,13 +16,14 @@ def test_into():
         guild_id=9,
         user=10,
         member=11,
-        command=12,
-        command_type=13,
-        group=14,
-        sub_group=15,
-        options=16,
-        has_created_message=17,
-        has_deferred_response=18,
+        locale=12,
+        command=13,
+        command_type=14,
+        group=15,
+        sub_group=16,
+        options=17,
+        has_created_message=18,
+        has_deferred_response=19,
     )
 
     ctx2 = ctx.into(BaseContext)
@@ -38,6 +39,7 @@ def test_into():
     assert ctx.guild_id == ctx2.guild_id
     assert ctx.user == ctx2.user
     assert ctx.member == ctx2.member
+    assert ctx.locale == ctx2.locale
     assert ctx.command == ctx2.command
     assert ctx.command_type == ctx2.command_type
     assert ctx.group == ctx2.group
@@ -69,6 +71,7 @@ async def test_supports_context():
         guild_id=None,
         user=None,
         member=None,
+        locale=None,
         command=None,
         command_type=None,
         group=None,
