@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import hikari
 from attr import define
-from hikari import Member, PartialInteraction, Snowflake, User
+from hikari import Member, PartialInteraction, Snowflake, User, Locale
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type, TypeVar
@@ -44,6 +44,7 @@ class BaseContext:
     """The user who triggered this command interaction."""
     member: Member | None
     """The member object for the user that triggered this interaction, if used in a guild."""
+    locale: Locale
 
     command: str
     """The name of the command."""
@@ -87,6 +88,7 @@ class BaseContext:
             guild_id=self.guild_id,
             user=self.user,
             member=self.member,
+            locale=self.locale,
             command=self.command,
             command_type=self.command_type,
             group=self.group,

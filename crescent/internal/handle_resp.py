@@ -12,6 +12,7 @@ from hikari import (
     CommandType,
     InteractionType,
     OptionType,
+    Locale,
     Snowflake,
 )
 
@@ -221,6 +222,7 @@ def _context_from_interaction_resp(
         guild_id=interaction.guild_id,
         user=interaction.user,
         member=interaction.member,
+        locale=Locale(interaction.locale),
         command=command_name,
         group=group,
         sub_group=sub_group,
