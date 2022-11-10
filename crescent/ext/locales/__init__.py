@@ -28,7 +28,7 @@ class i18n(LocaleBuilder):
             "de": _translate(self.key, locale="de"),
             "en-GB": _translate(self.key, locale="en-GB"),
             "en-US": _translate(self.key, locale="en-US"),
-            "es-ES": _translate(self.key, locale="en-ES"),
+            "es-ES": _translate(self.key, locale="es-ES"),
             "fr": _translate(self.key, locale="fr"),
             "hr": _translate(self.key, locale="hr"),
             "it": _translate(self.key, locale="it"),
