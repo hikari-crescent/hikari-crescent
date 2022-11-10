@@ -11,7 +11,7 @@ __all__: Sequence[str] = ("Locale",)
 @dataclass
 class Locale(LocaleBuilder):
 
-    default_name: str
+    _fallback: str
     en_US: str | None = None
 
     def build(self) -> dict[str, str]:
@@ -21,5 +21,6 @@ class Locale(LocaleBuilder):
 
         return out
 
-    def default(self) -> str:
-        return self.default_name
+    @property
+    def fallback(self) -> str:
+        return self._fallback
