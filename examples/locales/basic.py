@@ -1,8 +1,9 @@
 # Locales can be used by subclassing `crescent.LocaleBuilder`
 
+from __future__ import annotations
+
 import crescent
 import dataclasses
-import typing
 
 
 bot = crescent.Bot("...")
@@ -14,7 +15,8 @@ class Locale(crescent.LocaleBuilder):
     _fallback: str
     en_US: str
 
-    def build(self) -> typing.Mapping[str, str]:
+    # Build must return a subclass of `typing.Mapping`.
+    def build(self) -> dict[str, str]:
         """Return a dict of command localization names to values."""
 
         # All possible locales can be seen in the `hikari.Locale` enum.
