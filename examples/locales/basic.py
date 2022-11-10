@@ -14,7 +14,7 @@ class Locale(crescent.LocaleBuilder):
     _fallback: str
     en_US: str
 
-    def build(self) -> typing.MutableMapping[str, str]:
+    def build(self) -> typing.Mapping[str, str]:
         """Return a dict of command localization names to values."""
 
         # All possible locales can be seen in the `hikari.Locale` enum.
