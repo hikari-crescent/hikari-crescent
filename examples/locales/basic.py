@@ -11,19 +11,18 @@ bot = crescent.Bot("...")
 @dataclasses.dataclass
 class Locale(crescent.LocaleBuilder):
 
-    default_name: str
+    _fallback: str
     en_US: str
 
     def build(self) -> typing.MutableMapping[str, str]:
         """Return a dict of command localization names to values."""
 
         # All possible locales can be seen in the `hikari.Locale` enum.
-        return {"en-US": "english-name"}
+        return {"en-US": self.en_US}
 
     @property
     def fallback(self) -> str:
-        "This value is used as the default."
-        return self.default_name
+        return self._fallback
 
 
 # This command's name is "en-name" for users on the `en-US` locale. Otherwise the
