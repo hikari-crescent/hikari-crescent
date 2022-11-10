@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from crescent import LocaleBuilder
 from dataclasses import dataclass
+from typing import Sequence
 
 try:
     import i18n as i18n_  # pyright: ignore
@@ -9,7 +10,10 @@ except ImportError:
     i18n_ = None
 
 
-def translate(key: str, *, locale: str | None = None) -> str:
+__all__: Sequence[str] = ("i18n", "LocaleString")
+
+
+def _translate(key: str, *, locale: str | None = None) -> str:
     return i18n_.t(key, locale=locale)  # type: ignore
 
 
@@ -20,36 +24,36 @@ class i18n(LocaleBuilder):
 
         self.key = key
         self.translations: dict[str, str] = {
-            "da": translate(self.key, locale="da"),
-            "de": translate(self.key, locale="de"),
-            "en-GB": translate(self.key, locale="en-GB"),
-            "en-US": translate(self.key, locale="en-US"),
-            "es-ES": translate(self.key, locale="en-ES"),
-            "fr": translate(self.key, locale="fr"),
-            "hr": translate(self.key, locale="hr"),
-            "it": translate(self.key, locale="it"),
-            "lt": translate(self.key, locale="lt"),
-            "hu": translate(self.key, locale="hu"),
-            "nl": translate(self.key, locale="nl"),
-            "no": translate(self.key, locale="no"),
-            "pl": translate(self.key, locale="pl"),
-            "pt-BR": translate(self.key, locale="pt-BR"),
-            "ro": translate(self.key, locale="ro"),
-            "fi": translate(self.key, locale="fi"),
-            "sv-SE": translate(self.key, locale="sv-SE"),
-            "vi": translate(self.key, locale="vi"),
-            "tr": translate(self.key, locale="tr"),
-            "cs": translate(self.key, locale="cs"),
-            "el": translate(self.key, locale="el"),
-            "bg": translate(self.key, locale="bg"),
-            "ru": translate(self.key, locale="ru"),
-            "uk": translate(self.key, locale="uk"),
-            "hi": translate(self.key, locale="hi"),
-            "th": translate(self.key, locale="th"),
-            "zh-CN": translate(self.key, locale="zh-CN"),
-            "ja": translate(self.key, locale="ja"),
-            "zh-TW": translate(self.key, locale="zh-TW"),
-            "ko": translate(self.key, locale="ko"),
+            "da": _translate(self.key, locale="da"),
+            "de": _translate(self.key, locale="de"),
+            "en-GB": _translate(self.key, locale="en-GB"),
+            "en-US": _translate(self.key, locale="en-US"),
+            "es-ES": _translate(self.key, locale="en-ES"),
+            "fr": _translate(self.key, locale="fr"),
+            "hr": _translate(self.key, locale="hr"),
+            "it": _translate(self.key, locale="it"),
+            "lt": _translate(self.key, locale="lt"),
+            "hu": _translate(self.key, locale="hu"),
+            "nl": _translate(self.key, locale="nl"),
+            "no": _translate(self.key, locale="no"),
+            "pl": _translate(self.key, locale="pl"),
+            "pt-BR": _translate(self.key, locale="pt-BR"),
+            "ro": _translate(self.key, locale="ro"),
+            "fi": _translate(self.key, locale="fi"),
+            "sv-SE": _translate(self.key, locale="sv-SE"),
+            "vi": _translate(self.key, locale="vi"),
+            "tr": _translate(self.key, locale="tr"),
+            "cs": _translate(self.key, locale="cs"),
+            "el": _translate(self.key, locale="el"),
+            "bg": _translate(self.key, locale="bg"),
+            "ru": _translate(self.key, locale="ru"),
+            "uk": _translate(self.key, locale="uk"),
+            "hi": _translate(self.key, locale="hi"),
+            "th": _translate(self.key, locale="th"),
+            "zh-CN": _translate(self.key, locale="zh-CN"),
+            "ja": _translate(self.key, locale="ja"),
+            "zh-TW": _translate(self.key, locale="zh-TW"),
+            "ko": _translate(self.key, locale="ko"),
         }
 
     def build(self) -> dict[str, str]:
