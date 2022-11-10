@@ -19,6 +19,7 @@ from crescent.commands.args import (
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, get_channel_types
 from crescent.context import BaseContext
+from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.utils import any_issubclass
 
 if TYPE_CHECKING:
@@ -91,7 +92,16 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
         )
 
     name = _get_arg(Name, metadata) or param.name
-    description = _get_arg(Description, metadata) or _get_arg(str, metadata) or "No Description"
+    description = (
+        _get_arg(Description, metadata)
+        or _get_arg(str, metadata)
+        or _get_arg(LocaleBuilder, metadata)
+        or "No Description"
+    )
+
+    name, name_localizations = str_or_build_locale(name)
+    description, description_localizations = str_or_build_locale(description)
+
     choices = _get_arg(Choices, metadata)
     channel_types = _channel_types or _get_arg(ChannelTypes, metadata)
     min_value = _get_arg(MinValue, metadata)
@@ -104,9 +114,11 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
 
     return CommandOption(
         name=name,
+        name_localizations=name_localizations,
         autocomplete=bool(autocomplete),
         type=_type,
         description=description,
+        description_localizations=description_localizations,
         choices=choices,
         options=None,
         channel_types=list(channel_types) if channel_types else None,
