@@ -20,7 +20,7 @@ def _translate(key: str, *, locale: str | None = None) -> str:
 class i18n(LocaleBuilder):
     def __init__(self, fallback: str) -> None:
         if not i18n_:
-            raise ModuleNotFoundError("`python-i18n` must be installed to use i18n.")
+            raise ModuleNotFoundError("`hikari-crescent[i18n]` must be installed to use i18n.")
 
         self.fallback = fallback
         self.translations: dict[str, str] = {

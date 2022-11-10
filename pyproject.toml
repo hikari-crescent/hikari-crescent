@@ -46,6 +46,9 @@ pytest-cov = "^4.0.0"
 pyright = "^1.1.269"
 nox = "^2022.8.7"
 
+[tool.poetry.group.i18n.dependencies]
+python-i18n = ">=0.2"
+
 [tool.black]
 line-length = 99
 target-version = ['py38']
