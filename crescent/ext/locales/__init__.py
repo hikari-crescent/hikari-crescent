@@ -18,49 +18,49 @@ def _translate(key: str, *, locale: str | None = None) -> str:
 
 
 class i18n(LocaleBuilder):
-    def __init__(self, key: str) -> None:
+    def __init__(self, fallback: str) -> None:
         if not i18n_:
             raise ModuleNotFoundError("`python-i18n` must be installed to use i18n.")
 
-        self.key = key
+        self.fallback = fallback
         self.translations: dict[str, str] = {
-            "da": _translate(self.key, locale="da"),
-            "de": _translate(self.key, locale="de"),
-            "en-GB": _translate(self.key, locale="en-GB"),
-            "en-US": _translate(self.key, locale="en-US"),
-            "es-ES": _translate(self.key, locale="es-ES"),
-            "fr": _translate(self.key, locale="fr"),
-            "hr": _translate(self.key, locale="hr"),
-            "it": _translate(self.key, locale="it"),
-            "lt": _translate(self.key, locale="lt"),
-            "hu": _translate(self.key, locale="hu"),
-            "nl": _translate(self.key, locale="nl"),
-            "no": _translate(self.key, locale="no"),
-            "pl": _translate(self.key, locale="pl"),
-            "pt-BR": _translate(self.key, locale="pt-BR"),
-            "ro": _translate(self.key, locale="ro"),
-            "fi": _translate(self.key, locale="fi"),
-            "sv-SE": _translate(self.key, locale="sv-SE"),
-            "vi": _translate(self.key, locale="vi"),
-            "tr": _translate(self.key, locale="tr"),
-            "cs": _translate(self.key, locale="cs"),
-            "el": _translate(self.key, locale="el"),
-            "bg": _translate(self.key, locale="bg"),
-            "ru": _translate(self.key, locale="ru"),
-            "uk": _translate(self.key, locale="uk"),
-            "hi": _translate(self.key, locale="hi"),
-            "th": _translate(self.key, locale="th"),
-            "zh-CN": _translate(self.key, locale="zh-CN"),
-            "ja": _translate(self.key, locale="ja"),
-            "zh-TW": _translate(self.key, locale="zh-TW"),
-            "ko": _translate(self.key, locale="ko"),
+            "da": _translate(self.fallback, locale="da"),
+            "de": _translate(self.fallback, locale="de"),
+            "en-GB": _translate(self.fallback, locale="en-GB"),
+            "en-US": _translate(self.fallback, locale="en-US"),
+            "es-ES": _translate(self.fallback, locale="es-ES"),
+            "fr": _translate(self.fallback, locale="fr"),
+            "hr": _translate(self.fallback, locale="hr"),
+            "it": _translate(self.fallback, locale="it"),
+            "lt": _translate(self.fallback, locale="lt"),
+            "hu": _translate(self.fallback, locale="hu"),
+            "nl": _translate(self.fallback, locale="nl"),
+            "no": _translate(self.fallback, locale="no"),
+            "pl": _translate(self.fallback, locale="pl"),
+            "pt-BR": _translate(self.fallback, locale="pt-BR"),
+            "ro": _translate(self.fallback, locale="ro"),
+            "fi": _translate(self.fallback, locale="fi"),
+            "sv-SE": _translate(self.fallback, locale="sv-SE"),
+            "vi": _translate(self.fallback, locale="vi"),
+            "tr": _translate(self.fallback, locale="tr"),
+            "cs": _translate(self.fallback, locale="cs"),
+            "el": _translate(self.fallback, locale="el"),
+            "bg": _translate(self.fallback, locale="bg"),
+            "ru": _translate(self.fallback, locale="ru"),
+            "uk": _translate(self.fallback, locale="uk"),
+            "hi": _translate(self.fallback, locale="hi"),
+            "th": _translate(self.fallback, locale="th"),
+            "zh-CN": _translate(self.fallback, locale="zh-CN"),
+            "ja": _translate(self.fallback, locale="ja"),
+            "zh-TW": _translate(self.fallback, locale="zh-TW"),
+            "ko": _translate(self.fallback, locale="ko"),
         }
 
     def build(self) -> dict[str, str]:
         return self.translations
 
     def default(self) -> str:
-        return self.key
+        return self.fallback
 
 
 @dataclass
