@@ -16,8 +16,9 @@ class LocaleBuilder(ABC):
         [Discord API Docs Localization.](https://discord.com/developers/docs/interactions/application-commands#localization)
         """
 
+    @property
     @abstractmethod
-    def default(self) -> str:
+    def fallback(self) -> str:
         """Return the name used when there is no localization for a language."""
 
 
@@ -25,6 +26,6 @@ def str_or_build_locale(
     string_or_locale: str | LocaleBuilder,
 ) -> tuple[str, MutableMapping[str, str]]:
     if isinstance(string_or_locale, LocaleBuilder):
-        return (string_or_locale.default(), string_or_locale.build())
+        return (string_or_locale.fallback, string_or_locale.build())
     else:
         return (string_or_locale, {})

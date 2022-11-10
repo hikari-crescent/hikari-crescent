@@ -20,7 +20,8 @@ class Locale(crescent.LocaleBuilder):
         # All possible locales can be seen in the `hikari.Locale` enum.
         return {"en-US": "english-name"}
 
-    def default(self) -> str:
+    @property
+    def fallback(self) -> str:
         "This value is used as the default."
         return self.default_name
 
