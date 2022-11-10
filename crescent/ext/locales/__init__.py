@@ -22,7 +22,7 @@ class i18n(LocaleBuilder):
         if not i18n_:
             raise ModuleNotFoundError("`hikari-crescent[i18n]` must be installed to use i18n.")
 
-        self.fallback = fallback
+        self._fallback = fallback
         self.translations: dict[str, str] = {
             "da": _translate(self.fallback, locale="da"),
             "de": _translate(self.fallback, locale="de"),
@@ -59,13 +59,14 @@ class i18n(LocaleBuilder):
     def build(self) -> dict[str, str]:
         return self.translations
 
-    def default(self) -> str:
-        return self.fallback
+    @property
+    def fallback(self) -> str:
+        return self._fallback
 
 
 @dataclass
 class LocaleString(LocaleBuilder):
-    fallback: str
+    _fallback: str
     da: str | None = None
     de: str | None = None
     en_GB: str | None = None
@@ -133,5 +134,5 @@ class LocaleString(LocaleBuilder):
 
         return {k: v for k, v in locales.items() if v}
 
-    def default(self) -> str:
-        return self.fallback
+    def fallback(self) -> str:
+        return self._fallback
