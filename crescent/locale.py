@@ -14,7 +14,7 @@ class LocaleBuilder(ABC):
         language codes to strings.
 
         [Discord API Docs Localization.](https://discord.com/developers/docs/interactions/application-commands#localization)
-        """
+        """  # noqa: E501
 
     @property
     @abstractmethod
