@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Sequence
 
 try:
-    import i18n as i18n_  # pyright: ignore
+    import i18n as i18n_  # type: ignore
 except ImportError:
     i18n_ = None
 
