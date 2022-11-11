@@ -93,7 +93,7 @@ class LocaleMap(LocaleBuilder):
     from crescent.ext import locales
 
     @bot.include
-    @crescent.command(name=locales.LocaleMap("fallback", en_US="english-name", fr="French Name"))
+    @crescent.command(name=locales.LocaleMap("fallback", en_US="english-name", fr="french-name"))
     async def command(ctx: crescent.Context):
         ...
     ```
@@ -167,5 +167,6 @@ class LocaleMap(LocaleBuilder):
 
         return {k: v for k, v in locales.items() if v}
 
+    @property
     def fallback(self) -> str:
         return self._fallback
