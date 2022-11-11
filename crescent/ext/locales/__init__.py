@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from crescent import LocaleBuilder
 from dataclasses import dataclass
 from typing import Sequence
+
+from crescent import LocaleBuilder
 
 try:
     import i18n as i18n_  # type: ignore
