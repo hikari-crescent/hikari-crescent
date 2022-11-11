@@ -10,7 +10,7 @@ except ImportError:
     i18n_ = None
 
 
-__all__: Sequence[str] = ("i18n", "LocaleString")
+__all__: Sequence[str] = ("i18n", "LocaleMap")
 
 
 def _translate(key: str, *, locale: str | None = None) -> str:
@@ -18,6 +18,25 @@ def _translate(key: str, *, locale: str | None = None) -> str:
 
 
 class i18n(LocaleBuilder):
+    """
+    An implementation of `crescent.LocaleBuilder` that uses `python-i18n`.
+
+    > ⚠️ Translations must be loaded before any commands.
+
+    ```python
+    import crescent
+    import i18n
+    from crescent.ext import locales
+
+    i18n.add_translation("name", "translated-name", locale="en")
+
+    @bot.include
+    @crescent.command(name=locales.i18n("name"))
+    async def command(ctx: crescent.Context):
+        ...
+    ```
+    """
+
     def __init__(self, fallback: str) -> None:
         if not i18n_:
             raise ModuleNotFoundError("`hikari-crescent[i18n]` must be installed to use i18n.")
@@ -65,7 +84,21 @@ class i18n(LocaleBuilder):
 
 
 @dataclass
-class LocaleString(LocaleBuilder):
+class LocaleMap(LocaleBuilder):
+    """
+    An implementation of `crescent.LocaleBuilder` that allows you to declare locales as kwargs.
+
+    ```python
+    import crescent
+    from crescent.ext import locales
+
+    @bot.include
+    @crescent.command(name=locales.LocaleMap("fallback", en_US="english-name", fr="French Name"))
+    async def command(ctx: crescent.Context):
+        ...
+    ```
+    """
+
     _fallback: str
     da: str | None = None
     de: str | None = None
