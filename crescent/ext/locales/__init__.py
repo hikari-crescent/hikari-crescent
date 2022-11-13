@@ -17,6 +17,8 @@ __all__: Sequence[str] = ("i18n", "LocaleMap")
 
 
 def _translate(key: str, *, locale: str | None = None) -> str:
+    if not i18n_:
+        raise ModuleNotFoundError("`hikari-crescent[i18n]` must be installed to use i18n.")
     return i18n_.t(key, locale=locale)  # type: ignore
 
 
@@ -41,9 +43,6 @@ class i18n(LocaleBuilder):
     """
 
     def __init__(self, fallback: str) -> None:
-        if not i18n_:
-            raise ModuleNotFoundError("`hikari-crescent[i18n]` must be installed to use i18n.")
-
         self._fallback = fallback
         self.translations: dict[str, str] = {
             locale: _translate(self._fallback, locale=locale) for locale in hikari.Locale
