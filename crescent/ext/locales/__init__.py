@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Sequence
 
+import hikari
+
 from crescent import LocaleBuilder
 
 try:
@@ -14,38 +16,7 @@ except ImportError:
 __all__: Sequence[str] = ("i18n", "LocaleMap", "locales")
 
 
-locales: set[str] = {
-    "da",
-    "de",
-    "en-GB",
-    "en-US",
-    "es-ES",
-    "fr",
-    "hr",
-    "it",
-    "lt",
-    "hu",
-    "nl",
-    "no",
-    "pl",
-    "pt-BR",
-    "ro",
-    "fi",
-    "sv-SE",
-    "vi",
-    "tr",
-    "cs",
-    "el",
-    "bg",
-    "ru",
-    "uk",
-    "hi",
-    "th",
-    "zh-CN",
-    "ja",
-    "zh-TW",
-    "ko",
-}
+locales: set[str] = {value.value for value in hikari.Locale}
 """A set of all possible locales."""
 
 
