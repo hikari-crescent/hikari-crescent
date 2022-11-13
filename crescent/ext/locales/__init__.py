@@ -108,8 +108,7 @@ class LocaleMap(LocaleBuilder):
     def build(self) -> dict[str, str]:
         out: dict[str, str] = {}
         for locale in hikari.Locale:
-            value = getattr(self, locale.replace("-", "_"))
-            if value:
+            if value := getattr(self, locale.replace("-", "_")):
                 out[locale] = value
 
         return out
