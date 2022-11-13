@@ -13,11 +13,7 @@ except ImportError:
     i18n_ = None
 
 
-__all__: Sequence[str] = ("i18n", "LocaleMap", "locales")
-
-
-locales: set[str] = {value.value for value in hikari.Locale}
-"""A set of all possible locales."""
+__all__: Sequence[str] = ("i18n", "LocaleMap")
 
 
 def _translate(key: str, *, locale: str | None = None) -> str:
@@ -50,7 +46,7 @@ class i18n(LocaleBuilder):
 
         self._fallback = fallback
         self.translations: dict[str, str] = {
-            locale: _translate(self._fallback, locale=locale) for locale in locales
+            locale: _translate(self._fallback, locale=locale) for locale in hikari.Locale
         }
 
     def build(self) -> dict[str, str]:
@@ -111,7 +107,7 @@ class LocaleMap(LocaleBuilder):
 
     def build(self) -> dict[str, str]:
         out: dict[str, str] = {}
-        for locale in locales:
+        for locale in hikari.Locale:
             value = getattr(self, locale.replace("-", "_"))
             if value:
                 out[locale] = value
