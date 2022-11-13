@@ -14,7 +14,7 @@ except ImportError:
 __all__: Sequence[str] = ("i18n", "LocaleMap", "locales")
 
 
-locales = {
+locales: set[str] = {
     "da",
     "de",
     "en-GB",
