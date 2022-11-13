@@ -11,7 +11,42 @@ except ImportError:
     i18n_ = None
 
 
-__all__: Sequence[str] = ("i18n", "LocaleMap")
+__all__: Sequence[str] = ("i18n", "LocaleMap", "locales")
+
+
+locales = {
+    "da",
+    "de",
+    "en-GB",
+    "en-US",
+    "es-ES",
+    "fr",
+    "hr",
+    "it",
+    "lt",
+    "hu",
+    "nl",
+    "no",
+    "pl",
+    "pt-BR",
+    "ro",
+    "fi",
+    "sv-SE",
+    "vi",
+    "tr",
+    "cs",
+    "el",
+    "bg",
+    "ru",
+    "uk",
+    "hi",
+    "th",
+    "zh-CN",
+    "ja",
+    "zh-TW",
+    "ko",
+}
+"""A set of all possible locales."""
 
 
 def _translate(key: str, *, locale: str | None = None) -> str:
@@ -44,36 +79,7 @@ class i18n(LocaleBuilder):
 
         self._fallback = fallback
         self.translations: dict[str, str] = {
-            "da": _translate(self.fallback, locale="da"),
-            "de": _translate(self.fallback, locale="de"),
-            "en-GB": _translate(self.fallback, locale="en-GB"),
-            "en-US": _translate(self.fallback, locale="en-US"),
-            "es-ES": _translate(self.fallback, locale="es-ES"),
-            "fr": _translate(self.fallback, locale="fr"),
-            "hr": _translate(self.fallback, locale="hr"),
-            "it": _translate(self.fallback, locale="it"),
-            "lt": _translate(self.fallback, locale="lt"),
-            "hu": _translate(self.fallback, locale="hu"),
-            "nl": _translate(self.fallback, locale="nl"),
-            "no": _translate(self.fallback, locale="no"),
-            "pl": _translate(self.fallback, locale="pl"),
-            "pt-BR": _translate(self.fallback, locale="pt-BR"),
-            "ro": _translate(self.fallback, locale="ro"),
-            "fi": _translate(self.fallback, locale="fi"),
-            "sv-SE": _translate(self.fallback, locale="sv-SE"),
-            "vi": _translate(self.fallback, locale="vi"),
-            "tr": _translate(self.fallback, locale="tr"),
-            "cs": _translate(self.fallback, locale="cs"),
-            "el": _translate(self.fallback, locale="el"),
-            "bg": _translate(self.fallback, locale="bg"),
-            "ru": _translate(self.fallback, locale="ru"),
-            "uk": _translate(self.fallback, locale="uk"),
-            "hi": _translate(self.fallback, locale="hi"),
-            "th": _translate(self.fallback, locale="th"),
-            "zh-CN": _translate(self.fallback, locale="zh-CN"),
-            "ja": _translate(self.fallback, locale="ja"),
-            "zh-TW": _translate(self.fallback, locale="zh-TW"),
-            "ko": _translate(self.fallback, locale="ko"),
+            locale: _translate(self._fallback, locale=locale) for locale in locales
         }
 
     def build(self) -> dict[str, str]:
@@ -133,40 +139,13 @@ class LocaleMap(LocaleBuilder):
     ko: str | None = None
 
     def build(self) -> dict[str, str]:
-        locales = {
-            "da": self.da,
-            "de": self.de,
-            "en-GB": self.en_GB,
-            "en-US": self.en_US,
-            "es-ES": self.es_ES,
-            "fr": self.fr,
-            "hr": self.hr,
-            "it": self.it,
-            "lt": self.lt,
-            "hu": self.hu,
-            "nl": self.nl,
-            "no": self.no,
-            "pl": self.pl,
-            "pt-BR": self.pt_BR,
-            "ro": self.ro,
-            "fi": self.fi,
-            "sv-SE": self.sv_SE,
-            "vi": self.vi,
-            "tr": self.tr,
-            "cs": self.cs,
-            "el": self.el,
-            "bg": self.bg,
-            "ru": self.ru,
-            "uk": self.uk,
-            "hi": self.hi,
-            "th": self.th,
-            "zh-CN": self.zh_CN,
-            "ja": self.ja,
-            "zh-TW": self.zh_TW,
-            "ko": self.ko,
-        }
+        out: dict[str, str] = {}
+        for locale in locales:
+            value = getattr(self, locale.replace("-", "_"))
+            if value:
+                out[locale] = value
 
-        return {k: v for k, v in locales.items() if v}
+        return out
 
     @property
     def fallback(self) -> str:
