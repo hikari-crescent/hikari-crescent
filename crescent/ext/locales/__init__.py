@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Sequence
 
 import hikari
@@ -106,12 +106,7 @@ class LocaleMap(LocaleBuilder):
     ko: str | None = None
 
     def build(self) -> dict[str, str]:
-        out: dict[str, str] = {}
-        for locale in hikari.Locale:
-            if value := getattr(self, locale.replace("-", "_")):
-                out[locale] = value
-
-        return out
+        return {k.replace("_", "-"): v for k, v in asdict(self).items() if v}
 
     @property
     def fallback(self) -> str:
