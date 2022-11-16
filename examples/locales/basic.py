@@ -1,4 +1,6 @@
 # Locales can be used by subclassing `crescent.LocaleBuilder`
+# NOTE: `crescent.ext.locales` provides implementations of `crescent.LocaleBuilder` that
+# may work for your usecase.
 
 from __future__ import annotations
 
