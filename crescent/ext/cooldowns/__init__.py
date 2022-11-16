@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any, Awaitable, Callable, Optional
 
 from hikari import Snowflake
-from pycooldown import FixedCooldown
 
 from crescent import Context, HookResult
 
@@ -48,6 +47,14 @@ def cooldown(
         bucket:
             Callback that returns a key for a bucket.
     """
+
+    try:
+        from pycooldown import FixedCooldown
+    except ImportError:
+        raise ModuleNotFoundError(
+            "`hikari-crescent[cooldowns]` must be installed to use `crescent.ext.cooldowns`."
+        )
+
     cooldown: FixedCooldown[Any] = FixedCooldown(period=period, capacity=capacity)
 
     async def inner(ctx: Context) -> HookResult | None:
