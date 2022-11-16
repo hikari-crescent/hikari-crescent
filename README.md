@@ -146,9 +146,10 @@ Using crescent's event decorator lets you use
 crescent's [event error handling system](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/error_handling/basic.py#L27).
 
 # Extensions
-Crescent has 2 builtin extensions.
+Crescent has 3 builtin extensions.
 
 - [crescent-ext-cooldowns](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/cooldowns) - Allows you to add sliding window rate limits to your commands.
+- [crescent-ext-locales](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/locales) - Contains classes that cover common use cases for localization.
 - [crescent-ext-tasks](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/tasks) - Schedules background tasks using loops or cronjobs.
 
 These extensions can be installed with pip.
