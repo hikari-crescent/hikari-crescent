@@ -12,7 +12,7 @@ def poetry_session(
     def inner(session: nox.Session) -> None:
         session.install("poetry")
         session.run("poetry", "shell")
-        session.run("poetry", "install")
+        session.run("poetry", "install", "--with", "cron,i18n,cooldowns")
         callback(session)
 
     return inner
