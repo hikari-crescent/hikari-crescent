@@ -106,7 +106,7 @@ class LocaleMap(LocaleBuilder):
     ko: str | None = None
 
     def build(self) -> dict[str, str]:
-        return {k.replace("_", "-"): v for k, v in asdict(self).items() if v}
+        return {k.replace("_", "-"): v for k, v in asdict(self).items() if v and k != "_fallback"}
 
     @property
     def fallback(self) -> str:
