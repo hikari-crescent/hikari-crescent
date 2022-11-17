@@ -41,6 +41,7 @@ __all__: Sequence[str] = (
     "CrescentException",
     "AlreadyRegisteredError",
     "PluginAlreadyLoadedError",
+    "PermissionsError",
     "LocaleBuilder",
     "Mentionable",
     "CommandCallbackT",
