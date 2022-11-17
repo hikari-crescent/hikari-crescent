@@ -1,8 +1,6 @@
 from datetime import datetime
 from typing import Callable, Sequence
 
-from croniter import croniter
-
 from crescent.ext.tasks.task import Task, TaskCallbackT
 from crescent.internal import Includable
 
@@ -11,6 +9,13 @@ __all__: Sequence[str] = ("cronjob", "Cronjob")
 
 class Cronjob(Task):
     def __init__(self, cron: str, callback: TaskCallbackT, *, first_loop: bool) -> None:
+        try:
+            from croniter import croniter
+        except ImportError:
+            raise ModuleNotFoundError(
+                "`hikari-crescent[cron]` must be installed to use `cooldowns.cronjob`."
+            )
+
         self.cron: croniter = croniter(cron, datetime.now())
         self.first_loop: bool = first_loop
 
