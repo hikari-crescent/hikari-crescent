@@ -26,8 +26,8 @@ class Group:
 
     def sub_group(
         self,
-        name: str,
-        description: str | None = None,
+        name: str | LocaleBuilder,
+        description: str | LocaleBuilder | None = None,
         hooks: list[HookCallbackT] | None = None,
         after_hooks: list[HookCallbackT] | None = None,
     ) -> SubGroup:
