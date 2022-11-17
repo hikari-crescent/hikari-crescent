@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable
+    from crescent.locale import LocaleBuilder
     from crescent.typedefs import HookCallbackT
 
 __all__: Sequence[str] = ("Group", "SubGroup")
@@ -32,8 +33,8 @@ def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
 
 @define
 class Group:
-    name: str
-    description: str | None = None
+    name: str | LocaleBuilder
+    description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
     after_hooks: list[HookCallbackT] | None = None
 
@@ -42,8 +43,8 @@ class Group:
 
     def sub_group(
         self,
-        name: str,
-        description: str | None = None,
+        name: str | LocaleBuilder,
+        description: str | LocaleBuilder | None = None,
         hooks: list[HookCallbackT] | None = None,
         after_hooks: list[HookCallbackT] | None = None,
     ) -> SubGroup:
@@ -63,9 +64,9 @@ class Group:
 
 @define
 class SubGroup:
-    name: str
+    name: str | LocaleBuilder
     parent: Group
-    description: str | None = None
+    description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
     after_hooks: list[HookCallbackT] | None = None
 
