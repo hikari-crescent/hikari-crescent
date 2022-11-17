@@ -12,14 +12,15 @@ if TYPE_CHECKING:
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable
     from crescent.typedefs import HookCallbackT
+    from crescent.locale import LocaleBuilder
 
 __all__: Sequence[str] = ("Group", "SubGroup")
 
 
 @define
 class Group:
-    name: str
-    description: str | None = None
+    name: str | LocaleBuilder
+    description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
     after_hooks: list[HookCallbackT] | None = None
 
@@ -44,9 +45,9 @@ class Group:
 
 @define
 class SubGroup:
-    name: str
+    name: str | LocaleBuilder
     parent: Group
-    description: str | None = None
+    description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
     after_hooks: list[HookCallbackT] | None = None
 

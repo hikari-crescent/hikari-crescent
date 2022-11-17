@@ -164,7 +164,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=unwrap(command.metadata.group).name,
+                    name=str_or_build_locale(unwrap(command.metadata.group).name)[0],
                     type=command.metadata.app_command.type,
                     guild_id=command.metadata.app_command.guild_id,
                     group=None,
@@ -189,9 +189,18 @@ class CommandHandler:
 
                 children = cast("list[CommandOption]", unwrap(built_commands[key].options))
 
+                name, name_localizations = str_or_build_locale(
+                    unwrap(command.metadata.sub_group).name
+                )
+                description, description_localizations = str_or_build_locale(
+                    unwrap(command.metadata.sub_group).description or "No Description"
+                )
+
                 sub_command_group = CommandOption(
-                    name=unwrap(command.metadata.sub_group).name,
-                    description=unwrap(command.metadata.sub_group).description or "No Description",
+                    name=name,
+                    name_localizations=name_localizations,
+                    description=description,
+                    description_localizations=description_localizations,
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
                     is_required=False,
@@ -240,7 +249,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=command.metadata.group.name,
+                    name=str_or_build_locale(command.metadata.group.name)[0],
                     type=command.metadata.app_command.type,
                     guild_id=command.metadata.app_command.guild_id,
                     group=None,
