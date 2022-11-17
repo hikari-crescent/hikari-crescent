@@ -17,3 +17,7 @@ class AlreadyRegisteredError(CrescentException):
 
 class PluginAlreadyLoadedError(CrescentException):
     """A plugin is attempted to be loaded but the plugin manager already loaded the plugin."""
+
+
+class PermissionsError(CrescentException):
+    """Raise when a permission is declared in a subcommand"""
