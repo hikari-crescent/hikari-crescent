@@ -38,7 +38,6 @@ i18n = ["python-i18n"]
 cron = ["croniter", "types-croniter"]
 cooldowns = ["pycooldown"]
 
-
 [tool.poetry.group.dev.dependencies]
 flake8 = "^5.0.4"
 mypy = "^0.982"
@@ -52,9 +51,6 @@ pytest-asyncio = "^0.20.1"
 pytest-cov = "^4.0.0"
 pyright = "^1.1.269"
 nox = "^2022.8.7"
-
-[tool.poetry.group.i18n.dependencies]
-python-i18n = ">=0.2"
 
 [tool.black]
 line-length = 99
