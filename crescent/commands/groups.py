@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable
-    from crescent.typedefs import HookCallbackT
     from crescent.locale import LocaleBuilder
+    from crescent.typedefs import HookCallbackT
 
 __all__: Sequence[str] = ("Group", "SubGroup")
 
