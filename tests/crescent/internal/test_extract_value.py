@@ -39,6 +39,42 @@ def test_extract_user():
     assert _extract_value(option, command_interaction) is USER
 
 
+def test_extract_channel():
+    CHANNEL = object()
+
+    command_interaction = MockInteraction(
+        resolved=ResolvedOptionData(
+            users={},
+            members={},
+            roles={},
+            channels={"12345": CHANNEL},
+            messages={},
+            attachments={},
+        )
+    )
+    option = MockOption(type=OptionType.CHANNEL, value="12345")
+
+    assert _extract_value(option, command_interaction) is CHANNEL
+
+
+def test_extract_attachment():
+    ATTACHMENT = object()
+
+    command_interaction = MockInteraction(
+        resolved=ResolvedOptionData(
+            users={},
+            members={},
+            roles={},
+            channels={},
+            messages={},
+            attachments={"12345": ATTACHMENT},
+        )
+    )
+    option = MockOption(type=OptionType.ATTACHMENT, value="12345")
+
+    assert _extract_value(option, command_interaction) is ATTACHMENT
+
+
 def test_extract_autocomplete_option():
     command_interaction = MockInteraction(None)
     option = MockOption(type=OptionType.USER, value=Snowflake(12345))

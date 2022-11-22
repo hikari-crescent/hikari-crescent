@@ -16,19 +16,21 @@ from hikari import (
     Snowflake,
     UndefinedType,
 )
+from hikari.traits import CacheAware
 
 from crescent.context.utils import support_custom_context
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
+from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, DefaultDict, Sequence
+    from typing import Any, Awaitable, Callable, DefaultDict, Iterable, Sequence
 
-    from hikari import Snowflakeish
+    from hikari import PartialGuild, Snowflakeish, SnowflakeishOr
 
-    from crescent.bot import Bot
+    from crescent.bot import Mixin
     from crescent.typedefs import AutocompleteCallbackT, CanBuild, CommandCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
@@ -37,20 +39,20 @@ _log = getLogger(__name__)
 
 
 def _plugin_unload_callback(self: Includable[Any]) -> None:
-    self.app._command_handler.remove(self)
+    self.app._command_handler._remove(self)
 
 
 def _command_app_set_hook(self: Includable[AppCommandMeta]) -> None:
-    self.app._command_handler.register(self)
+    self.app._command_handler._register(self)
 
 
 def register_command(
     owner: Any,
     callback: CommandCallbackT,
     command_type: CommandType,
-    name: str,
+    name: str | LocaleBuilder,
     guild: Snowflakeish | None = None,
-    description: str | None = None,
+    description: str | LocaleBuilder | None = None,
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
@@ -88,8 +90,7 @@ _E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
 class ErrorHandler(Generic[_E]):
     __slots__: Sequence[str] = ("bot", "registry", "supports_custom_ctx")
 
-    def __init__(self, bot: Bot):
-        self.bot: Bot = bot
+    def __init__(self) -> None:
         self.registry: dict[type[Exception], Includable[_E]] = {}
 
     def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
@@ -119,30 +120,33 @@ class ErrorHandler(Generic[_E]):
 
 class CommandHandler:
 
-    __slots__: Sequence[str] = ("registry", "bot", "guilds", "application_id")
+    __slots__: Sequence[str] = ("_bot", "_guilds", "_application_id", "_registry")
 
-    def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
-        self.bot: Bot = bot
-        self.guilds: Sequence[Snowflakeish] = guilds
-        self.application_id: Snowflake | None = None
+    def __init__(self, bot: Mixin, guilds: Sequence[Snowflakeish]) -> None:
+        self._bot: Mixin = bot
+        self._guilds: Sequence[Snowflakeish] = guilds
+        self._application_id: Snowflake | None = None
 
-        self.registry: dict[Unique, Includable[AppCommandMeta]] = {}
+        self._registry: dict[Unique, Includable[AppCommandMeta]] = {}
 
-    def register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+    def _register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
         command.metadata.app_command.guild_id = (
-            command.metadata.app_command.guild_id or self.bot.default_guild
+            command.metadata.app_command.guild_id or self._bot.default_guild
         )
-        self.registry[command.metadata.unique] = command
+        self._registry[command.metadata.unique] = command
         return command
 
-    def remove(self, command: Includable[AppCommandMeta]) -> None:
-        self.registry.pop(command.metadata.unique)
+    def _remove(self, command: Includable[AppCommandMeta]) -> None:
+        self._registry.pop(command.metadata.unique)
 
-    def build_commands(self) -> Sequence[AppCommand]:
+    def _get(self, unique: Unique) -> Includable[AppCommandMeta]:
+        return self._registry[unique]
+
+    def __build_commands(self) -> Sequence[AppCommand]:
 
         built_commands: dict[Unique, AppCommand] = {}
 
-        for command in self.registry.values():
+        for command in self._registry.values():
             if command.metadata.sub_group:
                 # If a command has a sub_group, it must be nested 2 levels deep.
                 #
@@ -160,7 +164,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=unwrap(command.metadata.group).name,
+                    name=str_or_build_locale(unwrap(command.metadata.group).name)[0],
                     type=command.metadata.app_command.type,
                     guild_id=command.metadata.app_command.guild_id,
                     group=None,
@@ -175,9 +179,9 @@ class CommandHandler:
                         guild_id=command.metadata.app_command.guild_id,
                         options=[],
                         default_member_permissions=(
-                            command.metadata.app_command.default_member_permissions
+                            unwrap(command.metadata.group).default_member_permissions
                         ),
-                        is_dm_enabled=command.metadata.app_command.is_dm_enabled,
+                        is_dm_enabled=unwrap(command.metadata.group).dm_enabled,
                     )
 
                 # The top-level command now exists. A subcommand group now if placed
@@ -185,9 +189,18 @@ class CommandHandler:
 
                 children = cast("list[CommandOption]", unwrap(built_commands[key].options))
 
+                name, name_localizations = str_or_build_locale(
+                    unwrap(command.metadata.sub_group).name
+                )
+                description, description_localizations = str_or_build_locale(
+                    unwrap(command.metadata.sub_group).description or "No Description"
+                )
+
                 sub_command_group = CommandOption(
-                    name=unwrap(command.metadata.sub_group).name,
-                    description=unwrap(command.metadata.sub_group).description or "No Description",
+                    name=name,
+                    name_localizations=name_localizations,
+                    description=description,
+                    description_localizations=description_localizations,
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
                     is_required=False,
@@ -206,10 +219,18 @@ class CommandHandler:
                 else:
                     children.append(sub_command_group)
 
+                name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
+                assert command.metadata.app_command.description
+                description, description_localizations = str_or_build_locale(
+                    command.metadata.app_command.description
+                )
+
                 cast("list[CommandOption]", sub_command_group.options).append(
                     CommandOption(
-                        name=command.metadata.app_command.name,
-                        description=unwrap(command.metadata.app_command.description),
+                        name=name,
+                        name_localizations=name_localizations,
+                        description=description,
+                        description_localizations=description_localizations,
                         type=OptionType.SUB_COMMAND,
                         options=command.metadata.app_command.options,
                         is_required=False,
@@ -228,7 +249,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=command.metadata.group.name,
+                    name=str_or_build_locale(command.metadata.group.name)[0],
                     type=command.metadata.app_command.type,
                     guild_id=command.metadata.app_command.guild_id,
                     group=None,
@@ -243,17 +264,25 @@ class CommandHandler:
                         guild_id=command.metadata.app_command.guild_id,
                         options=[],
                         default_member_permissions=(
-                            command.metadata.app_command.default_member_permissions
+                            command.metadata.group.default_member_permissions
                         ),
-                        is_dm_enabled=command.metadata.app_command.is_dm_enabled,
+                        is_dm_enabled=command.metadata.group.dm_enabled,
                     )
 
                 # No checking has to be done before appending `command` since it is the
                 # lowest level.
+                name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
+                assert command.metadata.app_command.description
+                description, description_localizations = str_or_build_locale(
+                    command.metadata.app_command.description
+                )
+
                 cast("list[CommandOption]", built_commands[key].options).append(
                     CommandOption(
-                        name=command.metadata.app_command.name,
-                        description=unwrap(command.metadata.app_command.description),
+                        name=name,
+                        name_localizations=name_localizations,
+                        description=description,
+                        description_localizations=description_localizations,
                         type=command.metadata.app_command.type,
                         options=command.metadata.app_command.options,
                         is_required=False,
@@ -265,18 +294,23 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def post_guild_commands(self, commands: Sequence[CanBuild], guild: Snowflakeish) -> None:
+    async def __post_guild_commands(
+        self, commands: Sequence[CanBuild], guild: Snowflakeish
+    ) -> None:
         try:
-            if self.application_id is None:
+            if self._application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
-            await self.bot.rest.set_application_commands(
-                application=self.application_id,
+            await self._bot.rest.set_application_commands(
+                application=self._application_id,
                 # The only method that is called has been implemented.
                 commands=commands,  # type: ignore
                 guild=guild,
             )
         except ForbiddenError:
-            if guild in self.bot.cache.get_guilds_view().keys():
+            if not isinstance(self._bot, CacheAware):
+                return
+
+            if guild in self._bot.cache.get_guilds_view():
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
@@ -289,10 +323,44 @@ class CommandHandler:
                 guild,
             )
 
-    async def register_commands(self) -> None:
-        guilds = list(self.guilds)
+    async def purge_commands(
+        self,
+        *guilds: SnowflakeishOr[PartialGuild],
+        skip_global: bool = False,
+        purge_everything: bool = True,
+    ) -> None:
+        """Purge application commands for this Command Handler.
 
-        commands = self.build_commands()
+        Args:
+            *guilds: The guilds to purge commands from, if any.
+
+        Kwargs:
+            skip_global:
+                If `True`, skip purging global commands.
+            purge_everything:
+                If `True`, purge all global commands and commands in
+                all `tracked_guilds`. This option takes priority over
+                `skip_global`.
+        """
+        if self._application_id is None:
+            raise AttributeError("Client `application_id` is not defined")
+
+        if not skip_global or purge_everything:
+            await self._bot.rest.set_application_commands(self._application_id, ())
+
+        guilds_to_purge: Iterable[PartialGuild | Snowflake | int]
+        if purge_everything:
+            guilds_to_purge = {*guilds, *self._guilds}
+        else:
+            guilds_to_purge = guilds
+
+        for guild in guilds_to_purge:
+            await self._bot.rest.set_application_commands(self._application_id, (), guild)
+
+    async def register_commands(self) -> None:
+        guilds = list(self._guilds)
+
+        commands = self.__build_commands()
 
         command_guilds: DefaultDict[Snowflakeish, list[AppCommand]] = defaultdict(list)
         global_commands: list[AppCommand] = []
@@ -305,21 +373,36 @@ class CommandHandler:
             else:
                 global_commands.append(command)
 
-        assert self.application_id is not None
+        assert self._application_id is not None
         await gather(
-            self.bot.rest.set_application_commands(
-                application=self.application_id,
+            self._bot.rest.set_application_commands(
+                application=self._application_id,
                 # The only method that is called has been implemented.
                 commands=global_commands,  # type: ignore
             ),
             gather_iter(
-                self.post_guild_commands(commands, guild)
+                self.__post_guild_commands(commands, guild)
                 for guild, commands in command_guilds.items()
             ),
             gather_iter(
-                self.bot.rest.set_application_commands(
-                    application=self.application_id, commands=[], guild=guild
+                self._bot.rest.set_application_commands(
+                    application=self._application_id, commands=[], guild=guild
                 )
                 for guild in guilds
             ),
         )
+
+    @property
+    def crescent_commands(self) -> Iterable[AppCommandMeta]:
+        """
+        Returns the information crescent stores for all the commands registered
+        to the bot.
+        """
+        return (command.metadata for command in self._registry.values())
+
+    @property
+    def app_commands(self) -> Iterable[AppCommand]:
+        """
+        Returns the app commands registered to this bot.
+        """
+        return (command.metadata.app_command for command in self._registry.values())

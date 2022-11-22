@@ -3,30 +3,48 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from attr import define
+from hikari import UNDEFINED, Permissions, UndefinedType
 
 from crescent.commands.hooks import add_hooks
+from crescent.exceptions import PermissionsError
 
 if TYPE_CHECKING:
     from typing import Sequence
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable
+    from crescent.locale import LocaleBuilder
     from crescent.typedefs import HookCallbackT
 
 __all__: Sequence[str] = ("Group", "SubGroup")
 
 
+def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
+    """Raise an exception if permissions are declared in a subcommand."""
+    if (
+        includable.metadata.app_command.default_member_permissions
+        or not includable.metadata.app_command.is_dm_enabled
+    ):
+        raise PermissionsError(
+            "`dm_enabled` and `default_member_permissions` cannot be declared for subcommands."
+            " Permissions must be declared in the `crescent.Group` object."
+        )
+
+
 @define
 class Group:
-    name: str
-    description: str | None = None
+    name: str | LocaleBuilder
+    description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
     after_hooks: list[HookCallbackT] | None = None
 
+    default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
+    dm_enabled: bool = True
+
     def sub_group(
         self,
-        name: str,
-        description: str | None = None,
+        name: str | LocaleBuilder,
+        description: str | LocaleBuilder | None = None,
         hooks: list[HookCallbackT] | None = None,
         after_hooks: list[HookCallbackT] | None = None,
     ) -> SubGroup:
@@ -35,6 +53,8 @@ class Group:
         )
 
     def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        _check_permissions(includable)
+
         includable.metadata.group = self
 
         add_hooks(self, includable)
@@ -44,13 +64,15 @@ class Group:
 
 @define
 class SubGroup:
-    name: str
+    name: str | LocaleBuilder
     parent: Group
-    description: str | None = None
+    description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
     after_hooks: list[HookCallbackT] | None = None
 
     def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        _check_permissions(includable)
+
         includable.metadata.group = self.parent
         includable.metadata.sub_group = self
 

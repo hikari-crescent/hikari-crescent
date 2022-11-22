@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from inspect import isclass
 from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Union, get_args, get_origin
 
@@ -12,16 +11,21 @@ from crescent.commands.args import (
     ChannelTypes,
     Choices,
     Description,
+    MaxLength,
     MaxValue,
+    MinLength,
     MinValue,
     Name,
 )
 from crescent.commands.options import OPTIONS_TYPE_MAP, get_channel_types
 from crescent.context import BaseContext
+from crescent.locale import LocaleBuilder, str_or_build_locale
+from crescent.utils import any_issubclass
 
 if TYPE_CHECKING:
-    from inspect import Parameter
     from typing import Any, Sequence, TypeVar
+
+    from sigparse import Parameter
 
     from crescent.typedefs import AutocompleteCallbackT
 
@@ -65,18 +69,13 @@ def _get_origin_and_metadata(param: Parameter) -> tuple[Any, Iterable[Any]]:
     return origin, metadata
 
 
-def _any_issubclass(obj: Any, cls: type) -> bool:
-    if not isclass(obj):
-        return False
-    return issubclass(obj, cls)
-
-
 def gen_command_option(param: Parameter) -> CommandOption | None:
-    name = param.name
+    if not param.has_annotation:
+        return None
 
     origin, metadata = _get_origin_and_metadata(param)
 
-    if origin is param.empty or _any_issubclass(origin, BaseContext):
+    if any_issubclass(origin, BaseContext):
         return None
 
     _type = OPTIONS_TYPE_MAP.get(origin)
@@ -92,26 +91,41 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
             " `hikari.Role`, `hikari.User`, or `crescent.Mentionable`."
         )
 
-    name = _get_arg(Name, metadata) or name
-    description = _get_arg(Description, metadata) or _get_arg(str, metadata) or "No Description"
+    name = _get_arg(Name, metadata) or param.name
+    description = (
+        _get_arg(Description, metadata)
+        or _get_arg(str, metadata)
+        or _get_arg(LocaleBuilder, metadata)
+        or "No Description"
+    )
+
+    name, name_localizations = str_or_build_locale(name)
+    description, description_localizations = str_or_build_locale(description)
+
     choices = _get_arg(Choices, metadata)
     channel_types = _channel_types or _get_arg(ChannelTypes, metadata)
     min_value = _get_arg(MinValue, metadata)
     max_value = _get_arg(MaxValue, metadata)
+    min_length = _get_arg(MinLength, metadata)
+    max_length = _get_arg(MaxLength, metadata)
     autocomplete = _get_arg(Autocomplete, metadata)
 
-    required = param.default is param.empty
+    required = not param.has_default
 
     return CommandOption(
         name=name,
+        name_localizations=name_localizations,
         autocomplete=bool(autocomplete),
         type=_type,
         description=description,
+        description_localizations=description_localizations,
         choices=choices,
         options=None,
         channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,
+        min_length=min_length,
+        max_length=max_length,
         is_required=required,
     )
 

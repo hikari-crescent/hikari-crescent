@@ -44,10 +44,14 @@ def event(
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(includable: Includable[CallbackT[Any]]) -> None:
-        includable.app.subscribe(event_type=unwrap(event_type), callback=event_callback)
+        includable.app.event_manager.subscribe(
+            event_type=unwrap(event_type), callback=event_callback
+        )
 
     def on_remove(includable: Includable[CallbackT[Any]]) -> None:
-        includable.app.unsubscribe(event_type=unwrap(event_type), callback=event_callback)
+        includable.app.event_manager.unsubscribe(
+            event_type=unwrap(event_type), callback=event_callback
+        )
 
     includable = Includable(
         metadata=callback, app_set_hooks=[hook], plugin_unload_hooks=[on_remove]

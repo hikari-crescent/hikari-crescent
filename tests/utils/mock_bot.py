@@ -14,7 +14,7 @@ class MockBot(Bot):
         self.default_guild = default_guild
 
         self._command_handler = CommandHandler(self, [])
-        self._command_handler.application_id = Snowflake()
+        self._command_handler._application_id = Snowflake()
         self._wait_until_ready_event = Event()
 
     async def _on_started(self, event: StartedEvent) -> Task:
