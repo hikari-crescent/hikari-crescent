@@ -77,6 +77,7 @@ class AppCommand:
     options: Sequence[CommandOption] | None = None
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
     is_dm_enabled: bool = True
+    nsfw: bool | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
     __eq__props: Sequence[str] = (
@@ -121,6 +122,9 @@ class AppCommand:
             perms = None
         else:
             perms = str(self.default_member_permissions)
+
+        if self.nsfw is not None:
+            out["nsfw"] = self.nsfw
 
         out["default_member_permissions"] = perms
 

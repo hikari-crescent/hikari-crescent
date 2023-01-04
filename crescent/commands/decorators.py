@@ -60,6 +60,7 @@ def command(
     description: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
+    nsfw: bool | None = ...,
 ) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]:
     ...
 
@@ -73,6 +74,7 @@ def command(
     description: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
+    nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta] | Callable[
     [CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta],
 ]:
@@ -145,6 +147,7 @@ def command(
         default_member_permissions=default_member_permissions,
         dm_enabled=dm_enabled,
         autocomplete=autocomplete,
+        nsfw=nsfw,
     )
 
 
@@ -170,6 +173,7 @@ def user_command(
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
+    nsfw: bool | None = ...,
 ) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]]:
     ...
 
@@ -182,6 +186,7 @@ def user_command(
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
+    nsfw: bool | None = None,
 ) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
@@ -200,6 +205,7 @@ def user_command(
         guild=guild,
         default_member_permissions=default_member_permissions,
         dm_enabled=dm_enabled,
+        nsfw=nsfw,
     )
 
 
@@ -215,6 +221,7 @@ def message_command(
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
+    nsfw: bool | None = ...,
 ) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]]:
     ...
 
@@ -227,6 +234,7 @@ def message_command(
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
+    nsfw: bool | None = None,
 ) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     if not callback:
         return partial(
@@ -245,4 +253,5 @@ def message_command(
         guild=guild,
         default_member_permissions=default_member_permissions,
         dm_enabled=dm_enabled,
+        nsfw=nsfw,
     )
