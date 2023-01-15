@@ -57,6 +57,7 @@ def register_command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     autocomplete: dict[str, AutocompleteCallbackT] = {},
+    nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta]:
 
     if not iscoroutinefunction(callback):
@@ -77,6 +78,7 @@ def register_command(
                 options=options,
                 default_member_permissions=default_member_permissions,
                 is_dm_enabled=dm_enabled,
+                nsfw=nsfw,
             ),
         ),
     )
