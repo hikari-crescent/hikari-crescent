@@ -130,7 +130,10 @@ class TestPlugins:
 
         bot.plugins.load_folder("does.not.exist")
 
-        assert len(caplog.messages) == 2
+        assert (
+            caplog.messages[-1]
+            == "No plugins were loaded! Are you sure `does/not/exist` is the correct directory?"
+        )
 
     def test_load_hook(self):
         bot = MockBot()
