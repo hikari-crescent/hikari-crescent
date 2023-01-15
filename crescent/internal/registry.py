@@ -16,11 +16,13 @@ from hikari import (
     Snowflake,
     UndefinedType,
 )
+from hikari.traits import CacheAware
 
 from crescent.context.utils import support_custom_context
 from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
+from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
@@ -28,7 +30,7 @@ if TYPE_CHECKING:
 
     from hikari import PartialGuild, Snowflakeish, SnowflakeishOr
 
-    from crescent.bot import Bot
+    from crescent.bot import Mixin
     from crescent.typedefs import AutocompleteCallbackT, CanBuild, CommandCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
@@ -48,9 +50,9 @@ def register_command(
     owner: Any,
     callback: CommandCallbackT,
     command_type: CommandType,
-    name: str,
+    name: str | LocaleBuilder,
     guild: Snowflakeish | None = None,
-    description: str | None = None,
+    description: str | LocaleBuilder | None = None,
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
@@ -90,8 +92,7 @@ _E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
 class ErrorHandler(Generic[_E]):
     __slots__: Sequence[str] = ("bot", "registry", "supports_custom_ctx")
 
-    def __init__(self, bot: Bot):
-        self.bot: Bot = bot
+    def __init__(self) -> None:
         self.registry: dict[type[Exception], Includable[_E]] = {}
 
     def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
@@ -123,8 +124,8 @@ class CommandHandler:
 
     __slots__: Sequence[str] = ("_bot", "_guilds", "_application_id", "_registry")
 
-    def __init__(self, bot: Bot, guilds: Sequence[Snowflakeish]) -> None:
-        self._bot: Bot = bot
+    def __init__(self, bot: Mixin, guilds: Sequence[Snowflakeish]) -> None:
+        self._bot: Mixin = bot
         self._guilds: Sequence[Snowflakeish] = guilds
         self._application_id: Snowflake | None = None
 
@@ -165,7 +166,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=unwrap(command.metadata.group).name,
+                    name=str_or_build_locale(unwrap(command.metadata.group).name)[0],
                     type=command.metadata.app_command.type,
                     guild_id=command.metadata.app_command.guild_id,
                     group=None,
@@ -180,9 +181,9 @@ class CommandHandler:
                         guild_id=command.metadata.app_command.guild_id,
                         options=[],
                         default_member_permissions=(
-                            command.metadata.app_command.default_member_permissions
+                            unwrap(command.metadata.group).default_member_permissions
                         ),
-                        is_dm_enabled=command.metadata.app_command.is_dm_enabled,
+                        is_dm_enabled=unwrap(command.metadata.group).dm_enabled,
                     )
 
                 # The top-level command now exists. A subcommand group now if placed
@@ -190,9 +191,18 @@ class CommandHandler:
 
                 children = cast("list[CommandOption]", unwrap(built_commands[key].options))
 
+                name, name_localizations = str_or_build_locale(
+                    unwrap(command.metadata.sub_group).name
+                )
+                description, description_localizations = str_or_build_locale(
+                    unwrap(command.metadata.sub_group).description or "No Description"
+                )
+
                 sub_command_group = CommandOption(
-                    name=unwrap(command.metadata.sub_group).name,
-                    description=unwrap(command.metadata.sub_group).description or "No Description",
+                    name=name,
+                    name_localizations=name_localizations,
+                    description=description,
+                    description_localizations=description_localizations,
                     type=OptionType.SUB_COMMAND_GROUP,
                     options=[],
                     is_required=False,
@@ -211,10 +221,18 @@ class CommandHandler:
                 else:
                     children.append(sub_command_group)
 
+                name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
+                assert command.metadata.app_command.description
+                description, description_localizations = str_or_build_locale(
+                    command.metadata.app_command.description
+                )
+
                 cast("list[CommandOption]", sub_command_group.options).append(
                     CommandOption(
-                        name=command.metadata.app_command.name,
-                        description=unwrap(command.metadata.app_command.description),
+                        name=name,
+                        name_localizations=name_localizations,
+                        description=description,
+                        description_localizations=description_localizations,
                         type=OptionType.SUB_COMMAND,
                         options=command.metadata.app_command.options,
                         is_required=False,
@@ -233,7 +251,7 @@ class CommandHandler:
                 # `key` represents the unique value for the top-level command that will
                 # hold the subcommand.
                 key = Unique(
-                    name=command.metadata.group.name,
+                    name=str_or_build_locale(command.metadata.group.name)[0],
                     type=command.metadata.app_command.type,
                     guild_id=command.metadata.app_command.guild_id,
                     group=None,
@@ -248,17 +266,25 @@ class CommandHandler:
                         guild_id=command.metadata.app_command.guild_id,
                         options=[],
                         default_member_permissions=(
-                            command.metadata.app_command.default_member_permissions
+                            command.metadata.group.default_member_permissions
                         ),
-                        is_dm_enabled=command.metadata.app_command.is_dm_enabled,
+                        is_dm_enabled=command.metadata.group.dm_enabled,
                     )
 
                 # No checking has to be done before appending `command` since it is the
                 # lowest level.
+                name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
+                assert command.metadata.app_command.description
+                description, description_localizations = str_or_build_locale(
+                    command.metadata.app_command.description
+                )
+
                 cast("list[CommandOption]", built_commands[key].options).append(
                     CommandOption(
-                        name=command.metadata.app_command.name,
-                        description=unwrap(command.metadata.app_command.description),
+                        name=name,
+                        name_localizations=name_localizations,
+                        description=description,
+                        description_localizations=description_localizations,
                         type=command.metadata.app_command.type,
                         options=command.metadata.app_command.options,
                         is_required=False,
@@ -283,7 +309,10 @@ class CommandHandler:
                 guild=guild,
             )
         except ForbiddenError:
-            if guild in self._bot.cache.get_guilds_view().keys():
+            if not isinstance(self._bot, CacheAware):
+                return
+
+            if guild in self._bot.cache.get_guilds_view():
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"

@@ -10,6 +10,7 @@ from sigparse import sigparse
 from crescent.commands.options import ClassCommandOption
 from crescent.commands.signature import gen_command_option, get_autocomplete_func
 from crescent.internal.registry import register_command
+from crescent.locale import LocaleBuilder
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, TypeVar
@@ -56,8 +57,8 @@ def command(callback: CommandCallbackT | type[ClassCommandProto], /) -> Includab
 def command(
     *,
     guild: Snowflakeish | None = ...,
-    name: str | None = ...,
-    description: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
+    description: str | LocaleBuilder | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     nsfw: bool | None = ...,
@@ -70,8 +71,8 @@ def command(
     /,
     *,
     guild: Snowflakeish | None = None,
-    name: str | None = None,
-    description: str | None = None,
+    name: str | LocaleBuilder | None = None,
+    description: str | LocaleBuilder | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     nsfw: bool | None = None,

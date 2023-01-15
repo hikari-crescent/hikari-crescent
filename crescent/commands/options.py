@@ -25,6 +25,7 @@ from hikari import (
     User,
 )
 
+from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
@@ -89,26 +90,35 @@ Self = TypeVar("Self")
 
 @dataclass
 class ClassCommandOption(Generic[T]):
-    name: str | None
+    name: str | LocaleBuilder | None
     type: OptionType
-    description: str
+    description: str | LocaleBuilder
     default: UndefinedNoneOr[Any]
     choices: Sequence[CommandChoice] | None
     channel_types: Sequence[ChannelType] | None
     min_value: int | float | None
     max_value: int | float | None
+    min_length: int | None
+    max_length: int | None
     autocomplete: AutocompleteCallbackT | None
 
     def _gen_option(self, name: str) -> CommandOption:
+        name, name_localizations = str_or_build_locale(self.name or name)
+        description, description_localizations = str_or_build_locale(self.description)
+
         return CommandOption(
             type=self.type,
-            name=self.name or name,
-            description=self.description,
+            name=name,
+            name_localizations=name_localizations,
+            description=description,
+            description_localizations=description_localizations,
             is_required=self.default is UNDEFINED,
             choices=self.choices,
             channel_types=self.channel_types,
             min_value=self.min_value,
             max_value=self.max_value,
+            min_length=self.min_length,
+            max_length=self.max_length,
             autocomplete=bool(self.autocomplete),
         )
 
@@ -140,9 +150,9 @@ ATTACHMENT = TypeVar("ATTACHMENT", bound="type[Attachment]")
 @overload
 def option(
     option_type: type[PartialChannel] | Sequence[type[PartialChannel]],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[InteractionChannel]:
     ...
 
@@ -150,10 +160,10 @@ def option(
 @overload
 def option(
     option_type: type[PartialChannel] | Sequence[type[PartialChannel]],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[InteractionChannel | DEFAULT]:
     ...
 
@@ -162,8 +172,9 @@ def option(
 @overload
 def option(
     option_type: USER,  # pyright: ignore
-    description: str = ...,
-    *, name: str | None = ...,
+    description: str | LocaleBuilder = ...,
+    *,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[User]:
     ...
 # fmt: on
@@ -172,10 +183,10 @@ def option(
 @overload
 def option(
     option_type: USER,  # pyright: ignore
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[User | DEFAULT]:
     ...
 
@@ -184,9 +195,9 @@ def option(
 @overload
 def option(
     option_type: ROLE,  # pyright: ignore
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[Role]:
     ...
 # fmt: on
@@ -195,10 +206,10 @@ def option(
 @overload
 def option(
     option_type: ROLE,  # pyright: ignore
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[Role | DEFAULT]:
     ...
 
@@ -207,9 +218,9 @@ def option(
 @overload
 def option(
     option_type: ATTACHMENT,  # pyright: ignore
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[Attachment]:
     ...
 # fmt: on
@@ -218,17 +229,20 @@ def option(
 @overload
 def option(
     option_type: ATTACHMENT,  # pyright: ignore
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[Attachment | DEFAULT]:
     ...
 
 
 @overload
 def option(
-    option_type: type[Mentionable], description: str = ..., *, name: str | None = ...
+    option_type: type[Mentionable],
+    description: str | LocaleBuilder = ...,
+    *,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[Mentionable]:
     ...
 
@@ -236,24 +250,31 @@ def option(
 @overload
 def option(
     option_type: type[Mentionable],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[Mentionable | DEFAULT]:
     ...
 
 
 @overload
 def option(  # type: ignore
-    option_type: type[bool], description: str = ..., *, name: str | None = ...
+    option_type: type[bool],
+    description: str | LocaleBuilder = ...,
+    *,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[bool]:
     ...
 
 
 @overload
 def option(  # type: ignore
-    option_type: type[bool], description: str = ..., *, default: DEFAULT, name: str | None = ...
+    option_type: type[bool],
+    description: str | LocaleBuilder = ...,
+    *,
+    default: DEFAULT,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[bool | DEFAULT]:
     ...
 
@@ -261,13 +282,13 @@ def option(  # type: ignore
 @overload
 def option(
     option_type: type[int],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     choices: Sequence[tuple[str, int]] | None = ...,
     autocomplete: AutocompleteCallbackT | None = ...,
     min_value: int | None = ...,
     max_value: int | None = ...,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[int]:
     ...
 
@@ -275,14 +296,14 @@ def option(
 @overload
 def option(
     option_type: type[int],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
     choices: Sequence[tuple[str, int]] | None = ...,
     autocomplete: AutocompleteCallbackT | None = ...,
     min_value: int | None = ...,
     max_value: int | None = ...,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[int | DEFAULT]:
     ...
 
@@ -290,13 +311,13 @@ def option(
 @overload
 def option(
     option_type: type[float],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     choices: Sequence[tuple[str, float]] | None = ...,
     autocomplete: AutocompleteCallbackT | None = ...,
     min_value: float | None = ...,
     max_value: float | None = ...,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[float]:
     ...
 
@@ -304,14 +325,14 @@ def option(
 @overload
 def option(
     option_type: type[float],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
     choices: Sequence[tuple[str, float]] | None = ...,
     autocomplete: AutocompleteCallbackT | None = ...,
     min_value: float | None = ...,
     max_value: float | None = ...,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[float | DEFAULT]:
     ...
 
@@ -319,11 +340,13 @@ def option(
 @overload
 def option(
     option_type: type[str],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
+    min_length: int | None = ...,
+    max_length: int | None = ...,
     choices: Sequence[tuple[str, str]] | None = ...,
     autocomplete: AutocompleteCallbackT | None = ...,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[str]:
     ...
 
@@ -331,25 +354,29 @@ def option(
 @overload
 def option(
     option_type: type[str],
-    description: str = ...,
+    description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
+    min_length: int | None = ...,
+    max_length: int | None = ...,
     choices: Sequence[tuple[str, str]] | None = ...,
     autocomplete: AutocompleteCallbackT | None = ...,
-    name: str | None = ...,
+    name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[str | DEFAULT]:
     ...
 
 
 def option(
     option_type: type[OptionTypesT] | Sequence[type[PartialChannel]],
-    description: str = "No Description",
+    description: str | LocaleBuilder = "No Description",
     *,
     default: UndefinedOr[Any] = UNDEFINED,
     choices: Sequence[tuple[str, str | int | float]] | None = None,
     min_value: int | float | None = None,
     max_value: int | float | None = None,
-    name: str | None = None,
+    min_length: int | None = None,
+    max_length: int | None = None,
+    name: str | LocaleBuilder | None = None,
     autocomplete: AutocompleteCallbackT | None = None,
 ) -> ClassCommandOption[Any]:
 
@@ -377,6 +404,8 @@ def option(
         channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,
+        min_length=min_length,
+        max_length=max_length,
         name=name,
         autocomplete=autocomplete,
     )

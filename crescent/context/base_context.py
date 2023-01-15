@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 
 import hikari
 from attr import define
-from hikari import Member, PartialInteraction, Snowflake, User
+from hikari import Locale, Member, PartialInteraction, Snowflake, User
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type, TypeVar
 
-    from crescent.bot import Bot
+    from crescent.bot import Mixin
 
     ContextT = TypeVar("ContextT", bound="BaseContext")
 
@@ -23,7 +23,7 @@ class BaseContext:
 
     interaction: PartialInteraction
     """The interaction object."""
-    app: Bot
+    app: Mixin
     """The application instance."""
     application_id: Snowflake
     """The ID for the client that this interaction belongs to."""
@@ -44,6 +44,7 @@ class BaseContext:
     """The user who triggered this command interaction."""
     member: Member | None
     """The member object for the user that triggered this interaction, if used in a guild."""
+    locale: Locale
 
     command: str
     """The name of the command."""
@@ -87,6 +88,7 @@ class BaseContext:
             guild_id=self.guild_id,
             user=self.user,
             member=self.member,
+            locale=self.locale,
             command=self.command,
             command_type=self.command_type,
             group=self.group,

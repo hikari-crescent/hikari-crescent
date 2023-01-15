@@ -7,6 +7,7 @@ from crescent.context import *
 from crescent.errors import *
 from crescent.event import *
 from crescent.exceptions import *
+from crescent.locale import *
 from crescent.mentionable import *
 from crescent.plugin import *
 from crescent.typedefs import *
@@ -30,6 +31,7 @@ __all__: Sequence[str] = (
     "Group",
     "SubGroup",
     "Bot",
+    "Mixin",
     "Context",
     "AutocompleteContext",
     "catch_command",
@@ -39,6 +41,8 @@ __all__: Sequence[str] = (
     "CrescentException",
     "AlreadyRegisteredError",
     "PluginAlreadyLoadedError",
+    "PermissionsError",
+    "LocaleBuilder",
     "Mentionable",
     "CommandCallbackT",
     "CommandOptionsT",

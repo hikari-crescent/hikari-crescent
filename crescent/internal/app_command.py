@@ -7,6 +7,7 @@ from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import EntityFactory
 
 from crescent.context.utils import support_custom_context
+from crescent.locale import LocaleBuilder, str_or_build_locale
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
@@ -44,21 +45,27 @@ class Unique:
     @classmethod
     def from_meta_struct(cls: Type[Unique], command: Includable[AppCommandMeta]) -> Unique:
         return cls(
-            name=command.metadata.app_command.name,
+            name=str_or_build_locale(command.metadata.app_command.name)[0],
             type=command.metadata.app_command.type,
             guild_id=command.metadata.app_command.guild_id,
-            group=command.metadata.group.name if command.metadata.group else None,
-            sub_group=command.metadata.sub_group.name if command.metadata.sub_group else None,
+            group=str_or_build_locale(command.metadata.group.name)[0]
+            if command.metadata.group
+            else None,
+            sub_group=str_or_build_locale(command.metadata.sub_group.name)[0]
+            if command.metadata.sub_group
+            else None,
         )
 
     @classmethod
     def from_app_command_meta(cls: Type[Unique], command: AppCommandMeta) -> Unique:
         return cls(
-            name=command.app_command.name,
+            name=str_or_build_locale(command.app_command.name)[0],
             type=command.app_command.type,
             guild_id=command.app_command.guild_id,
-            group=command.group.name if command.group else None,
-            sub_group=command.sub_group.name if command.sub_group else None,
+            group=str_or_build_locale(command.group.name)[0] if command.group else None,
+            sub_group=str_or_build_locale(command.sub_group.name)[0]
+            if command.sub_group
+            else None,
         )
 
 
@@ -70,10 +77,10 @@ class AppCommand:
     """Local representation of an Application Command"""
 
     type: CommandType
-    name: str
+    name: str | LocaleBuilder
     guild_id: Snowflakeish | None
 
-    description: str | None = None
+    description: str | LocaleBuilder | None = None
     options: Sequence[CommandOption] | None = None
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
     is_dm_enabled: bool = True
@@ -109,10 +116,18 @@ class AppCommand:
         return self.guild_id == o.guild_id and self.name == o.name and self.type == o.type
 
     def build(self, encoder: EntityFactory) -> dict[str, Any]:
-        out: dict[str, Any] = {"name": self.name, "type": self.type}
+        name, name_localizations = str_or_build_locale(self.name)
+
+        out: dict[str, Any] = {
+            "name": name,
+            "name_localizations": name_localizations,
+            "type": self.type,
+        }
 
         if self.description:
-            out["description"] = self.description
+            description, description_localizations = str_or_build_locale(self.description)
+            out["description"] = description
+            out["description_localizations"] = description_localizations
         if self.options:
             out["options"] = [encoder.serialize_command_option(option) for option in self.options]
 
@@ -166,9 +181,9 @@ class AppCommandMeta:
     @property
     def unique(self) -> Unique:
         return Unique(
-            self.app_command.name,
+            str_or_build_locale(self.app_command.name)[0],
             self.app_command.type,
             self.app_command.guild_id,
-            self.group.name if self.group else None,
-            self.sub_group.name if self.sub_group else None,
+            str_or_build_locale(self.group.name)[0] if self.group else None,
+            str_or_build_locale(self.sub_group.name)[0] if self.sub_group else None,
         )

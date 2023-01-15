@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Awaitable, Callable, Sequence, TypeVar
 
 from hikari import StartedEvent
 
-from crescent.bot import Bot
+from crescent.bot import Mixin
 from crescent.exceptions import CrescentException
 from crescent.internal.includable import Includable
 
@@ -27,7 +27,7 @@ class Task(ABC):
         self.event_loop: AbstractEventLoop | None = None
         self.callback = callback
         self.timer_handle: TimerHandle | None = None
-        self.app: Bot | None = None
+        self.app: Mixin | None = None
 
     def start(self) -> None:
         if self.running:
@@ -79,10 +79,10 @@ def _on_app_set(self: Includable[_TaskType]) -> None:
 
     async def callback(_: StartedEvent) -> None:
         self.metadata.start()
-        self.app.unsubscribe(StartedEvent, callback)
+        self.app.event_manager.unsubscribe(StartedEvent, callback)
 
     if not self.app.started.is_set():
-        self.app.subscribe(StartedEvent, callback)
+        self.app.event_manager.subscribe(StartedEvent, callback)
     else:
         self.metadata.start()
 
