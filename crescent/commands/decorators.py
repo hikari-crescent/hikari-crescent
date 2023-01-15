@@ -87,6 +87,7 @@ def command(
             description=description,
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
+            nsfw=nsfw,
         )
 
     autocomplete: dict[str, AutocompleteCallbackT] = {}
@@ -196,6 +197,7 @@ def user_command(
             name=name,
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
+            nsfw=nsfw,
         )
 
     return register_command(
@@ -244,6 +246,7 @@ def message_command(
             name=name,
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
+            nsfw=nsfw,
         )
 
     return register_command(

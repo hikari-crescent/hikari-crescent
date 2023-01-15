@@ -37,7 +37,7 @@ def test_message_command_defaults():
     assert test_command.metadata.app_command.guild_id is None
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
     assert test_command.metadata.app_command.is_dm_enabled
-    assert test_command.metadata.app_command.is_dm_enabled is None
+    assert test_command.metadata.app_command.nsfw is None
 
 
 
