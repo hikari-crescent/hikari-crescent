@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
     from hikari import CommandInteractionOption, InteractionCreateEvent, Message, User
 
-    from crescent.bot import Mixin
+    from crescent.client import CrescentAware
     from crescent.context import BaseContext
     from crescent.internal import AppCommandMeta, Includable
     from crescent.typedefs import TransformedHookCallbackT
@@ -47,7 +47,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
         return
 
     if TYPE_CHECKING:
-        bot = cast(Mixin, bot)
+        bot = cast(CrescentAware, bot)
 
     command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
 
