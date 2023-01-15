@@ -28,7 +28,7 @@ def _make_catch_function(
             for exc in exceptions:
                 getattr(includable.app, error_handler_var).remove(exc)
 
-        def decorator(callback: T) -> Includable[Any]:
+        def decorator(callback: Any) -> Includable[Any]:
             if supports_custom_ctx:
                 maybe_supports_custom_ctx: Callable[..., Awaitable[Any]] = support_custom_context(
                     callback
