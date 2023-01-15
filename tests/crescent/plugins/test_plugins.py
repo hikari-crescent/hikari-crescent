@@ -92,8 +92,8 @@ class TestPlugins:
             plugin as nested_plugin,
         )
 
-        # No messages should be logged if plugins are loaded successfully.
-        assert len(caplog.messages) == 0
+        # Only the -OO warning should be logged if plugins are loaded successfully.
+        assert len(caplog.messages) == 1
 
         assert arrays_contain_same_elements([plugin, nested_plugin], plugins)
         assert arrays_contain_same_elements([plugin, nested_plugin], bot.plugins.plugins.values())
@@ -130,7 +130,7 @@ class TestPlugins:
 
         bot.plugins.load_folder("does.not.exist")
 
-        assert len(caplog.messages) == 1
+        assert len(caplog.messages) == 2
 
     def test_load_hook(self):
         bot = MockBot()
