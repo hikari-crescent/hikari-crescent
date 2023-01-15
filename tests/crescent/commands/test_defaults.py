@@ -13,6 +13,7 @@ def test_defaults():
     assert test_command.metadata.app_command.description == "No Description"
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
     assert test_command.metadata.app_command.is_dm_enabled
+    assert not test_command.metadata.app_command.nsfw
 
 
 def test_user_command_defaults():
@@ -44,6 +45,7 @@ def test_not_default():
         description="test description",
         default_member_permissions=Permissions.BAN_MEMBERS,
         dm_enabled=False,
+        nsfw=True,
     )
     async def test_command(ctx: Context):
         ...
@@ -53,6 +55,7 @@ def test_not_default():
     assert test_command.metadata.app_command.description == "test description"
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
     assert not test_command.metadata.app_command.is_dm_enabled
+    assert not test_command.metadata.app_command.nsfw
 
 
 def test_message_command_not_default():
