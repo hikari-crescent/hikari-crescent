@@ -1,6 +1,7 @@
-from crescent import command, Group, Context, PermissionsError
-from pytest import raises
 from hikari import PermissionOverwrite
+from pytest import raises
+
+from crescent import Context, Group, PermissionsError, command
 
 
 def test_no_perms_in_subcommand_group():

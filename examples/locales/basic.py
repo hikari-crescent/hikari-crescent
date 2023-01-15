@@ -4,9 +4,9 @@
 
 from __future__ import annotations
 
-import crescent
 import dataclasses
 
+import crescent
 
 bot = crescent.Bot("...")
 
