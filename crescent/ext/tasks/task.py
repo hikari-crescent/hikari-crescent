@@ -79,10 +79,10 @@ def _on_client_set(self: Includable[_TaskType]) -> None:
 
     async def callback(_: StartedEvent) -> None:
         self.metadata.start()
-        self.client.app.event_manager.unsubscribe(StartedEvent, callback)
+        self.client._app.event_manager.unsubscribe(StartedEvent, callback)
 
     if not self.client.started.is_set():
-        self.client.app.event_manager.subscribe(StartedEvent, callback)
+        self.client._app.event_manager.subscribe(StartedEvent, callback)
     else:
         self.metadata.start()
 

@@ -178,9 +178,17 @@ class Plugin:
         self._unload_hooks.append(callback)
 
     @property
-    def app(self) -> Client:
+    def app(self) -> CrescentAware:
         if not self._client:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
+        return self._client._app
+
+    @property
+    def client(self) -> Client:
+        if not self._client:
+            raise AttributeError(
+                "`Plugin.client` can not be accessed before the plugin is loaded."
+            )
         return self._client
 
     def _load(self, client: Client) -> None:
@@ -192,11 +200,11 @@ class Plugin:
             add_hooks(client, child)
             child.register_to_client(client)
 
-        client.app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
+        client._app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
 
     def _unload(self) -> None:
         assert self._client
-        self._client.app.event_manager.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
+        self._client._app.event_manager.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
         self._client = None
 
         for callback in self._unload_hooks:

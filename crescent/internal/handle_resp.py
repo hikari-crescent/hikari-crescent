@@ -57,7 +57,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     )
 
     if not command:
-        if not client.allow_unknown_interactions:
+        if not client._allow_unknown_interactions:
             _log.warning(
                 f"Handler for command `{command_name}` does not exist locally. (If this is"
                 " intended, add `allow_unknown_interactions=True` to the Client's constructor.)"
