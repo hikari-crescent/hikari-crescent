@@ -14,7 +14,7 @@ from crescent.internal.includable import Includable
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence, TypeVar
 
-    from crescent.client import Client, CrescentAware
+    from crescent.client import Client, GatewayTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
     T = TypeVar("T", bound="Includable[Any]")
@@ -178,7 +178,7 @@ class Plugin:
         self._unload_hooks.append(callback)
 
     @property
-    def app(self) -> CrescentAware:
+    def app(self) -> GatewayTraits:
         if not self._client:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
         return self._client.app
@@ -214,7 +214,7 @@ class Plugin:
             for hook in child.plugin_unload_hooks:
                 hook(child)
 
-    async def _on_bot_close(self, app: CrescentAware) -> None:
+    async def _on_bot_close(self, app: GatewayTraits) -> None:
         self._unload()
 
     @overload

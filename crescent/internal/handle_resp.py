@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
     from hikari import CommandInteractionOption, InteractionCreateEvent, Message, User
 
-    from crescent.client import Client, CrescentAware
+    from crescent.client import Client, GatewayTraits
     from crescent.context import BaseContext
     from crescent.internal import AppCommandMeta, Includable
     from crescent.typedefs import TransformedHookCallbackT
@@ -215,7 +215,7 @@ def _context_from_interaction_resp(
 
     return context_t(
         interaction=interaction,
-        app=cast("CrescentAware", interaction.app),
+        app=cast("GatewayTraits", interaction.app),
         application_id=interaction.application_id,
         type=interaction.type,
         token=interaction.token,

@@ -35,14 +35,14 @@ if TYPE_CHECKING:
 __all___: Sequence[str] = ("Client", "CrescentAware")
 
 
-class CrescentAware(EventManagerAware, RESTAware, Protocol):
+class GatewayTraits(EventManagerAware, RESTAware, Protocol):
     """The traits crescent requires for a bot."""
 
 
 class Client:
     def __init__(
         self,
-        app: CrescentAware,
+        app: GatewayTraits,
         *,
         tracked_guilds: Sequence[Snowflakeish] | None = None,
         default_guild: Snowflakeish | None = None,
