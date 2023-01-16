@@ -96,7 +96,9 @@ class TestPlugins:
         assert len(caplog.messages) == 1
 
         assert arrays_contain_same_elements([plugin, nested_plugin], plugins)
-        assert arrays_contain_same_elements([plugin, nested_plugin], client.plugins.plugins.values())
+        assert arrays_contain_same_elements(
+            [plugin, nested_plugin], client.plugins.plugins.values()
+        )
 
     def test_load_folder_refresh(self):
         client = MockClient()
