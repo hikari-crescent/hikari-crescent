@@ -31,11 +31,11 @@ def MockEvent(name, client):
     return InteractionCreateEvent(
         shard=None,
         interaction=CommandInteraction(
-            app=client._app,
+            app=client.app,
             id=None,
             application_id=...,
             type=InteractionType.APPLICATION_COMMAND,
-            token=client._app._token,
+            token=client.app._token,
             version=0,
             channel_id=0,
             guild_id=None,
@@ -57,11 +57,11 @@ def MockAutocompleteEvent(name, option_name, client):
     return InteractionCreateEvent(
         shard=None,
         interaction=AutocompleteInteraction(
-            app=client._app,
+            app=client.app,
             id=None,
             application_id=...,
             type=InteractionType.AUTOCOMPLETE,
-            token=client._app._token,
+            token=client.app._token,
             version=0,
             channel_id=0,
             guild_id=None,

@@ -26,7 +26,7 @@ class TestPlugins:
 
         assert plugin_event in _plugin._children
         # Length is one because only one event is listened to
-        assert len(client._app._event_manager.get_listeners(MessageCreateEvent)) == 1
+        assert len(client.app._event_manager.get_listeners(MessageCreateEvent)) == 1
 
         assert plugin_catch_command in _plugin._children
         assert plugin_catch_command in client._command_error_handler.registry.values()
@@ -47,7 +47,7 @@ class TestPlugins:
         client.plugins.unload("tests.crescent.plugins.plugin")
 
         assert plugin_command.metadata.unique not in client._command_handler._registry
-        assert len(client._app._event_manager.get_listeners(MessageCreateEvent)) == 0
+        assert len(client.app._event_manager.get_listeners(MessageCreateEvent)) == 0
         assert plugin_catch_command not in client._command_error_handler.registry.values()
 
     def test_plugin_reload(self):
@@ -63,7 +63,7 @@ class TestPlugins:
         assert plugin_command.metadata.unique in client._command_handler._registry
 
         assert plugin_event in _plugin._children
-        assert len(client._app._event_manager.get_listeners(MessageCreateEvent)) == 1
+        assert len(client.app._event_manager.get_listeners(MessageCreateEvent)) == 1
 
         assert plugin_catch_command in _plugin._children
         assert plugin_catch_command in client._command_error_handler.registry.values()

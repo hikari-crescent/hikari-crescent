@@ -39,13 +39,15 @@ _log = getLogger(__name__)
 __all__: Sequence[str] = ("handle_resp",)
 
 
-active_clients: dict[Any, Client] = {}
-"""The clients that are currently being tracked by crescent. This is used internally."""
+active_clients: dict[int, Client] = {}
+"""
+Dictionary of [id(client), client]. The clients that are currently being tracked by crescent.
+"""
 
 
 async def handle_resp(event: InteractionCreateEvent) -> None:
     interaction = event.interaction
-    client = active_clients[event.app]
+    client = active_clients[id(event.app)]
 
     if not isinstance(interaction, (CommandInteraction, AutocompleteInteraction)):
         return
@@ -57,7 +59,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
     )
 
     if not command:
-        if not client._allow_unknown_interactions:
+        if not client.allow_unknown_interactions:
             _log.warning(
                 f"Handler for command `{command_name}` does not exist locally. (If this is"
                 " intended, add `allow_unknown_interactions=True` to the Client's constructor.)"

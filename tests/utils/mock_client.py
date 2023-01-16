@@ -34,10 +34,6 @@ class MockClient(Client):
     async def wait_until_ready(self):
         await self._wait_until_ready_event.wait()
 
-    def run(self):
-        self._app.run()
-
-
 class MockBot(GatewayBot):
     def __init__(self):
         super().__init__(token="")

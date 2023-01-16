@@ -69,9 +69,9 @@ class Client:
             command_after_hooks:
                 List of hooks to run after all commands.
         """
-        active_clients[app] = self
+        active_clients[id(app)] = self
 
-        self._app = app
+        self.app = app
 
         if tracked_guilds is None:
             tracked_guilds = ()
@@ -79,8 +79,8 @@ class Client:
         if default_guild and default_guild not in tracked_guilds:
             tracked_guilds = tuple(chain(tracked_guilds, (default_guild,)))
 
-        self._allow_unknown_interactions = allow_unknown_interactions
-        self._update_commands = update_commands
+        self.allow_unknown_interactions = allow_unknown_interactions
+        self.update_commands = update_commands
 
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
@@ -114,7 +114,7 @@ class Client:
         self._command_handler._application_id = event.application_id
 
     async def _on_started(self, _: StartedEvent) -> Task[None] | None:
-        if self._update_commands:
+        if self.update_commands:
             return create_task(self._command_handler.register_commands())
         return None
 

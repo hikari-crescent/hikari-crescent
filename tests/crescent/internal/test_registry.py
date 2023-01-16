@@ -47,7 +47,7 @@ class TestRegistry:
         async def message_command(ctx: Context, message: Message):
             pass
 
-        client._app.run()
+        client.app.run()
         await client.wait_until_ready()
 
         assert self.posted_commands[GUILD_ID] == [
@@ -78,7 +78,7 @@ class TestRegistry:
         async def message_command(ctx: Context, message: Message):
             pass
 
-        client.run()
+        client.app.run()
         await client.wait_until_ready()
 
         register_commands.assert_not_called()
