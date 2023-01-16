@@ -1,6 +1,8 @@
+import hikari
 import crescent
 
-bot = crescent.Bot("...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 
 class CustomContext(crescent.Context):
@@ -15,7 +17,7 @@ async def my_hook(ctx: CustomContext) -> None:
 
 
 # Hooks with custom context can be added like normal.
-@bot.include
+@client.include
 @crescent.hook(my_hook)
 @crescent.command
 async def command(ctx: crescent.Context) -> None:

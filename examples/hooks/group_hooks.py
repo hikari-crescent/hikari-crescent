@@ -1,10 +1,12 @@
+import hikari
 import crescent
 
 # Groups can also have hooks. Hooks will resolved in the order of decorators.
 # When using a `crescent.SubGroup` the group's hooks will be executed before the
 # sub group's hooks.
 
-bot = crescent.Bot(token="...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 
 async def first_hook(ctx: crescent.Context) -> None:
@@ -34,7 +36,7 @@ sub_group = group.sub_group("my_sub_group", hooks=[second_hook], after_hooks=[se
 # third_hook
 
 
-@bot.include
+@client.include
 @sub_group.child
 @crescent.hook(third_hook)
 @crescent.hook(third_hook, after=True)

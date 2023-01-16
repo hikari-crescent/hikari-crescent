@@ -5,8 +5,8 @@ import typing_extensions
 
 import crescent
 
-bot = crescent.Bot(token="...")
-
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 async def autocomplete_response(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
@@ -28,7 +28,7 @@ async def fetch_autocomplete_options(
 
 
 # Both these commands function identically
-@bot.include
+@client.include
 @crescent.command
 async def functional_example(
     ctx: crescent.Context,
@@ -37,7 +37,7 @@ async def functional_example(
     await ctx.respond(result, ephemeral=True)
 
 
-@bot.include
+@client.include
 @crescent.command
 class class_example:
     result = crescent.option(str, "Respond to the message", autocomplete=autocomplete_response)

@@ -2,10 +2,12 @@
 
 # Crescent provides 2 implementations for `crescent.LocaleBuilder`
 
+import hikari
 import crescent
 from crescent.ext import locales
 
-bot = crescent.Bot("...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 # If you have installed i18n you can use `locales.i18n`
 # You must run `pip install hikari-crescent[i18n]` before you can use i18n.
@@ -20,7 +22,7 @@ i18n.add_translation("description", "french-description", locale="fr")
 
 
 # This command will have its name and translation in the french and english locales.
-@bot.include
+@client.include
 @crescent.command(name=locales.i18n("name"), description=locales.i18n("description"))
 async def command(ctx: crescent.Context) -> None:
     ...
@@ -28,7 +30,7 @@ async def command(ctx: crescent.Context) -> None:
 
 # There is also `locales.LocaleMap` which allows you to declare translation as kwargs
 # when the class is instantiated.
-@bot.include
+@client.include
 @crescent.command(
     name=locales.LocaleMap("name", en_US="english-name", en_GB="english-name", fr="french-name"),
     description=locales.LocaleMap(
@@ -40,3 +42,5 @@ async def command(ctx: crescent.Context) -> None:
 )
 async def command_2(ctx: crescent.Context) -> None:
     ...
+
+bot.run()
