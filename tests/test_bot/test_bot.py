@@ -16,7 +16,7 @@ async def myhook(ctx: crescent.Context) -> None:
     await ctx.respond("Hook Called", ephemeral=True)
 
 
-class Bot(crescent.Bot):
+class Client(crescent.Client):
     async def on_crescent_command_error(
         self, exc: Exception, ctx: crescent.Context, was_handled: bool
     ) -> None:
@@ -44,17 +44,16 @@ async def bot_wide_hook(ctx: crescent.Context) -> None:
     await ctx.respond("Bot wide hook called")
 
 
-bot = Bot(
-    os.environ["TOKEN"], default_guild=int(os.environ["GUILD"]), command_hooks=[bot_wide_hook]
-)
+bot = hikari.GatewayBot(os.environ["TOKEN"])
+client = Client(bot, command_hooks=[bot_wide_hook])
 
-bot.plugins.load("tests.test_bot.test_plugin")
+client.plugins.load("tests.test_bot.test_plugin")
 
 group = crescent.Group("group", hooks=[myhook])
 subgroup = group.sub_group("sub")
 
 
-@bot.include
+@client.include
 @crescent.command(name="class-command", description="testing testing 123")
 class ClassCommand:
     arg = crescent.option(str, "description")
@@ -64,27 +63,27 @@ class ClassCommand:
         await ctx.respond(f"{self.arg}, {self.another_arg}")
 
 
-@bot.include
+@client.include
 @crescent.command
 async def command(ctx: crescent.Context, arg: str) -> None:
     await ctx.respond(arg)
 
 
-@bot.include
+@client.include
 @crescent.command
 async def reload_plugin(ctx: crescent.Context) -> None:
-    ctx.app.plugins.load("tests.test_bot.test_plugin", refresh=True)
+    client.plugins.load("tests.test_client.test_plugin", refresh=True)
     await ctx.respond("Done")
 
 
-@bot.include
+@client.include
 @group.child
 @crescent.command
 async def group_command(ctx: crescent.Context, arg: str) -> None:
     await ctx.respond(arg)
 
 
-@bot.include
+@client.include
 @subgroup.child
 @crescent.hook(myhook)
 @crescent.command
@@ -92,13 +91,13 @@ async def subgroup_command(ctx: crescent.Context, arg: str) -> None:
     await ctx.respond(arg)
 
 
-@bot.include
+@client.include
 @crescent.user_command(name="User")
 async def user_command(ctx: crescent.Context, user: hikari.User) -> None:
     await ctx.respond(str(user))
 
 
-@bot.include
+@client.include
 @crescent.message_command(name="Message")
 async def msg_command(ctx: crescent.Context, msg: hikari.Message) -> None:
     await ctx.respond(str(msg))
@@ -114,19 +113,19 @@ class UnhandledErr(Exception):
         super().__init__("Unhandled Exception")
 
 
-@bot.include
+@client.include
 @crescent.catch_command(HandledErr)
 async def handle_cmd_err(exc: HandledErr, ctx: crescent.Context) -> None:
     await ctx.respond(f"HandledErr raised in {ctx.command}: {exc!r}")
 
 
-@bot.include
+@client.include
 @crescent.catch_event(HandledErr)
 async def handle_event_err(exc: HandledErr, event: hikari.Event) -> None:
     print(f"HandledErr raised in {event}: {exc!r}")
 
 
-@bot.include
+@client.include
 @crescent.catch_autocomplete(HandledErr)
 async def handle_autocomplete_err(
     exc: HandledErr, ctx: crescent.AutocompleteContext, inter: hikari.AutocompleteInteractionOption
@@ -135,19 +134,19 @@ async def handle_autocomplete_err(
 
 
 # ERRORS!!!!!!!!!!
-@bot.include
+@client.include
 @crescent.command
 async def raise_err(ctx: crescent.Context) -> None:
     raise HandledErr()
 
 
-@bot.include
+@client.include
 @crescent.command
 async def raise_unhandled_err(ctx: crescent.Context) -> None:
     raise UnhandledErr()
 
 
-@bot.include
+@client.include
 @crescent.event
 async def on_message(event: hikari.MessageCreateEvent) -> None:
     if event.author.is_bot or not event.message.content:
@@ -175,7 +174,7 @@ async def error_autocomplete(
     ]
 
 
-@bot.include
+@client.include
 @crescent.command
 async def error_autocomplete_command(
     ctx: crescent.Context, option: Annotated[str, crescent.Autocomplete(error_autocomplete)]
@@ -189,7 +188,7 @@ async def autocomplete_response(
     return [hikari.CommandChoice(name="Some Option", value="1234")]
 
 
-@bot.include
+@client.include
 @crescent.command
 async def autocomplete_interaction(
     ctx: crescent.Context, result: Annotated[str, crescent.Autocomplete(autocomplete_response)]
@@ -197,13 +196,13 @@ async def autocomplete_interaction(
     await ctx.respond(result, ephemeral=True)
 
 
-@bot.include
+@client.include
 @tasks.loop(seconds=5)
 async def loop() -> None:
     print(f"LOOP: {datetime.now()}")
 
 
-@bot.include
+@client.include
 @tasks.cronjob("* * * * *")
 async def cron() -> None:
     print(f"CRON: {datetime.now()}")

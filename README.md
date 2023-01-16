@@ -48,11 +48,13 @@ dataclass. The option function takes a type followed by the description, then op
 
 ```python
 import crescent
+import hikari
 
-bot = crescent.Bot("YOUR_TOKEN")
+bot = hikari.GatewayBot("YOUR_TOKEN")
+client = crescent.Client(bot)
 
-# Include the command in your bot - don't forget this
-@bot.include
+# Include the command in your client - don't forget this
+@client.include
 # Create a slash command
 @crescent.command(name="say")
 class Say:
@@ -61,14 +63,14 @@ class Say:
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)
 
-bot.start()
+bot.run()
 ```
 
 Simple commands can use functions instead of classes. It is recommended to use a function when your
 command does not have any options.
 
 ```python
-@bot.include
+@client.include
 @crescent.command
 async def ping(ctx: crescent.Context):
     await ctx.respond("Pong!")
@@ -84,13 +86,13 @@ from typing import Annotated as Atd
 # python 3.8
 from typing_extensions import Annotated as Atd
 
-@bot.include
+@client.include
 @crescent.command
 async def say(ctx: crescent.Context, word: str):
     await ctx.respond(word)
 
 # The same command but with a description for `word`
-@bot.include
+@client.include
 @crescent.command
 async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
     await ctx.respond(word)
@@ -120,12 +122,12 @@ Errors that are raised by a command can be handled by `crescent.catch_command`.
 class MyError(Exception):
     ...
 
-@bot.include
+@client.include
 @crescent.catch_command(MyError)
 async def on_err(exc: MyError, ctx: crescent.Context) -> None:
     await ctx.respond("An error occurred while running the command.")
 
-@bot.include
+@client.include
 @crescent.command
 async def my_command(ctx: crescent.Context):
     raise MyError()
@@ -135,7 +137,7 @@ async def my_command(ctx: crescent.Context):
 ```python
 import hikari
 
-@bot.include
+@client.include
 @crescent.event
 async def on_message_create(event: hikari.MessageCreateEvent):
     if event.message.author.is_bot:
