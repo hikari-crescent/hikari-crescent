@@ -24,18 +24,18 @@ from crescent import (
     hook,
 )
 from crescent.internal.handle_resp import handle_resp
-from tests.utils import MockBot
+from tests.utils import MockClient
 
 
-def MockEvent(name, bot):
+def MockEvent(name, client):
     return InteractionCreateEvent(
         shard=None,
         interaction=CommandInteraction(
-            app=bot,
+            app=client._app,
             id=None,
             application_id=...,
             type=InteractionType.APPLICATION_COMMAND,
-            token=bot._token,
+            token=client._app._token,
             version=0,
             channel_id=0,
             guild_id=None,
@@ -53,15 +53,15 @@ def MockEvent(name, bot):
     )
 
 
-def MockAutocompleteEvent(name, option_name, bot):
+def MockAutocompleteEvent(name, option_name, client):
     return InteractionCreateEvent(
         shard=None,
         interaction=AutocompleteInteraction(
-            app=bot,
+            app=client._app,
             id=None,
             application_id=...,
             type=InteractionType.AUTOCOMPLETE,
-            token=bot._token,
+            token=client._app._token,
             version=0,
             channel_id=0,
             guild_id=None,
@@ -91,29 +91,29 @@ class CustomContext(BaseContext):
 
 @mark.asyncio
 async def test_handle_resp_slash_function():
-    bot = MockBot()
+    client = MockClient()
 
     command_was_run = False
 
-    @bot.include
+    @client.include
     @command
     async def test_command(ctx: CustomContext):
         nonlocal command_was_run
         command_was_run = True
         assert type(ctx) is test_command.metadata.custom_context
 
-    await handle_resp(MockEvent("test_command", bot))
+    await handle_resp(MockEvent("test_command", client))
 
     assert command_was_run
 
 
 @mark.asyncio
 async def test_handle_resp_slash_class():
-    bot = MockBot()
+    client = MockClient()
 
     command_was_run = False
 
-    @bot.include
+    @client.include
     @command
     class test_command:
         async def callback(self, ctx: CustomContext):
@@ -121,14 +121,14 @@ async def test_handle_resp_slash_class():
             command_was_run = True
             assert type(ctx) is test_command.metadata.custom_context
 
-    await handle_resp(MockEvent("test_command", bot))
+    await handle_resp(MockEvent("test_command", client))
 
     assert command_was_run
 
 
 @mark.asyncio
 async def test_hooks():
-    bot = MockBot()
+    client = MockClient()
     command_was_run = False
     hook_was_run = False
     hook_no_annotations_was_run = False
@@ -148,7 +148,7 @@ async def test_hooks():
         hook_no_annotations_was_run = True
         assert type(ctx) is Context
 
-    @bot.include
+    @client.include
     @hook(hook_no_annotations)
     @hook(hook_)
     @command
@@ -158,7 +158,7 @@ async def test_hooks():
         assert ctx.id is mock_id
         assert type(ctx) is CustomContext
 
-    await handle_resp(MockEvent("test_command", bot))
+    await handle_resp(MockEvent("test_command", client))
 
     assert hook_was_run
     assert hook_no_annotations_was_run
@@ -167,11 +167,11 @@ async def test_hooks():
 
 @mark.asyncio
 async def test_handle_command_error():
-    bot = MockBot()
+    client = MockClient()
     command_was_run = False
     error_handler_was_run = False
 
-    @bot.include
+    @client.include
     @catch_command(Exception)
     async def test_command_handler(exc: Exception, ctx: CustomContext):
         nonlocal error_handler_was_run
@@ -179,14 +179,14 @@ async def test_handle_command_error():
         assert isinstance(exc, Exception)
         assert type(ctx) is CustomContext
 
-    @bot.include
+    @client.include
     @command
     async def test_command(ctx: CustomContext):
         nonlocal command_was_run
         command_was_run = True
         raise Exception
 
-    await handle_resp(MockEvent("test_command", bot))
+    await handle_resp(MockEvent("test_command", client))
 
     assert error_handler_was_run
     assert command_was_run
@@ -194,25 +194,25 @@ async def test_handle_command_error():
 
 @mark.asyncio
 async def test_unhandled_command_error():
-    bot = MockBot()
+    client = MockClient()
     command_was_run = False
     error_handler_was_run = False
 
-    @bot.include
+    @client.include
     @catch_command(ValueError)
     async def test_command_handler(exc: ValueError, ctx: CustomContext):
         nonlocal error_handler_was_run
         assert type(ctx) is CustomContext
         error_handler_was_run = True
 
-    @bot.include
+    @client.include
     @command
     async def test_command(ctx: CustomContext):
         nonlocal command_was_run
         command_was_run = True
         raise TypeError
 
-    await handle_resp(MockEvent("test_command", bot))
+    await handle_resp(MockEvent("test_command", client))
 
     assert not error_handler_was_run
     assert command_was_run
@@ -220,12 +220,12 @@ async def test_unhandled_command_error():
 
 @mark.asyncio
 async def test_handle_autocomplete_error():
-    bot = MockBot()
+    client = MockClient()
     command_was_run = False
     error_handler_was_run = False
     autocomplete_was_run = False
 
-    @bot.include
+    @client.include
     @catch_autocomplete(Exception)
     async def test_command_handler(
         exc: Exception, ctx: CustomContext, options: AutocompleteInteractionOption
@@ -243,7 +243,7 @@ async def test_handle_autocomplete_error():
         assert type(ctx) is CustomContext
         raise Exception
 
-    @bot.include
+    @client.include
     @command
     async def test_command(
         ctx: CustomContext, option: Annotated[str, Autocomplete(autocomplete_resp)]
@@ -251,7 +251,7 @@ async def test_handle_autocomplete_error():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(MockAutocompleteEvent("test_command", "option", bot))
+    await handle_resp(MockAutocompleteEvent("test_command", "option", client))
 
     assert error_handler_was_run
     assert autocomplete_was_run
@@ -260,12 +260,12 @@ async def test_handle_autocomplete_error():
 
 @mark.asyncio
 async def test_unhandled_autocomplete_error():
-    bot = MockBot()
+    client = MockClient()
     command_was_run = False
     error_handler_was_run = False
     autocomplete_was_run = False
 
-    @bot.include
+    @client.include
     @catch_autocomplete(ValueError)
     async def test_command_handler(
         exc: Exception, ctx: ValueError, options: AutocompleteInteractionOption
@@ -280,7 +280,7 @@ async def test_unhandled_autocomplete_error():
         autocomplete_was_run = True
         raise TypeError
 
-    @bot.include
+    @client.include
     @command
     async def test_command(
         ctx: CustomContext, option: Annotated[str, Autocomplete(autocomplete_resp)]
@@ -288,7 +288,7 @@ async def test_unhandled_autocomplete_error():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(MockAutocompleteEvent("test_command", "option", bot))
+    await handle_resp(MockAutocompleteEvent("test_command", "option", client))
 
     assert autocomplete_was_run
     assert not error_handler_was_run
