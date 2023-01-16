@@ -1,4 +1,5 @@
 import hikari
+
 import crescent
 
 bot = hikari.GatewayBot(token="...")

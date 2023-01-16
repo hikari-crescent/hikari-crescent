@@ -8,6 +8,7 @@ import crescent
 bot = hikari.GatewayBot(token="...")
 client = crescent.Client(bot)
 
+
 async def autocomplete_response(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[hikari.CommandChoice]:

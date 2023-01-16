@@ -3,6 +3,7 @@
 # Crescent provides 2 implementations for `crescent.LocaleBuilder`
 
 import hikari
+
 import crescent
 from crescent.ext import locales
 
@@ -42,5 +43,6 @@ async def command(ctx: crescent.Context) -> None:
 )
 async def command_2(ctx: crescent.Context) -> None:
     ...
+
 
 bot.run()

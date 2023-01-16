@@ -1,4 +1,5 @@
 import hikari
+
 import crescent
 
 # Hooks can be executed after commands.
@@ -17,5 +18,6 @@ async def hook(ctx: crescent.Context) -> None:
 @crescent.command
 async def say(ctx: crescent.Context, word: str) -> None:
     await ctx.respond(word)
+
 
 bot.run()

@@ -4,17 +4,11 @@ import crescent
 
 import random
 
+# The bot object can be any impl that implements `hikari.traits.RESTAware` and
+# `hikari.traits.EventManagerAware`. For most users this will be `hikari.GatewayBot`.
 bot = hikari.GatewayBot(token="TOKEN")
-client = crescent.Client(
-    bot,
-    # This is the default guild for commands. You can set this to `None` in production
-    # or not include the argument to post commands globally.
-    default_guild=123456789123456789,
-    # List of guilds that the bot compares its commands to. Guilds that aren't in this
-    # list or are default_guild will not have their commands removed. If this is `None`
-    # commands will be posted to all the guilds the bot is in.
-    tracked_guilds=[987654321987654321]
-)
+# The client object controls all the features of crescent.
+client = crescent.Client(bot)
 
 
 @client.include

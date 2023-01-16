@@ -1,4 +1,5 @@
 import hikari
+
 import crescent
 
 # Hooks allow you to execute functions before or after command
