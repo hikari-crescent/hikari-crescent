@@ -40,7 +40,6 @@ def test_message_command_defaults():
     assert test_command.metadata.app_command.nsfw is None
 
 
-
 def test_not_default():
     @command(
         name="test_name",

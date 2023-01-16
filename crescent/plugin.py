@@ -85,10 +85,12 @@ class PluginManager:
 
         ```python
         import crescent
+        import hikari
 
-        bot = crescent.Bot(token=...)
+        bot = hikari.GatewayBot(token=...)
+        client = crescent.Client(bot)
 
-        bot.plugins.load("project.plugin_folder")
+        client.plugins.load("project.plugin_folder")
         ```
 
         If a file is attempted to be loaded that does not have a plugin variable,
@@ -188,7 +190,7 @@ class Plugin:
             callback()
         for child in self._children:
             add_hooks(client, child)
-            child.register_to_app(client.app)
+            child.register_to_client(client)
 
         client.app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
 

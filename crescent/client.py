@@ -5,20 +5,15 @@ from asyncio import Task, create_task
 from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
-from typing import TYPE_CHECKING, overload, Protocol
+from typing import TYPE_CHECKING, Protocol, overload
 
 from hikari import AutocompleteInteractionOption
 from hikari import Event as hk_Event
-from hikari import (
-    InteractionCreateEvent,
-    ShardReadyEvent,
-    Snowflakeish,
-    StartedEvent,
-)
+from hikari import InteractionCreateEvent, ShardReadyEvent, Snowflakeish, StartedEvent
 from hikari.traits import EventManagerAware, RESTAware
 
 from crescent.commands.hooks import add_hooks
-from crescent.internal.handle_resp import handle_resp
+from crescent.internal.handle_resp import active_clients, handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
@@ -42,6 +37,7 @@ __all___: Sequence[str] = ("Client", "CrescentAware")
 
 class CrescentAware(EventManagerAware, RESTAware, Protocol):
     """The traits crescent requires for a bot."""
+
 
 class Client:
     def __init__(
@@ -73,6 +69,8 @@ class Client:
             command_after_hooks:
                 List of hooks to run after all commands.
         """
+        active_clients[app] = self
+
         self.app = app
 
         if tracked_guilds is None:
@@ -142,7 +140,7 @@ class Client:
 
         add_hooks(self, command)
 
-        command.register_to_app(self.app)
+        command.register_to_client(self)
 
         return command
 

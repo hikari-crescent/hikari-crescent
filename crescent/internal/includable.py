@@ -9,7 +9,7 @@ from crescent.utils.options import unwrap
 if TYPE_CHECKING:
     from typing import Any, Callable, Sequence
 
-    from crescent.client import CrescentAware
+    from crescent.client import Client
 
 T = TypeVar("T")
 
@@ -22,21 +22,21 @@ class Includable(Generic[T]):
     metadata: T
 
     manager: Any | None = None
-    _app: CrescentAware | None = None
+    _client: Client | None = None
 
-    app_set_hooks: list[Callable[[Includable[T]], None]] = field(factory=list)
+    client_set_hooks: list[Callable[[Includable[T]], None]] = field(factory=list)
     plugin_unload_hooks: list[Callable[[Includable[T]], None]] = field(factory=list)
 
     @property
-    def app(self) -> CrescentAware:
-        return unwrap(self._app)
+    def client(self) -> Client:
+        return unwrap(self._client)
 
-    @app.setter
-    def app(self, app: CrescentAware) -> None:
-        self._app = app
+    @client.setter
+    def client(self, client: Client) -> None:
+        self._client = client
 
-        for hook in self.app_set_hooks:
+        for hook in self.client_set_hooks:
             hook(self)
 
-    def register_to_app(self, app: CrescentAware) -> None:
-        self.app = app
+    def register_to_client(self, client: Client) -> None:
+        self.client = client
