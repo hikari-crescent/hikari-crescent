@@ -54,7 +54,7 @@ class Client:
         """
         Args:
             app:
-                The hikari bot object that is being proxied.
+                The hikari bot instance.
             tracked_guilds:
                 The guilds to compare posted commands to. Commands will not be
                 automatically removed from guilds that aren't in this list. This should
