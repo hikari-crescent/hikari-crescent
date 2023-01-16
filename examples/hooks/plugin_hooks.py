@@ -1,6 +1,6 @@
 import crescent
 
-# Plugins can be added to plugins or the bot. Adding commands to the bot works
+# Plugins can be added to plugins or the client. Adding commands to the client works
 # exactly the same as plugins.
 
 
