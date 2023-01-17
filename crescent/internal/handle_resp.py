@@ -41,7 +41,7 @@ __all__: Sequence[str] = ("handle_resp",)
 
 active_clients: dict[int, Client] = {}
 """
-Dictionary of [id(client), client]. The clients that are currently being tracked by crescent.
+Dictionary of [id(app), client]. The clients that are currently being tracked by crescent.
 """
 
 

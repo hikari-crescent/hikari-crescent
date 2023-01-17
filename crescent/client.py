@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
 
 
-__all___: Sequence[str] = ("Client", "CrescentAware")
+__all___: Sequence[str] = ("Client", "GatewayTraits")
 
 
 class GatewayTraits(EventManagerAware, RESTAware, Protocol):
