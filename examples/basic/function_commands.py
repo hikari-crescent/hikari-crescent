@@ -9,16 +9,17 @@ import crescent
 # from typing import Annotated
 
 
-bot = crescent.Bot(token="...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 
-@bot.include
+@client.include
 @crescent.command
 async def say(ctx: crescent.Context, word: str) -> None:
     await ctx.respond(f"{ctx.user.username} said {word}")
 
 
-@bot.include
+@client.include
 @crescent.command
 async def add(
     ctx: crescent.Context,
@@ -35,19 +36,19 @@ async def add(
     await ctx.respond(f"{first_number} + {second_number} = {first_number + second_number}")
 
 
-@bot.include
+@client.include
 @crescent.user_command
 async def my_user_command(ctx: crescent.Context, user: hikari.User | hikari.Member) -> None:
     await ctx.respond(f"Hello {user.username}")
 
 
-@bot.include
+@client.include
 @crescent.message_command
 async def my_message_command(ctx: crescent.Context, message: hikari.Message) -> None:
     await ctx.respond(f'The message said "{message.content}"')
 
 
-@bot.include
+@client.include
 @crescent.event
 async def event(event: hikari.ShardReadyEvent) -> None:
     print(event)

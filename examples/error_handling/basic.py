@@ -5,7 +5,8 @@ from typing_extensions import Annotated as Atd
 
 import crescent
 
-bot = crescent.Bot("...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 
 class RandomError(Exception):
@@ -17,19 +18,19 @@ class UnhandledError(Exception):
 
 
 # error handling
-@bot.include
+@client.include
 @crescent.catch_command(RandomError)
 async def on_cmd_random_error(exc: RandomError, ctx: crescent.Context) -> None:
     await ctx.respond(f"{exc} raised in {ctx.command}!")
 
 
-@bot.include
+@client.include
 @crescent.catch_event(RandomError)
 async def on_event_random_error(exc: RandomError, event: hikari.Event) -> None:
     print(f"{exc} raised in {event}!")
 
 
-@bot.include
+@client.include
 @crescent.catch_autocomplete(RandomError)
 async def on_autocomplete_random_error(
     exc: RandomError,
@@ -40,7 +41,7 @@ async def on_autocomplete_random_error(
 
 
 # buggy command/event/autocompletes
-@bot.include
+@client.include
 @crescent.command
 async def raise_error_cmd(ctx: crescent.Context, unhandled: bool) -> None:
     if unhandled:
@@ -48,7 +49,7 @@ async def raise_error_cmd(ctx: crescent.Context, unhandled: bool) -> None:
     raise RandomError("Handled error")
 
 
-@bot.include
+@client.include
 @crescent.event
 async def raise_error_event(event: hikari.MessageCreateEvent) -> None:
     if event.author.is_bot:
@@ -79,7 +80,7 @@ async def autocomplete(
     ]
 
 
-@bot.include
+@client.include
 @crescent.command
 async def autocomplete_error(
     ctx: crescent.Context,

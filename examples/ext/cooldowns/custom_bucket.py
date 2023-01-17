@@ -5,7 +5,8 @@ import hikari
 import crescent
 from crescent.ext import cooldowns
 
-bot = crescent.Bot("...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 
 def guild_specific_rate_limits(
@@ -15,7 +16,7 @@ def guild_specific_rate_limits(
 
 
 # This function now has individual rate limit buckets for each guild.
-@bot.include
+@client.include
 @crescent.hook(cooldowns.cooldown(3, 20, bucket=guild_specific_rate_limits))
 @crescent.command
 async def my_command(ctx: crescent.Context) -> None:

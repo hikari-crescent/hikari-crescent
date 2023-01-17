@@ -9,7 +9,7 @@ from hikari import Locale, Member, PartialInteraction, Snowflake, User
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type, TypeVar
 
-    from crescent.bot import Mixin
+    from crescent.client import GatewayTraits
 
     ContextT = TypeVar("ContextT", bound="BaseContext")
 
@@ -23,7 +23,7 @@ class BaseContext:
 
     interaction: PartialInteraction
     """The interaction object."""
-    app: Mixin
+    app: GatewayTraits
     """The application instance."""
     application_id: Snowflake
     """The ID for the client that this interaction belongs to."""

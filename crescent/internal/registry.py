@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
     from hikari import PartialGuild, Snowflakeish, SnowflakeishOr
 
-    from crescent.bot import Mixin
+    from crescent.client import Client
     from crescent.typedefs import AutocompleteCallbackT, CanBuild, CommandCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
@@ -39,11 +39,11 @@ _log = getLogger(__name__)
 
 
 def _plugin_unload_callback(self: Includable[Any]) -> None:
-    self.app._command_handler._remove(self)
+    self.client._command_handler._remove(self)
 
 
-def _command_app_set_hook(self: Includable[AppCommandMeta]) -> None:
-    self.app._command_handler._register(self)
+def _command_client_set_hook(self: Includable[AppCommandMeta]) -> None:
+    self.client._command_handler._register(self)
 
 
 def register_command(
@@ -64,7 +64,7 @@ def register_command(
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     includable: Includable[AppCommandMeta] = Includable(
-        app_set_hooks=[_command_app_set_hook],
+        client_set_hooks=[_command_client_set_hook],
         plugin_unload_hooks=[_plugin_unload_callback],
         metadata=AppCommandMeta(
             owner=owner,
@@ -122,10 +122,10 @@ class ErrorHandler(Generic[_E]):
 
 class CommandHandler:
 
-    __slots__: Sequence[str] = ("_bot", "_guilds", "_application_id", "_registry")
+    __slots__: Sequence[str] = ("_client", "_guilds", "_application_id", "_registry")
 
-    def __init__(self, bot: Mixin, guilds: Sequence[Snowflakeish]) -> None:
-        self._bot: Mixin = bot
+    def __init__(self, client: Client, guilds: Sequence[Snowflakeish]) -> None:
+        self._client: Client = client
         self._guilds: Sequence[Snowflakeish] = guilds
         self._application_id: Snowflake | None = None
 
@@ -133,7 +133,7 @@ class CommandHandler:
 
     def _register(self, command: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
         command.metadata.app_command.guild_id = (
-            command.metadata.app_command.guild_id or self._bot.default_guild
+            command.metadata.app_command.guild_id or self._client.default_guild
         )
         self._registry[command.metadata.unique] = command
         return command
@@ -302,17 +302,17 @@ class CommandHandler:
         try:
             if self._application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
-            await self._bot.rest.set_application_commands(
+            await self._client.app.rest.set_application_commands(
                 application=self._application_id,
                 # The only method that is called has been implemented.
                 commands=commands,  # type: ignore
                 guild=guild,
             )
         except ForbiddenError:
-            if not isinstance(self._bot, CacheAware):
+            if not isinstance(self._client.app, CacheAware):
                 return
 
-            if guild in self._bot.cache.get_guilds_view():
+            if guild in self._client.app.cache.get_guilds_view():
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
                     " guild from the bot's `tracked_guilds` or inviting the bot with the"
@@ -348,7 +348,7 @@ class CommandHandler:
             raise AttributeError("Client `application_id` is not defined")
 
         if not skip_global or purge_everything:
-            await self._bot.rest.set_application_commands(self._application_id, ())
+            await self._client.app.rest.set_application_commands(self._application_id, ())
 
         guilds_to_purge: Iterable[PartialGuild | Snowflake | int]
         if purge_everything:
@@ -357,7 +357,7 @@ class CommandHandler:
             guilds_to_purge = guilds
 
         for guild in guilds_to_purge:
-            await self._bot.rest.set_application_commands(self._application_id, (), guild)
+            await self._client.app.rest.set_application_commands(self._application_id, (), guild)
 
     async def register_commands(self) -> None:
         guilds = list(self._guilds)
@@ -377,7 +377,7 @@ class CommandHandler:
 
         assert self._application_id is not None
         await gather(
-            self._bot.rest.set_application_commands(
+            self._client.app.rest.set_application_commands(
                 application=self._application_id,
                 # The only method that is called has been implemented.
                 commands=global_commands,  # type: ignore
@@ -387,7 +387,7 @@ class CommandHandler:
                 for guild, commands in command_guilds.items()
             ),
             gather_iter(
-                self._bot.rest.set_application_commands(
+                self._client.app.rest.set_application_commands(
                     application=self._application_id, commands=[], guild=guild
                 )
                 for guild in guilds

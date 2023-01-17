@@ -6,9 +6,12 @@ from __future__ import annotations
 
 import dataclasses
 
+import hikari
+
 import crescent
 
-bot = crescent.Bot("...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 
 @dataclasses.dataclass
@@ -31,7 +34,7 @@ class Locale(crescent.LocaleBuilder):
 
 # This command's name is "en-name" for users on the `en-US` locale. Otherwise the
 # command will be displayed as "name". The same pattern follows for the description.
-@bot.include
+@client.include
 @crescent.command(
     name=Locale("name", en_US="en-name"), description=Locale("description", en_US="en-description")
 )
