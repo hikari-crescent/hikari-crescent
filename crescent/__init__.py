@@ -31,6 +31,7 @@ __all__: Sequence[str] = (
     "Group",
     "SubGroup",
     "Client",
+    "GatewayTraits",
     "Context",
     "AutocompleteContext",
     "catch_command",
