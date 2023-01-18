@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from crescent.utils import fast_dataclass
+
 from typing import TYPE_CHECKING
 
 import hikari
-from attr import define
 from hikari import Locale, Member, PartialInteraction, Snowflake, User
 
 if TYPE_CHECKING:
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("BaseContext",)
 
 
-@define(slots=True)
+@fast_dataclass
 class BaseContext:
     """Represents the context for interactions"""
 

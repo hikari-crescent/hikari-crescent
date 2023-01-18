@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Any, Protocol, Sequence
-
-from attrs import define
 
 from crescent.internal.app_command import AppCommandMeta
 
@@ -14,7 +13,7 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("HookResult", "hook", "add_hooks")
 
 
-@define
+@dataclass
 class HookResult:
     exit: bool = False
 

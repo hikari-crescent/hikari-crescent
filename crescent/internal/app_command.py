@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, TypeVar
 
-from attr import define, field
 from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import EntityFactory
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     Self = TypeVar("Self")
 
 
-@define(hash=True)
+@dataclass(unsafe_hash=True)
 class Unique:
     name: str
     type: CommandType
@@ -72,7 +72,7 @@ class Unique:
 __all__: Sequence[str] = ("AppCommandMeta", "AppCommand")
 
 
-@define
+@dataclass
 class AppCommand:
     """Local representation of an Application Command"""
 
@@ -148,17 +148,17 @@ class AppCommand:
         return out
 
 
-@define
+@dataclass
 class AppCommandMeta:
     app_command: AppCommand
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
-    autocomplete: dict[str, TransformedAutocompleteCallbackT] = field(factory=dict)
+    autocomplete: dict[str, TransformedAutocompleteCallbackT] = field(default_factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[TransformedHookCallbackT] = field(factory=list)
-    after_hooks: list[TransformedHookCallbackT] = field(factory=list)
+    hooks: list[TransformedHookCallbackT] = field(default_factory=list)
+    after_hooks: list[TransformedHookCallbackT] = field(default_factory=list)
 
     def add_hooks(
         self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool
