@@ -88,6 +88,13 @@ T = TypeVar("T")
 Self = TypeVar("Self")
 
 
+class SentinalType:
+    ...
+
+
+SENTINEL = SentinalType()
+
+
 @dataclass
 class ClassCommandOption(Generic[T]):
     name: str | LocaleBuilder | None
@@ -102,7 +109,9 @@ class ClassCommandOption(Generic[T]):
     max_length: int | None
     autocomplete: AutocompleteCallbackT | None
 
-    def _gen_option(self, name: str) -> CommandOption:
+    _value: T | SentinalType = SENTINEL
+
+    def _build(self, name: str) -> CommandOption:
         name, name_localizations = str_or_build_locale(self.name or name)
         description, description_localizations = str_or_build_locale(self.description)
 
@@ -122,20 +131,16 @@ class ClassCommandOption(Generic[T]):
             autocomplete=bool(self.autocomplete),
         )
 
-    @overload
-    def __get__(self: Self, inst: None, cls: Any) -> Self:
-        ...
+    def __get__(self, inst: Any, _: Any = None) -> T:
+        assert inst, "Options can not be accessed before instantiating the class."
+        assert not isinstance(
+            self._value, SentinalType
+        ), "Options should be set before being accessed"
+        return self._value
 
-    @overload
-    def __get__(self, inst: object, cls: Any) -> T:
-        ...
-
-    def __get__(self, inst: Any | None, cls: Any) -> Any:
-        if inst is None:
-            return self
-
-        # we should never reach this point
-        raise NotImplementedError
+    def __set__(self, inst: Any, value: T):
+        assert inst, "Options can not be set before instantiating the class."
+        self._value = value
 
 
 DEFAULT = TypeVar("DEFAULT")

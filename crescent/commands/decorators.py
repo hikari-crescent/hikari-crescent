@@ -106,7 +106,7 @@ def command(
             if not isinstance(v, ClassCommandOption):
                 continue
 
-            generated = v._gen_option(n)
+            generated = v._build(n)
             options.append(generated)
 
             if v.autocomplete:
