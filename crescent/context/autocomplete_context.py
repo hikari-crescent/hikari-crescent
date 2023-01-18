@@ -89,6 +89,8 @@ _serialization_map: dict[OptionType, Callable[[AutocompleteContext, Snowflake], 
 class AutocompleteContext(BaseContext):
     """Represents the context for autocomplete interactions"""
 
+    __slots__ = ("interaction",)
+
     interaction: AutocompleteInteraction
 
     async def fetch_options(self) -> dict[str, Any]:
