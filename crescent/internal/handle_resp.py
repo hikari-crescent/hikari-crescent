@@ -5,7 +5,6 @@ from logging import getLogger
 from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
 
 from hikari import (
-    UNDEFINED,
     AutocompleteInteraction,
     AutocompleteInteractionOption,
     CommandInteraction,
@@ -153,7 +152,7 @@ def _get_command(
     with suppress(KeyError):
         return client._command_handler._get(Unique(guild_id=guild_id, **kwargs))
     with suppress(KeyError):
-        return client._command_handler._get(Unique(guild_id=UNDEFINED, **kwargs))
+        return client._command_handler._get(Unique(guild_id=None, **kwargs))
     return None
 
 
@@ -231,9 +230,8 @@ def _context_from_interaction_resp(
         sub_group=sub_group,
         command_type=CommandType(interaction.command_type),
         options=callback_options,
-        # See crescent/context/base_context.py
-        has_created_message=False,  # pyright: ignore
-        has_deferred_response=False,  # pyright: ignore
+        _has_created_message=False,
+        _has_deferred_response=False,
     )
 
 

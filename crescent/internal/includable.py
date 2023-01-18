@@ -1,8 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Generic, TypeVar
-
-from attr import define, field
 
 from crescent.utils.options import unwrap
 
@@ -16,7 +15,7 @@ T = TypeVar("T")
 __all__: Sequence[str] = ("Includable",)
 
 
-@define
+@dataclass
 class Includable(Generic[T]):
 
     metadata: T
@@ -24,8 +23,8 @@ class Includable(Generic[T]):
     manager: Any | None = None
     _client: Client | None = None
 
-    client_set_hooks: list[Callable[[Includable[T]], None]] = field(factory=list)
-    plugin_unload_hooks: list[Callable[[Includable[T]], None]] = field(factory=list)
+    client_set_hooks: list[Callable[[Includable[T]], None]] = field(default_factory=list)
+    plugin_unload_hooks: list[Callable[[Includable[T]], None]] = field(default_factory=list)
 
     @property
     def client(self) -> Client:

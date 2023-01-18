@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from attr import define
 from hikari import UNDEFINED, Permissions, UndefinedType
 
 from crescent.commands.hooks import add_hooks
@@ -31,7 +31,7 @@ def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
         )
 
 
-@define
+@dataclass
 class Group:
     name: str | LocaleBuilder
     description: str | LocaleBuilder | None = None
@@ -62,7 +62,7 @@ class Group:
         return includable
 
 
-@define
+@dataclass
 class SubGroup:
     name: str | LocaleBuilder
     parent: Group

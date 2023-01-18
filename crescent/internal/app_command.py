@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, TypeVar
 
-from attr import define, field
 from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import EntityFactory
 
@@ -12,7 +12,7 @@ from crescent.locale import LocaleBuilder, str_or_build_locale
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
 
-    from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr, UndefinedType
+    from hikari import CommandType, Snowflake, UndefinedOr, UndefinedType
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
@@ -26,21 +26,13 @@ if TYPE_CHECKING:
     Self = TypeVar("Self")
 
 
-@define(hash=True)
+@dataclass(frozen=True)
 class Unique:
     name: str
     type: CommandType
-    guild_id: UndefinedNoneOr[Snowflakeish]
-    group: UndefinedNoneOr[str]
-    sub_group: UndefinedNoneOr[str]
-
-    def __attrs_post_init__(self) -> None:
-        if self.guild_id is UNDEFINED:
-            self.guild_id = None
-        if self.group is UNDEFINED:
-            self.group = None
-        if self.sub_group is UNDEFINED:
-            self.sub_group = None
+    guild_id: Snowflakeish | None
+    group: str | None
+    sub_group: str | None
 
     @classmethod
     def from_meta_struct(cls: Type[Unique], command: Includable[AppCommandMeta]) -> Unique:
@@ -72,7 +64,7 @@ class Unique:
 __all__: Sequence[str] = ("AppCommandMeta", "AppCommand")
 
 
-@define
+@dataclass
 class AppCommand:
     """Local representation of an Application Command"""
 
@@ -148,17 +140,17 @@ class AppCommand:
         return out
 
 
-@define
+@dataclass
 class AppCommandMeta:
     app_command: AppCommand
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
-    autocomplete: dict[str, TransformedAutocompleteCallbackT] = field(factory=dict)
+    autocomplete: dict[str, TransformedAutocompleteCallbackT] = field(default_factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[TransformedHookCallbackT] = field(factory=list)
-    after_hooks: list[TransformedHookCallbackT] = field(factory=list)
+    hooks: list[TransformedHookCallbackT] = field(default_factory=list)
+    after_hooks: list[TransformedHookCallbackT] = field(default_factory=list)
 
     def add_hooks(
         self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool
