@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("BaseContext",)
 
 
-@define(slots=True)
+@define(slots=True, weakref_slot=False)
 class BaseContext:
     """Represents the context for interactions"""
 

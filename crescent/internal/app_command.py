@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     Self = TypeVar("Self")
 
 
-@define(hash=True)
+@define(hash=True, slots=True)
 class Unique:
     name: str
     type: CommandType
@@ -72,7 +72,7 @@ class Unique:
 __all__: Sequence[str] = ("AppCommandMeta", "AppCommand")
 
 
-@define
+@define(slots=True, weakref_slot=False)
 class AppCommand:
     """Local representation of an Application Command"""
 
@@ -148,7 +148,7 @@ class AppCommand:
         return out
 
 
-@define
+@define(slots=True, weakref_slot=False)
 class AppCommandMeta:
     app_command: AppCommand
     owner: Any

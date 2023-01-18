@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("Mentionable",)
 
 
-@define
+@define(slots=True, weakref_slot=False)
 class Mentionable:
     user: User | None
     role: Role | None

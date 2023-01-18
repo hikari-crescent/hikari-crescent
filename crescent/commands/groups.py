@@ -31,7 +31,7 @@ def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
         )
 
 
-@define
+@define(slots=True, weakref_slot=False)
 class Group:
     name: str | LocaleBuilder
     description: str | LocaleBuilder | None = None
@@ -62,7 +62,7 @@ class Group:
         return includable
 
 
-@define
+@define(slots=True, weakref_slot=False)
 class SubGroup:
     name: str | LocaleBuilder
     parent: Group

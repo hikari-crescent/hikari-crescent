@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("HookResult", "hook", "add_hooks")
 
 
-@define
+@define(slots=True, weakref_slot=False)
 class HookResult:
     exit: bool = False
 

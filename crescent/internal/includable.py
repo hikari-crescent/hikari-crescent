@@ -16,7 +16,7 @@ T = TypeVar("T")
 __all__: Sequence[str] = ("Includable",)
 
 
-@define
+@define(slots=True, weakref_slot=False)
 class Includable(Generic[T]):
 
     metadata: T
