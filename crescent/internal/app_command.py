@@ -12,7 +12,7 @@ from crescent.locale import LocaleBuilder, str_or_build_locale
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
 
-    from hikari import CommandType, Snowflake, UndefinedNoneOr, UndefinedOr, UndefinedType
+    from hikari import CommandType, Snowflake, UndefinedOr, UndefinedType
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
@@ -26,21 +26,13 @@ if TYPE_CHECKING:
     Self = TypeVar("Self")
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class Unique:
     name: str
     type: CommandType
-    guild_id: UndefinedNoneOr[Snowflakeish]
-    group: UndefinedNoneOr[str]
-    sub_group: UndefinedNoneOr[str]
-
-    def __post_init__(self) -> None:
-        if self.guild_id is UNDEFINED:
-            self.guild_id = None
-        if self.group is UNDEFINED:
-            self.group = None
-        if self.sub_group is UNDEFINED:
-            self.sub_group = None
+    guild_id: Snowflakeish | None
+    group: str | None
+    sub_group: str | None
 
     @classmethod
     def from_meta_struct(cls: Type[Unique], command: Includable[AppCommandMeta]) -> Unique:

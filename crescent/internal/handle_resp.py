@@ -5,7 +5,6 @@ from logging import getLogger
 from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
 
 from hikari import (
-    UNDEFINED,
     AutocompleteInteraction,
     AutocompleteInteractionOption,
     CommandInteraction,
@@ -153,7 +152,7 @@ def _get_command(
     with suppress(KeyError):
         return client._command_handler._get(Unique(guild_id=guild_id, **kwargs))
     with suppress(KeyError):
-        return client._command_handler._get(Unique(guild_id=UNDEFINED, **kwargs))
+        return client._command_handler._get(Unique(guild_id=None, **kwargs))
     return None
 
 
