@@ -88,11 +88,11 @@ T = TypeVar("T")
 Self = TypeVar("Self")
 
 
-class SentinalType:
+class NoValueType:
     ...
 
 
-SENTINEL = SentinalType()
+NO_VALUE = NoValueType()
 
 
 @dataclass
@@ -109,7 +109,7 @@ class ClassCommandOption(Generic[T]):
     max_length: int | None
     autocomplete: AutocompleteCallbackT | None
 
-    _value: T | SentinalType = SENTINEL
+    _value: T | NoValueType = NO_VALUE
 
     def _build(self, name: str) -> CommandOption:
         name, name_localizations = str_or_build_locale(self.name or name)
@@ -134,11 +134,11 @@ class ClassCommandOption(Generic[T]):
     def __get__(self, inst: Any, _: Any = None) -> T:
         assert inst, "Options can not be accessed before instantiating the class."
         assert not isinstance(
-            self._value, SentinalType
+            self._value, NoValueType
         ), "Options should be set before being accessed"
         return self._value
 
-    def __set__(self, inst: Any, value: T):
+    def __set__(self, inst: Any, value: T) -> None:
         assert inst, "Options can not be set before instantiating the class."
         self._value = value
 
