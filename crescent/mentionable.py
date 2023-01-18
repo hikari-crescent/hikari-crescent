@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from utils import fast_dataclass
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -11,8 +11,11 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("Mentionable",)
 
 
-@fast_dataclass
+@dataclass
 class Mentionable:
+
+    __slots__ = ("user", "role")
+
     user: User | None
     role: Role | None
 

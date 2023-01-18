@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from crescent.utils import fast_dataclass
-
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import hikari
@@ -18,9 +17,31 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("BaseContext",)
 
 
-@fast_dataclass
+@dataclass
 class BaseContext:
     """Represents the context for interactions"""
+
+    __slots__ = (
+        "interaction",
+        "app",
+        "application_id",
+        "type",
+        "token",
+        "id",
+        "version",
+        "channel_id",
+        "guild_id",
+        "user",
+        "member",
+        "locale",
+        "command",
+        "command_type",
+        "group",
+        "sub_group",
+        "options",
+        "_has_created_message",
+        "_has_deferred_response",
+    )
 
     interaction: PartialInteraction
     """The interaction object."""
@@ -95,7 +116,6 @@ class BaseContext:
             group=self.group,
             sub_group=self.sub_group,
             options=self.options,
-            # Pyright expects these arguments to start with an underscore but attrs removes that.
-            has_created_message=self._has_created_message,  # pyright: ignore
-            has_deferred_response=self._has_deferred_response,  # pyright: ignore
+            _has_created_message=self._has_created_message,
+            _has_deferred_response=self._has_deferred_response,
         )

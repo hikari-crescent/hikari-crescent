@@ -231,9 +231,8 @@ def _context_from_interaction_resp(
         sub_group=sub_group,
         command_type=CommandType(interaction.command_type),
         options=callback_options,
-        # See crescent/context/base_context.py
-        has_created_message=False,  # pyright: ignore
-        has_deferred_response=False,  # pyright: ignore
+        _has_created_message=False,
+        _has_deferred_response=False,
     )
 
 

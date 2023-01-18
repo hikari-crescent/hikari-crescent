@@ -22,8 +22,8 @@ def test_into():
         group=15,
         sub_group=16,
         options=17,
-        has_created_message=18,
-        has_deferred_response=19,
+        _has_created_message=18,
+        _has_deferred_response=19,
     )
 
     ctx2 = ctx.into(BaseContext)
@@ -77,8 +77,8 @@ async def test_supports_context():
         group=None,
         sub_group=None,
         options=None,
-        has_created_message=None,
-        has_deferred_response=None,
+        _has_created_message=None,
+        _has_deferred_response=None,
     )
 
     await support_custom_context(callback)(ctx, 5, kwarg=10)
