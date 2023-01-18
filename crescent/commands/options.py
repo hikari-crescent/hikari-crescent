@@ -92,9 +92,6 @@ class NoValueType:
     ...
 
 
-NO_VALUE = NoValueType()
-
-
 @dataclass
 class ClassCommandOption(Generic[T]):
     name: str | LocaleBuilder | None
@@ -109,7 +106,7 @@ class ClassCommandOption(Generic[T]):
     max_length: int | None
     autocomplete: AutocompleteCallbackT | None
 
-    _value: T | NoValueType = NO_VALUE
+    _value: T | NoValueType = NoValueType()
 
     def _build(self, name: str) -> CommandOption:
         name, name_localizations = str_or_build_locale(self.name or name)
