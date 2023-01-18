@@ -34,7 +34,7 @@ class Arg(ABC):
         return super().__hash__() ^ hash(self.payload)
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class Description(Arg):
     description: str | LocaleBuilder
 
@@ -43,7 +43,7 @@ class Description(Arg):
         return self.description
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class Name(Arg):
     name: str | LocaleBuilder
 
@@ -70,7 +70,7 @@ class ChannelTypes(Arg):
         return self.channel_types
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class MaxValue(Arg):
     max_value: int
 
@@ -79,7 +79,7 @@ class MaxValue(Arg):
         return self.max_value
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class MinValue(Arg):
     min_value: int
 
@@ -88,7 +88,7 @@ class MinValue(Arg):
         return self.min_value
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class MinLength(Arg):
     min_length: int
 
@@ -97,7 +97,7 @@ class MinLength(Arg):
         return self.min_length
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class MaxLength(Arg):
     max_length: int
 
@@ -106,7 +106,7 @@ class MaxLength(Arg):
         return self.max_length
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class Autocomplete(Arg):
     callback: AutocompleteCallbackT
 
