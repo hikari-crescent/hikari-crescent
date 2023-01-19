@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Protocol, Sequence, Generic, TypeVar
 from typing_extensions import ParamSpec
 
-from crescent.internal.app_command import AppCommandMeta
-
 if TYPE_CHECKING:
     from crescent.internal.includable import Includable
     from crescent.typedefs import HookCallbackT
@@ -47,10 +45,7 @@ class HasHooksLongName(Protocol):
     command_after_hooks: list[HookCallbackT] | None
 
 
-def add_hooks(obj: HasHooks | HasHooksLongName, command: Includable[Any]) -> None:
-    if not isinstance(command.metadata, AppCommandMeta):
-        return
-
+def add_hooks(obj: HasHooks | HasHooksLongName, command: Includable[Hookable[Any]]) -> None:
     command_hooks = getattr(obj, "hooks", None) or getattr(obj, "command_hooks", None)
     command_after_hooks = getattr(obj, "after_hooks", None) or getattr(
         obj, "command_after_hooks", None

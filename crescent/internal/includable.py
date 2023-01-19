@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
     from crescent.client import Client
 
-T = TypeVar("T")
+T = TypeVar("T", covariant=True)
 
 __all__: Sequence[str] = ("Includable",)
 
