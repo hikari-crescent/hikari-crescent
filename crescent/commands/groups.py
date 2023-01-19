@@ -57,7 +57,7 @@ class Group:
 
         includable.metadata.group = self
 
-        add_hooks(self, includable)
+        add_hooks(includable, hooks=self.hooks, after_hooks=self.after_hooks)
 
         return includable
 
@@ -76,7 +76,7 @@ class SubGroup:
         includable.metadata.group = self.parent
         includable.metadata.sub_group = self
 
-        add_hooks(self, includable)
-        add_hooks(self.parent, includable)
+        add_hooks(includable, hooks=self.hooks, after_hooks=self.after_hooks)
+        add_hooks(includable, hooks=self.parent.hooks, after_hooks=self.parent.after_hooks)
 
         return includable

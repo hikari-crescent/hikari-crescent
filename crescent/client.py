@@ -139,7 +139,7 @@ class Client:
         if command is None:
             return self.include
 
-        add_hooks(self, command)
+        add_hooks(command, hooks=self.command_hooks, after_hooks=self.command_after_hooks)
 
         command.register_to_client(self)
 

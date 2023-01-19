@@ -167,7 +167,7 @@ class Plugin:
         self._unload_hooks: list[PluginCallbackT] = []
 
     def include(self, obj: T) -> T:
-        add_hooks(self, obj)
+        add_hooks(obj, hooks=self.command_hooks, after_hooks=self.command_after_hooks)
         self._children.append(obj)
         return obj
 
@@ -197,7 +197,7 @@ class Plugin:
         for callback in self._load_hooks:
             callback()
         for child in self._children:
-            add_hooks(client, child)
+            add_hooks(child, hooks=client.command_hooks, after_hooks=client.command_after_hooks)
             child.register_to_client(client)
 
         client.app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
