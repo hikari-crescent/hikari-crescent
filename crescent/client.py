@@ -12,7 +12,7 @@ from hikari import Event as hk_Event
 from hikari import InteractionCreateEvent, ShardReadyEvent, Snowflakeish, StartedEvent
 from hikari.traits import EventManagerAware, RESTAware
 
-from crescent.commands.hooks import add_hooks
+from crescent.hooks import add_hooks
 from crescent.internal.handle_resp import active_clients, handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler

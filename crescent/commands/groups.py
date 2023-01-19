@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from hikari import UNDEFINED, Permissions, UndefinedType
 
-from crescent.commands.hooks import add_hooks
+from crescent.hooks import add_hooks
 from crescent.exceptions import PermissionsError
 
 if TYPE_CHECKING:
