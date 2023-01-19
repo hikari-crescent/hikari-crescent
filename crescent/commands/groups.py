@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 
 from hikari import UNDEFINED, Permissions, UndefinedType
 
-from crescent.hooks import add_hooks
 from crescent.exceptions import PermissionsError
+from crescent.hooks import add_hooks
 
 if TYPE_CHECKING:
     from typing import Sequence

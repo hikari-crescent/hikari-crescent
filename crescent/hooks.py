@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Protocol, Sequence, Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, Protocol, Sequence, TypeVar
 
 if TYPE_CHECKING:
     from crescent.internal.includable import Includable
