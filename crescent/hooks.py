@@ -19,8 +19,6 @@ class Hookable(Protocol[T]):
 
 @dataclass
 class HookResult:
-    __slots__ = ("exit",)
-
     exit: bool = False
 
 
