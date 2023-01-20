@@ -51,6 +51,7 @@ __all__: Sequence[str] = (
     "AutocompleteCallbackT",
     "ClassCommandProto",
     "Plugin",
+    "UserPlugin",
     "PluginManager",
     "ClassCommandOption",
 )

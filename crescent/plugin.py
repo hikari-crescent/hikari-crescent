@@ -3,7 +3,7 @@ from __future__ import annotations
 from importlib import import_module, reload
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, overload, Generic
 
 import hikari
 
@@ -19,8 +19,10 @@ if TYPE_CHECKING:
 
     T = TypeVar("T", bound="Includable[Any]")
 
+BotT = TypeVar("BotT", bound="GatewayTraits", covariant=True)
+PluginSelf = TypeVar("PluginSelf", bound="UserPlugin[Any]")
 
-__all__: Sequence[str] = ("PluginManager", "Plugin")
+__all__: Sequence[str] = ("PluginManager", "Plugin", "UserPlugin")
 
 _LOG = getLogger(__name__)
 
@@ -151,7 +153,7 @@ class PluginManager:
         plugin._load(self._client)
 
 
-class Plugin:
+class UserPlugin(Generic[BotT]):
     def __init__(
         self,
         *,
@@ -178,10 +180,10 @@ class Plugin:
         self._unload_hooks.append(callback)
 
     @property
-    def app(self) -> GatewayTraits:
+    def app(self) -> BotT:
         if not self._client:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
-        return self._client.app
+        return self._client.app  # type: ignore
 
     @property
     def client(self) -> Client:
@@ -259,3 +261,7 @@ class Plugin:
             )
 
         return plugin
+
+
+class Plugin(UserPlugin[GatewayTraits]):
+    ...
