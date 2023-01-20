@@ -1,25 +1,26 @@
 from __future__ import annotations
 
-from asyncio import Event as aio_Event
-from asyncio import Task, create_task
+from asyncio import Future
 from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
-from typing import TYPE_CHECKING, Protocol, overload
+from typing import TYPE_CHECKING, Protocol, overload, runtime_checkable
 
-from hikari import AutocompleteInteractionOption
+from hikari import AutocompleteInteractionOption, RESTBot
 from hikari import Event as hk_Event
-from hikari import InteractionCreateEvent, ShardReadyEvent, Snowflakeish, StartedEvent
+from hikari import InteractionCreateEvent, Snowflakeish, StartedEvent, CommandInteraction
 from hikari.traits import EventManagerAware, RESTAware
 
 from crescent.commands.hooks import add_hooks
-from crescent.internal.handle_resp import active_clients, handle_resp
+from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Sequence, TypeVar
+    from typing import Any, Callable, Sequence, TypeVar, Coroutine
+
+    from hikari.api import InteractionResponseBuilder
 
     from crescent.context import AutocompleteContext, Context
     from crescent.typedefs import (
@@ -35,18 +36,23 @@ if TYPE_CHECKING:
 __all___: Sequence[str] = ("Client", "GatewayTraits")
 
 
+@runtime_checkable
 class GatewayTraits(EventManagerAware, RESTAware, Protocol):
-    """The traits crescent requires for a bot."""
+    """The traits crescent requires for a gateway-based bot."""
+
+
+class RESTTraits(RESTAware, Protocol):
+    """The traits crescents requires for a REST-based bot."""
 
 
 class Client:
     def __init__(
         self,
-        app: GatewayTraits,
+        app: RESTTraits | GatewayTraits,
         *,
         tracked_guilds: Sequence[Snowflakeish] | None = None,
         default_guild: Snowflakeish | None = None,
-        update_commands: bool = True,
+        update_commands: bool = False,
         allow_unknown_interactions: bool = False,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
@@ -64,14 +70,26 @@ class Client:
                 slash commands will be posted globally.
             update_commands:
                 If `True` or not specified, update commands when the bot starts.
+                Only works for gateway-based bots.
             command_hooks:
                 List of hooks to run before all commands.
             command_after_hooks:
                 List of hooks to run after all commands.
         """
-        active_clients[id(app)] = self
 
         self.app = app
+
+        self.is_gateway = isinstance(app, GatewayTraits)
+        if isinstance(app, GatewayTraits):
+            app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
+
+            if update_commands:
+                app.event_manager.subscribe(StartedEvent, lambda _: self.post_commands())
+        elif isinstance(app, RESTBot):
+            if update_commands:
+                app.add_startup_callback(lambda _: self.post_commands())
+        elif update_commands:
+            raise ValueError("Crescent cannot update commands automatically for RESTTraits.")
 
         if tracked_guilds is None:
             tracked_guilds = ()
@@ -84,8 +102,6 @@ class Client:
 
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
-
-        self._started = aio_Event()
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
@@ -101,29 +117,16 @@ class Client:
 
         self._plugins = PluginManager(self)
 
-        app.event_manager.subscribe(ShardReadyEvent, self._on_shard_ready)
+    async def on_rest_interaction(self, interaction: CommandInteraction) -> InteractionResponseBuilder:
+        future: Future[InteractionResponseBuilder] = Future()
+        await handle_resp(self, interaction, future)
+        return await future
 
-        async def on_started(event: StartedEvent) -> None:
-            self._started.set()
-            await self._on_started(event)
+    def on_interaction_event(self, event: InteractionCreateEvent) -> Coroutine[Any, Any, None]:
+        return handle_resp(self, event.interaction, None)
 
-        app.event_manager.subscribe(StartedEvent, on_started)
-        app.event_manager.subscribe(InteractionCreateEvent, handle_resp)
-
-    async def _on_shard_ready(self, event: ShardReadyEvent) -> None:
-        self._command_handler._application_id = event.application_id
-
-    async def _on_started(self, _: StartedEvent) -> Task[None] | None:
-        if self.update_commands:
-            return create_task(self._command_handler.register_commands())
-        return None
-
-    @property
-    def started(self) -> aio_Event:
-        """
-        Returns `asyncio.Event` that is set when `hikari.StartedEvent` is dispatched.
-        """
-        return self._started
+    def post_commands(self) -> Coroutine[Any, Any, None]:
+        return self._command_handler.register_commands()
 
     @overload
     def include(self, command: INCLUDABLE) -> INCLUDABLE:
