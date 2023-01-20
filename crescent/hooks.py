@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generic, Protocol, Sequence, TypeVar, overload, Any
+from typing import TYPE_CHECKING, Any, Generic, Protocol, Sequence, TypeVar, overload
 
 if TYPE_CHECKING:
-    from crescent.internal.includable import Includable
     from crescent.internal.app_command import AppCommandMeta
+    from crescent.internal.includable import Includable
 
 __all__: Sequence[str] = ("HookResult", "hook", "add_hooks")
 
