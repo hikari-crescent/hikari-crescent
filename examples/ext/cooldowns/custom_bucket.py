@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import datetime
+
 import hikari
 
 import crescent
@@ -17,7 +19,9 @@ def guild_specific_rate_limits(
 
 # This function now has individual rate limit buckets for each guild.
 @client.include
-@crescent.hook(cooldowns.cooldown(3, 20, bucket=guild_specific_rate_limits))
+@crescent.hook(
+    cooldowns.cooldown(3, datetime.timedelta(seconds=20), bucket=guild_specific_rate_limits)
+)
 @crescent.command
 async def my_command(ctx: crescent.Context) -> None:
     await ctx.respond("Hello!")
