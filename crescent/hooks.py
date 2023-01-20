@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generic, Protocol, Sequence, TypeVar
+from typing import TYPE_CHECKING, Generic, Protocol, Sequence, TypeVar, overload, Any
 
 if TYPE_CHECKING:
     from crescent.internal.includable import Includable
+    from crescent.internal.app_command import AppCommandMeta
 
 __all__: Sequence[str] = ("HookResult", "hook", "add_hooks")
 
@@ -27,7 +28,17 @@ class hook(Generic[T]):
         self.callbacks = callbacks
         self.after = after
 
+    # Due to typing limitations, overloads are used to make this __call__ more accurate
+    # for crescent's built in types.
+    @overload
+    def __call__(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        ...
+
+    @overload
     def __call__(self, includable: Includable[Hookable[T]]) -> Includable[Hookable[T]]:
+        ...
+
+    def __call__(self, includable: Includable[Any]) -> Includable[Any]:
         includable.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
         return includable
 
