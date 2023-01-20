@@ -33,6 +33,8 @@ __all__: Sequence[str] = ("Context",)
 class Context(BaseContext):
     """Represents the context for command interactions"""
 
+    __slots__ = ("interaction",)
+
     interaction: CommandInteraction
 
     @property

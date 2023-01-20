@@ -10,7 +10,7 @@ from crescent import Context, command
 from crescent import message_command as _message_command
 from crescent import user_command as _user_command
 from crescent.internal.registry import CommandHandler
-from tests.utils import MockBot
+from tests.utils import MockClient
 
 GUILD_ID = 123456789
 
@@ -30,25 +30,25 @@ class TestRegistry:
 
     @mark.asyncio
     async def test_post_commands(self):
-        bot = MockBot(default_guild=GUILD_ID)
+        client = MockClient(default_guild=GUILD_ID)
 
-        @bot.include
+        @client.include
         @command
         async def slash_command(ctx: Context):
             pass
 
-        @bot.include
+        @client.include
         @_user_command
         async def user_command(ctx: Context, user: User):
             pass
 
-        @bot.include
+        @client.include
         @_message_command
         async def message_command(ctx: Context, message: Message):
             pass
 
-        bot.run()
-        await bot.wait_until_ready()
+        client.app.run()
+        await client.wait_until_ready()
 
         assert self.posted_commands[GUILD_ID] == [
             slash_command.metadata.app_command,
@@ -61,25 +61,25 @@ class TestRegistry:
         stack = ExitStack()
         register_commands = stack.enter_context(patch.object(CommandHandler, "register_commands"))
 
-        bot = MockBot(default_guild=GUILD_ID, update_commands=False)
+        client = MockClient(default_guild=GUILD_ID, update_commands=False)
 
-        @bot.include
+        @client.include
         @command
         async def slash_command(ctx: Context):
             pass
 
-        @bot.include
+        @client.include
         @_user_command
         async def user_command(ctx: Context, user: User):
             pass
 
-        @bot.include
+        @client.include
         @_message_command
         async def message_command(ctx: Context, message: Message):
             pass
 
-        bot.run()
-        await bot.wait_until_ready()
+        client.app.run()
+        await client.wait_until_ready()
 
         register_commands.assert_not_called()
         assert self.posted_commands[GUILD_ID] == []

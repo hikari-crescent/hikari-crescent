@@ -5,7 +5,6 @@ from logging import getLogger
 from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
 
 from hikari import (
-    UNDEFINED,
     AutocompleteInteraction,
     AutocompleteInteractionOption,
     CommandInteraction,
@@ -26,7 +25,7 @@ if TYPE_CHECKING:
 
     from hikari import CommandInteractionOption, InteractionCreateEvent, Message, User
 
-    from crescent.bot import Mixin
+    from crescent.client import Client, GatewayTraits
     from crescent.context import BaseContext
     from crescent.internal import AppCommandMeta, Includable
     from crescent.typedefs import TransformedHookCallbackT
@@ -39,27 +38,30 @@ _log = getLogger(__name__)
 __all__: Sequence[str] = ("handle_resp",)
 
 
+active_clients: dict[int, Client] = {}
+"""
+Dictionary of [id(app), client]. The clients that are currently being tracked by crescent.
+"""
+
+
 async def handle_resp(event: InteractionCreateEvent) -> None:
     interaction = event.interaction
-    bot = event.app
+    client = active_clients[id(event.app)]
 
     if not isinstance(interaction, (CommandInteraction, AutocompleteInteraction)):
         return
 
-    if TYPE_CHECKING:
-        bot = cast(Mixin, bot)
-
     command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
 
     command = _get_command(
-        bot, command_name, interaction.command_type, interaction.guild_id, group, sub_group
+        client, command_name, interaction.command_type, interaction.guild_id, group, sub_group
     )
 
     if not command:
-        if not bot.allow_unknown_interactions:
+        if not client.allow_unknown_interactions:
             _log.warning(
                 f"Handler for command `{command_name}` does not exist locally. (If this is"
-                " intended, add `allow_unknown_interactions=True` to the Bot's constructor.)"
+                " intended, add `allow_unknown_interactions=True` to the Client's constructor.)"
             )
         return
 
@@ -70,7 +72,7 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
 
         return
 
-    await _handle_slash_resp(bot, command, _context_from_interaction_resp(Context, interaction))
+    await _handle_slash_resp(command, _context_from_interaction_resp(Context, interaction))
 
 
 async def _handle_hooks(
@@ -85,9 +87,7 @@ async def _handle_hooks(
     return False, ctx
 
 
-async def _handle_slash_resp(
-    bot: Mixin, command: Includable[AppCommandMeta], ctx: BaseContext
-) -> None:
+async def _handle_slash_resp(command: Includable[AppCommandMeta], ctx: BaseContext) -> None:
 
     should_exit, ctx = await _handle_hooks(command.metadata.hooks, ctx)
 
@@ -98,8 +98,8 @@ async def _handle_slash_resp(
         await command.metadata.callback(ctx, **ctx.options)
         _, ctx = await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
-        handled = await command.app._command_error_handler.try_handle(exc, [exc, ctx])
-        await bot.on_crescent_command_error(exc, ctx.into(Context), handled)
+        handled = await command.client._command_error_handler.try_handle(exc, [exc, ctx])
+        await command.client.on_crescent_command_error(exc, ctx.into(Context), handled)
 
 
 async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: BaseContext) -> None:
@@ -117,8 +117,10 @@ async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: Ba
         res, ctx = await autocomplete(ctx, option)
         await interaction.create_response(res)
     except Exception as exc:
-        handled = await command.app._autocomplete_error_handler.try_handle(exc, [exc, ctx, option])
-        await command.app.on_crescent_autocomplete_error(
+        handled = await command.client._autocomplete_error_handler.try_handle(
+            exc, [exc, ctx, option]
+        )
+        await command.client.on_crescent_autocomplete_error(
             exc, ctx.into(AutocompleteContext), option, handled
         )
 
@@ -137,7 +139,7 @@ def _get_option_recursive(
 
 
 def _get_command(
-    bot: Mixin,
+    client: Client,
     name: str,
     type: CommandType | int,
     guild_id: Snowflake | None,
@@ -148,9 +150,9 @@ def _get_command(
     kwargs: dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
 
     with suppress(KeyError):
-        return bot._command_handler._get(Unique(guild_id=guild_id, **kwargs))
+        return client._command_handler._get(Unique(guild_id=guild_id, **kwargs))
     with suppress(KeyError):
-        return bot._command_handler._get(Unique(guild_id=UNDEFINED, **kwargs))
+        return client._command_handler._get(Unique(guild_id=None, **kwargs))
     return None
 
 
@@ -212,7 +214,7 @@ def _context_from_interaction_resp(
 
     return context_t(
         interaction=interaction,
-        app=cast("Mixin", interaction.app),
+        app=cast("GatewayTraits", interaction.app),
         application_id=interaction.application_id,
         type=interaction.type,
         token=interaction.token,
@@ -228,9 +230,8 @@ def _context_from_interaction_resp(
         sub_group=sub_group,
         command_type=CommandType(interaction.command_type),
         options=callback_options,
-        # See crescent/context/base_context.py
-        has_created_message=False,  # pyright: ignore
-        has_deferred_response=False,  # pyright: ignore
+        _has_created_message=False,
+        _has_deferred_response=False,
     )
 
 

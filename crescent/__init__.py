@@ -1,7 +1,7 @@
 from importlib.metadata import version
 from typing import Sequence
 
-from crescent.bot import *
+from crescent.client import *
 from crescent.commands import *
 from crescent.context import *
 from crescent.errors import *
@@ -30,8 +30,8 @@ __all__: Sequence[str] = (
     "HookResult",
     "Group",
     "SubGroup",
-    "Bot",
-    "Mixin",
+    "Client",
+    "GatewayTraits",
     "Context",
     "AutocompleteContext",
     "catch_command",

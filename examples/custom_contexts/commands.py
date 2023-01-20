@@ -4,7 +4,8 @@ import hikari
 
 import crescent
 
-bot = crescent.Bot("...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 # All custom contexts must inherit from `crescent.BaseContext` or a subclass, such
 # as `crescent.Context`.
@@ -18,7 +19,7 @@ class CustomContext2(crescent.Context):
     ...
 
 
-@bot.include
+@client.include
 @crescent.command
 # To use a custom context, simply use the context object you want as the type hint.
 async def my_command(ctx: CustomContext) -> None:
@@ -33,7 +34,7 @@ async def my_command(ctx: CustomContext) -> None:
 
 
 # A custom context type can be provided to command error handlers
-@bot.include
+@client.include
 @crescent.catch_command(Exception)
 async def error_handle(exc: Exception, ctx: CustomContext) -> None:
     ...
@@ -47,7 +48,7 @@ async def autocomplete_callback(
 
 
 # Autocomplete error handlers also support custom contexts.
-@bot.include
+@client.include
 @crescent.catch_autocomplete(Exception)
 async def autocomplete_error_handler(
     exc: Exception, ctx: CustomContext, option: hikari.AutocompleteInteractionOption
@@ -55,7 +56,7 @@ async def autocomplete_error_handler(
     ...
 
 
-@bot.include
+@client.include
 @crescent.command(name="has_autocomplete")
 class HasAutocomplete:
     option = crescent.option(str, autocomplete=autocomplete_callback)

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Awaitable, Callable, Sequence, TypeVar
 
 from hikari import StartedEvent
 
-from crescent.bot import Mixin
+from crescent.client import Client
 from crescent.exceptions import CrescentException
 from crescent.internal.includable import Includable
 
@@ -27,7 +27,7 @@ class Task(ABC):
         self.event_loop: AbstractEventLoop | None = None
         self.callback = callback
         self.timer_handle: TimerHandle | None = None
-        self.app: Mixin | None = None
+        self.client: Client | None = None
 
     def start(self) -> None:
         if self.running:
@@ -37,7 +37,7 @@ class Task(ABC):
         ensure_future(self._start_inner())
 
     async def _start_inner(self) -> None:
-        assert self.app is not None
+        assert self.client is not None
 
         self._call_next()
 
@@ -67,22 +67,22 @@ class Task(ABC):
     @staticmethod
     def _link(includable: Includable[_TaskType]) -> None:
         """Sets hooks on Includable required for Task to function properly."""
-        includable.app_set_hooks.append(_on_app_set)
+        includable.client_set_hooks.append(_on_client_set)
         includable.plugin_unload_hooks.append(_unload)
 
 
 _TaskType = TypeVar("_TaskType", bound=Task)
 
 
-def _on_app_set(self: Includable[_TaskType]) -> None:
-    self.metadata.app = self.app
+def _on_client_set(self: Includable[_TaskType]) -> None:
+    self.metadata.client = self.client
 
     async def callback(_: StartedEvent) -> None:
         self.metadata.start()
-        self.app.event_manager.unsubscribe(StartedEvent, callback)
+        self.client.app.event_manager.unsubscribe(StartedEvent, callback)
 
-    if not self.app.started.is_set():
-        self.app.event_manager.subscribe(StartedEvent, callback)
+    if not self.client.started.is_set():
+        self.client.app.event_manager.subscribe(StartedEvent, callback)
     else:
         self.metadata.start()
 

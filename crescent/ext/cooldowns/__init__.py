@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import Any, Awaitable, Callable, Optional
 
 from hikari import Snowflake
@@ -8,7 +9,7 @@ from crescent import Context, HookResult
 
 __all__ = ("CooldownCallbackT", "BucketCallbackT", "cooldown")
 
-CooldownCallbackT = Callable[[Context, float], Awaitable[Optional[HookResult]]]
+CooldownCallbackT = Callable[[Context, timedelta], Awaitable[Optional[HookResult]]]
 BucketCallbackT = Callable[[Context], Any]
 
 
@@ -16,8 +17,8 @@ def _default_bucket(ctx: Context) -> Snowflake:
     return ctx.user.id
 
 
-async def _default_callback(ctx: Context, retry: float) -> None:
-    seconds = round(retry)
+async def _default_callback(ctx: Context, retry: timedelta) -> None:
+    seconds = round(retry.total_seconds())
     if seconds <= 1:
         message = "1 second"
     else:
@@ -29,7 +30,7 @@ async def _default_callback(ctx: Context, retry: float) -> None:
 
 def cooldown(
     capacity: int,
-    period: float,
+    period: timedelta,
     *,
     callback: CooldownCallbackT = _default_callback,
     bucket: BucketCallbackT = _default_bucket,
@@ -49,16 +50,16 @@ def cooldown(
     """
 
     try:
-        from pycooldown import FixedCooldown
+        from floodgate import FixedMapping
     except ImportError:
         raise ModuleNotFoundError(
             "`hikari-crescent[cooldowns]` must be installed to use `crescent.ext.cooldowns`."
         )
 
-    cooldown: FixedCooldown[Any] = FixedCooldown(period=period, capacity=capacity)
+    cooldown: FixedMapping[Any] = FixedMapping(period=period, capacity=capacity)
 
     async def inner(ctx: Context) -> HookResult | None:
-        retry_after = cooldown.update_ratelimit(bucket(ctx))
+        retry_after = cooldown.trigger(bucket(ctx))
 
         if not retry_after:
             return None

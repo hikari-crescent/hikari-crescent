@@ -22,13 +22,13 @@ def _make_catch_function(
     def func(*exceptions: type[Exception]) -> Callable[[T], Includable[T]]:
         def app_set_hook(includable: Includable[Any]) -> None:
             for exc in exceptions:
-                getattr(includable.app, error_handler_var).register(includable, exc)
+                getattr(includable.client, error_handler_var).register(includable, exc)
 
         def plugin_unload_hook(includable: Includable[Any]) -> None:
             for exc in exceptions:
-                getattr(includable.app, error_handler_var).remove(exc)
+                getattr(includable.client, error_handler_var).remove(exc)
 
-        def decorator(callback: T) -> Includable[Any]:
+        def decorator(callback: Any) -> Includable[Any]:
             if supports_custom_ctx:
                 maybe_supports_custom_ctx: Callable[..., Awaitable[Any]] = support_custom_context(
                     callback
@@ -38,7 +38,7 @@ def _make_catch_function(
 
             includable = Includable(
                 maybe_supports_custom_ctx,
-                app_set_hooks=[app_set_hook],
+                client_set_hooks=[app_set_hook],
                 plugin_unload_hooks=[plugin_unload_hook],
             )
 

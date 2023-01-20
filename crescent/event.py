@@ -44,17 +44,17 @@ def event(
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(includable: Includable[CallbackT[Any]]) -> None:
-        includable.app.event_manager.subscribe(
+        includable.client.app.event_manager.subscribe(
             event_type=unwrap(event_type), callback=event_callback
         )
 
     def on_remove(includable: Includable[CallbackT[Any]]) -> None:
-        includable.app.event_manager.unsubscribe(
+        includable.client.app.event_manager.unsubscribe(
             event_type=unwrap(event_type), callback=event_callback
         )
 
     includable = Includable(
-        metadata=callback, app_set_hooks=[hook], plugin_unload_hooks=[on_remove]
+        metadata=callback, client_set_hooks=[hook], plugin_unload_hooks=[on_remove]
     )
     event_callback = _event_callback(includable)
 
@@ -68,7 +68,7 @@ def _event_callback(
         try:
             await self.metadata(event)
         except Exception as exc:
-            handled = await self.app._event_error_handler.try_handle(exc, [exc, event])
-            await self.app.on_crescent_event_error(exc, event, handled)
+            handled = await self.client._event_error_handler.try_handle(exc, [exc, event])
+            await self.client.on_crescent_event_error(exc, event, handled)
 
     return func

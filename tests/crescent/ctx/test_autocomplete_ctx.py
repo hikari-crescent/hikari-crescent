@@ -45,8 +45,8 @@ ctx = AutocompleteContext(
     locale=None,
     command_type=None,
     options=None,
-    has_created_message=None,
-    has_deferred_response=None,
+    _has_created_message=None,
+    _has_deferred_response=None,
     command=None,
     interaction=interaction,
 )

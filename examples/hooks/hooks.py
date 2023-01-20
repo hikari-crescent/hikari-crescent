@@ -1,7 +1,9 @@
+import hikari
+
 import crescent
 
 # Hooks allow you to execute functions before or after command
-# They execute in this order: command -> subgroup -> group -> plugin -> bot
+# They execute in this order: command -> subgroup -> group -> plugin -> client
 
 
 async def first_hook(ctx: crescent.Context) -> crescent.HookResult:  # you can also return None
@@ -20,10 +22,11 @@ def second_hook(number: int) -> crescent.HookCallbackT:
     return inner
 
 
-bot = crescent.Bot(token="...")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
 
-@bot.include
+@client.include
 @crescent.hook(first_hook, second_hook(5))
 @crescent.command
 async def test_command(ctx: crescent.Context, number: int) -> None:
@@ -32,7 +35,7 @@ async def test_command(ctx: crescent.Context, number: int) -> None:
 
 
 # This code is equlivent to equivalent to the previous function.
-@bot.include
+@client.include
 @crescent.hook(first_hook)
 @crescent.hook(second_hook(5))
 @crescent.command

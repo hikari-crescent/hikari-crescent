@@ -1,15 +1,22 @@
 from asyncio import Event, Task
 
-from hikari import Snowflake, StartedEvent
+from hikari import GatewayBot, Snowflake, StartedEvent
 
-from crescent import Bot
+from crescent import Client
 from crescent.internal.registry import CommandHandler
 
 
-class MockBot(Bot):
-    def __init__(self, default_guild=None, update_commands=True) -> None:
+class MockClient(Client):
+    def __init__(
+        self, default_guild=None, update_commands=True, command_hooks=[], command_after_hooks=[]
+    ) -> None:
 
-        super().__init__(token="", update_commands=update_commands)
+        super().__init__(
+            app=MockBot(),
+            update_commands=update_commands,
+            command_hooks=command_hooks,
+            command_after_hooks=command_after_hooks,
+        )
 
         self.default_guild = default_guild
 
@@ -24,8 +31,13 @@ class MockBot(Bot):
         self._wait_until_ready_event.set()
         return None
 
-    def run(self):
-        self.dispatch(StartedEvent(app=self))
-
     async def wait_until_ready(self):
         await self._wait_until_ready_event.wait()
+
+
+class MockBot(GatewayBot):
+    def __init__(self):
+        super().__init__(token="")
+
+    def run(self):
+        self.dispatch(StartedEvent(app=self))

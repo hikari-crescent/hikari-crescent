@@ -1,15 +1,18 @@
+import hikari
+
 import crescent
 
-bot = crescent.Bot(token="TOKEN")
+bot = hikari.GatewayBot(token="...")
+client = crescent.Client(bot)
 
-bot.plugins.load("plugin")
-bot.plugins.load("folder.another_plugin")
+client.plugins.load("plugin")
+client.plugins.load("folder.another_plugin")
 
 # Plugins can be unloaded and reloaded
-bot.plugins.unload("plugin")
-bot.plugins.load("plugin")
+client.plugins.unload("plugin")
+client.plugins.load("plugin")
 
-bot.plugins.unload("folder.another_plugin")
-bot.plugins.load("folder.another_plugin")
+client.plugins.unload("folder.another_plugin")
+client.plugins.load("folder.another_plugin")
 
 bot.run()

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from attr import define
 from hikari import ChannelType, CommandChoice
 
 from crescent.locale import LocaleBuilder
@@ -34,7 +34,7 @@ class Arg(ABC):
         return super().__hash__() ^ hash(self.payload)
 
 
-@define(hash=True)
+@dataclass(frozen=True)
 class Description(Arg):
     description: str | LocaleBuilder
 
@@ -43,7 +43,7 @@ class Description(Arg):
         return self.description
 
 
-@define(hash=True)
+@dataclass(frozen=True)
 class Name(Arg):
     name: str | LocaleBuilder
 
@@ -70,7 +70,7 @@ class ChannelTypes(Arg):
         return self.channel_types
 
 
-@define(hash=True)
+@dataclass(frozen=True)
 class MaxValue(Arg):
     max_value: int
 
@@ -79,7 +79,7 @@ class MaxValue(Arg):
         return self.max_value
 
 
-@define(hash=True)
+@dataclass(frozen=True)
 class MinValue(Arg):
     min_value: int
 
@@ -88,7 +88,7 @@ class MinValue(Arg):
         return self.min_value
 
 
-@define(hash=True)
+@dataclass(frozen=True)
 class MinLength(Arg):
     min_length: int
 
@@ -97,7 +97,7 @@ class MinLength(Arg):
         return self.min_length
 
 
-@define(hash=True)
+@dataclass(frozen=True)
 class MaxLength(Arg):
     max_length: int
 
@@ -106,7 +106,7 @@ class MaxLength(Arg):
         return self.max_length
 
 
-@define(hash=True)
+@dataclass(frozen=True)
 class Autocomplete(Arg):
     callback: AutocompleteCallbackT
 

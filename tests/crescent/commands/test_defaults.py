@@ -13,6 +13,7 @@ def test_defaults():
     assert test_command.metadata.app_command.description == "No Description"
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
     assert test_command.metadata.app_command.is_dm_enabled
+    assert test_command.metadata.app_command.nsfw is None
 
 
 def test_user_command_defaults():
@@ -24,6 +25,7 @@ def test_user_command_defaults():
     assert test_command.metadata.app_command.guild_id is None
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
     assert test_command.metadata.app_command.is_dm_enabled
+    assert test_command.metadata.app_command.nsfw is None
 
 
 def test_message_command_defaults():
@@ -35,6 +37,7 @@ def test_message_command_defaults():
     assert test_command.metadata.app_command.guild_id is None
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
     assert test_command.metadata.app_command.is_dm_enabled
+    assert test_command.metadata.app_command.nsfw is None
 
 
 def test_not_default():
@@ -44,6 +47,7 @@ def test_not_default():
         description="test description",
         default_member_permissions=Permissions.BAN_MEMBERS,
         dm_enabled=False,
+        nsfw=True,
     )
     async def test_command(ctx: Context):
         ...
@@ -53,6 +57,7 @@ def test_not_default():
     assert test_command.metadata.app_command.description == "test description"
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
     assert not test_command.metadata.app_command.is_dm_enabled
+    assert test_command.metadata.app_command.nsfw
 
 
 def test_message_command_not_default():
@@ -61,6 +66,7 @@ def test_message_command_not_default():
         guild=123456,
         default_member_permissions=Permissions.BAN_MEMBERS,
         dm_enabled=False,
+        nsfw=True,
     )
     async def test_command(ctx: Context):
         ...
@@ -69,6 +75,7 @@ def test_message_command_not_default():
     assert test_command.metadata.app_command.guild_id == 123456
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
     assert not test_command.metadata.app_command.is_dm_enabled
+    assert test_command.metadata.app_command.nsfw
 
 
 def test_user_command_not_default():
@@ -77,6 +84,7 @@ def test_user_command_not_default():
         guild=123456,
         default_member_permissions=Permissions.BAN_MEMBERS,
         dm_enabled=False,
+        nsfw=True,
     )
     async def test_command(ctx: Context):
         ...
@@ -85,3 +93,4 @@ def test_user_command_not_default():
     assert test_command.metadata.app_command.guild_id == 123456
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
     assert not test_command.metadata.app_command.is_dm_enabled
+    assert test_command.metadata.app_command.nsfw
