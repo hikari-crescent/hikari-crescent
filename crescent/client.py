@@ -52,7 +52,7 @@ class Client:
         *,
         tracked_guilds: Sequence[Snowflakeish] | None = None,
         default_guild: Snowflakeish | None = None,
-        update_commands: bool = False,
+        update_commands: bool = True,
         allow_unknown_interactions: bool = False,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
@@ -89,7 +89,10 @@ class Client:
             if update_commands:
                 app.add_startup_callback(lambda _: self.post_commands())
         elif update_commands:
-            raise ValueError("Crescent cannot update commands automatically for RESTTraits.")
+            raise ValueError(
+                "Crescent cannot update commands automatically for RESTTraits. "
+                "Please pass update_commands=False, or use a RESTBot."
+            )
 
         if tracked_guilds is None:
             tracked_guilds = ()
