@@ -3,7 +3,7 @@ from __future__ import annotations
 from importlib import import_module, reload
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast, overload
 
 import hikari
 
@@ -180,7 +180,7 @@ class UserPlugin(Generic[BotT]):
     def app(self) -> BotT:
         if not self._client:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
-        return self._client.app  # type: ignore
+        return cast(BotT, self._client.app)
 
     @property
     def client(self) -> Client:
