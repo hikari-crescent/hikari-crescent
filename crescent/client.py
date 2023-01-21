@@ -208,9 +208,7 @@ class Client:
         )
         print_exception(exc.__class__, exc, exc.__traceback__)
 
-    def _run_future(
-        self, callback: Coroutine[Any, Any, Any]
-    ) -> None:
+    def _run_future(self, callback: Coroutine[Any, Any, Any]) -> None:
         if self._started:
             get_running_loop().create_task(callback)
         else:
