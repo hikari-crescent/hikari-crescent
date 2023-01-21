@@ -6,7 +6,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, overload
 
 import hikari
+from hikari import RESTBotAware
 
+from crescent.client import GatewayTraits, RESTTraits
 from crescent.commands.hooks import add_hooks
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.includable import Includable
@@ -14,7 +16,7 @@ from crescent.internal.includable import Includable
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence, TypeVar
 
-    from crescent.client import Client, GatewayTraits
+    from crescent.client import Client, GatewayTraits, RESTTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
     T = TypeVar("T", bound="Includable[Any]")
@@ -178,7 +180,7 @@ class Plugin:
         self._unload_hooks.append(callback)
 
     @property
-    def app(self) -> GatewayTraits:
+    def app(self) -> GatewayTraits | RESTTraits:
         if not self._client:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
         return self._client.app
@@ -200,12 +202,16 @@ class Plugin:
             add_hooks(client, child)
             child.register_to_client(client)
 
-        client.app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
+        if isinstance(client.app, GatewayTraits):
+            client.app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
+        elif isinstance(client.app, RESTBotAware):
+            client.app.add_shutdown_callback(self._on_bot_close)
 
     def _unload(self) -> None:
-        assert self._client
-        self._client.app.event_manager.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
-        self._client = None
+        if isinstance(self.client.app, GatewayTraits):
+            self.client.app.event_manager.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
+        elif isinstance(self.client.app, RESTBotAware):
+            self.client.app.remove_shutdown_callback(self._on_bot_close)
 
         for callback in self._unload_hooks:
             callback()
@@ -214,7 +220,7 @@ class Plugin:
             for hook in child.plugin_unload_hooks:
                 hook(child)
 
-    async def _on_bot_close(self, app: GatewayTraits) -> None:
+    async def _on_bot_close(self, app: GatewayTraits | RESTBotAware) -> None:
         self._unload()
 
     @overload

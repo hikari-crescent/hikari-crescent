@@ -11,10 +11,10 @@ from hikari import Event as hk_Event
 from hikari import (
     InteractionCreateEvent,
     PartialInteraction,
+    RESTBotAware,
     Snowflakeish,
     StartedEvent,
-    RESTBotAware,
-    InteractionServerAware,
+    StoppedEvent,
 )
 from hikari.traits import EventManagerAware, RESTAware
 
@@ -26,7 +26,7 @@ from crescent.plugin import PluginManager
 
 if TYPE_CHECKING:
     from asyncio import Future
-    from typing import Any, Callable, Coroutine, Sequence, TypeVar
+    from typing import Any, Awaitable, Callable, Coroutine, Sequence, TypeVar
 
     from hikari.api import InteractionResponseBuilder
 
@@ -47,11 +47,6 @@ __all__: Sequence[str] = ("Client", "GatewayTraits", "RESTTraits")
 @runtime_checkable
 class GatewayTraits(EventManagerAware, RESTAware, Protocol):
     """The traits crescent requires for a gateway-based bot."""
-
-
-@runtime_checkable
-class RESTBotTraits(RESTBotAware, InteractionServerAware, Protocol):
-    """The traits for a fully-automatic REST-bot."""
 
 
 class RESTTraits(RESTAware, Protocol):
@@ -98,10 +93,7 @@ class Client:
         self.is_gateway = isinstance(app, GatewayTraits)
         if isinstance(app, GatewayTraits):
             app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
-
-            if update_commands:
-                app.event_manager.subscribe(StartedEvent, lambda _: self.post_commands())
-        elif isinstance(app, RESTBotTraits):
+        elif isinstance(app, RESTBotAware):
             app.interaction_server.set_listener(
                 CommandInteraction,  # pyright: ignore
                 self.on_rest_interaction,  # type: ignore
@@ -111,14 +103,15 @@ class Client:
                 self.on_rest_interaction,  # type: ignore
             )
 
-            if update_commands:
-                app.add_startup_callback(lambda _: self.post_commands())
-        elif update_commands:
-            raise ValueError(
-                "Crescent cannot update commands automatically for RESTTraits. "
-                "Please pass update_commands=False and call `.post_commands` manually. "
-                "Alternatively, you can use RESTBot."
-            )
+        if update_commands:
+            try:
+                self.add_startup_callback(lambda _: self.post_commands())
+            except TypeError as e:
+                raise ValueError(
+                    "Crescent cannot update commands automatically for RESTTraits. "
+                    "Please pass update_commands=False and call `.post_commands` manually. "
+                    "Alternatively, you can use RESTBot."
+                ) from e
 
         if tracked_guilds is None:
             tracked_guilds = ()
@@ -158,6 +151,38 @@ class Client:
 
     def post_commands(self) -> Coroutine[Any, Any, None]:
         return self._command_handler.register_commands()
+
+    def add_startup_callback(
+        self, callback: Callable[[Client], Awaitable[None]], fail_silently: bool = False
+    ) -> Callable[[], None] | None:
+        async def on_start(_: Any) -> None:
+            await callback(self)
+
+        if isinstance(self.app, GatewayTraits):
+            self.app.event_manager.subscribe(StartedEvent, on_start)
+            return lambda: self.app.event_manager.unsubscribe(StartedEvent, on_start)  # type: ignore
+        elif isinstance(self.app, RESTBotAware):
+            self.app.add_startup_callback(on_start)
+            return lambda: self.app.remove_startup_callback(on_start)  # type: ignore
+        elif not fail_silently:
+            raise TypeError("Only GatewayBot and RESTBot support startup callbacks.")
+        return None
+
+    def add_shutdown_callback(
+        self, callback: Callable[[Client], Awaitable[None]], fail_silently: bool = False
+    ) -> Callable[[], None] | None:
+        async def on_stop(_: Any) -> None:
+            await callback(self)
+
+        if isinstance(self.app, GatewayTraits):
+            self.app.event_manager.subscribe(StoppedEvent, on_stop)
+            return lambda: self.app.event_manager.unsubscribe(StoppedEvent, on_stop)  # type: ignore
+        elif isinstance(self.app, RESTBotAware):
+            self.app.add_shutdown_callback(on_stop)
+            return lambda: self.app.remove_shutdown_callback(on_stop)  # type: ignore
+        elif not fail_silently:
+            raise TypeError("Only GatewayBot and RESTBot support shutdown callbacks.")
+        return None
 
     @overload
     def include(self, command: INCLUDABLE) -> INCLUDABLE:
