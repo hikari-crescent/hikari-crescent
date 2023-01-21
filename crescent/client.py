@@ -105,14 +105,14 @@ class Client:
             )
 
         # if update_commands:
-            # try:
+        # try:
         self.add_startup_callback(self.post_commands)
-            # except TypeError as e:
-            #     raise ValueError(
-            #         "Crescent cannot update commands automatically for RESTTraits. "
-            #         "Please pass update_commands=False and call `.post_commands` manually. "
-            #         "Alternatively, you can use RESTBot."
-            #     ) from e
+        # except TypeError as e:
+        #     raise ValueError(
+        #         "Crescent cannot update commands automatically for RESTTraits. "
+        #         "Please pass update_commands=False and call `.post_commands` manually. "
+        #         "Alternatively, you can use RESTBot."
+        #     ) from e
 
         if tracked_guilds is None:
             tracked_guilds = ()

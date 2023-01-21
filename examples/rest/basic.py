@@ -12,7 +12,9 @@ bot = RESTBot("...", TokenType.BOT)
 client = crescent.Client(bot)
 
 
-async def autocomplete_callback(ctx: crescent.AutocompleteContext, option: AutocompleteInteractionOption) -> list[CommandChoice]:
+async def autocomplete_callback(
+    ctx: crescent.AutocompleteContext, option: AutocompleteInteractionOption
+) -> list[CommandChoice]:
     chars = [c for c in str(option.value)]
     random.shuffle(chars)
     shuffled = "".join(chars)
@@ -35,5 +37,6 @@ class AutocompleteTest:
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(f"You said {self.option}!")
+
 
 bot.run()

@@ -251,7 +251,9 @@ async def test_handle_autocomplete_error():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(client, MockAutocompleteEvent("test_command", "option", client).interaction, None)
+    await handle_resp(
+        client, MockAutocompleteEvent("test_command", "option", client).interaction, None
+    )
 
     assert error_handler_was_run
     assert autocomplete_was_run
@@ -288,7 +290,9 @@ async def test_unhandled_autocomplete_error():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(client, MockAutocompleteEvent("test_command", "option", client).interaction, None)
+    await handle_resp(
+        client, MockAutocompleteEvent("test_command", "option", client).interaction, None
+    )
 
     assert autocomplete_was_run
     assert not error_handler_was_run
