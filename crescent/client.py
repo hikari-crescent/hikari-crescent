@@ -91,7 +91,7 @@ class Client:
 
         self.app = app
 
-        self.is_gateway = isinstance(app, GatewayTraits)
+        self.is_gateway: bool = isinstance(app, GatewayTraits)
         if isinstance(app, GatewayTraits):
             app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
         elif isinstance(app, RESTBotAware):
