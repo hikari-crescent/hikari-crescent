@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
     from hikari.api import InteractionResponseBuilder
 
-    from crescent.client import GatewayTraits, RESTTraits, Client
+    from crescent.client import Client, GatewayTraits, RESTTraits
 
     ContextT = TypeVar("ContextT", bound="BaseContext")
 

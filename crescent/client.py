@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from asyncio import get_event_loop, create_task
+from asyncio import create_task, get_event_loop
 from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, Protocol, overload, runtime_checkable
 
-from hikari import AutocompleteInteractionOption, RESTBot
+from hikari import AutocompleteInteractionOption, CommandInteraction
 from hikari import Event as hk_Event
-from hikari import InteractionCreateEvent, Snowflakeish, StartedEvent, CommandInteraction, PartialInteraction
+from hikari import InteractionCreateEvent, PartialInteraction, RESTBot, Snowflakeish, StartedEvent
 from hikari.traits import EventManagerAware, RESTAware
 
 from crescent.commands.hooks import add_hooks
@@ -19,7 +19,7 @@ from crescent.plugin import PluginManager
 
 if TYPE_CHECKING:
     from asyncio import Future
-    from typing import Any, Callable, Sequence, TypeVar, Coroutine
+    from typing import Any, Callable, Coroutine, Sequence, TypeVar
 
     from hikari.api import InteractionResponseBuilder
 
@@ -123,7 +123,9 @@ class Client:
 
         self._plugins = PluginManager(self)
 
-    async def on_rest_interaction(self, interaction: PartialInteraction) -> InteractionResponseBuilder:
+    async def on_rest_interaction(
+        self, interaction: PartialInteraction
+    ) -> InteractionResponseBuilder:
         future: Future[InteractionResponseBuilder] = get_event_loop().create_future()
         create_task(handle_resp(self, interaction, future))
         return await future
