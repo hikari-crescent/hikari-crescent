@@ -22,6 +22,7 @@
  - Plugin system to easily split bot into different modules.
  - Easily use a custom context class.
  - Makes typehinting easy.
+ - RESTBot and GatewayBot support.
 
 ### Links
 > 📖 | [User Guide](https://magpie-dev.github.io/crescent-book)<br>
