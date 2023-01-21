@@ -106,9 +106,6 @@ class Client:
                 self.on_rest_interaction,  # type: ignore
             )
 
-        self._started_future = get_event_loop().create_future()
-        self._add_startup_callback(self._on_start)
-
         if update_commands:
             self._add_startup_callback(self.post_commands)
 
@@ -137,10 +134,6 @@ class Client:
         self.default_guild: Snowflakeish | None = default_guild
 
         self._plugins = PluginManager(self)
-
-    @property
-    def started(self) -> bool:
-        return self._started_future.done()
 
     async def on_rest_interaction(
         self, interaction: PartialInteraction
@@ -215,10 +208,6 @@ class Client:
             f" (option: {option.name}):"
         )
         print_exception(exc.__class__, exc, exc.__traceback__)
-
-    async def _on_start(self) -> None:
-        assert self._started_future
-        self._started_future.set_result(None)
 
     def _add_startup_callback(
         self, callback: Callable[[], Awaitable[None]]
