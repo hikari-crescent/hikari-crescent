@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from asyncio import create_task, get_event_loop
 from contextlib import suppress
+from functools import partial
 from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, Protocol, overload, runtime_checkable
@@ -10,6 +11,7 @@ from hikari import AutocompleteInteraction, AutocompleteInteractionOption, Comma
 from hikari import Event as hk_Event
 from hikari import (
     InteractionCreateEvent,
+    InteractionServerAware,
     PartialInteraction,
     RESTBotAware,
     Snowflakeish,
@@ -50,7 +52,7 @@ class GatewayTraits(EventManagerAware, RESTAware, Protocol):
 
 
 @runtime_checkable
-class RESTTraits(RESTAware, Protocol):
+class RESTTraits(InteractionServerAware, RESTAware, Protocol):
     """The base traits crescents requires for a REST-based bot.
 
     May require you to manually post_commands and manually listen
@@ -94,7 +96,7 @@ class Client:
         self.is_gateway: bool = isinstance(app, GatewayTraits)
         if isinstance(app, GatewayTraits):
             app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
-        elif isinstance(app, RESTBotAware):
+        else:
             app.interaction_server.set_listener(
                 CommandInteraction,  # pyright: ignore
                 self.on_rest_interaction,  # type: ignore
@@ -104,15 +106,11 @@ class Client:
                 self.on_rest_interaction,  # type: ignore
             )
 
-        # if update_commands:
-        # try:
-        self.add_startup_callback(self.post_commands)
-        # except TypeError as e:
-        #     raise ValueError(
-        #         "Crescent cannot update commands automatically for RESTTraits. "
-        #         "Please pass update_commands=False and call `.post_commands` manually. "
-        #         "Alternatively, you can use RESTBot."
-        #     ) from e
+        self._started_future = get_event_loop().create_future()
+        self._add_startup_callback(self._on_start)
+
+        if update_commands:
+            self._add_startup_callback(self.post_commands)
 
         if tracked_guilds is None:
             tracked_guilds = ()
@@ -140,6 +138,10 @@ class Client:
 
         self._plugins = PluginManager(self)
 
+    @property
+    def started(self) -> bool:
+        return self._started_future.done()
+
     async def on_rest_interaction(
         self, interaction: PartialInteraction
     ) -> InteractionResponseBuilder:
@@ -152,32 +154,6 @@ class Client:
 
     def post_commands(self) -> Coroutine[Any, Any, None]:
         return self._command_handler.register_commands()
-
-    def add_startup_callback(
-        self, callback: Callable[[], Awaitable[None]], fail_silently: bool = False
-    ) -> None:
-        async def on_start(_: Any) -> None:
-            await callback()
-
-        if isinstance(self.app, GatewayTraits):
-            self.app.event_manager.subscribe(StartedEvent, on_start)
-        elif isinstance(self.app, RESTBotAware):
-            self.app.add_startup_callback(on_start)
-        elif not fail_silently:
-            raise TypeError("Only GatewayBot and RESTBot support startup callbacks.")
-
-    def add_shutdown_callback(
-        self, callback: Callable[[Client], Awaitable[None]], fail_silently: bool = False
-    ) -> None:
-        async def on_stop(_: Any) -> None:
-            await callback(self)
-
-        if isinstance(self.app, GatewayTraits):
-            self.app.event_manager.subscribe(StoppedEvent, on_stop)
-        elif isinstance(self.app, RESTBotAware):
-            self.app.add_shutdown_callback(on_stop)
-        elif not fail_silently:
-            raise TypeError("Only GatewayBot and RESTBot support shutdown callbacks.")
 
     @overload
     def include(self, command: INCLUDABLE) -> INCLUDABLE:
@@ -239,3 +215,35 @@ class Client:
             f" (option: {option.name}):"
         )
         print_exception(exc.__class__, exc, exc.__traceback__)
+
+    async def _on_start(self) -> None:
+        assert self._started_future
+        self._started_future.set_result(None)
+
+    def _add_startup_callback(
+        self, callback: Callable[[], Awaitable[None]]
+    ) -> Callable[[], None] | None:
+        async def on_start(_: Any) -> None:
+            await callback()
+
+        if isinstance(self.app, GatewayTraits):
+            self.app.event_manager.subscribe(StartedEvent, on_start)
+            return partial(self.app.event_manager.unsubscribe, StartedEvent, on_start)
+        elif isinstance(self.app, RESTBotAware):
+            self.app.add_startup_callback(on_start)
+            return partial(self.app.remove_startup_callback, on_start)
+        return None
+
+    def _add_shutdown_callback(
+        self, callback: Callable[[Client], Awaitable[None]]
+    ) -> Callable[[], None] | None:
+        async def on_stop(_: Any) -> None:
+            await callback(self)
+
+        if isinstance(self.app, GatewayTraits):
+            self.app.event_manager.subscribe(StoppedEvent, on_stop)
+            return partial(self.app.event_manager.unsubscribe, StoppedEvent, on_stop)
+        elif isinstance(self.app, RESTBotAware):
+            self.app.add_shutdown_callback(on_stop)
+            return partial(self.app.remove_shutdown_callback, on_stop)
+        return None

@@ -208,9 +208,6 @@ class Plugin:
 
         self._client = None
 
-    async def _on_bot_close(self) -> None:
-        self._unload()
-
     @overload
     @classmethod
     def _from_module(cls, path: str, /, *, refresh: bool = ...) -> Plugin:

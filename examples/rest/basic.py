@@ -3,10 +3,9 @@ from __future__ import annotations
 import asyncio
 import random
 
-from hikari import RESTBot, TokenType, CommandChoice, AutocompleteInteractionOption
+from hikari import AutocompleteInteractionOption, CommandChoice, RESTBot, TokenType
 
 import crescent
-
 
 bot = RESTBot("...", TokenType.BOT)
 client = crescent.Client(bot)
