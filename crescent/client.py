@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import create_task, get_event_loop
+from asyncio import create_task, get_running_loop
 from contextlib import suppress
 from functools import partial
 from itertools import chain
@@ -93,7 +93,6 @@ class Client:
 
         self.app = app
 
-        self.is_gateway: bool = isinstance(app, GatewayTraits)
         if isinstance(app, GatewayTraits):
             app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
         else:
@@ -135,10 +134,13 @@ class Client:
 
         self._plugins = PluginManager(self)
 
+        self._started = False
+        self._add_startup_callback(self._on_start)
+
     async def on_rest_interaction(
         self, interaction: PartialInteraction
     ) -> InteractionResponseBuilder:
-        future: Future[InteractionResponseBuilder] = get_event_loop().create_future()
+        future: Future[InteractionResponseBuilder] = get_running_loop().create_future()
         create_task(handle_resp(self, interaction, future))
         return await future
 
@@ -208,6 +210,17 @@ class Client:
             f" (option: {option.name}):"
         )
         print_exception(exc.__class__, exc, exc.__traceback__)
+
+    def _run_future(
+        self, callback: Coroutine[Any, Any, Any]
+    ) -> None:
+        if self._started:
+            get_running_loop().create_task(callback)
+        else:
+            self._add_startup_callback(lambda: callback)
+
+    async def _on_start(self) -> None:
+        self._started = True
 
     def _add_startup_callback(
         self, callback: Callable[[], Awaitable[None]]

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import TimerHandle, ensure_future, get_event_loop
+from asyncio import TimerHandle, ensure_future, get_running_loop
 from typing import TYPE_CHECKING, Awaitable, Callable, Sequence, TypeVar
 
 from crescent.client import Client
@@ -31,12 +31,13 @@ class Task(ABC):
         if self.running:
             raise TaskError("Task is already running.")
 
-        self.event_loop = get_event_loop()
-        ensure_future(self._start_inner())
+        assert self.client
+        self.client._run_future(self._start_inner())
 
     async def _start_inner(self) -> None:
         assert self.client is not None
 
+        self.event_loop = get_running_loop()
         self._call_next()
 
     def stop(self) -> None:
