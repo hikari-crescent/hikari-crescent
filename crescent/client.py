@@ -6,7 +6,7 @@ from itertools import chain
 from traceback import print_exception
 from typing import TYPE_CHECKING, Protocol, overload, runtime_checkable
 
-from hikari import AutocompleteInteractionOption, CommandInteraction
+from hikari import AutocompleteInteraction, AutocompleteInteractionOption, CommandInteraction
 from hikari import Event as hk_Event
 from hikari import InteractionCreateEvent, PartialInteraction, RESTBot, Snowflakeish, StartedEvent
 from hikari.traits import EventManagerAware, RESTAware
@@ -88,6 +88,7 @@ class Client:
                 app.event_manager.subscribe(StartedEvent, lambda _: self.post_commands())
         elif isinstance(app, RESTBot):
             app.set_listener(CommandInteraction, self.on_rest_interaction)  # type: ignore
+            app.set_listener(AutocompleteInteraction, self.on_rest_interaction)  # type: ignore
 
             if update_commands:
                 app.add_startup_callback(lambda _: self.post_commands())
