@@ -3,7 +3,7 @@ from __future__ import annotations
 from importlib import import_module, reload
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, overload, Generic
+from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, overload
 
 import hikari
 
@@ -12,13 +12,10 @@ from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Sequence, TypeVar
-
     from crescent.client import Client, GatewayTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
-    T = TypeVar("T", bound="Includable[Any]")
-
+T = TypeVar("T", bound="Includable[Any]")
 BotT = TypeVar("BotT", bound="GatewayTraits", covariant=True)
 PluginSelf = TypeVar("PluginSelf", bound="UserPlugin[Any]")
 
@@ -263,5 +260,5 @@ class UserPlugin(Generic[BotT]):
         return plugin
 
 
-class Plugin(UserPlugin[GatewayTraits]):
+class Plugin(UserPlugin["GatewayTraits"]):
     ...
