@@ -10,7 +10,7 @@ from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Sequence, TypeVar, Callable
+    from typing import Any, Literal, Sequence, TypeVar
 
     from crescent.client import Client, GatewayTraits, RESTTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
@@ -164,8 +164,6 @@ class Plugin:
         self._load_hooks: list[PluginCallbackT] = []
         self._unload_hooks: list[PluginCallbackT] = []
 
-        self.__unsubscribe_callback: None | Callable[[], None] = None
-
     def include(self, obj: T) -> T:
         add_hooks(self, obj)
         self._children.append(obj)
@@ -192,8 +190,6 @@ class Plugin:
         return self._client
 
     def _load(self, client: Client) -> None:
-        if self._client:
-            raise RuntimeError("Plugin already loaded.")
         self._client = client
 
         for callback in self._load_hooks:
@@ -202,14 +198,7 @@ class Plugin:
             add_hooks(client, child)
             child.register_to_client(client)
 
-        self.__unsubscribe_callback = client.add_shutdown_callback(
-            lambda _: self._on_bot_close(), fail_silently=True
-        )
-
     def _unload(self) -> None:
-        if self.__unsubscribe_callback:
-            self.__unsubscribe_callback()
-
         for callback in self._unload_hooks:
             callback()
 
