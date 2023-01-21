@@ -17,7 +17,7 @@ from hikari import (
 )
 from hikari.api import InteractionResponseBuilder
 
-from crescent.context import AutocompleteContext, Context
+from crescent.context import AutocompleteContext, Context, BaseContext
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
@@ -28,7 +28,6 @@ if TYPE_CHECKING:
     from hikari import CommandInteractionOption, Message, User, PartialInteraction
 
     from crescent.client import Client
-    from crescent.context import BaseContext
     from crescent.internal import AppCommandMeta, Includable
     from crescent.typedefs import TransformedHookCallbackT
 

@@ -375,7 +375,10 @@ class CommandHandler:
             else:
                 global_commands.append(command)
 
-        assert self._application_id is not None
+        if not self._application_id:
+            me = await self._client.app.rest.fetch_application()
+            self._application_id = me.id
+
         await gather(
             self._client.app.rest.set_application_commands(
                 application=self._application_id,

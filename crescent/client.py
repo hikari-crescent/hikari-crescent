@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import get_event_loop
+from asyncio import get_event_loop, create_task
 from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Protocol, overload, runtime_checkable
 
 from hikari import AutocompleteInteractionOption, RESTBot
 from hikari import Event as hk_Event
-from hikari import InteractionCreateEvent, Snowflakeish, StartedEvent, CommandInteraction
+from hikari import InteractionCreateEvent, Snowflakeish, StartedEvent, CommandInteraction, PartialInteraction
 from hikari.traits import EventManagerAware, RESTAware
 
 from crescent.commands.hooks import add_hooks
@@ -87,6 +87,8 @@ class Client:
             if update_commands:
                 app.event_manager.subscribe(StartedEvent, lambda _: self.post_commands())
         elif isinstance(app, RESTBot):
+            app.set_listener(CommandInteraction, self.on_rest_interaction)  # type: ignore
+
             if update_commands:
                 app.add_startup_callback(lambda _: self.post_commands())
         elif update_commands:
@@ -121,9 +123,9 @@ class Client:
 
         self._plugins = PluginManager(self)
 
-    async def on_rest_interaction(self, interaction: CommandInteraction) -> InteractionResponseBuilder:
+    async def on_rest_interaction(self, interaction: PartialInteraction) -> InteractionResponseBuilder:
         future: Future[InteractionResponseBuilder] = get_event_loop().create_future()
-        await handle_resp(self, interaction, future)
+        create_task(handle_resp(self, interaction, future))
         return await future
 
     def on_interaction_event(self, event: InteractionCreateEvent) -> Coroutine[Any, Any, None]:
