@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
 
 
-__all___: Sequence[str] = ("Client", "GatewayTraits")
+__all__: Sequence[str] = ("Client", "GatewayTraits", "RESTTraits")
 
 
 @runtime_checkable
