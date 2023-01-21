@@ -107,8 +107,8 @@ async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: Ba
 
     try:
         res, ctx = await autocomplete(ctx, option)
-        if fut := ctx._unset_future:
-            fut.set_result(interaction.build_response(res))
+        if future := ctx._unset_future:
+            future.set_result(interaction.build_response(res))
         else:
             await interaction.create_response(res)
     except Exception as exc:

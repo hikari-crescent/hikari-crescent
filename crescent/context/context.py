@@ -53,8 +53,8 @@ class Context(BaseContext):
         minutes.
         """
 
-        if fut := self._unset_future:
-            fut.set_result(self.interaction.build_deferred_response())
+        if future := self._unset_future:
+            future.set_result(self.interaction.build_deferred_response())
         else:
             await self.app.rest.create_interaction_response(
                 interaction=self.id,
@@ -145,7 +145,7 @@ class Context(BaseContext):
         )
 
         if not (self._has_deferred_response or self._has_created_message):
-            if fut := self._unset_future:
+            if future := self._unset_future:
                 resp = (
                     self.interaction.build_response()
                     .set_content(content)
@@ -171,7 +171,7 @@ class Context(BaseContext):
                 if embed:
                     resp = resp.add_embed(embed)
 
-                fut.set_result(resp)
+                future.set_result(resp)
             else:
                 await self.app.rest.create_interaction_response(
                     **kwargs,
