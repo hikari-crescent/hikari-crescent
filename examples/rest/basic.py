@@ -8,7 +8,7 @@ from hikari import RESTBot, TokenType, CommandChoice, AutocompleteInteractionOpt
 import crescent
 
 
-bot = RESTBot("OTgzOTExMDgwMjkwMDM3Nzkx.GssPTP.0qgNmazCATq0gS1ex22NBi-CayLG_e_VN8BI5w", TokenType.BOT)
+bot = RESTBot("...", TokenType.BOT)
 client = crescent.Client(bot)
 
 
