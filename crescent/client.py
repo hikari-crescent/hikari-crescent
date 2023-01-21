@@ -53,10 +53,7 @@ class GatewayTraits(EventManagerAware, RESTAware, Protocol):
 
 @runtime_checkable
 class RESTTraits(InteractionServerAware, RESTAware, Protocol):
-    """The base traits crescents requires for a REST-based bot.
-
-    May require you to manually post_commands and manually listen
-    for interactions."""
+    """The base traits crescents requires for a REST-based bot."""
 
 
 class Client:
