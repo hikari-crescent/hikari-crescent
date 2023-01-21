@@ -5,16 +5,12 @@ from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING, overload
 
-import hikari
-from hikari import RESTBotAware
-
-from crescent.client import GatewayTraits, RESTTraits
 from crescent.commands.hooks import add_hooks
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Sequence, TypeVar
+    from typing import Any, Literal, Sequence, TypeVar, Callable
 
     from crescent.client import Client, GatewayTraits, RESTTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
@@ -168,6 +164,8 @@ class Plugin:
         self._load_hooks: list[PluginCallbackT] = []
         self._unload_hooks: list[PluginCallbackT] = []
 
+        self.__unsubscribe_callback: None | Callable[[], None] = None
+
     def include(self, obj: T) -> T:
         add_hooks(self, obj)
         self._children.append(obj)
@@ -194,6 +192,8 @@ class Plugin:
         return self._client
 
     def _load(self, client: Client) -> None:
+        if self._client:
+            raise RuntimeError("Plugin already loaded.")
         self._client = client
 
         for callback in self._load_hooks:
@@ -202,16 +202,13 @@ class Plugin:
             add_hooks(client, child)
             child.register_to_client(client)
 
-        if isinstance(client.app, GatewayTraits):
-            client.app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
-        elif isinstance(client.app, RESTBotAware):
-            client.app.add_shutdown_callback(self._on_bot_close)
+        self.__unsubscribe_callback = client.add_shutdown_callback(
+            lambda _: self._on_bot_close(), fail_silently=True
+        )
 
     def _unload(self) -> None:
-        if isinstance(self.client.app, GatewayTraits):
-            self.client.app.event_manager.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
-        elif isinstance(self.client.app, RESTBotAware):
-            self.client.app.remove_shutdown_callback(self._on_bot_close)
+        if self.__unsubscribe_callback:
+            self.__unsubscribe_callback()
 
         for callback in self._unload_hooks:
             callback()
@@ -220,7 +217,9 @@ class Plugin:
             for hook in child.plugin_unload_hooks:
                 hook(child)
 
-    async def _on_bot_close(self, app: GatewayTraits | RESTBotAware) -> None:
+        self._client = None
+
+    async def _on_bot_close(self) -> None:
         self._unload()
 
     @overload

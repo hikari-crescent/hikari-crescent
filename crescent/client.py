@@ -146,8 +146,8 @@ class Client:
         create_task(handle_resp(self, interaction, future))
         return await future
 
-    def on_interaction_event(self, event: InteractionCreateEvent) -> Coroutine[Any, Any, None]:
-        return handle_resp(self, event.interaction, None)
+    async def on_interaction_event(self, event: InteractionCreateEvent) -> None:
+        await handle_resp(self, event.interaction, None)
 
     def post_commands(self) -> Coroutine[Any, Any, None]:
         return self._command_handler.register_commands()

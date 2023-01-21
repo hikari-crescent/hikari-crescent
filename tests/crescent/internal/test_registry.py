@@ -47,9 +47,6 @@ class TestRegistry:
         async def message_command(ctx: Context, message: Message):
             pass
 
-        client.app.run()
-        await client.wait_until_ready()
-
         assert self.posted_commands[GUILD_ID] == [
             slash_command.metadata.app_command,
             user_command.metadata.app_command,

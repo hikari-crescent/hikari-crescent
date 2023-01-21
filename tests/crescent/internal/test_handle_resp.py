@@ -102,7 +102,7 @@ async def test_handle_resp_slash_function():
         command_was_run = True
         assert type(ctx) is test_command.metadata.custom_context
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client), None)
 
     assert command_was_run
 
@@ -121,7 +121,7 @@ async def test_handle_resp_slash_class():
             command_was_run = True
             assert type(ctx) is test_command.metadata.custom_context
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client), None)
 
     assert command_was_run
 
@@ -158,7 +158,7 @@ async def test_hooks():
         assert ctx.id is mock_id
         assert type(ctx) is CustomContext
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client), None)
 
     assert hook_was_run
     assert hook_no_annotations_was_run
@@ -186,7 +186,7 @@ async def test_handle_command_error():
         command_was_run = True
         raise Exception
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client), None)
 
     assert error_handler_was_run
     assert command_was_run
@@ -212,7 +212,7 @@ async def test_unhandled_command_error():
         command_was_run = True
         raise TypeError
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client), None)
 
     assert not error_handler_was_run
     assert command_was_run
@@ -251,7 +251,7 @@ async def test_handle_autocomplete_error():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(MockAutocompleteEvent("test_command", "option", client))
+    await handle_resp(client, MockAutocompleteEvent("test_command", "option", client), None)
 
     assert error_handler_was_run
     assert autocomplete_was_run
@@ -288,7 +288,7 @@ async def test_unhandled_autocomplete_error():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(MockAutocompleteEvent("test_command", "option", client))
+    await handle_resp(client, MockAutocompleteEvent("test_command", "option", client), None)
 
     assert autocomplete_was_run
     assert not error_handler_was_run

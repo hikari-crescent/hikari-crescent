@@ -22,17 +22,6 @@ class MockClient(Client):
 
         self._command_handler = CommandHandler(self, [])
         self._command_handler._application_id = Snowflake()
-        self._wait_until_ready_event = Event()
-
-    async def _on_started(self, event: StartedEvent) -> Task:
-        event = await super()._on_started(event)
-        if event:
-            await event
-        self._wait_until_ready_event.set()
-        return None
-
-    async def wait_until_ready(self):
-        await self._wait_until_ready_event.wait()
 
 
 class MockBot(GatewayBot):

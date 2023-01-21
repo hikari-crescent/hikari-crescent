@@ -6,29 +6,32 @@ from crescent.context import BaseContext, support_custom_context
 def test_into():
     ctx = BaseContext(
         interaction=1,
-        app=2,
-        application_id=3,
-        type=4,
-        token=5,
-        id=6,
-        version=7,
-        channel_id=8,
-        guild_id=9,
-        user=10,
-        member=11,
-        locale=12,
-        command=13,
-        command_type=14,
-        group=15,
-        sub_group=16,
-        options=17,
-        _has_created_message=18,
-        _has_deferred_response=19,
+        client=2,
+        app=3,
+        application_id=4,
+        type=5,
+        token=6,
+        id=7,
+        version=8,
+        channel_id=9,
+        guild_id=10,
+        user=11,
+        member=12,
+        locale=13,
+        command=14,
+        command_type=15,
+        group=16,
+        sub_group=17,
+        options=18,
+        _has_created_message=19,
+        _has_deferred_response=20,
+        _rest_interaction_future=21,
     )
 
     ctx2 = ctx.into(BaseContext)
 
     assert ctx.interaction == ctx2.interaction
+    assert ctx.app == ctx2.app
     assert ctx.app == ctx2.app
     assert ctx.application_id == ctx2.application_id
     assert ctx.type == ctx2.type
@@ -47,6 +50,7 @@ def test_into():
     assert ctx.options == ctx2.options
     assert ctx._has_created_message == ctx2._has_created_message
     assert ctx._has_deferred_response == ctx2._has_deferred_response
+    assert ctx._rest_interaction_future == ctx2._rest_interaction_future
 
 
 @mark.asyncio
@@ -62,6 +66,7 @@ async def test_supports_context():
     ctx = BaseContext(
         interaction=None,
         app=None,
+        client=None,
         application_id=None,
         type=None,
         token=None,
@@ -79,6 +84,7 @@ async def test_supports_context():
         options=None,
         _has_created_message=None,
         _has_deferred_response=None,
+        _rest_interaction_future=None,
     )
 
     await support_custom_context(callback)(ctx, 5, kwarg=10)
