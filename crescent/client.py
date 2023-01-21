@@ -8,7 +8,14 @@ from typing import TYPE_CHECKING, Protocol, overload, runtime_checkable
 
 from hikari import AutocompleteInteraction, AutocompleteInteractionOption, CommandInteraction
 from hikari import Event as hk_Event
-from hikari import InteractionCreateEvent, PartialInteraction, RESTBot, Snowflakeish, StartedEvent
+from hikari import (
+    InteractionCreateEvent,
+    PartialInteraction,
+    Snowflakeish,
+    StartedEvent,
+    RESTBotAware,
+    InteractionServerAware,
+)
 from hikari.traits import EventManagerAware, RESTAware
 
 from crescent.commands.hooks import add_hooks
@@ -42,8 +49,16 @@ class GatewayTraits(EventManagerAware, RESTAware, Protocol):
     """The traits crescent requires for a gateway-based bot."""
 
 
+@runtime_checkable
+class RESTBotTraits(RESTBotAware, InteractionServerAware, Protocol):
+    """The traits for a fully-automatic REST-bot."""
+
+
 class RESTTraits(RESTAware, Protocol):
-    """The traits crescents requires for a REST-based bot."""
+    """The base traits crescents requires for a REST-based bot.
+
+    May require you to manually post_commands and manually listen
+    for interactions."""
 
 
 class Client:
@@ -86,9 +101,15 @@ class Client:
 
             if update_commands:
                 app.event_manager.subscribe(StartedEvent, lambda _: self.post_commands())
-        elif isinstance(app, RESTBot):
-            app.set_listener(CommandInteraction, self.on_rest_interaction)  # type: ignore
-            app.set_listener(AutocompleteInteraction, self.on_rest_interaction)  # type: ignore
+        elif isinstance(app, RESTBotTraits):
+            app.interaction_server.set_listener(
+                CommandInteraction,  # pyright: ignore
+                self.on_rest_interaction,  # type: ignore
+            )
+            app.interaction_server.set_listener(
+                AutocompleteInteraction,  # type: ignore
+                self.on_rest_interaction,  # type: ignore
+            )
 
             if update_commands:
                 app.add_startup_callback(lambda _: self.post_commands())
