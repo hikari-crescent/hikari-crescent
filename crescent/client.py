@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import Future
+from asyncio import get_event_loop
 from contextlib import suppress
 from itertools import chain
 from traceback import print_exception
@@ -18,6 +18,7 @@ from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
 
 if TYPE_CHECKING:
+    from asyncio import Future
     from typing import Any, Callable, Sequence, TypeVar, Coroutine
 
     from hikari.api import InteractionResponseBuilder
@@ -121,7 +122,7 @@ class Client:
         self._plugins = PluginManager(self)
 
     async def on_rest_interaction(self, interaction: CommandInteraction) -> InteractionResponseBuilder:
-        future: Future[InteractionResponseBuilder] = Future()
+        future: Future[InteractionResponseBuilder] = get_event_loop().create_future()
         await handle_resp(self, interaction, future)
         return await future
 
