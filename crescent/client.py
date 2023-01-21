@@ -95,7 +95,8 @@ class Client:
         elif update_commands:
             raise ValueError(
                 "Crescent cannot update commands automatically for RESTTraits. "
-                "Please pass update_commands=False, or use a RESTBot."
+                "Please pass update_commands=False and call `.post_commands` manually. "
+                "Alternatively, you can use RESTBot."
             )
 
         if tracked_guilds is None:
