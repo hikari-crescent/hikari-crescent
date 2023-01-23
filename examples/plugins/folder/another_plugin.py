@@ -1,6 +1,7 @@
 import crescent
+import hikari
 
-plugin = crescent.Plugin()
+plugin = crescent.Plugin[hikari.GatewayBot]()
 
 
 @plugin.include

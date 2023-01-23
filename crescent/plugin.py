@@ -17,16 +17,15 @@ if TYPE_CHECKING:
 
 T = TypeVar("T", bound="Includable[Any]")
 BotT = TypeVar("BotT", bound="GatewayTraits", covariant=True)
-PluginSelf = TypeVar("PluginSelf", bound="UserPlugin[Any]")
 
-__all__: Sequence[str] = ("PluginManager", "Plugin", "UserPlugin")
+__all__: Sequence[str] = ("PluginManager", "Plugin")
 
 _LOG = getLogger(__name__)
 
 
 class PluginManager:
     def __init__(self, client: Client) -> None:
-        self.plugins: dict[str, Plugin] = {}
+        self.plugins: dict[str, Plugin[Any]] = {}
         self._client = client
 
     def unload(self, path: str) -> None:
@@ -34,22 +33,24 @@ class PluginManager:
         plugin._unload()
 
     @overload
-    def load(self, path: str, /, *, refresh: bool = ...) -> Plugin:
+    def load(self, path: str, /, *, refresh: bool = ...) -> Plugin[Any]:
         ...
 
     @overload
-    def load(self, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
+    def load(self, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin[Any]:
         ...
 
     @overload
-    def load(self, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
+    def load(
+        self, path: str, *, strict: Literal[False], refresh: bool = ...
+    ) -> Plugin[Any] | None:
         ...
 
     @overload
-    def load(self, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin | None:
+    def load(self, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin[Any] | None:
         ...
 
-    def load(self, path: str, refresh: bool = False, strict: bool = True) -> Plugin | None:
+    def load(self, path: str, refresh: bool = False, strict: bool = True) -> Plugin[Any] | None:
         """Load a plugin from the module path.
 
         ```python
@@ -72,14 +73,16 @@ class PluginManager:
             old_plugin = self.plugins.pop(path)
             old_plugin._unload()
 
-        plugin = Plugin._from_module(path, refresh=refresh, strict=strict)
+        plugin: Plugin[Any] | None = Plugin._from_module(path, refresh=refresh, strict=strict)
         if not plugin:
             return None
         self._add_plugin(path, plugin, refresh=refresh)
 
         return plugin
 
-    def load_folder(self, path: str, refresh: bool = False, strict: bool = True) -> list[Plugin]:
+    def load_folder(
+        self, path: str, refresh: bool = False, strict: bool = True
+    ) -> list[Plugin[Any]]:
         """Loads plugins from a folder.
 
         ```python
@@ -107,7 +110,7 @@ class PluginManager:
         """
 
         pathlib_path = Path(*path.split("."))
-        loaded_plugins: list[Plugin] = []
+        loaded_plugins: list[Plugin[Any]] = []
         loaded_paths: list[str] = []
 
         for glob_path in pathlib_path.glob(r"**/[!_]*.py"):
@@ -127,7 +130,13 @@ class PluginManager:
         return loaded_plugins
 
     def _load_plugin_from_filepath(
-        self, path: Path, plugins: list[Plugin], paths: list[str], *, strict: bool, refresh: bool
+        self,
+        path: Path,
+        plugins: list[Plugin[Any]],
+        paths: list[str],
+        *,
+        strict: bool,
+        refresh: bool,
     ) -> None:
         mod_name = ".".join(path.as_posix()[:-3].split("/"))
         try:
@@ -139,7 +148,7 @@ class PluginManager:
                 self.unload(plugin_path)
             raise e
 
-    def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
+    def _add_plugin(self, path: str, plugin: Plugin[Any], refresh: bool = False) -> None:
         if path in self.plugins and not refresh:
             raise PluginAlreadyLoadedError(
                 f"Plugin `{path}` is already loaded."
@@ -150,7 +159,7 @@ class PluginManager:
         plugin._load(self._client)
 
 
-class UserPlugin(Generic[BotT]):
+class Plugin(Generic[BotT]):
     def __init__(
         self,
         *,
@@ -218,28 +227,34 @@ class UserPlugin(Generic[BotT]):
 
     @overload
     @classmethod
-    def _from_module(cls, path: str, /, *, refresh: bool = ...) -> Plugin:
+    def _from_module(cls, path: str, /, *, refresh: bool = ...) -> Plugin[BotT]:
         ...
 
     @overload
     @classmethod
-    def _from_module(cls, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
+    def _from_module(
+        cls, path: str, *, strict: Literal[True], refresh: bool = ...
+    ) -> Plugin[BotT]:
         ...
 
     @overload
     @classmethod
     def _from_module(
         cls, path: str, *, strict: Literal[False], refresh: bool = ...
-    ) -> Plugin | None:
+    ) -> Plugin[BotT] | None:
         ...
 
     @overload
     @classmethod
-    def _from_module(cls, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin | None:
+    def _from_module(
+        cls, path: str, refresh: bool = ..., strict: bool = ...
+    ) -> Plugin[BotT] | None:
         ...
 
     @classmethod
-    def _from_module(cls, path: str, refresh: bool = False, strict: bool = True) -> Plugin | None:
+    def _from_module(
+        cls, path: str, refresh: bool = False, strict: bool = True
+    ) -> Plugin[BotT] | None:
         parents = path.split(".")
 
         name = parents.pop(-1)
@@ -257,8 +272,4 @@ class UserPlugin(Generic[BotT]):
                 "alias (plugin = YOUR_PLUGIN_NAME)."
             )
 
-        return plugin
-
-
-class Plugin(UserPlugin["GatewayTraits"]):
-    ...
+        return plugin  # pyright: ignore
