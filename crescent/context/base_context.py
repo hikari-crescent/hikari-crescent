@@ -103,6 +103,10 @@ class BaseContext:
 
     @property
     def _unset_future(self) -> Future[InteractionResponseBuilder] | None:
+        """Returns the future for the response, if it exists and hasn't already been set.
+
+        Will only exist for RESTBot."""
+
         if self._rest_interaction_future and not self._rest_interaction_future.done():
             return self._rest_interaction_future
         return None
