@@ -167,7 +167,7 @@ class PluginManager:
         plugin._load(self._client)
 
 
-class Plugin(Generic[BotT]):
+class Plugin(Generic["BotT"]):
     def __init__(
         self,
         *,
@@ -197,7 +197,7 @@ class Plugin(Generic[BotT]):
     def app(self) -> BotT:
         if not self._client:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
-        return cast(BotT, self._client.app)
+        return cast("BotT", self._client.app)
 
     @property
     def client(self) -> Client:
