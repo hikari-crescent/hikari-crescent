@@ -53,7 +53,7 @@ def event(
             raise ValueError("Events can only be used with GatewayBot.")
 
     def on_remove(includable: Includable[CallbackT[Any]]) -> None:
-        # if it's not gatewaytraits, the event could never have been
+        # if it's not `GatewayTraits`, the event could never have been
         # added in the first place.
         assert isinstance(includable.client.app, GatewayTraits)
         includable.client.app.event_manager.unsubscribe(
