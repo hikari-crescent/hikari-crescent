@@ -15,10 +15,18 @@ if TYPE_CHECKING:
     from crescent.client import Client, GatewayTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
-T = TypeVar("T", bound="Includable[Any]")
-BotT = TypeVar("BotT", bound="GatewayTraits", covariant=True)
-
 __all__: Sequence[str] = ("PluginManager", "Plugin")
+
+
+T = TypeVar("T", bound="Includable[Any]")
+
+# pyright supports the `default` kwarg but mypy does not.
+# pyright being supperior once again.
+# NOTE: DO NOT TOUCH THIS BLACK MAGIC
+if TYPE_CHECKING:
+    BotT = TypeVar("BotT", bound="GatewayTraits", covariant=True)  # pyright: ignore
+    BotT = TypeVar("BotT", bound="GatewayTraits", covariant=True, default="GatewayTraits")  # type: ignore # noqa: E501
+
 
 _LOG = getLogger(__name__)
 
