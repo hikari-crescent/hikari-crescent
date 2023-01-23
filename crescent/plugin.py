@@ -264,12 +264,12 @@ class Plugin(Generic[BotT]):
         module = import_module(name, package)
         if refresh:
             module = reload(module)
-        plugin = getattr(module, "plugin", None)
-        if strict and not isinstance(plugin, Plugin):
+        plugin: Plugin[BotT] | None = getattr(module, "plugin", None)
+        if strict and not plugin:
             raise ValueError(
                 f"Plugin {path} has no `plugin` or `plugin` is not of type Plugin. "
                 "If you want to name your plugin something else, you have to add an "
                 "alias (plugin = YOUR_PLUGIN_NAME)."
             )
 
-        return plugin  # pyright: ignore
+        return plugin
