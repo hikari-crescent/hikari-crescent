@@ -16,7 +16,6 @@ from hikari import (
     RESTBotAware,
     Snowflakeish,
     StartedEvent,
-    StoppedEvent,
 )
 from hikari.traits import EventManagerAware, RESTAware
 
