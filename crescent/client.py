@@ -90,20 +90,9 @@ class Client:
 
         self.app = app
 
-        if isinstance(app, GatewayTraits):
-            app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
-        else:
-            app.interaction_server.set_listener(
-                CommandInteraction,  # pyright: ignore
-                self.on_rest_interaction,  # type: ignore
-            )
-            app.interaction_server.set_listener(
-                AutocompleteInteraction,  # type: ignore
-                self.on_rest_interaction,  # type: ignore
-            )
-
         if update_commands:
             self._add_startup_callback(self.post_commands)
+        self._add_startup_callback(self._on_start)
 
         if tracked_guilds is None:
             tracked_guilds = ()
@@ -132,7 +121,18 @@ class Client:
         self._plugins = PluginManager(self)
 
         self._started = False
-        self._add_startup_callback(self._on_start)
+
+        if isinstance(app, GatewayTraits):
+            app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
+            return
+        app.interaction_server.set_listener(
+            CommandInteraction,  # pyright: ignore
+            self.on_rest_interaction,  # type: ignore
+        )
+        app.interaction_server.set_listener(
+            AutocompleteInteraction,  # type: ignore
+            self.on_rest_interaction,  # type: ignore
+        )
 
     async def on_rest_interaction(
         self, interaction: PartialInteraction
