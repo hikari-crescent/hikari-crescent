@@ -308,10 +308,8 @@ async def test_rest_bot_command():
     command_was_run = False
 
     create_interaction_response = AsyncMock()
-    execute_webhook = AsyncMock()
 
     RESTClientImpl.create_interaction_response = create_interaction_response
-    RESTClientImpl.execute_webhook = execute_webhook
 
     @client.include
     @command
@@ -320,7 +318,6 @@ async def test_rest_bot_command():
         command_was_run = True
 
         await ctx.respond("something")
-        await ctx.followup("something")
 
     await handle_resp(
         client,
@@ -329,6 +326,27 @@ async def test_rest_bot_command():
     )
 
     create_interaction_response.assert_not_called()
-    execute_webhook.assert_called_once()
 
     assert command_was_run
+
+
+@mark.asyncio
+async def test_rest_future_is_set():
+    client = MockRESTClient()
+
+    mock_future = Mock()
+    set_result = Mock()
+    done = Mock(return_value=False)
+    mock_future.set_result = set_result
+    mock_future.done = done
+
+    @client.include
+    @command
+    async def test_command(ctx: Context):
+        await ctx.defer()
+        print(ctx._rest_interaction_future.set_result)
+        await ctx.followup("something")
+
+    await handle_resp(client, MockEvent("test_command", client).interaction, future=mock_future)
+
+    set_result.assert_called_once()
