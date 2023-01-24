@@ -1,5 +1,6 @@
+from asyncio import get_event_loop
 from typing import List
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 from hikari import (
     AutocompleteInteraction,
@@ -11,6 +12,7 @@ from hikari import (
     InteractionType,
     OptionType,
 )
+from hikari.impl import RESTClientImpl
 from pytest import mark
 from typing_extensions import Annotated
 
@@ -24,7 +26,7 @@ from crescent import (
     hook,
 )
 from crescent.internal.handle_resp import handle_resp
-from tests.utils import MockClient
+from tests.utils import MockClient, MockRESTClient
 
 
 def MockEvent(name, client):
@@ -35,7 +37,7 @@ def MockEvent(name, client):
             id=None,
             application_id=...,
             type=InteractionType.APPLICATION_COMMAND,
-            token=client.app._token,
+            token=None,
             version=0,
             channel_id=0,
             guild_id=None,
@@ -297,3 +299,36 @@ async def test_unhandled_autocomplete_error():
     assert autocomplete_was_run
     assert not error_handler_was_run
     assert not command_was_run
+
+
+@mark.asyncio
+async def test_rest_bot_command():
+    client = MockRESTClient()
+
+    command_was_run = False
+
+    create_interaction_response = AsyncMock()
+    execute_webhook = AsyncMock()
+
+    RESTClientImpl.create_interaction_response = create_interaction_response
+    RESTClientImpl.execute_webhook = execute_webhook
+
+    @client.include
+    @command
+    async def test_command(ctx: Context):
+        nonlocal command_was_run
+        command_was_run = True
+
+        await ctx.respond("something")
+        await ctx.followup("something")
+
+    await handle_resp(
+        client,
+        MockEvent("test_command", client).interaction,
+        future=get_event_loop().create_future(),
+    )
+
+    create_interaction_response.assert_not_called()
+    execute_webhook.assert_called_once()
+
+    assert command_was_run
