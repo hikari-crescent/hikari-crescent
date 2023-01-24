@@ -1,3 +1,5 @@
+import hikari
+
 import crescent
 
 # Plugins can be added to plugins or the client. Adding hooks to the client works
@@ -12,7 +14,7 @@ async def second_hook(ctx: crescent.Context) -> None:
     pass
 
 
-plugin = crescent.Plugin(
+plugin = crescent.Plugin[hikari.GatewayBot](
     command_hooks=[first_hook],  # Hooks to execute before the command
     command_after_hooks=[first_hook],  # Hooks to execute after the command
 )
