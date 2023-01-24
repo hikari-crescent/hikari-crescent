@@ -10,8 +10,6 @@ from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Sequence, TypeVar
-
     from crescent.client import Client, GatewayTraits, RESTTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
