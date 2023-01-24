@@ -230,17 +230,3 @@ class Client:
             self.app.add_startup_callback(on_start)
             return partial(self.app.remove_startup_callback, on_start)
         return None
-
-    def _add_shutdown_callback(
-        self, callback: Callable[[Client], Awaitable[None]]
-    ) -> Callable[[], None] | None:
-        async def on_stop(_: Any) -> None:
-            await callback(self)
-
-        if isinstance(self.app, GatewayTraits):
-            self.app.event_manager.subscribe(StoppedEvent, on_stop)
-            return partial(self.app.event_manager.unsubscribe, StoppedEvent, on_stop)
-        elif isinstance(self.app, RESTBotAware):
-            self.app.add_shutdown_callback(on_stop)
-            return partial(self.app.remove_shutdown_callback, on_stop)
-        return None
