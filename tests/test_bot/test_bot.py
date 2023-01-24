@@ -44,7 +44,7 @@ async def bot_wide_hook(ctx: crescent.Context) -> None:
     await ctx.respond("Bot wide hook called")
 
 
-bot = hikari.GatewayBot(os.environ["TOKEN"])
+bot = hikari.GatewayBot(os.getenv("TOKEN") or "")
 client = Client(bot, command_hooks=[bot_wide_hook])
 
 client.plugins.load("tests.test_bot.test_plugin")

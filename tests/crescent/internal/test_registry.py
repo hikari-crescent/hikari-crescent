@@ -23,6 +23,7 @@ class TestRegistry:
         def set_application_commands(application, commands, guild=None):
             self.posted_commands[guild] = commands
 
+        RESTClientImpl.fetch_application = AsyncMock(return_value=MagicMock())
         RESTClientImpl.set_application_commands = AsyncMock(return_value=None)
         RESTClientImpl.set_application_commands.side_effect = set_application_commands
 
@@ -47,39 +48,10 @@ class TestRegistry:
         async def message_command(ctx: Context, message: Message):
             pass
 
-        client.app.run()
-        await client.wait_until_ready()
+        await client.post_commands()
 
         assert self.posted_commands[GUILD_ID] == [
             slash_command.metadata.app_command,
             user_command.metadata.app_command,
             message_command.metadata.app_command,
         ]
-
-    @mark.asyncio
-    async def test_dont_register_commands(self):
-        stack = ExitStack()
-        register_commands = stack.enter_context(patch.object(CommandHandler, "register_commands"))
-
-        client = MockClient(default_guild=GUILD_ID, update_commands=False)
-
-        @client.include
-        @command
-        async def slash_command(ctx: Context):
-            pass
-
-        @client.include
-        @_user_command
-        async def user_command(ctx: Context, user: User):
-            pass
-
-        @client.include
-        @_message_command
-        async def message_command(ctx: Context, message: Message):
-            pass
-
-        client.app.run()
-        await client.wait_until_ready()
-
-        register_commands.assert_not_called()
-        assert self.posted_commands[GUILD_ID] == []

@@ -5,14 +5,12 @@ from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast, overload
 
-import hikari
-
 from crescent.commands.hooks import add_hooks
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
-    from crescent.client import Client, GatewayTraits
+    from crescent.client import Client, GatewayTraits, RESTTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
@@ -22,7 +20,7 @@ T = TypeVar("T", bound="Includable[Any]")
 
 # NOTE: When mypy supports PEP 696 (type var defaults) a `default="GatewayTraits"` kwarg
 # should be added to improve ergonomics.
-BotT = TypeVar("BotT", bound="GatewayTraits")
+BotT = TypeVar("BotT", bound="GatewayTraits | RESTTraits")
 
 
 _LOG = getLogger(__name__)
@@ -213,13 +211,7 @@ class Plugin(Generic[BotT]):
             add_hooks(client, child)
             child.register_to_client(client)
 
-        client.app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
-
     def _unload(self) -> None:
-        assert self._client
-        self._client.app.event_manager.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
-        self._client = None
-
         for callback in self._unload_hooks:
             callback()
 
@@ -227,8 +219,7 @@ class Plugin(Generic[BotT]):
             for hook in child.plugin_unload_hooks:
                 hook(child)
 
-    async def _on_bot_close(self, app: GatewayTraits) -> None:
-        self._unload()
+        self._client = None
 
     @overload
     @classmethod

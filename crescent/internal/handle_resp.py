@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from asyncio import Future
 from contextlib import suppress
 from logging import getLogger
-from typing import TYPE_CHECKING, NamedTuple, TypeVar, cast
+from typing import TYPE_CHECKING, NamedTuple, cast
 
 from hikari import (
     AutocompleteInteraction,
@@ -14,8 +15,9 @@ from hikari import (
     OptionType,
     Snowflake,
 )
+from hikari.api import InteractionResponseBuilder
 
-from crescent.context import AutocompleteContext, Context
+from crescent.context import AutocompleteContext, BaseContext, Context
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
@@ -23,14 +25,11 @@ from crescent.utils import unwrap
 if TYPE_CHECKING:
     from typing import Any, Sequence
 
-    from hikari import CommandInteractionOption, InteractionCreateEvent, Message, User
+    from hikari import CommandInteractionOption, Message, PartialInteraction, User
 
-    from crescent.client import Client, GatewayTraits
-    from crescent.context import BaseContext
+    from crescent.client import Client
     from crescent.internal import AppCommandMeta, Includable
     from crescent.typedefs import TransformedHookCallbackT
-
-    ContextT = TypeVar("ContextT", bound=BaseContext)
 
 
 _log = getLogger(__name__)
@@ -38,16 +37,11 @@ _log = getLogger(__name__)
 __all__: Sequence[str] = ("handle_resp",)
 
 
-active_clients: dict[int, Client] = {}
-"""
-Dictionary of [id(app), client]. The clients that are currently being tracked by crescent.
-"""
-
-
-async def handle_resp(event: InteractionCreateEvent) -> None:
-    interaction = event.interaction
-    client = active_clients[id(event.app)]
-
+async def handle_resp(
+    client: Client,
+    interaction: PartialInteraction,
+    future: Future[InteractionResponseBuilder] | None,
+) -> None:
     if not isinstance(interaction, (CommandInteraction, AutocompleteInteraction)):
         return
 
@@ -65,14 +59,13 @@ async def handle_resp(event: InteractionCreateEvent) -> None:
             )
         return
 
+    ctx = _context_from_interaction_resp(client, interaction)
+    ctx._rest_interaction_future = future
+
     if interaction.type is InteractionType.AUTOCOMPLETE:
-        await _handle_autocomplete_resp(
-            command, _context_from_interaction_resp(AutocompleteContext, interaction)
-        )
-
-        return
-
-    await _handle_slash_resp(command, _context_from_interaction_resp(Context, interaction))
+        await _handle_autocomplete_resp(command, ctx.into(AutocompleteContext))
+    else:
+        await _handle_slash_resp(command, ctx.into(Context))
 
 
 async def _handle_hooks(
@@ -88,7 +81,6 @@ async def _handle_hooks(
 
 
 async def _handle_slash_resp(command: Includable[AppCommandMeta], ctx: BaseContext) -> None:
-
     should_exit, ctx = await _handle_hooks(command.metadata.hooks, ctx)
 
     if should_exit:
@@ -115,7 +107,10 @@ async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: Ba
 
     try:
         res, ctx = await autocomplete(ctx, option)
-        await interaction.create_response(res)
+        if future := ctx._unset_future:
+            future.set_result(interaction.build_response(res))
+        else:
+            await interaction.create_response(res)
     except Exception as exc:
         handled = await command.client._autocomplete_error_handler.try_handle(
             exc, [exc, ctx, option]
@@ -199,8 +194,8 @@ def _get_crescent_command_data(
 
 
 def _context_from_interaction_resp(
-    context_t: type[ContextT], interaction: CommandInteraction | AutocompleteInteraction
-) -> ContextT:
+    client: Client, interaction: CommandInteraction | AutocompleteInteraction
+) -> BaseContext:
 
     command_name, group, sub_group, options = _get_crescent_command_data(interaction)
 
@@ -212,9 +207,10 @@ def _context_from_interaction_resp(
         assert isinstance(interaction, CommandInteraction)
         callback_options = _resolved_data_to_kwargs(interaction)
 
-    return context_t(
+    return BaseContext(
         interaction=interaction,
-        app=cast("GatewayTraits", interaction.app),
+        app=client.app,
+        client=client,
         application_id=interaction.application_id,
         type=interaction.type,
         token=interaction.token,
@@ -232,6 +228,7 @@ def _context_from_interaction_resp(
         options=callback_options,
         _has_created_message=False,
         _has_deferred_response=False,
+        _rest_interaction_future=None,
     )
 
 

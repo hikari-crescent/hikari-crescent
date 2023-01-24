@@ -59,6 +59,7 @@ def pyright(session: nox.Session) -> None:
 
 @poetry_session
 def pytest(session: nox.Session) -> None:
+    session.install("hikari[server]")
     session.run("poetry", "run", "pytest", "tests/crescent", "--cov=crescent/")
 
 

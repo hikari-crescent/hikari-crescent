@@ -33,8 +33,6 @@ __all__: Sequence[str] = ("Context",)
 class Context(BaseContext):
     """Represents the context for command interactions"""
 
-    __slots__ = ("interaction",)
-
     interaction: CommandInteraction
 
     @property
@@ -54,12 +52,16 @@ class Context(BaseContext):
         Defer this interaction response, allowing you to respond within the next 15
         minutes.
         """
-        await self.app.rest.create_interaction_response(
-            interaction=self.id,
-            token=self.token,
-            flags=MessageFlag.EPHEMERAL if ephemeral else UNDEFINED,
-            response_type=ResponseType.DEFERRED_MESSAGE_CREATE,
-        )
+
+        if future := self._unset_future:
+            future.set_result(self.interaction.build_deferred_response())
+        else:
+            await self.app.rest.create_interaction_response(
+                interaction=self.id,
+                token=self.token,
+                flags=MessageFlag.EPHEMERAL if ephemeral else UNDEFINED,
+                response_type=ResponseType.DEFERRED_MESSAGE_CREATE,
+            )
         self._has_deferred_response = True
 
     @overload
@@ -143,14 +145,42 @@ class Context(BaseContext):
         )
 
         if not (self._has_deferred_response or self._has_created_message):
-            await self.app.rest.create_interaction_response(
-                **kwargs,
-                interaction=self.id,
-                token=self.token,
-                response_type=ResponseType.MESSAGE_CREATE,
-                flags=flags,
-                tts=tts,
-            )
+            if future := self._unset_future:
+                resp = (
+                    self.interaction.build_response()
+                    .set_content(content)
+                    .set_user_mentions(user_mentions)
+                    .set_role_mentions(role_mentions)
+                    .set_mentions_everyone(mentions_everyone)
+                    .set_flags(flags)
+                    .set_tts(tts)
+                )
+                if attachments:
+                    for a in attachments:
+                        resp = resp.add_attachment(a)
+                if attachment:
+                    resp = resp.add_attachment(attachment)
+                if components:
+                    for c in components:
+                        resp = resp.add_component(c)
+                if component:
+                    resp = resp.add_component(component)
+                if embeds:
+                    for e in embeds:
+                        resp = resp.add_embed(e)
+                if embed:
+                    resp = resp.add_embed(embed)
+
+                future.set_result(resp)
+            else:
+                await self.app.rest.create_interaction_response(
+                    **kwargs,
+                    tts=tts,
+                    flags=flags,
+                    interaction=self.id,
+                    token=self.token,
+                    response_type=ResponseType.MESSAGE_CREATE,
+                )
 
             self._has_created_message = True
 

@@ -1,5 +1,6 @@
+from asyncio import get_event_loop
 from typing import List
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 from hikari import (
     AutocompleteInteraction,
@@ -11,6 +12,7 @@ from hikari import (
     InteractionType,
     OptionType,
 )
+from hikari.impl import RESTClientImpl
 from pytest import mark
 from typing_extensions import Annotated
 
@@ -24,7 +26,7 @@ from crescent import (
     hook,
 )
 from crescent.internal.handle_resp import handle_resp
-from tests.utils import MockClient
+from tests.utils import MockClient, MockRESTClient
 
 
 def MockEvent(name, client):
@@ -35,7 +37,7 @@ def MockEvent(name, client):
             id=None,
             application_id=...,
             type=InteractionType.APPLICATION_COMMAND,
-            token=client.app._token,
+            token=None,
             version=0,
             channel_id=0,
             guild_id=None,
@@ -102,7 +104,7 @@ async def test_handle_resp_slash_function():
         command_was_run = True
         assert type(ctx) is test_command.metadata.custom_context
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client).interaction, None)
 
     assert command_was_run
 
@@ -121,7 +123,7 @@ async def test_handle_resp_slash_class():
             command_was_run = True
             assert type(ctx) is test_command.metadata.custom_context
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client).interaction, None)
 
     assert command_was_run
 
@@ -158,7 +160,7 @@ async def test_hooks():
         assert ctx.id is mock_id
         assert type(ctx) is CustomContext
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client).interaction, None)
 
     assert hook_was_run
     assert hook_no_annotations_was_run
@@ -186,7 +188,7 @@ async def test_handle_command_error():
         command_was_run = True
         raise Exception
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client).interaction, None)
 
     assert error_handler_was_run
     assert command_was_run
@@ -212,7 +214,7 @@ async def test_unhandled_command_error():
         command_was_run = True
         raise TypeError
 
-    await handle_resp(MockEvent("test_command", client))
+    await handle_resp(client, MockEvent("test_command", client).interaction, None)
 
     assert not error_handler_was_run
     assert command_was_run
@@ -251,7 +253,9 @@ async def test_handle_autocomplete_error():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(MockAutocompleteEvent("test_command", "option", client))
+    await handle_resp(
+        client, MockAutocompleteEvent("test_command", "option", client).interaction, None
+    )
 
     assert error_handler_was_run
     assert autocomplete_was_run
@@ -288,8 +292,61 @@ async def test_unhandled_autocomplete_error():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(MockAutocompleteEvent("test_command", "option", client))
+    await handle_resp(
+        client, MockAutocompleteEvent("test_command", "option", client).interaction, None
+    )
 
     assert autocomplete_was_run
     assert not error_handler_was_run
     assert not command_was_run
+
+
+@mark.asyncio
+async def test_rest_bot_command():
+    client = MockRESTClient()
+
+    command_was_run = False
+
+    create_interaction_response = AsyncMock()
+
+    RESTClientImpl.create_interaction_response = create_interaction_response
+
+    @client.include
+    @command
+    async def test_command(ctx: Context):
+        nonlocal command_was_run
+        command_was_run = True
+
+        await ctx.respond("something")
+
+    await handle_resp(
+        client,
+        MockEvent("test_command", client).interaction,
+        future=get_event_loop().create_future(),
+    )
+
+    create_interaction_response.assert_not_called()
+
+    assert command_was_run
+
+
+@mark.asyncio
+async def test_rest_future_is_set():
+    client = MockRESTClient()
+
+    mock_future = Mock()
+    set_result = Mock()
+    done = Mock(return_value=False)
+    mock_future.set_result = set_result
+    mock_future.done = done
+
+    @client.include
+    @command
+    async def test_command(ctx: Context):
+        await ctx.defer()
+        print(ctx._rest_interaction_future.set_result)
+        await ctx.followup("something")
+
+    await handle_resp(client, MockEvent("test_command", client).interaction, future=mock_future)
+
+    set_result.assert_called_once()
