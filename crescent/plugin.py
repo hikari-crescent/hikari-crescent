@@ -20,12 +20,9 @@ __all__: Sequence[str] = ("PluginManager", "Plugin")
 
 T = TypeVar("T", bound="Includable[Any]")
 
-# pyright supports the `default` kwarg but mypy does not.
-# pyright being supperior once again.
-# NOTE: DO NOT TOUCH THIS BLACK MAGIC
-if TYPE_CHECKING:
-    BotT = TypeVar("BotT", bound="GatewayTraits", covariant=True)  # pyright: ignore
-    BotT = TypeVar("BotT", bound="GatewayTraits", covariant=True, default="GatewayTraits")  # type: ignore # noqa: E501
+# NOTE: When mypy supports PEP 696 (type var defaults) a `default="GatewayTraits"` kwarg
+# should be added to improve ergonomics.
+BotT = TypeVar("BotT", bound="GatewayTraits")
 
 
 _LOG = getLogger(__name__)
@@ -167,7 +164,7 @@ class PluginManager:
         plugin._load(self._client)
 
 
-class Plugin(Generic["BotT"]):
+class Plugin(Generic[BotT]):
     def __init__(
         self,
         *,
