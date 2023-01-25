@@ -32,10 +32,6 @@ class PluginManager:
         self.plugins: dict[str, Plugin[Any, Any]] = {}
         self._client = client
 
-    def unload(self, path: str) -> None:
-        plugin = self.plugins.pop(path)
-        plugin._unload()
-
     @overload
     def load(self, path: str, /, *, refresh: bool = ...) -> Plugin[Any, Any]:
         ...
@@ -163,6 +159,23 @@ class PluginManager:
 
         self.plugins[path] = plugin
         plugin._load(self._client)
+
+    def unload(self, path: str) -> None:
+        """
+        Unload a plugin.
+
+        Args:
+            path: The module path for the plugin.
+        """
+        plugin = self.plugins.pop(path)
+        plugin._unload()
+
+    def unload_everything(self) -> None:
+        """
+        Unload all of the plugins that are currently loaded.
+        """
+        for path in tuple(self.plugins.keys()):
+            self.unload(path)
 
 
 class Plugin(Generic[BotT, ModelT]):
