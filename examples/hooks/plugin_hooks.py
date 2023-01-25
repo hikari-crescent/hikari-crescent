@@ -14,7 +14,7 @@ async def second_hook(ctx: crescent.Context) -> None:
     pass
 
 
-plugin = crescent.Plugin[hikari.GatewayBot](
+plugin = crescent.Plugin[hikari.GatewayBot, None](
     command_hooks=[first_hook],  # Hooks to execute before the command
     command_after_hooks=[first_hook],  # Hooks to execute after the command
 )

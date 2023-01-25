@@ -2,7 +2,7 @@ import hikari
 
 import crescent
 
-plugin = crescent.Plugin[hikari.GatewayBot]()
+plugin = crescent.Plugin[hikari.GatewayBot, None]()
 
 
 @plugin.include
@@ -23,6 +23,9 @@ async def plugin_event(event: hikari.MessageCreateEvent) -> None:
 @plugin.load_hook
 def on_load() -> None:
     print("LOADED")
+
+    # The model attribute is accessible once the plugin is loaded.
+    print(plugin.model)
 
 
 @plugin.unload_hook
