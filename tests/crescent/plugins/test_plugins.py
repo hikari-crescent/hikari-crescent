@@ -54,7 +54,7 @@ class TestPlugins:
         client = MockClient()
 
         client.plugins.load("tests.crescent.plugins.plugin")
-        client.plugins.unload_everything()
+        client.plugins.unload_all()
 
         assert plugin_command.metadata.unique not in client._command_handler._registry
         assert len(client.app._event_manager.get_listeners(MessageCreateEvent)) == 0

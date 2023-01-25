@@ -170,7 +170,7 @@ class PluginManager:
         plugin = self.plugins.pop(path)
         plugin._unload()
 
-    def unload_everything(self) -> None:
+    def unload_all(self) -> None:
         """
         Unload all of the plugins that are currently loaded.
         """
