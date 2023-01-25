@@ -1,7 +1,8 @@
+import dataclasses
+
 import hikari
 
 import crescent
-import dataclasses
 
 bot = hikari.GatewayBot(token="...")
 
