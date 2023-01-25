@@ -59,6 +59,7 @@ class Client:
     def __init__(
         self,
         app: RESTTraits | GatewayTraits,
+        model: Any = None,
         *,
         tracked_guilds: Sequence[Snowflakeish] | None = None,
         default_guild: Snowflakeish | None = None,
@@ -86,8 +87,8 @@ class Client:
             command_after_hooks:
                 List of hooks to run after all commands.
         """
-
         self.app = app
+        self.model = model
 
         if update_commands:
             self._add_startup_callback(self.post_commands)

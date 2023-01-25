@@ -179,3 +179,10 @@ class TestPlugins:
 
         with raises(AttributeError):
             plugin.app
+
+    def test_model(self):
+        model = object()
+        client = MockClient(model=model)
+        plugin = client.plugins.load("tests.crescent.plugins.plugin")
+
+        assert plugin.model is model

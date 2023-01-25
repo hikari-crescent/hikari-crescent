@@ -1,9 +1,19 @@
+import dataclasses
+
 import hikari
 
 import crescent
 
 bot = hikari.GatewayBot(token="...")
-client = crescent.Client(bot)
+
+
+@dataclasses.dataclass
+class Model:
+    value = 5
+
+
+# The modal kwarg is optional. If provided, you can access this object through `plugin.model`.
+client = crescent.Client(bot, model=Model())
 
 client.plugins.load("plugin")
 client.plugins.load("folder.another_plugin")

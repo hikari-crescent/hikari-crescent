@@ -17,7 +17,7 @@ async def first_hook(ctx: crescent.Context) -> crescent.HookResult:  # you can a
 def second_hook(number: int) -> crescent.HookCallbackT:
     async def inner(ctx: crescent.Context) -> None:
         print(f"Here second. Number is {number}")
-        ctx.options["numeber"] = number
+        ctx.options["number"] = number
 
     return inner
 
