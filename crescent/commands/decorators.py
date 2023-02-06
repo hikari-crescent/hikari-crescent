@@ -123,9 +123,6 @@ def command(
         callback_func = callback
 
         for param in sigparse(callback_func).parameters:
-            if param is None:
-                continue
-
             option = gen_command_option(param)
             if not option:
                 continue
