@@ -122,7 +122,7 @@ def command(
     elif isfunction(callback):
         callback_func = callback
 
-        for param in sigparse(callback_func):
+        for param in sigparse(callback_func).parameters:
             if param is None:
                 continue
 

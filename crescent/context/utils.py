@@ -3,7 +3,7 @@ from __future__ import annotations
 from functools import wraps
 from typing import TYPE_CHECKING, Awaitable, cast
 
-from sigparse import Parameter, sigparse
+from sigparse import Signature, sigparse
 
 from crescent.context.base_context import BaseContext
 from crescent.context.context import Context
@@ -63,12 +63,12 @@ def get_function_context(func: Callable[..., Any]) -> type[BaseContext]:
     return get_context_type(sigparse(func)) or Context
 
 
-def get_context_type(params: Sequence[Parameter]) -> type[BaseContext] | None:
+def get_context_type(sig: Signature) -> type[BaseContext] | None:
     """
     Returns the Context type the function uses or `None` if the function is not annotated with
     a subclass of `BaseContext`
     """
-    for param in params:
+    for param in sig.parameters:
         if any_issubclass(param.annotation, BaseContext):
             return cast("type[BaseContext]", param.annotation)
     return None
