@@ -14,7 +14,6 @@ class MockClient(Client):
         command_hooks=[],
         command_after_hooks=[],
     ) -> None:
-
         super().__init__(
             app=MockBot(),
             model=model,
@@ -33,7 +32,6 @@ class MockRESTClient(Client):
     def __init__(
         self, default_guild=None, update_commands=True, command_hooks=[], command_after_hooks=[]
     ) -> None:
-
         super().__init__(
             app=RESTBot(token=None),
             update_commands=update_commands,

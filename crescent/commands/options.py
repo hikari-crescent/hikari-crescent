@@ -379,7 +379,6 @@ def option(
     name: str | LocaleBuilder | None = None,
     autocomplete: AutocompleteCallbackT | None = None,
 ) -> ClassCommandOption[Any]:
-
     _option_type: type[OptionTypesT]
     if (
         isinstance(option_type, type)

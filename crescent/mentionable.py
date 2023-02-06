@@ -13,7 +13,6 @@ __all__: Sequence[str] = ("Mentionable",)
 
 @dataclass
 class Mentionable:
-
     __slots__ = ("user", "role")
 
     user: User | None

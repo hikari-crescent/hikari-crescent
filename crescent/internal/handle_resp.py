@@ -141,7 +141,6 @@ def _get_command(
     group: str | None,
     sub_group: str | None,
 ) -> Includable[AppCommandMeta] | None:
-
     kwargs: dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
 
     with suppress(KeyError):
@@ -196,7 +195,6 @@ def _get_crescent_command_data(
 def _context_from_interaction_resp(
     client: Client, interaction: CommandInteraction | AutocompleteInteraction
 ) -> BaseContext:
-
     command_name, group, sub_group, options = _get_crescent_command_data(interaction)
 
     if interaction.command_type is CommandType.SLASH:

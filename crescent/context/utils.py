@@ -40,7 +40,6 @@ def support_custom_context(
 
     @wraps(func)
     async def inner(*args: P.args, **kwargs: P.kwargs) -> tuple[T, BaseContext]:
-
         ctx, index = _get_ctx(args)
 
         argv: Sequence[Any]

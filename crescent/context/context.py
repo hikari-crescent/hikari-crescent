@@ -124,7 +124,6 @@ class Context(BaseContext):
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
         ensure_message: bool = False,
     ) -> Message | None:
-
         if ephemeral:
             if flags is UNDEFINED:
                 flags = MessageFlag.EPHEMERAL
