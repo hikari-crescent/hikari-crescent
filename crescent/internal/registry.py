@@ -59,7 +59,6 @@ def register_command(
     autocomplete: dict[str, AutocompleteCallbackT] = {},
     nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta]:
-
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
@@ -121,7 +120,6 @@ class ErrorHandler(Generic[_E]):
 
 
 class CommandHandler:
-
     __slots__: Sequence[str] = ("_client", "_guilds", "_application_id", "_registry")
 
     def __init__(self, client: Client, guilds: Sequence[Snowflakeish]) -> None:
@@ -145,7 +143,6 @@ class CommandHandler:
         return self._registry[unique]
 
     def __build_commands(self) -> Sequence[AppCommand]:
-
         built_commands: dict[Unique, AppCommand] = {}
 
         for command in self._registry.values():

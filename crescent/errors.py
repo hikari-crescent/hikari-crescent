@@ -73,6 +73,6 @@ def catch_event(
 def catch_autocomplete(
     *exceptions: type[Exception],
 ) -> Callable[
-    [AutocompleteErrorHandlerCallbackT[Any]], Includable[AutocompleteErrorHandlerCallbackT[Any]],
+    [AutocompleteErrorHandlerCallbackT[Any]], Includable[AutocompleteErrorHandlerCallbackT[Any]]
 ]:
     return _catch_autocomplete(*exceptions)

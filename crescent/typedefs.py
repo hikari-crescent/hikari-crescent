@@ -52,10 +52,10 @@ CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[[Any], Awaitable[Optional["HookResult"]]]
 TransformedHookCallbackT = Callable[[Any], Awaitable[Tuple[Optional["HookResult"], "BaseContext"]]]
 AutocompleteCallbackT = Callable[
-    [Any, AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]],
+    [Any, AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
 ]
 TransformedAutocompleteCallbackT = Callable[
-    [Any, AutocompleteInteractionOption], Awaitable[Tuple[Sequence[CommandChoice], "BaseContext"]],
+    [Any, AutocompleteInteractionOption], Awaitable[Tuple[Sequence[CommandChoice], "BaseContext"]]
 ]
 
 PluginCallbackT = Callable[[], None]
