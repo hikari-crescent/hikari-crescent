@@ -37,19 +37,25 @@ i18n = ["python-i18n"]
 cron = ["croniter", "types-croniter"]
 cooldowns = ["floodgate-rs"]
 
-[tool.poetry.group.dev.dependencies]
-flake8 = "^5.0.4"
+[tool.poetry.group.typing.dependencies]
 mypy = "^0.982"
+pyright = "^1.1.269"
+nox = ">=2022.8.7"
+
+[tool.poetry.group.linting.dependencies]
+ruff = ">=0.0.244"
 isort = "^5.10.1"
 black = ">=23.1.0"
 codespell = "^2.1.0"
+
+[tool.poetry.group.doc.dependencies]
 pdoc = "^12.1.0"
-python-dotenv = "^0.21.0"
+
+[tool.poetry.group.tests.dependencies]
 pytest = "^7.0.0"
 pytest-asyncio = "^0.20.1"
 pytest-cov = "^4.0.0"
-pyright = "^1.1.269"
-nox = "^2022.8.7"
+python-dotenv = "^0.21.0"
 
 [tool.black]
 line-length = 99
@@ -73,6 +79,14 @@ reportPrivateUsage = false
 reportImportCycles = false
 reportIncompatibleMethodOverride = false
 reportWildcardImportFromLibrary = false
+
+[tool.ruff]
+ignore = [
+    # Allow * imports to be used in the module level
+    "F403",
+    "F405",
+]
+line-length = 99
 
 [tool.isort]
 profile = "black"
