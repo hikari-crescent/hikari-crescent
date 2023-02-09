@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, ClassVar, TypeVar
 
 from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import EntityFactory
@@ -79,7 +79,7 @@ class AppCommand:
     nsfw: bool | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
-    __eq__props: Sequence[str] = (
+    __eq__props: ClassVar[Sequence[str]] = (
         "type",
         "name",
         "description",
