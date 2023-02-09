@@ -38,11 +38,11 @@ def apply_lint(session: nox.Session) -> None:
     session.run("codespell", "crescent", "-i", "2")
 
 
-@pip_session("black", "codespell", "flake8", "isort")
+@pip_session("black", "codespell", "ruff", "isort")
 def lint(session: nox.Session) -> None:
     session.run("black", "--check", "crescent")
     session.run("codespell", "crescent")
-    session.run("flake8", "crescent")
+    session.run("ruff", "crescent")
     session.run("isort", "--check", "crescent")
 
 
