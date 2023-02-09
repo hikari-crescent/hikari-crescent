@@ -35,7 +35,7 @@ _LOG = getLogger(__name__)
 
 __all__: Sequence[str] = ("gen_command_option", "get_autocomplete_func")
 
-NoneType = type(None)
+NoneType: type[None] = type(None)
 
 
 def _unwrap_optional(origin: type[Any]) -> Any:
