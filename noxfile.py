@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import functools
-import os
 import typing
 
 import nox
@@ -13,7 +12,7 @@ def poetry_session(
     def inner(
         callback: typing.Callable[[nox.Session], None]
     ) -> typing.Callable[[nox.Session], None]:
-        @nox.session(**kwargs, reuse_venv=bool(os.environ.get("CI")))
+        @nox.session(**kwargs)
         @functools.wraps(callback)
         def inner(session: nox.Session) -> None:
             session.install("poetry")
