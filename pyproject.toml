@@ -9,9 +9,9 @@ maintainers = [
     "Circuit <circuitsacul@icloud.com>",
 ]
 license = "MPL-2.0"
-homepage = "https://github.com/magpie-dev/hikari-crescent"
-repository = "https://github.com/magpie-dev/hikari-crescent"
-documentation = "https://magpie-dev.github.io/hikari-crescent/crescent.html"
+homepage = "https://github.com/hikari-crescent/hikari-crescent"
+repository = "https://github.com/hikari-crescent/hikari-crescent"
+documentation = "https://hikari-crescent.github.io/hikari-crescent/crescent.html"
 keywords = [
     "discord",
     "hikari",
