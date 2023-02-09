@@ -2,16 +2,16 @@
 
 <div align="center">
 
-![code-style-black](https://img.shields.io/badge/code%20style-black-black)
+![Pypi](https://img.shields.io/pypi/v/hikari-crescent)
+[![ci](https://github.com/hikari-crescent/hikari-crescent/actions/workflows/ci.yml/badge.svg)](https://github.com/hikari-crescent/hikari-crescent/actions/workflows/ci.yml)
 ![mypy](https://badgen.net/badge/mypy/checked/2A6DB2)
 ![pyright](https://badgen.net/badge/pyright/checked/2A6DB2)
-[![ci](https://github.com/hikari-crescent/hikari-crescent/actions/workflows/ci.yml/badge.svg)](https://github.com/hikari-crescent/hikari-crescent/actions/workflows/ci.yml)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/hikari-crescent/hikari-crescent/main.svg)](https://results.pre-commit.ci/latest/github/hikari-crescent/hikari-crescent/main)
-![Pypi](https://img.shields.io/pypi/v/hikari-crescent)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
+![code-style-black](https://img.shields.io/badge/code%20style-black-black)
 
- </div>
+</div>
 
-🌕 A command handler for [Hikari](https://github.com/hikari-py/hikari) that keeps your project neat and tidy.
+🌙 A command handler for [Hikari](https://github.com/hikari-py/hikari) that keeps your project neat and tidy.
 
 ## Features
  - Simple and intuitive API.
