@@ -87,6 +87,10 @@ ignore = [
     "F405",
 ]
 select = [
+    # Pyflakes
+    "E",
+    "F",
+    # Dangling Tasks
     "RUF006",
 ]
 line-length = 99
