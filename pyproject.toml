@@ -86,6 +86,13 @@ ignore = [
     "F403",
     "F405",
 ]
+select = [
+    # Pyflakes
+    "E",
+    "F",
+    # Dangling Tasks
+    "RUF006",
+]
 line-length = 99
 
 [tool.isort]
