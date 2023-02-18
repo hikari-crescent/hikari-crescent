@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import create_task, get_running_loop
+from asyncio import get_running_loop
 from contextlib import suppress
 from functools import partial
 from itertools import chain
@@ -24,6 +24,7 @@ from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
+from crescent.utils import create_task
 
 if TYPE_CHECKING:
     from asyncio import Future

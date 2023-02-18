@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import TimerHandle, ensure_future, get_running_loop
+from asyncio import TimerHandle, get_running_loop
 from typing import TYPE_CHECKING, Awaitable, Callable, Sequence, TypeVar
 
 from crescent.client import Client
 from crescent.exceptions import CrescentException
 from crescent.internal.includable import Includable
+from crescent.utils import create_task
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
@@ -51,7 +52,7 @@ class Task(ABC):
         return not self.timer_handle.cancelled()
 
     def _call_async(self) -> None:
-        ensure_future(self.callback())
+        create_task(self.callback())
         self._call_next()
 
     def _call_next(self) -> None:
