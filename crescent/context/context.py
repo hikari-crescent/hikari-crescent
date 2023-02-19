@@ -2,11 +2,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-from hikari import UNDEFINED, Guild, GuildChannel, MessageFlag, ResponseType
+from hikari import (
+    UNDEFINED,
+    GatewayGuild,
+    GuildThreadChannel,
+    MessageFlag,
+    PermissibleGuildChannel,
+    ResponseType,
+)
 from hikari.traits import CacheAware
 
 from crescent.context.base_context import BaseContext
-from crescent.utils import map_or
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence
@@ -36,16 +42,21 @@ class Context(BaseContext):
     interaction: CommandInteraction
 
     @property
-    def channel(self) -> GuildChannel | None:
+    def channel(self) -> PermissibleGuildChannel | GuildThreadChannel | None:
+        """Get the object of this context's guild channel or thread from the cache.
+
+        > 📝 This will always be `None` for interactions triggered in a DM channel.
+        """
         if isinstance(self.app, CacheAware):
-            return self.app.cache.get_guild_channel(self.channel_id)
+            return self.app.cache.get_guild_channel(self.channel_id) or self.app.cache.get_thread(
+                self.channel_id
+            )
         return None
 
     @property
-    def guild(self) -> Guild | None:
-        if isinstance(self.app, CacheAware):
-            return map_or(self.guild_id, self.app.cache.get_available_guild)
-        return None
+    def guild(self) -> GatewayGuild | None:
+        """Get the object of this context's guild from the cache."""
+        return self.interaction.get_guild()
 
     async def defer(self, ephemeral: bool = False) -> None:
         """
