@@ -89,10 +89,11 @@ _E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
 
 
 class ErrorHandler(Generic[_E]):
-    __slots__: Sequence[str] = ("bot", "registry", "supports_custom_ctx")
+    __slots__: Sequence[str] = ("bot", "registry", "subclass_registry", "supports_custom_ctx")
 
     def __init__(self) -> None:
         self.registry: dict[type[Exception], Includable[_E]] = {}
+        self.subclass_registry: dict[type[Exception], Includable[_E]] = {}
 
     def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
         if reg_includable := self.registry.get(exc):
@@ -103,16 +104,25 @@ class ErrorHandler(Generic[_E]):
             )
 
         self.registry[exc] = includable
+        self.build_subclass_registry()
 
     def remove(self, exc: type[Exception]) -> None:
         self.registry.pop(exc)
+        self.build_subclass_registry()
+
+    def build_subclass_registry(self) -> None:
+        self.subclass_registry.clear()
+
+        for key, value in self.registry.items():
+            for subclass in (key, *key.__subclasses__()):
+                self.subclass_registry[subclass] = value
 
     async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
         """
         Attempts to run a function to handle an exception. Returns whether the exception
         was handled.
         """
-        if func := self.registry.get(exc.__class__):
+        if func := self.subclass_registry.get(exc.__class__):
             await func.metadata(*args)
             return True
 
