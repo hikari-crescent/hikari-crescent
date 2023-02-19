@@ -43,7 +43,7 @@ class Context(BaseContext):
 
     @property
     def channel(self) -> PermissibleGuildChannel | GuildThreadChannel | None:
-        """Get the object of this context's guild channel or thread from the cache.
+        """Get this context's guild channel or thread from the cache.
 
         > 📝 This will always be `None` for interactions triggered in a DM channel.
         """
