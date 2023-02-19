@@ -55,7 +55,7 @@ class Context(BaseContext):
 
     @property
     def guild(self) -> GatewayGuild | None:
-        """Get the object of this context's guild from the cache."""
+        """Get this context's guild from the cache."""
         return self.interaction.get_guild()
 
     async def defer(self, ephemeral: bool = False) -> None:
