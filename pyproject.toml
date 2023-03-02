@@ -38,7 +38,7 @@ cron = ["croniter", "types-croniter"]
 cooldowns = ["floodgate-rs"]
 
 [tool.poetry.group.typing.dependencies]
-mypy = "^0.982"
+mypy = ">=0.982,<1.1"
 pyright = "^1.1.269"
 nox = ">=2022.8.7"
 
