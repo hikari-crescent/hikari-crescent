@@ -53,7 +53,7 @@ pdoc = ">=12.1,<14.0"
 
 [tool.poetry.group.tests.dependencies]
 pytest = "^7.0.0"
-pytest-asyncio = "^0.20.1"
+pytest-asyncio = ">=0.20.1,<0.22.0"
 pytest-cov = "^4.0.0"
 python-dotenv = "^1.0.0"
 
