@@ -76,9 +76,10 @@ def command(
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
     nsfw: bool | None = None,
-) -> Includable[AppCommandMeta] | Callable[
-    [CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta],
-]:
+) -> (
+    Includable[AppCommandMeta]
+    | Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]
+):
     if not callback:
         return partial(
             command,
@@ -102,7 +103,6 @@ def command(
         defaults: dict[str, Any] = {}
 
         for n, v in callback.__dict__.items():
-
             if not isinstance(v, ClassCommandOption):
                 continue
 
@@ -122,10 +122,7 @@ def command(
     elif isfunction(callback):
         callback_func = callback
 
-        for param in sigparse(callback_func):
-            if param is None:
-                continue
-
+        for param in sigparse(callback_func).parameters:
             option = gen_command_option(param)
             if not option:
                 continue

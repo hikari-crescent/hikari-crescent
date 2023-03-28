@@ -12,15 +12,15 @@ jobs:
           pip install nox
       - run: nox -s lint
 
-  typechecking:
-    name: "typechecking and docs"
+  mypy:
+    name: "mypy"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.8"
           architecture: "x64"
       - name: Install Poetry
         run: |
@@ -28,4 +28,40 @@ jobs:
       - name: run
         run: |
           poetry install
-          poetry run nox -s mypy pyright docs
+          poetry run nox -s mypy
+
+  pyright:
+    name: "pyright"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+          architecture: "x64"
+      - name: Install Poetry
+        run: |
+          pip install poetry
+      - name: run
+        run: |
+          poetry install
+          poetry run nox -s pyright
+
+  docs:
+    name: "build docs"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+          architecture: "x64"
+      - name: Install Poetry
+        run: |
+          pip install poetry
+      - name: run
+        run: |
+          poetry install
+          poetry run nox -s docs

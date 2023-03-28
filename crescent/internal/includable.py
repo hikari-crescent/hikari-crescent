@@ -17,7 +17,6 @@ __all__: Sequence[str] = ("Includable",)
 
 @dataclass
 class Includable(Generic[T]):
-
     metadata: T
 
     manager: Any | None = None

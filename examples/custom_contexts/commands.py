@@ -7,6 +7,7 @@ import crescent
 bot = hikari.GatewayBot(token="...")
 client = crescent.Client(bot)
 
+
 # All custom contexts must inherit from `crescent.BaseContext` or a subclass, such
 # as `crescent.Context`.
 # `BaseContext` does not define any methods. It only stores data from the interaction.

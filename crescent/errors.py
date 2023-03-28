@@ -61,18 +61,30 @@ _catch_autocomplete = _make_catch_function("_autocomplete_error_handler", suppor
 def catch_command(
     *exceptions: type[Exception],
 ) -> Callable[[CommandErrorHandlerCallbackT[Any]], Includable[CommandErrorHandlerCallbackT[Any]]]:
+    """
+    Catch an exception or subclasses of an exception passed into this function when the
+    exception is raised in a command.
+    """
     return _catch_command(*exceptions)
 
 
 def catch_event(
     *exceptions: type[Exception],
 ) -> Callable[[EventErrorHandlerCallbackT[Any]], Includable[EventErrorHandlerCallbackT[Any]]]:
+    """
+    Catch an exception or subclasses of an exception passed into this function when the
+    exception is raised in an event.
+    """
     return _catch_event(*exceptions)
 
 
 def catch_autocomplete(
     *exceptions: type[Exception],
 ) -> Callable[
-    [AutocompleteErrorHandlerCallbackT[Any]], Includable[AutocompleteErrorHandlerCallbackT[Any]],
+    [AutocompleteErrorHandlerCallbackT[Any]], Includable[AutocompleteErrorHandlerCallbackT[Any]]
 ]:
+    """
+    Catch an exception or subclasses of an exception passed into this function when the
+    exception is raised in an autocomplete handler.
+    """
     return _catch_autocomplete(*exceptions)

@@ -9,14 +9,14 @@ import crescent
 
 class CustomContext(crescent.BaseContext):
     async def defer(self) -> None:
-        # When creating a reponse with type `hikari.ResponseType.DEFERRED_MESSAGE_UPDATE`
+        # When creating a response with type `hikari.ResponseType.DEFERRED_MESSAGE_UPDATE`
         self._has_deferred_response = True
         self.app.rest.create_interaction_response(
             response_type=hikari.ResponseType.DEFERRED_MESSAGE_CREATE
         )
 
     async def create_response(self) -> None:
-        # When creating a reponse with type `hikari.ResponseType.MESSAGE_CREATE``
+        # When creating a response with type `hikari.ResponseType.MESSAGE_CREATE``
         self._has_created_message = True
         self.app.rest.create_interaction_response(response_type=hikari.ResponseType.MESSAGE_CREATE)
 

@@ -7,7 +7,7 @@ from pytest import mark
 
 from crescent import AutocompleteContext
 from crescent.mentionable import Mentionable
-from tests.utils import MockBot
+from tests.utils import MockBot, MockClient
 
 options = [
     CommandInteractionOption(name="user", type=OptionType.USER, value=12345, options=None),
@@ -30,6 +30,7 @@ interaction.type = InteractionType.AUTOCOMPLETE
 interaction.options = options
 
 ctx = AutocompleteContext(
+    client=MockClient(),
     app=MockBot(),
     application_id=None,
     type=None,
@@ -49,6 +50,7 @@ ctx = AutocompleteContext(
     _has_deferred_response=None,
     command=None,
     interaction=interaction,
+    _rest_interaction_future=None,
 )
 
 

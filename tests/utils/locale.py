@@ -10,7 +10,6 @@ __all__: Sequence[str] = ("Locale",)
 
 @dataclass
 class Locale(LocaleBuilder):
-
     _fallback: str
     en_US: str | None = None
 

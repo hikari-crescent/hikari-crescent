@@ -2,16 +2,16 @@
 
 <div align="center">
 
-![code-style-black](https://img.shields.io/badge/code%20style-black-black)
+![Pypi](https://img.shields.io/pypi/v/hikari-crescent)
+[![ci](https://github.com/hikari-crescent/hikari-crescent/actions/workflows/ci.yml/badge.svg)](https://github.com/hikari-crescent/hikari-crescent/actions/workflows/ci.yml)
 ![mypy](https://badgen.net/badge/mypy/checked/2A6DB2)
 ![pyright](https://badgen.net/badge/pyright/checked/2A6DB2)
-[![ci](https://github.com/magpie-dev/hikari-crescent/actions/workflows/ci.yml/badge.svg)](https://github.com/magpie-dev/hikari-crescent/actions/workflows/ci.yml)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/magpie-dev/hikari-crescent/main.svg)](https://results.pre-commit.ci/latest/github/magpie-dev/hikari-crescent/main)
-![Pypi](https://img.shields.io/pypi/v/hikari-crescent)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
+![code-style-black](https://img.shields.io/badge/code%20style-black-black)
 
- </div>
+</div>
 
-🌕 A command handler for [Hikari](https://github.com/hikari-py/hikari) that keeps your project neat and tidy.
+🌙 A command handler for [Hikari](https://github.com/hikari-py/hikari) that keeps your project neat and tidy.
 
 ## Features
  - Simple and intuitive API.
@@ -22,10 +22,11 @@
  - Plugin system to easily split bot into different modules.
  - Easily use a custom context class.
  - Makes typehinting easy.
+ - RESTBot and GatewayBot support.
 
 ### Links
-> 📖 | [User Guide](https://magpie-dev.github.io/crescent-book)<br>
-> 🗃️ | [Docs](https://magpie-dev.github.io/hikari-crescent/crescent.html)<br>
+> 📖 | [User Guide](https://hikari-crescent.github.io/book)<br>
+> 🗃️ | [Docs](https://hikari-crescent.github.io/hikari-crescent/crescent.html)<br>
 > 📦 | [Pypi](https://pypi.org/project/hikari-crescent/)
 
 ## Installation
@@ -42,7 +43,7 @@ in over 17k servers.
 
 
 ## Usage
-Crescent uses [class commands](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/basic/basic.py)
+Crescent uses [class commands](https://github.com/hikari-crescent/hikari-crescent/blob/main/examples/basic/basic.py)
 to simplify creating commands. Class commands allow you to create a command similar to how you declare a
 dataclass. The option function takes a type followed by the description, then optional information.
 
@@ -77,7 +78,7 @@ async def ping(ctx: crescent.Context):
 ```
 
 Adding arguments to the function adds more options. Information for arguments can be provided using the `Annotated` type hint.
-See [this example](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/basic/function_commands.py) for more information.
+See [this example](https://github.com/hikari-crescent/hikari-crescent/blob/main/examples/basic/function_commands.py) for more information.
 
 ```python
 # python 3.9 +
@@ -145,19 +146,19 @@ async def on_message_create(event: hikari.MessageCreateEvent):
     await event.message.respond("Hello!")
 ```
 Using crescent's event decorator lets you use
-crescent's [event error handling system](https://github.com/magpie-dev/hikari-crescent/blob/main/examples/error_handling/basic.py#L27).
+crescent's [event error handling system](https://github.com/hikari-crescent/hikari-crescent/blob/main/examples/error_handling/basic.py#L27).
 
 # Extensions
 Crescent has 3 builtin extensions.
 
-- [crescent-ext-cooldowns](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/cooldowns) - Allows you to add sliding window rate limits to your commands.
-- [crescent-ext-locales](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/locales) - Contains classes that cover common use cases for localization.
-- [crescent-ext-tasks](https://github.com/magpie-dev/hikari-crescent/tree/main/examples/ext/tasks) - Schedules background tasks using loops or cronjobs.
+- [crescent-ext-cooldowns](https://github.com/hikari-crescent/hikari-crescent/tree/main/examples/ext/cooldowns) - Allows you to add sliding window rate limits to your commands.
+- [crescent-ext-locales](https://github.com/hikari-crescent/hikari-crescent/tree/main/examples/ext/locales) - Contains classes that cover common use cases for localization.
+- [crescent-ext-tasks](https://github.com/hikari-crescent/hikari-crescent/tree/main/examples/ext/tasks) - Schedules background tasks using loops or cronjobs.
 
 These extensions can be installed with pip.
 
-- [crescent-ext-docstrings](https://github.com/Lunarmagpie/crescent-ext-docstrings) - Lets you use docstrings to write descriptions for commands and options.
-- [crescent-ext-kebabify](https://github.com/Lunarmagpie/crescent-ext-kebabify) - Turns your command names into kebabs!
+- [crescent-ext-docstrings](https://github.com/hikari-crescent/crescent-ext-docstrings) - Lets you use docstrings to write descriptions for commands and options.
+- [crescent-ext-kebabify](https://github.com/hikari-crescent/crescent-ext-kebabify) - Turns your command names into kebabs!
 
 # Support
 You can ask questions in the `#crescent` channel in the [Hikari Discord server](https://discord.gg/Jx4cNGG). My Discord username is `Lunarmagpie❤#0001`.

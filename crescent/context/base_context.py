@@ -7,9 +7,12 @@ import hikari
 from hikari import Locale, Member, PartialInteraction, Snowflake, User
 
 if TYPE_CHECKING:
+    from asyncio import Future
     from typing import Any, Sequence, Type, TypeVar
 
-    from crescent.client import GatewayTraits
+    from hikari.api import InteractionResponseBuilder
+
+    from crescent.client import Client, GatewayTraits, RESTTraits
 
     ContextT = TypeVar("ContextT", bound="BaseContext")
 
@@ -24,6 +27,7 @@ class BaseContext:
     __slots__ = (
         "interaction",
         "app",
+        "client",
         "application_id",
         "type",
         "token",
@@ -41,12 +45,15 @@ class BaseContext:
         "options",
         "_has_created_message",
         "_has_deferred_response",
+        "_rest_interaction_future",
     )
 
     interaction: PartialInteraction
     """The interaction object."""
-    app: GatewayTraits
+    app: GatewayTraits | RESTTraits
     """The application instance."""
+    client: Client
+    """The crescent Client instance."""
     application_id: Snowflake
     """The ID for the client that this interaction belongs to."""
     type: int
@@ -92,6 +99,18 @@ class BaseContext:
     deferring an interaction response.
     """
 
+    _rest_interaction_future: Future[InteractionResponseBuilder] | None
+
+    @property
+    def _unset_future(self) -> Future[InteractionResponseBuilder] | None:
+        """Returns the future for the response, if it exists and hasn't already been set.
+
+        Will only exist for RESTBot."""
+
+        if self._rest_interaction_future and not self._rest_interaction_future.done():
+            return self._rest_interaction_future
+        return None
+
     def into(self, context_t: Type[ContextT]) -> ContextT:
         """Convert to a context of a different type."""
         if type(self) is context_t:
@@ -101,6 +120,7 @@ class BaseContext:
         return context_t(
             interaction=self.interaction,
             app=self.app,
+            client=self.client,
             application_id=self.application_id,
             type=self.type,
             token=self.token,
@@ -118,4 +138,5 @@ class BaseContext:
             options=self.options,
             _has_created_message=self._has_created_message,
             _has_deferred_response=self._has_deferred_response,
+            _rest_interaction_future=self._rest_interaction_future,
         )

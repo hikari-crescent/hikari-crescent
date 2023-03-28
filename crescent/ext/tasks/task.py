@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import TimerHandle, ensure_future, get_event_loop
+from asyncio import TimerHandle, get_running_loop
 from typing import TYPE_CHECKING, Awaitable, Callable, Sequence, TypeVar
-
-from hikari import StartedEvent
 
 from crescent.client import Client
 from crescent.exceptions import CrescentException
 from crescent.internal.includable import Includable
+from crescent.utils import create_task
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
@@ -33,12 +32,13 @@ class Task(ABC):
         if self.running:
             raise TaskError("Task is already running.")
 
-        self.event_loop = get_event_loop()
-        ensure_future(self._start_inner())
+        assert self.client
+        self.client._run_future(self._start_inner())
 
     async def _start_inner(self) -> None:
         assert self.client is not None
 
+        self.event_loop = get_running_loop()
         self._call_next()
 
     def stop(self) -> None:
@@ -52,7 +52,7 @@ class Task(ABC):
         return not self.timer_handle.cancelled()
 
     def _call_async(self) -> None:
-        ensure_future(self.callback())
+        create_task(self.callback())
         self._call_next()
 
     def _call_next(self) -> None:
@@ -76,15 +76,7 @@ _TaskType = TypeVar("_TaskType", bound=Task)
 
 def _on_client_set(self: Includable[_TaskType]) -> None:
     self.metadata.client = self.client
-
-    async def callback(_: StartedEvent) -> None:
-        self.metadata.start()
-        self.client.app.event_manager.unsubscribe(StartedEvent, callback)
-
-    if not self.client.started.is_set():
-        self.client.app.event_manager.subscribe(StartedEvent, callback)
-    else:
-        self.metadata.start()
+    self.metadata.start()
 
 
 def _unload(self: Includable[_TaskType]) -> None:

@@ -4,6 +4,7 @@ from functools import partial
 from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, get_type_hints, overload
 
+from crescent.client import GatewayTraits
 from crescent.internal.includable import Includable
 from crescent.utils.options import unwrap
 
@@ -44,11 +45,17 @@ def event(
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(includable: Includable[CallbackT[Any]]) -> None:
-        includable.client.app.event_manager.subscribe(
-            event_type=unwrap(event_type), callback=event_callback
-        )
+        if isinstance(includable.client.app, GatewayTraits):
+            includable.client.app.event_manager.subscribe(
+                event_type=unwrap(event_type), callback=event_callback
+            )
+        else:
+            raise ValueError("Events can only be used with GatewayBot.")
 
     def on_remove(includable: Includable[CallbackT[Any]]) -> None:
+        # if it's not `GatewayTraits`, the event could never have been
+        # added in the first place.
+        assert isinstance(includable.client.app, GatewayTraits)
         includable.client.app.event_manager.unsubscribe(
             event_type=unwrap(event_type), callback=event_callback
         )

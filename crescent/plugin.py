@@ -3,54 +3,56 @@ from __future__ import annotations
 from importlib import import_module, reload
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, overload
-
-import hikari
+from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast, overload
 
 from crescent.commands.hooks import add_hooks
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Sequence, TypeVar
-
-    from crescent.client import Client, GatewayTraits
+    from crescent.client import Client, GatewayTraits, RESTTraits
     from crescent.typedefs import HookCallbackT, PluginCallbackT
 
-    T = TypeVar("T", bound="Includable[Any]")
-
-
 __all__: Sequence[str] = ("PluginManager", "Plugin")
+
+
+T = TypeVar("T", bound="Includable[Any]")
+
+# NOTE: When mypy supports PEP 696 (type var defaults) a `default="GatewayTraits"` kwarg
+# should be added to improve ergonomics.
+BotT = TypeVar("BotT", bound="GatewayTraits | RESTTraits")
+ModelT = TypeVar("ModelT")
+
 
 _LOG = getLogger(__name__)
 
 
 class PluginManager:
     def __init__(self, client: Client) -> None:
-        self.plugins: dict[str, Plugin] = {}
+        self.plugins: dict[str, Plugin[Any, Any]] = {}
         self._client = client
 
-    def unload(self, path: str) -> None:
-        plugin = self.plugins.pop(path)
-        plugin._unload()
-
     @overload
-    def load(self, path: str, /, *, refresh: bool = ...) -> Plugin:
+    def load(self, path: str, /, *, refresh: bool = ...) -> Plugin[Any, Any]:
         ...
 
     @overload
-    def load(self, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
+    def load(self, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin[Any, Any]:
         ...
 
     @overload
-    def load(self, path: str, *, strict: Literal[False], refresh: bool = ...) -> Plugin | None:
+    def load(
+        self, path: str, *, strict: Literal[False], refresh: bool = ...
+    ) -> Plugin[Any, Any] | None:
         ...
 
     @overload
-    def load(self, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin | None:
+    def load(self, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin[Any, Any] | None:
         ...
 
-    def load(self, path: str, refresh: bool = False, strict: bool = True) -> Plugin | None:
+    def load(
+        self, path: str, refresh: bool = False, strict: bool = True
+    ) -> Plugin[Any, Any] | None:
         """Load a plugin from the module path.
 
         ```python
@@ -73,14 +75,16 @@ class PluginManager:
             old_plugin = self.plugins.pop(path)
             old_plugin._unload()
 
-        plugin = Plugin._from_module(path, refresh=refresh, strict=strict)
+        plugin: Plugin[Any, Any] | None = Plugin._from_module(path, refresh=refresh, strict=strict)
         if not plugin:
             return None
         self._add_plugin(path, plugin, refresh=refresh)
 
         return plugin
 
-    def load_folder(self, path: str, refresh: bool = False, strict: bool = True) -> list[Plugin]:
+    def load_folder(
+        self, path: str, refresh: bool = False, strict: bool = True
+    ) -> list[Plugin[Any, Any]]:
         """Loads plugins from a folder.
 
         ```python
@@ -108,7 +112,7 @@ class PluginManager:
         """
 
         pathlib_path = Path(*path.split("."))
-        loaded_plugins: list[Plugin] = []
+        loaded_plugins: list[Plugin[Any, Any]] = []
         loaded_paths: list[str] = []
 
         for glob_path in pathlib_path.glob(r"**/[!_]*.py"):
@@ -128,7 +132,13 @@ class PluginManager:
         return loaded_plugins
 
     def _load_plugin_from_filepath(
-        self, path: Path, plugins: list[Plugin], paths: list[str], *, strict: bool, refresh: bool
+        self,
+        path: Path,
+        plugins: list[Plugin[Any, Any]],
+        paths: list[str],
+        *,
+        strict: bool,
+        refresh: bool,
     ) -> None:
         mod_name = ".".join(path.as_posix()[:-3].split("/"))
         try:
@@ -140,7 +150,7 @@ class PluginManager:
                 self.unload(plugin_path)
             raise e
 
-    def _add_plugin(self, path: str, plugin: Plugin, refresh: bool = False) -> None:
+    def _add_plugin(self, path: str, plugin: Plugin[Any, Any], refresh: bool = False) -> None:
         if path in self.plugins and not refresh:
             raise PluginAlreadyLoadedError(
                 f"Plugin `{path}` is already loaded."
@@ -150,8 +160,25 @@ class PluginManager:
         self.plugins[path] = plugin
         plugin._load(self._client)
 
+    def unload(self, path: str) -> None:
+        """
+        Unload a plugin.
 
-class Plugin:
+        Args:
+            path: The module path for the plugin.
+        """
+        plugin = self.plugins.pop(path)
+        plugin._unload()
+
+    def unload_all(self) -> None:
+        """
+        Unload all of the plugins that are currently loaded.
+        """
+        for path in tuple(self.plugins.keys()):
+            self.unload(path)
+
+
+class Plugin(Generic[BotT, ModelT]):
     def __init__(
         self,
         *,
@@ -161,6 +188,7 @@ class Plugin:
         self.command_hooks = command_hooks
         self.command_after_hooks = command_after_hooks
         self._client: Client | None = None
+        self._model: ModelT | None = None
         self._children: list[Includable[Any]] = []
 
         self._load_hooks: list[PluginCallbackT] = []
@@ -178,10 +206,16 @@ class Plugin:
         self._unload_hooks.append(callback)
 
     @property
-    def app(self) -> GatewayTraits:
+    def app(self) -> BotT:
         if not self._client:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
-        return self._client.app
+        return cast(BotT, self._client.app)
+
+    @property
+    def model(self) -> ModelT:
+        if not self._client:
+            raise AttributeError("`Plugin.model` can not be accessed before the plugin is loaded.")
+        return cast(ModelT, self._client.model)
 
     @property
     def client(self) -> Client:
@@ -200,13 +234,7 @@ class Plugin:
             add_hooks(client, child)
             child.register_to_client(client)
 
-        client.app.event_manager.subscribe(hikari.StoppedEvent, self._on_bot_close)
-
     def _unload(self) -> None:
-        assert self._client
-        self._client.app.event_manager.unsubscribe(hikari.StoppedEvent, self._on_bot_close)
-        self._client = None
-
         for callback in self._unload_hooks:
             callback()
 
@@ -214,33 +242,38 @@ class Plugin:
             for hook in child.plugin_unload_hooks:
                 hook(child)
 
-    async def _on_bot_close(self, app: GatewayTraits) -> None:
-        self._unload()
+        self._client = None
 
     @overload
     @classmethod
-    def _from_module(cls, path: str, /, *, refresh: bool = ...) -> Plugin:
+    def _from_module(cls, path: str, /, *, refresh: bool = ...) -> Plugin[BotT, ModelT]:
         ...
 
     @overload
     @classmethod
-    def _from_module(cls, path: str, *, strict: Literal[True], refresh: bool = ...) -> Plugin:
+    def _from_module(
+        cls, path: str, *, strict: Literal[True], refresh: bool = ...
+    ) -> Plugin[BotT, ModelT]:
         ...
 
     @overload
     @classmethod
     def _from_module(
         cls, path: str, *, strict: Literal[False], refresh: bool = ...
-    ) -> Plugin | None:
+    ) -> Plugin[BotT, ModelT] | None:
         ...
 
     @overload
     @classmethod
-    def _from_module(cls, path: str, refresh: bool = ..., strict: bool = ...) -> Plugin | None:
+    def _from_module(
+        cls, path: str, refresh: bool = ..., strict: bool = ...
+    ) -> Plugin[BotT, ModelT] | None:
         ...
 
     @classmethod
-    def _from_module(cls, path: str, refresh: bool = False, strict: bool = True) -> Plugin | None:
+    def _from_module(
+        cls, path: str, refresh: bool = False, strict: bool = True
+    ) -> Plugin[BotT, ModelT] | None:
         parents = path.split(".")
 
         name = parents.pop(-1)
@@ -250,8 +283,8 @@ class Plugin:
         module = import_module(name, package)
         if refresh:
             module = reload(module)
-        plugin = getattr(module, "plugin", None)
-        if strict and not isinstance(plugin, Plugin):
+        plugin: Plugin[BotT, ModelT] | None = getattr(module, "plugin", None)
+        if strict and not plugin:
             raise ValueError(
                 f"Plugin {path} has no `plugin` or `plugin` is not of type Plugin. "
                 "If you want to name your plugin something else, you have to add an "

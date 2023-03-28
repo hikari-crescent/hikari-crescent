@@ -59,7 +59,6 @@ def register_command(
     autocomplete: dict[str, AutocompleteCallbackT] = {},
     nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta]:
-
     if not iscoroutinefunction(callback):
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
@@ -90,10 +89,11 @@ _E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
 
 
 class ErrorHandler(Generic[_E]):
-    __slots__: Sequence[str] = ("bot", "registry", "supports_custom_ctx")
+    __slots__: Sequence[str] = ("bot", "registry", "subclass_registry", "supports_custom_ctx")
 
     def __init__(self) -> None:
         self.registry: dict[type[Exception], Includable[_E]] = {}
+        self.subclass_registry: dict[type[Exception], Includable[_E]] = {}
 
     def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
         if reg_includable := self.registry.get(exc):
@@ -104,16 +104,25 @@ class ErrorHandler(Generic[_E]):
             )
 
         self.registry[exc] = includable
+        self.build_subclass_registry()
 
     def remove(self, exc: type[Exception]) -> None:
         self.registry.pop(exc)
+        self.build_subclass_registry()
+
+    def build_subclass_registry(self) -> None:
+        self.subclass_registry.clear()
+
+        for key, value in self.registry.items():
+            for subclass in (key, *key.__subclasses__()):
+                self.subclass_registry[subclass] = value
 
     async def try_handle(self, exc: Exception, args: Sequence[Any]) -> bool:
         """
         Attempts to run a function to handle an exception. Returns whether the exception
         was handled.
         """
-        if func := self.registry.get(exc.__class__):
+        if func := self.subclass_registry.get(exc.__class__):
             await func.metadata(*args)
             return True
 
@@ -121,7 +130,6 @@ class ErrorHandler(Generic[_E]):
 
 
 class CommandHandler:
-
     __slots__: Sequence[str] = ("_client", "_guilds", "_application_id", "_registry")
 
     def __init__(self, client: Client, guilds: Sequence[Snowflakeish]) -> None:
@@ -145,7 +153,6 @@ class CommandHandler:
         return self._registry[unique]
 
     def __build_commands(self) -> Sequence[AppCommand]:
-
         built_commands: dict[Unique, AppCommand] = {}
 
         for command in self._registry.values():
@@ -375,7 +382,10 @@ class CommandHandler:
             else:
                 global_commands.append(command)
 
-        assert self._application_id is not None
+        if not self._application_id:
+            me = await self._client.app.rest.fetch_application()
+            self._application_id = me.id
+
         await gather(
             self._client.app.rest.set_application_commands(
                 application=self._application_id,

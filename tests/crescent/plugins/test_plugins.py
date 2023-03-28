@@ -50,6 +50,16 @@ class TestPlugins:
         assert len(client.app._event_manager.get_listeners(MessageCreateEvent)) == 0
         assert plugin_catch_command not in client._command_error_handler.registry.values()
 
+    def test_unload_everything(self):
+        client = MockClient()
+
+        client.plugins.load("tests.crescent.plugins.plugin")
+        client.plugins.unload_all()
+
+        assert plugin_command.metadata.unique not in client._command_handler._registry
+        assert len(client.app._event_manager.get_listeners(MessageCreateEvent)) == 0
+        assert plugin_catch_command not in client._command_error_handler.registry.values()
+
     def test_plugin_reload(self):
         client = MockClient()
 
@@ -179,3 +189,10 @@ class TestPlugins:
 
         with raises(AttributeError):
             plugin.app
+
+    def test_model(self):
+        model = object()
+        client = MockClient(model=model)
+        plugin = client.plugins.load("tests.crescent.plugins.plugin")
+
+        assert plugin.model is model

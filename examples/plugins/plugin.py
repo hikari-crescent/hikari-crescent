@@ -1,8 +1,15 @@
+import typing
+
 import hikari
 
 import crescent
 
-plugin = crescent.Plugin()
+if typing.TYPE_CHECKING:
+    from examples.plugins.example import Model
+
+# If you are not using the model property you can typehint as
+# `crescent.Plugin[hikari.GatewayBot, None]` instead.
+plugin = crescent.Plugin[hikari.GatewayBot, "Model"]()
 
 
 @plugin.include
@@ -24,8 +31,10 @@ async def plugin_event(event: hikari.MessageCreateEvent) -> None:
 def on_load() -> None:
     print("LOADED")
 
+    # The model attribute is accessible once the plugin is loaded.
+    print(plugin.model)
 
-# Unload hooks are automatically called when the bot is shut down (hikari.StoppedEvent)
+
 @plugin.unload_hook
 def on_unload() -> None:
     print("UNLOADED")

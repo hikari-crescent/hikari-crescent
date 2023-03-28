@@ -16,7 +16,6 @@ client = crescent.Client(bot)
 
 @dataclasses.dataclass
 class Locale(crescent.LocaleBuilder):
-
     _fallback: str
     en_US: str
 
