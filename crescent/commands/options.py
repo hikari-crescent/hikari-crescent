@@ -12,7 +12,11 @@ from hikari import (
     DMChannel,
     GroupDMChannel,
     GuildCategory,
+    GuildForumChannel,
     GuildNewsChannel,
+    GuildNewsThread,
+    GuildPrivateThread,
+    GuildPublicThread,
     GuildStageChannel,
     GuildTextChannel,
     GuildVoiceChannel,
@@ -59,7 +63,11 @@ VALID_CHANNEL_TYPES = Union[
     GuildVoiceChannel,
     GuildCategory,
     GuildNewsChannel,
+    GuildNewsThread,
+    GuildPublicThread,
+    GuildPrivateThread,
     GuildStageChannel,
+    GuildForumChannel,
 ]
 CHANNEL_TYPE_MAP: dict[type[VALID_CHANNEL_TYPES], ChannelType] = {
     GuildTextChannel: ChannelType.GUILD_TEXT,
@@ -68,7 +76,11 @@ CHANNEL_TYPE_MAP: dict[type[VALID_CHANNEL_TYPES], ChannelType] = {
     GroupDMChannel: ChannelType.GROUP_DM,
     GuildCategory: ChannelType.GUILD_CATEGORY,
     GuildNewsChannel: ChannelType.GUILD_NEWS,
+    GuildNewsThread: ChannelType.GUILD_NEWS_THREAD,
+    GuildPublicThread: ChannelType.GUILD_PUBLIC_THREAD,
+    GuildPrivateThread: ChannelType.GUILD_PRIVATE_THREAD,
     GuildStageChannel: ChannelType.GUILD_STAGE,
+    GuildForumChannel: ChannelType.GUILD_FORUM,
 }
 
 
