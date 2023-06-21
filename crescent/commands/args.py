@@ -7,11 +7,12 @@ from typing import TYPE_CHECKING, Generic
 from hikari import ChannelType, CommandChoice
 
 from crescent.locale import LocaleBuilder
+from crescent.typedefs import AutocompleteValueT
 
 if TYPE_CHECKING:
     from typing import Any, Sequence
 
-    from crescent.typedefs import AutocompleteCallbackT, AutocompleteValueT
+    from crescent.typedefs import AutocompleteCallbackT
 
 __all__: Sequence[str] = (
     "Description",
