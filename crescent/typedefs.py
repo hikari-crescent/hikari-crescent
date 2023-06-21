@@ -62,6 +62,7 @@ PluginCallbackT = Callable[[], None]
 
 
 class ClassCommandProto(Protocol):
+    """A type with all the attributes required for class commands."""
     async def callback(self, ctx: Any) -> Any:
         ...
 

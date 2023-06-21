@@ -15,10 +15,35 @@ __all__: Sequence[str] = ("HookResult", "hook", "add_hooks")
 
 @dataclass
 class HookResult:
+    """
+    An object return by hooks to provide information about what to do after
+    the hook is run.
+
+    Args:
+        exit: If true, don't run any following hooks or the command.
+    """
     exit: bool = False
 
 
 class hook:
+    """
+    Register a hook to a command.
+
+    ### Example
+    ```python
+    async def say_hi(ctx: crescent.Context) -> None:
+        await ctx.respond("Hello there")
+
+    @client.include
+    @crescent.hook(say_hi)
+    @crescent.command
+    async def ping(ctx: crescent.Context):
+        await ctx.respond("Pong")
+    ```
+
+    Args:
+        after: If true, run this hook after the command has completed.
+    """
     def __init__(self, *callbacks: HookCallbackT, after: bool = False):
         self.callbacks = callbacks
         self.after = after

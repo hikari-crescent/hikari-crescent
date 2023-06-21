@@ -13,6 +13,21 @@ __all__: Sequence[str] = ("Mentionable",)
 
 @dataclass
 class Mentionable:
+    """
+    Represent's discord's mentionable type. A mentionable can be a User or Role.
+    Not that it can not be both.
+
+    ### Example
+    ```python
+    @client.include
+    @crescent.command
+    async def command(ctx: crescent.Context, mentionable: crescent.Mentionable):
+        if mentionable.is_user:
+            user = mentionable.unwrap_user()
+        else:
+            role = mentionable.unwrap_role()
+    ```
+    """
     __slots__ = ("user", "role")
 
     user: User | None

@@ -25,6 +25,11 @@ __all__: Sequence[str] = (
 
 
 class Arg(ABC):
+    """
+    A class to specify argument information when defining a command using a
+    function.
+    """
+
     @property
     def payload(self) -> Any:
         """Returns the data for this object"""

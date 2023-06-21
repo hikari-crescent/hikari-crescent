@@ -32,6 +32,25 @@ def event(
 def event(
     callback: CallbackT[Any] | None = None, /, *, event_type: type[Any] | None = None
 ) -> Callable[[CallbackT[Any]], Includable[CallbackT[Any]]] | Includable[CallbackT[Any]]:
+    """
+    Listen to an event. This function should be used instead of `hikari.GatewayBot.listen` whenever possible.
+
+    ### Example
+    ```python
+    import crescent
+    
+    client = crescent.Client(...)
+
+    # Listen to the message create event
+    @client.include
+    @crescent.event
+    async def ping(event: hikari.MessageCreateEvent):
+        ...
+    ```
+
+    Event types can be provided using the `event_type` kwarg if you do not want
+    to use type annotations.
+    """
     if callback is None:
         return partial(event, event_type=event_type)
 

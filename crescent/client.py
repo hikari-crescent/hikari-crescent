@@ -57,6 +57,28 @@ class RESTTraits(InteractionServerAware, RESTAware, Protocol):
 
 
 class Client:
+    """
+    The client object is a wrapper around your bot that lets you use
+    Crescent's features.
+
+    ### Example
+
+    ```python
+    import hikari
+    import crescent
+
+    bot = hikari.GatewayBot()
+    client = crescent.Client(bot)
+
+    # Crescent's features can be used.
+    @client.include
+    @crescent.command
+    async def ping(ctx: crescent.Context):
+        await ctx.respong("Pong")
+
+    bot.run()
+    ```
+    """
     def __init__(
         self,
         app: RESTTraits | GatewayTraits,
@@ -159,6 +181,20 @@ class Client:
     def include(
         self, command: INCLUDABLE | None = None
     ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
+        """
+        Register an includable object, such as an event or a command.
+
+        ### Example
+
+        ```python
+        client = crescent.Client(...)
+
+        @client.include
+        @crescent.command
+        async def ping(ctx: crescent.Context):
+            await ctx.respong("Pong")
+        ```
+        """
         if command is None:
             return self.include
 
@@ -170,15 +206,29 @@ class Client:
 
     @property
     def plugins(self) -> PluginManager:
+        """
+        Return the plugin manager object. This object lets you load and unload
+        plugins. See `PluginManager` for more information.
+        """
         return self._plugins
 
     @property
     def commands(self) -> CommandHandler:
+        """
+        Return the command handler object. This object lets you access command
+        information that is not normally accessible. See `CommandHandler` for
+        more information.
+        """
         return self._command_handler
 
     async def on_crescent_command_error(
         self, exc: Exception, ctx: Context, was_handled: bool
     ) -> None:
+        """
+        This function is run when there is an error in a crescent command
+        that is not caught with any error handlers. You can inherit from this
+        class and override this function to change default error handling.
+        """
         if was_handled:
             return
         with suppress(Exception):
@@ -189,6 +239,11 @@ class Client:
     async def on_crescent_event_error(
         self, exc: Exception, event: hk_Event, was_handled: bool
     ) -> None:
+        """
+        This function is run when there is an error in a crescent event
+        that is not caught with any error handlers. You can inherit from this
+        class and override this function to change default error handling.
+        """
         if was_handled:
             return
         print(f"Unhandled exception occurred for {type(event)}:")
@@ -201,6 +256,11 @@ class Client:
         option: AutocompleteInteractionOption,
         was_handled: bool,
     ) -> None:
+        """
+        This function is run when there is an error in an autocomplete handler
+        that is not caught with any error handlers. You can inherit from this
+        class and override this function to change default error handling.
+        """
         if was_handled:
             return
         print(

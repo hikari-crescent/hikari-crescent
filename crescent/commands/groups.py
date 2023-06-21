@@ -33,6 +33,23 @@ def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
 
 @dataclass
 class Group:
+    """
+    A command group. A command group is a top level command that contains subcommands.
+
+    ### Example
+    ```python
+    import crescent
+
+    utils_group = crescent.Group("utils")
+
+    # This command will appear under the `utils` group in discord.
+    @client.include
+    @utils_group.child
+    @crescent.command
+    async def ping(ctx: crescent.Context):
+        await ctx.respond("Pong")
+    ```
+    """
     name: str | LocaleBuilder
     description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
@@ -64,6 +81,25 @@ class Group:
 
 @dataclass
 class SubGroup:
+    """
+    A command subgroup. A command subgroup is a group that is under a top level group.
+
+    ### Example
+    ```python
+    import crescent
+
+    utils_group = crescent.Group("utils")
+    time_utils_group = utils_group.sub_group("time")
+
+    # This command will appear under the `utils` group in discord.
+    @client.include
+    @time_utils_group.child
+    @crescent.command
+    async def latency(ctx: crescent.Context):
+        await ctx.respond(f"The latency is {bot.heartbeat_latency * 1000}ms")
+    ```
+    """
+
     name: str | LocaleBuilder
     parent: Group
     description: str | LocaleBuilder | None = None
