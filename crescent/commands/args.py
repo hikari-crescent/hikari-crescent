@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic
 
 from hikari import ChannelType, CommandChoice
 
@@ -11,7 +11,7 @@ from crescent.locale import LocaleBuilder
 if TYPE_CHECKING:
     from typing import Any, Sequence
 
-    from crescent.typedefs import AutocompleteCallbackT
+    from crescent.typedefs import AutocompleteCallbackT, AutocompleteValueT
 
 __all__: Sequence[str] = (
     "Description",
@@ -107,9 +107,9 @@ class MaxLength(Arg):
 
 
 @dataclass(frozen=True)
-class Autocomplete(Arg):
-    callback: AutocompleteCallbackT
+class Autocomplete(Arg, Generic[AutocompleteValueT]):
+    callback: AutocompleteCallbackT[AutocompleteValueT]
 
     @property
-    def payload(self) -> AutocompleteCallbackT:
+    def payload(self) -> AutocompleteCallbackT[AutocompleteValueT]:
         return self.callback

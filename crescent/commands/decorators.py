@@ -91,7 +91,7 @@ def command(
             nsfw=nsfw,
         )  # pyright: ignore
 
-    autocomplete: dict[str, AutocompleteCallbackT] = {}
+    autocomplete: dict[str, AutocompleteCallbackT[Any]] = {}
     options: list[CommandOption] = []
 
     if isclass(callback):

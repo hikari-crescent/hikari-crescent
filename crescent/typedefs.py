@@ -40,6 +40,7 @@ __all__: Sequence[str] = (
     "HookCallbackT",
     "CommandErrorHandlerCallbackT",
     "AutocompleteCallbackT",
+    "AutocompleteValueT",
 )
 
 CommandCallbackT = Callable[..., Awaitable[Any]]
@@ -50,12 +51,13 @@ OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mention
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[[Any], Awaitable[Optional["HookResult"]]]
 TransformedHookCallbackT = Callable[[Any], Awaitable[Tuple[Optional["HookResult"], "BaseContext"]]]
+AutocompleteValueT = TypeVar("AutocompleteValueT", str, int, float)
 AutocompleteCallbackT = Callable[
-    [Any, AutocompleteInteractionOption], Awaitable[Sequence[Tuple[str, Union[str, int, float]]]]
+    [Any, AutocompleteInteractionOption], Awaitable[Sequence[Tuple[str, AutocompleteValueT]]]
 ]
 TransformedAutocompleteCallbackT = Callable[
     [Any, AutocompleteInteractionOption],
-    Awaitable[Tuple[Sequence[Tuple[str, Union[str, int, float]]], "BaseContext"]],
+    Awaitable[Tuple[Sequence[Tuple[str, AutocompleteValueT]], "BaseContext"]],
 ]
 
 PluginCallbackT = Callable[[], None]
