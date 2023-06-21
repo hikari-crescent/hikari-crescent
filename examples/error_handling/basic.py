@@ -74,6 +74,7 @@ async def autocomplete(
     elif option.value == "error":
         raise RandomError("Handled error")
 
+    # returns a list of tuples of (option name, option value).
     return [("error", "error"), ("unhandled", "unhandled")]
 
 

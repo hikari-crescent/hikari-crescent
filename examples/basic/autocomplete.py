@@ -13,6 +13,7 @@ async def autocomplete_response(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[Tuple[str, str]]:
     # All the other options are stored in ctx.options
+    # returns a list of tuples of (option name, option value).
     return [("Some Option", "1234")]
 
 
