@@ -67,17 +67,14 @@ async def raise_error_event(event: hikari.MessageCreateEvent) -> None:
 
 async def autocomplete(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
-) -> list[hikari.CommandChoice]:
+) -> list[tuple[str, str]]:
     assert isinstance(option.value, str)
     if option.value == "unhandled":
         raise UnhandledError("Unhandled error!")
     elif option.value == "error":
         raise RandomError("Handled error")
 
-    return [
-        hikari.CommandChoice(name="error", value="error"),
-        hikari.CommandChoice(name="unhandled", value="unhandled"),
-    ]
+    return [("error", "error"), ("unhandled", "unhandled")]
 
 
 @client.include
