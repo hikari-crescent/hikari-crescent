@@ -17,6 +17,17 @@ async def autocomplete_response(
     return [("Some Option", "1234")]
 
 
+async def fetch_autocomplete_options(
+    ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
+) -> Sequence[Tuple[str, str]]:
+    # Return options with snowflakes converted into the option types.
+    # This function can be extremely expensive.
+    _options = await ctx.fetch_options()
+
+    # Return no options.
+    return []
+
+
 # Both these commands function identically
 @client.include
 @crescent.command
