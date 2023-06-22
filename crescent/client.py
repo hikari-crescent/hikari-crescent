@@ -139,7 +139,7 @@ class Client:
         self.model = model
 
         if update_commands:
-            self._add_startup_callback(self.post_commands)
+            self._add_startup_callback(self._post_commands)
         self._add_startup_callback(self._on_start)
 
         if tracked_guilds is None:
@@ -171,28 +171,28 @@ class Client:
         self._started = False
 
         if isinstance(app, GatewayTraits):
-            app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
+            app.event_manager.subscribe(InteractionCreateEvent, self._on_interaction_event)
             return
         app.interaction_server.set_listener(
             CommandInteraction,  # pyright: ignore
-            self.on_rest_interaction,  # type: ignore
+            self._on_rest_interaction,  # type: ignore
         )
         app.interaction_server.set_listener(
             AutocompleteInteraction,  # type: ignore
-            self.on_rest_interaction,  # type: ignore
+            self._on_rest_interaction,  # type: ignore
         )
 
-    async def on_rest_interaction(
+    async def _on_rest_interaction(
         self, interaction: PartialInteraction
     ) -> InteractionResponseBuilder:
         future: Future[InteractionResponseBuilder] = get_running_loop().create_future()
         create_task(handle_resp(self, interaction, future))
         return await future
 
-    async def on_interaction_event(self, event: InteractionCreateEvent) -> None:
+    async def _on_interaction_event(self, event: InteractionCreateEvent) -> None:
         await handle_resp(self, event.interaction, None)
 
-    def post_commands(self) -> Coroutine[Any, Any, None]:
+    def _post_commands(self) -> Coroutine[Any, Any, None]:
         return self._command_handler.register_commands()
 
     @overload
