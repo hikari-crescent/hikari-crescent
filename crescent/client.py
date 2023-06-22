@@ -67,7 +67,7 @@ class Client:
     import hikari
     import crescent
 
-    bot = hikari.GatewayBot()
+    bot = hikari.GatewayBot("your token")
     client = crescent.Client(bot)
 
     # Crescent's features can be used.
@@ -79,6 +79,7 @@ class Client:
     bot.run()
     ```
     """
+
     def __init__(
         self,
         app: RESTTraits | GatewayTraits,
@@ -95,6 +96,30 @@ class Client:
         Args:
             app:
                 The hikari bot instance.
+            model:
+                An object to store global data. This object can be accessed
+                with the `Plugin.model` property.
+
+                ### Example
+
+                ```
+                # In bot.py
+                bot = hikari.GatewayBot("your token")
+                client = crescent.Client(bot, "I am a model")
+
+                client.plugins.load("plugin")
+
+                # In plugin.py
+                plugin = crescent.Plugin()
+
+                @plugin.on_load
+                def on_load():
+                    # Print the model object that was set earlier to the console.
+                    print(plugin.model)  # prints "I am a model"
+                ```
+
+                If no model is set, it will default to `None`.
+
             tracked_guilds:
                 The guilds to compare posted commands to. Commands will not be
                 automatically removed from guilds that aren't in this list. This should
