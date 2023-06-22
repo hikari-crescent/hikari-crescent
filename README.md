@@ -117,34 +117,32 @@ async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
 
 
 ### Autocomplete
-Autocomplete callbacks return a list of tuples. Each tuple should be a the name followed by the value. The type of the value
-should be either `int`, `float`, or `str`, depending on the option type.
+Autocomplete is supported by using a callback function. This function returns a list of tuples where the first
+value is the option name and the second value is the option value. `str`, `int`, and `float` value type
+can be used.
 
 ```python
 async def autocomplete(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
-) -> list[tuple[str, int]]:
-    return [("Option 1", 1), ("Option 2", 2)]
+) -> list[tuple[str, str]]:
+    return [("Option 1", "Option value 1"), ("Option 2", "Option value 2")]
 
-# function commands
+@client.include
+@crescent.command(name="class-command")
+class ClassCommand:
+    option = crescent.option(str, autocomplete=autocomplete)
+
+    async def callback(self) -> None:
+        await ctx.respond(self.option)
+
 @client.include
 @crescent.command
 async def function_command(
     ctx: crescent.Context,
-    option: Annotated[int, crescent.Autocomplete(autocomplete)]
+    option: Annotated[str, crescent.Autocomplete(autocomplete)]
 ) -> None:
-    await ctx.respond(str(option))
-
-# class commands
-@client.include
-@crescent.command(name="class-command")
-class ClassCommand:
-    option = crescent.option(int, autocomplete=autocomplete)
-
-    async def callback(self) -> None:
-        await ctx.respond(str(self.option))
+    await ctx.respond(option)
 ```
-
 
 ### Error Handling
 Errors that are raised by a command can be handled by `crescent.catch_command`.
@@ -163,6 +161,9 @@ async def on_err(exc: MyError, ctx: crescent.Context) -> None:
 async def my_command(ctx: crescent.Context):
     raise MyError()
 ```
+
+There is also a `crescent.catch_event` and `crescent.catch_autocomplete` function for
+events and autocomplete respectively.
 
 ### Events
 ```python
