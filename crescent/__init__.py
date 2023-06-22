@@ -53,5 +53,4 @@ __all__: Sequence[str] = (
     "ClassCommandProto",
     "Plugin",
     "PluginManager",
-    "ClassCommandOption",
 )

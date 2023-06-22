@@ -53,7 +53,7 @@ def _unwrap_optional(origin: type[Any]) -> Any:
 def _get_arg(t: type[Arg] | type[Any], metadata: Iterable[Any]) -> Any | None:
     for data in metadata:
         if isinstance(data, t):
-            return getattr(data, "payload", data)
+            return getattr(data, "_payload", data)
     return None
 
 
