@@ -5,7 +5,7 @@ from crescent.client import *
 from crescent.commands import *
 from crescent.context import *
 from crescent.errors import *
-from crescent.event import *
+from crescent.events import *
 from crescent.exceptions import *
 from crescent.locale import *
 from crescent.mentionable import *
