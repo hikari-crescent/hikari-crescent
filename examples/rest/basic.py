@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import random
 
-from hikari import AutocompleteInteractionOption, CommandChoice, RESTBot, TokenType
+from hikari import AutocompleteInteractionOption, RESTBot, TokenType
 
 import crescent
 
@@ -13,12 +13,12 @@ client = crescent.Client(bot)
 
 async def autocomplete_callback(
     ctx: crescent.AutocompleteContext, option: AutocompleteInteractionOption
-) -> list[CommandChoice]:
+) -> list[tuple[str, str]]:
     chars = [c for c in str(option.value)]
     random.shuffle(chars)
     shuffled = "".join(chars)
     value = f"Showing results for '{shuffled}'."
-    return [CommandChoice(name=value, value=shuffled)]
+    return [(value, shuffled)]
 
 
 @client.include

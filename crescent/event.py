@@ -52,7 +52,7 @@ def event(
     to use type annotations.
     """
     if callback is None:
-        return partial(event, event_type=event_type)
+        return partial(event, event_type=event_type)  # pyright: ignore
 
     if not event_type:
         event_type = next(iter(get_type_hints(callback).values()))

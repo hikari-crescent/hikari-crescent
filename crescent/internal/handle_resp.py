@@ -16,6 +16,7 @@ from hikari import (
     Snowflake,
 )
 from hikari.api import InteractionResponseBuilder
+from hikari.impl import AutocompleteChoiceBuilder
 
 from crescent.context import AutocompleteContext, BaseContext, Context
 from crescent.internal.app_command import Unique
@@ -107,10 +108,11 @@ async def _handle_autocomplete_resp(command: Includable[AppCommandMeta], ctx: Ba
 
     try:
         res, ctx = await autocomplete(ctx, option)
+        choices = [AutocompleteChoiceBuilder(name, value) for name, value in res]
         if future := ctx._unset_future:
-            future.set_result(interaction.build_response(res))
+            future.set_result(interaction.build_response(choices))
         else:
-            await interaction.create_response(res)
+            await interaction.create_response(choices)
     except Exception as exc:
         handled = await command.client._autocomplete_error_handler.try_handle(
             exc, [exc, ctx, option]
