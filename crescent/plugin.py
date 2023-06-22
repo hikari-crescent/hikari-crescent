@@ -33,6 +33,7 @@ class PluginManager:
     this class yourself. It will be provided to you as the `clients.plugins`
     property when you construct a `Client` object.
     """
+
     def __init__(self, client: Client) -> None:
         self.plugins: dict[str, Plugin[Any, Any]] = {}
         self._client = client
@@ -197,6 +198,7 @@ class Plugin(Generic[BotT, ModelT]):
 
     You can load this file with `PluginManager.load`
     """
+
     def __init__(
         self,
         *,

@@ -38,7 +38,7 @@ def event(
     ### Example
     ```python
     import crescent
-    
+
     client = crescent.Client(...)
 
     # Listen to the message create event

@@ -28,6 +28,7 @@ class Mentionable:
             role = mentionable.unwrap_role()
     ```
     """
+
     __slots__ = ("user", "role")
 
     user: User | None

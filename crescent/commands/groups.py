@@ -50,6 +50,7 @@ class Group:
         await ctx.respond("Pong")
     ```
     """
+
     name: str | LocaleBuilder
     description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
@@ -109,6 +110,7 @@ class SubGroup:
         await ctx.respond(f"The latency is {bot.heartbeat_latency * 1000}ms")
     ```
     """
+
     name: str | LocaleBuilder
     parent: Group
     description: str | LocaleBuilder | None = None

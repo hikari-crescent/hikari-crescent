@@ -22,6 +22,7 @@ class HookResult:
     Args:
         exit: If true, don't run any following hooks or the command.
     """
+
     exit: bool = False
 
 
@@ -44,6 +45,7 @@ class hook:
     Args:
         after: If true, run this hook after the command has completed.
     """
+
     def __init__(self, *callbacks: HookCallbackT, after: bool = False):
         self.callbacks = callbacks
         self.after = after

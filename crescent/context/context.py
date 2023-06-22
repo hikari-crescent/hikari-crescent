@@ -165,7 +165,7 @@ class Context(BaseContext):
                 this, and exists for compatibility in the future. Instead set
                 the `ephermial` kwarg  to `True`.
             tts:
-                If true, send a text to speach message.
+                If true, send a text to speech message.
             attachment:
                 A single attachment to send.
             attachments:
