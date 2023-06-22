@@ -7,6 +7,11 @@ __all__: Sequence[str] = ("LocaleBuilder", "str_or_build_locale")
 
 
 class LocaleBuilder(ABC):
+    """
+    A class that can be inherited from to created APIs to use locales in your
+    code.
+    """
+
     @abstractmethod
     def build(self) -> Mapping[str, str]:
         """
