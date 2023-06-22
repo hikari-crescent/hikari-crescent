@@ -17,7 +17,6 @@ from typing import (
 from hikari import (
     Attachment,
     AutocompleteInteractionOption,
-    CommandChoice,
     Event,
     Message,
     PartialChannel,
@@ -41,6 +40,7 @@ __all__: Sequence[str] = (
     "HookCallbackT",
     "CommandErrorHandlerCallbackT",
     "AutocompleteCallbackT",
+    "AutocompleteValueT",
 )
 
 CommandCallbackT = Callable[..., Awaitable[Any]]
@@ -51,11 +51,13 @@ OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mention
 CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
 HookCallbackT = Callable[[Any], Awaitable[Optional["HookResult"]]]
 TransformedHookCallbackT = Callable[[Any], Awaitable[Tuple[Optional["HookResult"], "BaseContext"]]]
+AutocompleteValueT = TypeVar("AutocompleteValueT", str, int, float)
 AutocompleteCallbackT = Callable[
-    [Any, AutocompleteInteractionOption], Awaitable[Sequence[CommandChoice]]
+    [Any, AutocompleteInteractionOption], Awaitable[Sequence[Tuple[str, AutocompleteValueT]]]
 ]
 TransformedAutocompleteCallbackT = Callable[
-    [Any, AutocompleteInteractionOption], Awaitable[Tuple[Sequence[CommandChoice], "BaseContext"]]
+    [Any, AutocompleteInteractionOption],
+    Awaitable[Tuple[Sequence[Tuple[str, AutocompleteValueT]], "BaseContext"]],
 ]
 
 PluginCallbackT = Callable[[], None]

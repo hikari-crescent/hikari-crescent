@@ -84,6 +84,17 @@ CHANNEL_TYPE_MAP: dict[type[VALID_CHANNEL_TYPES], ChannelType] = {
 }
 
 
+def build_choices(
+    choices: Sequence[tuple[str | LocaleBuilder, str | int | float]]
+) -> list[CommandChoice]:
+    result: list[CommandChoice] = []
+    for name, value in choices:
+        name, name_localizations = str_or_build_locale(name)
+        result.append(CommandChoice(name=name, name_localizations=name_localizations, value=value))
+
+    return result
+
+
 def get_channel_types(*channels: type[PartialChannel]) -> set[ChannelType]:
     if len(channels) == 1 and channels[0] is PartialChannel:
         return set()
@@ -112,7 +123,7 @@ class ClassCommandOption(Generic[T]):
     max_value: int | float | None
     min_length: int | None
     max_length: int | None
-    autocomplete: AutocompleteCallbackT | None
+    autocomplete: AutocompleteCallbackT[Any] | None
 
     def _gen_option(self, name: str) -> CommandOption:
         name, name_localizations = str_or_build_locale(self.name or name)
@@ -296,8 +307,8 @@ def option(
     option_type: type[int],
     description: str | LocaleBuilder = ...,
     *,
-    choices: Sequence[tuple[str, int]] | None = ...,
-    autocomplete: AutocompleteCallbackT | None = ...,
+    choices: Sequence[tuple[str | LocaleBuilder, int]] | None = ...,
+    autocomplete: AutocompleteCallbackT[int] | None = ...,
     min_value: int | None = ...,
     max_value: int | None = ...,
     name: str | LocaleBuilder | None = ...,
@@ -311,8 +322,8 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
-    choices: Sequence[tuple[str, int]] | None = ...,
-    autocomplete: AutocompleteCallbackT | None = ...,
+    choices: Sequence[tuple[str | LocaleBuilder, int]] | None = ...,
+    autocomplete: AutocompleteCallbackT[int] | None = ...,
     min_value: int | None = ...,
     max_value: int | None = ...,
     name: str | LocaleBuilder | None = ...,
@@ -325,8 +336,8 @@ def option(
     option_type: type[float],
     description: str | LocaleBuilder = ...,
     *,
-    choices: Sequence[tuple[str, float]] | None = ...,
-    autocomplete: AutocompleteCallbackT | None = ...,
+    choices: Sequence[tuple[str | LocaleBuilder, float]] | None = ...,
+    autocomplete: AutocompleteCallbackT[float] | None = ...,
     min_value: float | None = ...,
     max_value: float | None = ...,
     name: str | LocaleBuilder | None = ...,
@@ -340,8 +351,8 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     default: DEFAULT,
-    choices: Sequence[tuple[str, float]] | None = ...,
-    autocomplete: AutocompleteCallbackT | None = ...,
+    choices: Sequence[tuple[str | LocaleBuilder, float]] | None = ...,
+    autocomplete: AutocompleteCallbackT[float] | None = ...,
     min_value: float | None = ...,
     max_value: float | None = ...,
     name: str | LocaleBuilder | None = ...,
@@ -356,8 +367,8 @@ def option(
     *,
     min_length: int | None = ...,
     max_length: int | None = ...,
-    choices: Sequence[tuple[str, str]] | None = ...,
-    autocomplete: AutocompleteCallbackT | None = ...,
+    choices: Sequence[tuple[str | LocaleBuilder, str]] | None = ...,
+    autocomplete: AutocompleteCallbackT[str] | None = ...,
     name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[str]:
     ...
@@ -371,8 +382,8 @@ def option(
     default: DEFAULT,
     min_length: int | None = ...,
     max_length: int | None = ...,
-    choices: Sequence[tuple[str, str]] | None = ...,
-    autocomplete: AutocompleteCallbackT | None = ...,
+    choices: Sequence[tuple[str | LocaleBuilder, str]] | None = ...,
+    autocomplete: AutocompleteCallbackT[str] | None = ...,
     name: str | LocaleBuilder | None = ...,
 ) -> ClassCommandOption[str | DEFAULT]:
     ...
@@ -383,13 +394,13 @@ def option(
     description: str | LocaleBuilder = "No Description",
     *,
     default: UndefinedOr[Any] = UNDEFINED,
-    choices: Sequence[tuple[str, str | int | float]] | None = None,
+    choices: Sequence[tuple[str | LocaleBuilder, str | int | float]] | None = None,
     min_value: int | float | None = None,
     max_value: int | float | None = None,
     min_length: int | None = None,
     max_length: int | None = None,
     name: str | LocaleBuilder | None = None,
-    autocomplete: AutocompleteCallbackT | None = None,
+    autocomplete: AutocompleteCallbackT[Any] | None = None,
 ) -> ClassCommandOption[Any]:
     _option_type: type[OptionTypesT]
     if (
@@ -411,7 +422,7 @@ def option(
         type=OPTIONS_TYPE_MAP[_option_type],
         description=description,
         default=default,
-        choices=[CommandChoice(name=n, value=v) for n, v in choices] if choices else None,
+        choices=build_choices(choices) if choices else None,
         channel_types=list(channel_types) if channel_types else None,
         min_value=min_value,
         max_value=max_value,

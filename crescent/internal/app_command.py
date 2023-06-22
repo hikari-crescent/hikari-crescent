@@ -146,7 +146,7 @@ class AppCommandMeta:
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
-    autocomplete: dict[str, TransformedAutocompleteCallbackT] = field(default_factory=dict)
+    autocomplete: dict[str, TransformedAutocompleteCallbackT[Any]] = field(default_factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
     hooks: list[TransformedHookCallbackT] = field(default_factory=list)

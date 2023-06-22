@@ -44,7 +44,7 @@ async def error_handle(exc: Exception, ctx: CustomContext) -> None:
 # Autocomplete callbacks also support custom contexts.
 async def autocomplete_callback(
     ctx: CustomContext, option: hikari.AutocompleteInteractionOption
-) -> typing.List[hikari.CommandChoice]:
+) -> typing.List[typing.Tuple[str, str]]:
     return []
 
 
