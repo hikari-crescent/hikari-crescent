@@ -53,10 +53,14 @@ class Group:
     name: str | LocaleBuilder
     description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
+    """A looks of hooks to run before all commands in this group."""
     after_hooks: list[HookCallbackT] | None = None
+    """A list of hooks to run after all commands in this group."""
 
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
+    """The default permissions for all commands in this group."""
     dm_enabled: bool = True
+    """Whether commands in this group can be used in DMs."""
 
     def sub_group(
         self,
@@ -65,11 +69,17 @@ class Group:
         hooks: list[HookCallbackT] | None = None,
         after_hooks: list[HookCallbackT] | None = None,
     ) -> SubGroup:
+        """
+        Create a sub group from this group.
+        """
         return SubGroup(
             name=name, parent=self, description=description, hooks=hooks, after_hooks=after_hooks
         )
 
     def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        """
+        Add a command to this command group.
+        """
         _check_permissions(includable)
 
         includable.metadata.group = self
@@ -103,9 +113,14 @@ class SubGroup:
     parent: Group
     description: str | LocaleBuilder | None = None
     hooks: list[HookCallbackT] | None = None
+    """A looks of hooks to run before all commands in this group."""
     after_hooks: list[HookCallbackT] | None = None
+    """A list of hooks to run after all commands in this group."""
 
     def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
+        """
+        Add a command to this command group.
+        """
         _check_permissions(includable)
 
         includable.metadata.group = self.parent
