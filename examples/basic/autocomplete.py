@@ -1,4 +1,4 @@
-from typing import Sequence, Tuple
+from __future__ import annotations
 
 import hikari
 import typing_extensions
@@ -11,7 +11,7 @@ client = crescent.Client(bot)
 
 async def autocomplete_response(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
-) -> Sequence[Tuple[str, str]]:
+) -> list[tuple[str, str]]:
     # All the other options are stored in ctx.options
     # returns a list of tuples of (option name, option value).
     return [("Some Option", "1234")]
@@ -19,7 +19,7 @@ async def autocomplete_response(
 
 async def fetch_autocomplete_options(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
-) -> Sequence[Tuple[str, str]]:
+) -> list[tuple[str, str]]:
     # Return options with snowflakes converted into the option types.
     # This function can be extremely expensive.
     _options = await ctx.fetch_options()
