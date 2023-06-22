@@ -116,6 +116,34 @@ async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
 | `hikari.Attachment` | Attachment |
 
 
+### Autocomplete
+Autocomplete is supported by using a callback function. This function returns a list of tuples where the first
+value is the option name and the second value is the option value. `str`, `int`, and `float` value types
+can be used.
+
+```python
+async def autocomplete(
+    ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
+) -> list[tuple[str, str]]:
+    return [("Option 1", "Option value 1"), ("Option 2", "Option value 2")]
+
+@client.include
+@crescent.command(name="class-command")
+class ClassCommand:
+    option = crescent.option(str, autocomplete=autocomplete)
+
+    async def callback(self) -> None:
+        await ctx.respond(self.option)
+
+@client.include
+@crescent.command
+async def function_command(
+    ctx: crescent.Context,
+    option: Annotated[str, crescent.Autocomplete(autocomplete)]
+) -> None:
+    await ctx.respond(option)
+```
+
 ### Error Handling
 Errors that are raised by a command can be handled by `crescent.catch_command`.
 
@@ -133,6 +161,9 @@ async def on_err(exc: MyError, ctx: crescent.Context) -> None:
 async def my_command(ctx: crescent.Context):
     raise MyError()
 ```
+
+There is also a `crescent.catch_event` and `crescent.catch_autocomplete` function for
+events and autocomplete respectively.
 
 ### Events
 ```python
