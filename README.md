@@ -118,7 +118,7 @@ async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
 
 ### Autocomplete
 Autocomplete is supported by using a callback function. This function returns a list of tuples where the first
-value is the option name and the second value is the option value. `str`, `int`, and `float` value type
+value is the option name and the second value is the option value. `str`, `int`, and `float` value types
 can be used.
 
 ```python
