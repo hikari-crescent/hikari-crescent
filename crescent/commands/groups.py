@@ -91,7 +91,7 @@ class SubGroup:
     utils_group = crescent.Group("utils")
     time_utils_group = utils_group.sub_group("time")
 
-    # This command will appear under the `utils` group in discord.
+    # This command will appear under the `utils time` group in discord.
     @client.include
     @time_utils_group.child
     @crescent.command
