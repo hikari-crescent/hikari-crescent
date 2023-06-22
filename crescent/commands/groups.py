@@ -52,7 +52,10 @@ class Group:
     """
 
     name: str | LocaleBuilder
+    """The name of the group"""
     description: str | LocaleBuilder | None = None
+    """The description of the group. The discord API supports this feature but
+    it does not do anything."""
     hooks: list[HookCallbackT] | None = None
     """A looks of hooks to run before all commands in this group."""
     after_hooks: list[HookCallbackT] | None = None
