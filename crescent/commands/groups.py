@@ -99,7 +99,6 @@ class SubGroup:
         await ctx.respond(f"The latency is {bot.heartbeat_latency * 1000}ms")
     ```
     """
-
     name: str | LocaleBuilder
     parent: Group
     description: str | LocaleBuilder | None = None
