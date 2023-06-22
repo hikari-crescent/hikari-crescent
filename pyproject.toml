@@ -49,7 +49,7 @@ black = "^23.3.0"
 codespell = "^2.2.5"
 
 [tool.poetry.group.doc.dependencies]
-pdoc = ">=12.1,<14.0"
+pdoc = ">=12.1,<15.0"
 
 [tool.poetry.group.tests.dependencies]
 pytest = "^7.3.2"
