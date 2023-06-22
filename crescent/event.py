@@ -33,7 +33,8 @@ def event(
     callback: CallbackT[Any] | None = None, /, *, event_type: type[Any] | None = None
 ) -> Callable[[CallbackT[Any]], Includable[CallbackT[Any]]] | Includable[CallbackT[Any]]:
     """
-    Listen to an event. This function should be used instead of `hikari.GatewayBot.listen` whenever possible.
+    Listen to an event. This function should be used instead of
+    `hikari.GatewayBot.listen` whenever possible.
 
     ### Example
     ```python
