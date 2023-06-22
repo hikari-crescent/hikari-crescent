@@ -56,7 +56,7 @@ def register_command(
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     dm_enabled: bool = True,
-    autocomplete: dict[str, AutocompleteCallbackT] = {},
+    autocomplete: dict[str, AutocompleteCallbackT[Any]] = {},
     nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta]:
     if not iscoroutinefunction(callback):

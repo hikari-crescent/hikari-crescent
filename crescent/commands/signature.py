@@ -130,6 +130,6 @@ def gen_command_option(param: Parameter) -> CommandOption | None:
     )
 
 
-def get_autocomplete_func(param: Parameter) -> AutocompleteCallbackT | None:
+def get_autocomplete_func(param: Parameter) -> AutocompleteCallbackT[Any] | None:
     _, metadata = _get_origin_and_metadata(param)
     return _get_arg(Autocomplete, metadata)

@@ -89,9 +89,9 @@ def command(
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
             nsfw=nsfw,
-        )
+        )  # pyright: ignore
 
-    autocomplete: dict[str, AutocompleteCallbackT] = {}
+    autocomplete: dict[str, AutocompleteCallbackT[Any]] = {}
     options: list[CommandOption] = []
 
     if isclass(callback):
@@ -195,7 +195,7 @@ def user_command(
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
             nsfw=nsfw,
-        )
+        )  # pyright: ignore
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
@@ -244,7 +244,7 @@ def message_command(
             default_member_permissions=default_member_permissions,
             dm_enabled=dm_enabled,
             nsfw=nsfw,
-        )
+        )  # pyright: ignore
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
