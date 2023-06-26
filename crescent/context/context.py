@@ -277,7 +277,7 @@ class Context(BaseContext):
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
     ) -> Message:
         """
-        Edit the previous response to an interaction.
+        Edit the previous response to this interaction.
 
         ### Example
         ```python
