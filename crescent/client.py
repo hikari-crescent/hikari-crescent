@@ -118,7 +118,7 @@ class Client:
                     print(plugin.model)  # prints "I am a model"
                 ```
 
-                If no model is set, it will default to `None`.
+                If no model is set, the model will default to `None`.
 
             tracked_guilds:
                 The guilds to compare posted commands to. Commands will not be
