@@ -34,7 +34,8 @@ def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
 @dataclass
 class Group:
     """
-    A command group. A command group is a top level command that contains subcommands.
+    A command group. A command group is a top level command that contains subcommands
+    and `SubGroup`s.
 
     ### Example
     ```python
