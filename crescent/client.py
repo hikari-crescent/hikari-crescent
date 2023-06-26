@@ -207,7 +207,7 @@ class Client:
         self, command: INCLUDABLE | None = None
     ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
         """
-        Register an includable object, such as an event or a command.
+        Register an includable object, such as an event or command handler.
 
         ### Example
 
