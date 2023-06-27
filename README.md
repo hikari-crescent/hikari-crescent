@@ -11,6 +11,12 @@
 
 </div>
 
+<div>
+
+<div style="position: relative; float: right;">
+    <img src="https://raw.githubusercontent.com/hikari-crescent/crescent-chan/main/1x.png" style="width: 60%; height: 60%">
+</div>
+
 🌙 A command handler for [Hikari](https://github.com/hikari-py/hikari) that keeps your project neat and tidy.
 
 ## Features
@@ -196,3 +202,5 @@ You can ask questions in the `#crescent` channel in the [Hikari Discord server](
 
 # Contributing
 Create an issue for your feature. There aren't any guidelines right now so just don't be rude.
+
+</div>
