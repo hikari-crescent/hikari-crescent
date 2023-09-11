@@ -80,6 +80,42 @@ def command(
     Includable[AppCommandMeta]
     | Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]
 ):
+    """
+    Register a slash command.
+
+    ### Example
+    ```
+    import hikari
+    import crescent
+
+    bot = hikari.GatewayBot("YOUR_TOKEN_HERE")
+    client = crescent.Client(bot)
+
+    @client.include
+    @crescent.command
+    async def ping(ctx: crescent.Context):
+        await ctx.respond("Pong")
+    ```
+
+    Args:
+        name:
+            The name of this command. If not specified the function name will
+            be used.
+        description:
+            The description of this command. If not specified the description
+            will be set to "No Description".
+        guild:
+            The guild to register this command to. If not specified this
+            command will be registered globally.
+        default_member_permissions:
+            The default permissions for this command. For more information see
+            (the discord api docs)[https://discord.com/developers/docs/topics/permissions]
+            and (the hikari docs)[https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/].
+        dm_enabled:
+            Set to `False` to disable in dms. Defaults to `True`.
+        nsfw:
+            Set to `True` to mark this command as nsfw. Defaults to `None`.
+    """
     if not callback:
         return partial(
             command,
@@ -187,6 +223,40 @@ def user_command(
     dm_enabled: bool = True,
     nsfw: bool | None = None,
 ) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
+    """
+    Register a user command. A user command can be used by right clicking on a discord
+    user. Your bot can have up to 5 user commands.
+
+    ### Example
+    ```
+    import hikari
+    import crescent
+
+    bot = hikari.GatewayBot("YOUR_TOKEN_HERE")
+    client = crescent.Client(bot)
+
+    @client.include
+    @crescent.user_command
+    async def ping(ctx: crescent.Context, user: hikari.User):
+        await ctx.respond(user.username)
+    ```
+
+    Args:
+        name:
+            The name of this command. If not specified the function name will
+            be used.
+        guild:
+            The guild to register this command to. If not specified this
+            command will be registered globally.
+        default_member_permissions:
+            The default permissions for this command. For more information see
+            [the discord api docs](https://discord.com/developers/docs/topics/permissions)
+            and [the hikari docs](https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/).
+        dm_enabled:
+            Set to `False` to disable in dms. Defaults to `True`.
+        nsfw:
+            Set to `True` to mark this command as nsfw. Defaults to `None`.
+    """
     if not callback:
         return partial(
             user_command,
@@ -236,6 +306,40 @@ def message_command(
     dm_enabled: bool = True,
     nsfw: bool | None = None,
 ) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
+    """
+    Register a message command. A message command can be used by right clicking on a discord
+    message. Your bot can have up to 5 message commands.
+
+    ### Example
+    ```
+    import hikari
+    import crescent
+
+    bot = hikari.GatewayBot("YOUR_TOKEN_HERE")
+    client = crescent.Client(bot)
+
+    @client.include
+    @crescent.message_command
+    async def ping(ctx: crescent.Context, message: hikari.Message):
+        await ctx.respond(message.contents)
+    ```
+
+    Args:
+        name:
+            The name of this command. If not specified the function name will
+            be used.
+        guild:
+            The guild to register this command to. If not specified this
+            command will be registered globally.
+        default_member_permissions:
+            The default permissions for this command. For more information see
+            (the discord api docs)[https://discord.com/developers/docs/topics/permissions]
+            and (the hikari docs)[https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/].
+        dm_enabled:
+            Set to `False` to disable in dms. Defaults to `True`.
+        nsfw:
+            Set to `True` to mark this command as nsfw. Defaults to `None`.
+    """
     if not callback:
         return partial(
             message_command,

@@ -57,6 +57,29 @@ class RESTTraits(InteractionServerAware, RESTAware, Protocol):
 
 
 class Client:
+    """
+    The client object is a wrapper around your bot that lets you use
+    Crescent's features.
+
+    ### Example
+
+    ```python
+    import hikari
+    import crescent
+
+    bot = hikari.GatewayBot("your token")
+    client = crescent.Client(bot)
+
+    # Crescent's features can be used.
+    @client.include
+    @crescent.command
+    async def ping(ctx: crescent.Context):
+        await ctx.respong("Pong")
+
+    bot.run()
+    ```
+    """
+
     def __init__(
         self,
         app: RESTTraits | GatewayTraits,
@@ -73,6 +96,30 @@ class Client:
         Args:
             app:
                 The hikari bot instance.
+            model:
+                An object to store global data. This object can be accessed
+                with the `Plugin.model` property.
+
+                ### Example
+
+                ```
+                # In bot.py
+                bot = hikari.GatewayBot("your token")
+                client = crescent.Client(bot, "I am a model")
+
+                client.plugins.load("plugin")
+
+                # In plugin.py
+                plugin = crescent.Plugin()
+
+                @plugin.on_load
+                def on_load():
+                    # Print the model object that was set earlier to the console.
+                    print(plugin.model)  # prints "I am a model"
+                ```
+
+                If no model is set, the model will default to `None`.
+
             tracked_guilds:
                 The guilds to compare posted commands to. Commands will not be
                 automatically removed from guilds that aren't in this list. This should
@@ -92,7 +139,7 @@ class Client:
         self.model = model
 
         if update_commands:
-            self._add_startup_callback(self.post_commands)
+            self._add_startup_callback(self._post_commands)
         self._add_startup_callback(self._on_start)
 
         if tracked_guilds is None:
@@ -124,28 +171,28 @@ class Client:
         self._started = False
 
         if isinstance(app, GatewayTraits):
-            app.event_manager.subscribe(InteractionCreateEvent, self.on_interaction_event)
+            app.event_manager.subscribe(InteractionCreateEvent, self._on_interaction_event)
             return
         app.interaction_server.set_listener(
             CommandInteraction,  # pyright: ignore
-            self.on_rest_interaction,  # type: ignore
+            self._on_rest_interaction,  # type: ignore
         )
         app.interaction_server.set_listener(
             AutocompleteInteraction,  # type: ignore
-            self.on_rest_interaction,  # type: ignore
+            self._on_rest_interaction,  # type: ignore
         )
 
-    async def on_rest_interaction(
+    async def _on_rest_interaction(
         self, interaction: PartialInteraction
     ) -> InteractionResponseBuilder:
         future: Future[InteractionResponseBuilder] = get_running_loop().create_future()
         create_task(handle_resp(self, interaction, future))
         return await future
 
-    async def on_interaction_event(self, event: InteractionCreateEvent) -> None:
+    async def _on_interaction_event(self, event: InteractionCreateEvent) -> None:
         await handle_resp(self, event.interaction, None)
 
-    def post_commands(self) -> Coroutine[Any, Any, None]:
+    def _post_commands(self) -> Coroutine[Any, Any, None]:
         return self._command_handler.register_commands()
 
     @overload
@@ -159,6 +206,20 @@ class Client:
     def include(
         self, command: INCLUDABLE | None = None
     ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
+        """
+        Register an includable object, such as an event or command handler.
+
+        ### Example
+
+        ```python
+        client = crescent.Client(...)
+
+        @client.include
+        @crescent.command
+        async def ping(ctx: crescent.Context):
+            await ctx.respong("Pong")
+        ```
+        """
         if command is None:
             return self.include
 
@@ -170,15 +231,29 @@ class Client:
 
     @property
     def plugins(self) -> PluginManager:
+        """
+        Return the plugin manager object. This object lets you load and unload
+        plugins. See `PluginManager` for more information.
+        """
         return self._plugins
 
     @property
     def commands(self) -> CommandHandler:
+        """
+        Return the command handler object. This object lets you access command
+        information that is not normally accessible. See `CommandHandler` for
+        more information.
+        """
         return self._command_handler
 
     async def on_crescent_command_error(
         self, exc: Exception, ctx: Context, was_handled: bool
     ) -> None:
+        """
+        This function is run when there is an error in a crescent command
+        that is not caught with any error handlers. You can inherit from this
+        class and override this function to change default error handling.
+        """
         if was_handled:
             return
         with suppress(Exception):
@@ -189,6 +264,11 @@ class Client:
     async def on_crescent_event_error(
         self, exc: Exception, event: hk_Event, was_handled: bool
     ) -> None:
+        """
+        This function is run when there is an error in a crescent event
+        that is not caught with any error handlers. You can inherit from this
+        class and override this function to change default error handling.
+        """
         if was_handled:
             return
         print(f"Unhandled exception occurred for {type(event)}:")
@@ -201,6 +281,11 @@ class Client:
         option: AutocompleteInteractionOption,
         was_handled: bool,
     ) -> None:
+        """
+        This function is run when there is an error in an autocomplete handler
+        that is not caught with any error handlers. You can inherit from this
+        class and override this function to change default error handling.
+        """
         if was_handled:
             return
         print(

@@ -135,6 +135,62 @@ class Context(BaseContext):
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
         ensure_message: bool = False,
     ) -> Message | None:
+        """
+        Respond to an interaction. This function can be used multiple times
+        for one interaction,
+
+        ### Example
+        ```python
+        @client.include
+        @crescent.command
+        async def command(ctx: crescent.Context):
+            # Initial response
+            await ctx.respond("hello")
+            # After the first response, a followup response will be sent.
+            await ctx.respond("word")
+        ```
+
+        > 📝 Message flags are ignored in followup responses.
+
+        Args:
+            content:
+                The content to send.
+            ephermial:
+                Send this message as ephermial if set to true. Ephermial
+                messages can be dismissed by the user, similar to Clyde
+                messages. This kwarg only affects the initial response to an
+                interaction.
+            flags:
+                Message flags to send with the message. You do not need to use
+                this, and exists for compatibility in the future. Instead set
+                the `ephermial` kwarg  to `True`.
+            tts:
+                If true, send a text to speech message.
+            attachment:
+                A single attachment to send.
+            attachments:
+                A list of attachments to send.
+            component:
+                A single component to send.
+            components:
+                A list of components to send.
+            embed:
+                A single embed to send.
+            embeds:
+                A list of embeds to send.
+            mentions_everyone:
+                Allow `@everyone` and `@here` to ping users if set to `True`.
+            user_mentions:
+                If `True`, all mentioned users will be sent a notification. If
+                a list of users is provided, only those users will be mentioned.
+            role_mentions:
+                If `True`, all mentioned roles will be sent a notification. If
+                a list of roles is provided, only those roles will be mentioned.
+            ensure_message:
+                A message is not returned the first time you use
+                `Contex.respond`. Set `ensure_message=True` to automatically
+                fetch a message and return it.
+        """
         if ephemeral:
             if flags is UNDEFINED:
                 flags = MessageFlag.EPHEMERAL
@@ -220,6 +276,47 @@ class Context(BaseContext):
         user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
     ) -> Message:
+        """
+        Edit the previous response to this interaction.
+
+        ### Example
+        ```python
+        import asyncio
+
+        @client.include
+        @crescent.command
+        async def command(ctx: crescent.Context):
+            await ctx.respond("hello there")
+            await asyncio.sleep(3)
+            await ctx.edit("general kenobi")
+        ```
+
+        > 📝 Message flags are ignored in followup responses.
+
+        Args:
+            content:
+                The content to send.
+            attachment:
+                A single attachment to send.
+            attachments:
+                A list of attachments to send.
+            component:
+                A single component to send.
+            components:
+                A list of components to send.
+            embed:
+                A single embed to send.
+            embeds:
+                A list of embeds to send.
+            mentions_everyone:
+                Allow `@everyone` and `@here` to ping users if set to `True`.
+            user_mentions:
+                If `True`, all mentioned users will be sent a notification. If
+                a list of users is provided, only those users will be mentioned.
+            role_mentions:
+                If `True`, all mentioned roles will be sent a notification. If
+                a list of roles is provided, only those roles will be mentioned.
+        """
         return await self.app.rest.edit_interaction_response(
             application=self.application_id,
             token=self.token,
@@ -265,6 +362,21 @@ class Context(BaseContext):
         )
 
     async def delete(self) -> None:
+        """
+        Delete the previous response to this interaction.
+
+        ### Example
+        ```python
+        import asyncio
+
+        @client.include
+        @crescent.command
+        async def command(ctx: crescent.Context):
+            await ctx.respond("im going to disappear")
+            await asyncio.sleep(3)
+            await ctx.delete()
+        ```
+        """
         await self.app.rest.delete_interaction_response(
             application=self.application_id, token=self.token
         )

@@ -393,15 +393,72 @@ def option(
     option_type: type[OptionTypesT] | Sequence[type[PartialChannel]],
     description: str | LocaleBuilder = "No Description",
     *,
+    name: str | LocaleBuilder | None = None,
     default: UndefinedOr[Any] = UNDEFINED,
     choices: Sequence[tuple[str | LocaleBuilder, str | int | float]] | None = None,
     min_value: int | float | None = None,
     max_value: int | float | None = None,
     min_length: int | None = None,
     max_length: int | None = None,
-    name: str | LocaleBuilder | None = None,
     autocomplete: AutocompleteCallbackT[Any] | None = None,
 ) -> ClassCommandOption[Any]:
+    """
+    An option when declaring a command using class syntax.
+
+    ### Example
+    ```python
+    @client.include
+    @crescent.command(name="say")
+    class Say:
+        word = crescent.option(str)
+
+        async def callback(self, ctx: crescent.Context):
+            await ctx.respond(self.word)
+    ```
+
+    Args:
+        description:
+            The description for this option. Defaults to "No Description".
+        name:
+            The name to use for this option. By default, the name of the
+            property on the option the option is set to will be used for the
+            name. In the above example the name would be `word`.
+        default:
+            The default value for this option. Specifying this will make this
+            option optional.
+        choices:
+            A set of choices a user can pick from for this option. Only available
+            for `int`, `str`, and `float` option types.
+        min_value:
+            The minimum value for a number the user inputs. Only available for
+            `int` and `float` option types.
+        man_value:
+            The maximum value for a number the user inputs. Only available for
+            `int` and `float` option types.
+        min_length:
+            The minimum length for a `str` that the user inputs.
+        max_length:
+            The maximum length for a `str` that the user inputs.
+        autocomplete:
+            An autocomplete callback for this option.
+
+            ### Example
+            ```python
+            async def autocomplete_response(
+                ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
+            ) -> list[tuple[str, str]]:
+                # Return a list of tuples of (option name, option value)
+                return [("Some Option", "1234")]
+
+            @client.include
+            @crescent.command
+            class autocomplete:
+                result = crescent.option(str, "Respond to the message", autocomplete=autocomplete_response)
+
+                async def callback(self, ctx: crescent.Context) -> None:
+                    await ctx.respond(self.result, ephemeral=True)
+            ```
+    """  # noqa: E501
     _option_type: type[OptionTypesT]
     if (
         isinstance(option_type, type)

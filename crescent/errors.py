@@ -64,6 +64,19 @@ def catch_command(
     """
     Catch an exception or subclasses of an exception passed into this function when the
     exception is raised in a command.
+
+    ### Example
+    ```python
+    @client.include
+    @crescent.catch_command(Exception)
+    async def handler(exc: Exception, ctx: crescent.Context) -> None:
+        await ctx.respond(f"{exc} raised in {ctx.command}!")
+
+    @client.include
+    @crescent.command
+    async def example_command(ctx: crescent.Context):
+        ...
+    ```
     """
     return _catch_command(*exceptions)
 
@@ -74,6 +87,19 @@ def catch_event(
     """
     Catch an exception or subclasses of an exception passed into this function when the
     exception is raised in an event.
+
+    ### Example
+    ```python
+    @client.include
+    @crescent.catch_event(Exception)
+    async def handler(exc: Exception, event: hikari.Event) -> None:
+        print(f"{exc} raised in {event}!")
+
+    @client.include
+    @crescent.event
+    async def example_error(event: hikari.MessageCreateEvent) -> None:
+        raise Exception
+    ```
     """
     return _catch_event(*exceptions)
 
@@ -86,5 +112,23 @@ def catch_autocomplete(
     """
     Catch an exception or subclasses of an exception passed into this function when the
     exception is raised in an autocomplete handler.
+
+    ### Example
+    ```python
+    @client.include
+    @crescent.catch_autocomplete(Exception)
+    async def on_autocomplete_random_error(
+        exc: Exception,
+        ctx: crescent.AutocompleteContext,
+        inter: hikari.AutocompleteInteractionOption,
+    ) -> None:
+        print(f"{exc} raised in autocomplete for {ctx.command}!")
+
+    # An autocomplete callback that a command is using.
+    async def example_autocomplete(
+        ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
+    ) -> list[tuple[str, str]]:
+        raise Exception
+    ```
     """
     return _catch_autocomplete(*exceptions)

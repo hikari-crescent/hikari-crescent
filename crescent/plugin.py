@@ -28,6 +28,12 @@ _LOG = getLogger(__name__)
 
 
 class PluginManager:
+    """
+    A class that allows you to load and unload plugins. You should not construct
+    this class yourself. It will be provided to you as the `clients.plugins`
+    property when you construct a `Client` object.
+    """
+
     def __init__(self, client: Client) -> None:
         self.plugins: dict[str, Plugin[Any, Any]] = {}
         self._client = client
@@ -179,6 +185,20 @@ class PluginManager:
 
 
 class Plugin(Generic[BotT, ModelT]):
+    """
+    A plugin object to be used in a plugin file.
+
+    ### Example
+    ```python
+    import hikari
+    import crescent
+
+    plugin = crescent.Plugin[hikari.GatewayBot, None]()
+    ```
+
+    You can load this file with `PluginManager.load`
+    """
+
     def __init__(
         self,
         *,
