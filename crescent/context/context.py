@@ -39,7 +39,7 @@ __all__: Sequence[str] = ("Context",)
 class Context(BaseContext):
     """Represents the context for command interactions"""
 
-    interaction: CommandInteraction
+    interaction: CommandInteraction  # pyright: ignore [reportIncompatibleVariableOverride]
 
     @property
     def channel(self) -> PermissibleGuildChannel | GuildThreadChannel | None:
