@@ -74,7 +74,7 @@ class Loop(Task):
         self.delay_seconds = timedelta.total_seconds()
 
         # We do not want to schedule a new task if the loop is not currently running
-        # because that would unitentionally start the loop again.
+        # because that would unintentionally start the loop again.
         if self.running:
             self.stop()
             self.start()
