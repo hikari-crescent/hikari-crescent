@@ -43,7 +43,7 @@ class Loop(Task):
         hours: int = 0,
         minutes: int = 0,
         seconds: int = 0,
-    ):
+    ) -> None:
         """
         Cancel the currently scheduled task and schedule the next task and future tasks
         with a new wait time.
@@ -53,7 +53,7 @@ class Loop(Task):
         from datetime import datetime
         import crescent
         from crescent.ext import tasks
-    
+
         bot = hikari.GatewayBot("...")
         client = crescent.Client(bot)
 

@@ -188,7 +188,7 @@ class Context(BaseContext):
                 a list of roles is provided, only those roles will be mentioned.
             ensure_message:
                 A message is not returned the first time you use
-                `Contex.respond`. Set `ensure_message=True` to automatically
+                `Context.respond`. Set `ensure_message=True` to automatically
                 fetch a message and return it.
         """
         if ephemeral:
