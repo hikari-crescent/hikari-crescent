@@ -89,9 +89,7 @@ _serialization_map: dict[OptionType, Callable[[AutocompleteContext, Snowflake], 
 class AutocompleteContext(BaseContext):
     """Represents the context for autocomplete interactions"""
 
-    __slots__ = ("interaction",)
-
-    interaction: AutocompleteInteraction
+    interaction: AutocompleteInteraction  # pyright: ignore [reportIncompatibleVariableOverride]
 
     async def fetch_options(self) -> dict[str, Any]:
         if not self.interaction.options:
