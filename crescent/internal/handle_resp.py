@@ -277,7 +277,7 @@ def _extract_value(
 
 def _resolved_data_to_kwargs(interaction: CommandInteraction) -> dict[str, Message | User]:
     if not interaction.resolved:
-        raise ValueError("interaction.resoved should be defined when running this function")
+        raise ValueError("interaction.resolved should be defined when running this function")
 
     if interaction.resolved.messages:
         return {"message": next(iter(interaction.resolved.messages.values()))}
