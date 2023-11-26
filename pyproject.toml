@@ -24,8 +24,8 @@ include = ["crescent/banner.txt"]
 packages = [{ include = "crescent" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-hikari = "==2.0.0.dev121"
+python = ">=3.8,<3.13"
+hikari = "==2.0.0.dev122"
 sigparse = "^3.0.0"
 floodgate-rs = { version = "^0.1.1", optional = true }
 types-croniter = { version = "==1.0.11", optional = true }
