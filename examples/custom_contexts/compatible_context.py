@@ -17,11 +17,11 @@ class CustomContext(crescent.BaseContext):
 
     async def create_response(self) -> None:
         # When creating a response with type `hikari.ResponseType.MESSAGE_CREATE``
-        self._has_created_message = True
+        self._has_created_response = True
         self.app.rest.create_interaction_response(response_type=hikari.ResponseType.MESSAGE_CREATE)
 
     async def edit_response(self) -> None:
         # Set `self._has_created_message` to True when editing the response to a
         # deferred intereaction.
-        self._has_created_message = True
+        self._has_created_response = True
         self.app.rest.edit_interaction_response(...)

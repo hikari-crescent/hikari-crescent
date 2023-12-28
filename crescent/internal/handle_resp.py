@@ -226,7 +226,7 @@ def _context_from_interaction_resp(
         sub_group=sub_group,
         command_type=CommandType(interaction.command_type),
         options=callback_options,
-        _has_created_message=False,
+        _has_created_response=False,
         _has_deferred_response=False,
         _rest_interaction_future=None,
     )
