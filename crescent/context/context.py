@@ -286,7 +286,7 @@ class Context(BaseContext):
 
         Raises:
             InteractionAlreadyAcknowledgedError:
-                If you use this method after responding to an interaction.
+                Raised when calling this method after responding to an interaction.
         """
         if self._has_created_response or self._has_deferred_response:
             raise InteractionAlreadyAcknowledgedError(
@@ -318,14 +318,14 @@ class Context(BaseContext):
 
         Raises:
             InteractionAlreadyAcknowledgedError:
-                If you use this method after responding to an interaction.
+                Raised when calling this method after responding to an interaction.
 
         Returns:
             The message if `ensure_message` is `True` and a message is sent.
         """
         if self._has_created_response or self._has_deferred_response:
             raise InteractionAlreadyAcknowledgedError(
-                "You cannot use this method after already responding to an interaction."
+                "This method cannot be used after already responding to an interaction."
             )
 
         if future := self._unset_future:
