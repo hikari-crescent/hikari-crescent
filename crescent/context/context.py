@@ -321,7 +321,7 @@ class Context(BaseContext):
                 Raised when calling this method after responding to an interaction.
 
         Returns:
-            The message if `ensure_message` is `True` and a message is sent.
+            The message if `ensure_message` is `True` and a message builder was passed.
         """
         if self._has_created_response or self._has_deferred_response:
             raise InteractionAlreadyAcknowledgedError(
