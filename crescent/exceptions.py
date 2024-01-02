@@ -22,3 +22,7 @@ class PluginAlreadyLoadedError(CrescentException):
 
 class PermissionsError(CrescentException):
     """Raise when a permission is declared in a subcommand"""
+
+
+class InteractionAlreadyAcknowledgedError(CrescentException):
+    """Raise when an interaction is already acknowledged"""

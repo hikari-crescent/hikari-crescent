@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, Union, overload
 
 from hikari import (
     UNDEFINED,
@@ -10,9 +10,16 @@ from hikari import (
     PermissibleGuildChannel,
     ResponseType,
 )
+from hikari.api import (
+    ComponentBuilder,
+    InteractionDeferredBuilder,
+    InteractionMessageBuilder,
+    InteractionModalBuilder,
+)
 from hikari.traits import CacheAware
 
 from crescent.context.base_context import BaseContext
+from crescent.exceptions import InteractionAlreadyAcknowledgedError
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Sequence
@@ -30,10 +37,12 @@ if TYPE_CHECKING:
         UndefinedOr,
         UndefinedType,
     )
-    from hikari.api import ComponentBuilder
-
 
 __all__: Sequence[str] = ("Context",)
+
+ResponseBuilderT = Union[
+    InteractionMessageBuilder, InteractionDeferredBuilder, InteractionModalBuilder
+]
 
 
 class Context(BaseContext):
@@ -210,7 +219,7 @@ class Context(BaseContext):
             role_mentions=role_mentions,
         )
 
-        if not (self._has_deferred_response or self._has_created_message):
+        if not (self._has_deferred_response or self._has_created_response):
             if future := self._unset_future:
                 resp = (
                     self.interaction.build_response()
@@ -248,19 +257,106 @@ class Context(BaseContext):
                     response_type=ResponseType.MESSAGE_CREATE,
                 )
 
-            self._has_created_message = True
+            self._has_created_response = True
 
             if not ensure_message:
                 return None
 
             return await self.app.rest.fetch_interaction_response(self.application_id, self.token)
 
-        if self._has_deferred_response and not self._has_created_message:
+        if self._has_deferred_response and not self._has_created_response:
             res = await self.edit(**kwargs)
-            self._has_created_message = True
+            self._has_created_response = True
             return res
 
         return await self.followup(**kwargs)
+
+    async def respond_with_modal(
+        self, title: str, custom_id: str, components: Sequence[ComponentBuilder]
+    ) -> None:
+        """Respond to an interaction with a modal.
+
+        Args:
+            title:
+                The title of the modal.
+            custom_id:
+                The custom id of the modal.
+            components:
+                The components to add to the modal.
+
+        Raises:
+            InteractionAlreadyAcknowledgedError:
+                Raised when calling this method after responding to an interaction.
+        """
+        if self._has_created_response or self._has_deferred_response:
+            raise InteractionAlreadyAcknowledgedError(
+                "You cannot use this method after already responding to an interaction."
+            )
+
+        if future := self._unset_future:
+            builder = self.interaction.build_modal_response(title, custom_id)
+            for component in components:
+                builder.add_component(component)
+            future.set_result(builder)
+        else:
+            await self.interaction.create_modal_response(
+                title=title, custom_id=custom_id, components=components
+            )
+        self._has_created_response = True
+
+    async def respond_with_builder(
+        self, builder: ResponseBuilderT, ensure_message: bool = False
+    ) -> Message | None:
+        """Respond to an interaction with a builder.
+
+        Args:
+            builder:
+                The builder to respond with.
+            ensure_message:
+                If an InteractionMessageBuilder is passed, this will fetch the
+                message and return it. Otherwise does nothing.
+
+        Raises:
+            InteractionAlreadyAcknowledgedError:
+                Raised when calling this method after responding to an interaction.
+
+        Returns:
+            The message if `ensure_message` is `True` and a message builder was passed.
+        """
+        if self._has_created_response or self._has_deferred_response:
+            raise InteractionAlreadyAcknowledgedError(
+                "This method cannot be used after already responding to an interaction."
+            )
+
+        if future := self._unset_future:
+            future.set_result(builder)
+        else:
+            if isinstance(builder, InteractionMessageBuilder):
+                await self.interaction.create_initial_response(
+                    response_type=ResponseType.MESSAGE_CREATE,
+                    content=builder.content,
+                    tts=builder.is_tts,
+                    flags=builder.flags,
+                    embeds=builder.embeds,
+                    attachments=builder.attachments,
+                    components=builder.components,
+                    mentions_everyone=builder.mentions_everyone,
+                    user_mentions=builder.user_mentions,
+                    role_mentions=builder.role_mentions,
+                )
+            elif isinstance(builder, InteractionDeferredBuilder):
+                await self.interaction.create_initial_response(
+                    response_type=ResponseType.DEFERRED_MESSAGE_CREATE, flags=builder.flags
+                )
+            else:
+                await self.interaction.create_modal_response(
+                    title=builder.title, custom_id=builder.custom_id, components=builder.components
+                )
+        self._has_created_response = True
+
+        if ensure_message and isinstance(builder, InteractionMessageBuilder):
+            return await self.app.rest.fetch_interaction_response(self.application_id, self.token)
+        return None
 
     async def edit(
         self,

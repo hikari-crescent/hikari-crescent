@@ -23,7 +23,7 @@ def test_into():
         group=16,
         sub_group=17,
         options=18,
-        _has_created_message=19,
+        _has_created_response=19,
         _has_deferred_response=20,
         _rest_interaction_future=21,
     )
@@ -48,7 +48,7 @@ def test_into():
     assert ctx.group == ctx2.group
     assert ctx.sub_group == ctx2.sub_group
     assert ctx.options == ctx2.options
-    assert ctx._has_created_message == ctx2._has_created_message
+    assert ctx._has_created_response == ctx2._has_created_response
     assert ctx._has_deferred_response == ctx2._has_deferred_response
     assert ctx._rest_interaction_future == ctx2._rest_interaction_future
 
@@ -82,7 +82,7 @@ async def test_supports_context():
         group=None,
         sub_group=None,
         options=None,
-        _has_created_message=None,
+        _has_created_response=None,
         _has_deferred_response=None,
         _rest_interaction_future=None,
     )
