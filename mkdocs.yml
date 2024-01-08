@@ -93,7 +93,7 @@ plugins:
       handlers:
         python:
           import:
-            - https://docs.python.org/3.10/objects.inv
+            - https://docs.python.org/3.8/objects.inv
             - https://docs.hikari-py.dev/en/latest/objects.inv
           options:
             heading_level: 3
