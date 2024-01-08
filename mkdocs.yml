@@ -99,7 +99,7 @@ plugins:
             heading_level: 3
             annotations_path: source
             docstring_section_style: spacy
-            docstring_style: numpy
+            docstring_style: google
             inherited_members: true
             merge_init_into_class: true
             separate_signature: true
