@@ -10,7 +10,7 @@ def poetry_session(
     *groups: str, extras: bool = False, **kwargs: typing.Any
 ) -> typing.Callable[[typing.Callable[[nox.Session], None]], typing.Callable[[nox.Session], None]]:
     def inner(
-        callback: typing.Callable[[nox.Session], None]
+        callback: typing.Callable[[nox.Session], None],
     ) -> typing.Callable[[nox.Session], None]:
         @nox.session(**kwargs)
         @functools.wraps(callback)
@@ -69,4 +69,9 @@ def pytest(session: nox.Session) -> None:
 
 @poetry_session("doc")
 def docs(session: nox.Session) -> None:
-    session.run("pdoc", "crescent", "-d", "google", "-o", "docs/_build")
+    session.run("poetry", "run", "mkdocs", "-q", "build")
+
+
+@poetry_session("doc")
+def servedocs(session: nox.Session) -> None:
+    session.run("poetry", "run", "mkdocs", "serve")

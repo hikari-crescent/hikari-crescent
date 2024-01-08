@@ -1,1 +1,1 @@
-poetry run pdoc crescent -o docs/_build -d google
+poetry run mkdocs -q build
