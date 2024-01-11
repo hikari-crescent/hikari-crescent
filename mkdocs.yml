@@ -113,15 +113,14 @@ plugins:
             extensions:
                 - griffe_inherited_docstrings
 nav:
-  - Getting Started:
-    - home.md
-    - getting_started.md
+  - Welcome to Crescent: index.md
+  - getting_started.md
   - Guides:
     - guides/index.md
     - guides/commands.md
     - guides/plugins.md
-    - guides/hooks.md
     - guides/events.md
+    - guides/hooks.md
     - guides/error_handling.md
     - Extension Libraries:
       - guides/ext/cooldowns.md

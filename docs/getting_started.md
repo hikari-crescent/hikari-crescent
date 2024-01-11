@@ -113,12 +113,12 @@ Copy this code into a python file, and run with `python filename.py`.
     ```
 
 ## Tooling
-It is reccomended to use a typechecker when working with crescent. Both the [Mypy](https://github.com/python/mypy) and [Pyright](https://github.com/microsoft/pyright) typecheckers are supported. The developer reccomends pyright if you don't know what to pick.
+It is recommended to use a typechecker when working with crescent. Both the [Mypy](https://github.com/python/mypy) and [Pyright](https://github.com/microsoft/pyright) typecheckers are supported. The developer recommends pyright if you don't know what to pick.
 
 !!! warning
 
-    Crescent does not thow exceptions for issues a typechecker would catch.
+    Crescent does not throw exceptions for issues a typechecker would catch. Use a typechecker.
 
 ## Next Steps
 
-🎉 Congradulations! At this point you should have a bot. Now you should check out the [guides](../guides), or if want to jump straight into coding, check out the [template project](https://github.com/hikari-crescent/template) for some quick examples.
+🎉 Congratulations! At this point you should have a bot. Now you should check out the [guides](../guides), or if want to jump straight into coding, check out the [template project](https://github.com/hikari-crescent/template) for some quick examples.

@@ -13,8 +13,8 @@ Heres a bunch of guides for things you'll find useful! Please make a Github issu
 
     ---
 
-    The fundementals for creating slash commands with crescent, and everything past
-    the fundementals.
+    The fundamentals for creating slash commands with crescent, and everything past
+    the fundamentals.
 
   - [:octicons-plug-16: **Plugins**](plugins)
 
@@ -32,21 +32,15 @@ Heres a bunch of guides for things you'll find useful! Please make a Github issu
 
     ---
 
-    Hooks are a powerfull tool allowing you to run code before an after a
+    Hooks are a powerful tool allowing you to run code before an after a
     command. Hooks can be used for command setup and cleanup code.
 
   - [:material-fishbowl-outline: **Error Handling**](error_handling)
 
     ---
 
-    Crescent provides powerfull tools for error handling, giving you control even
+    Crescent provides powerful tools for error handling, giving you control even
     when things go wrong.
-
-  - [:octicons-plug-16: **Plugins**](plugins)
-
-    ---
-
-    Plugins are used to split your bot into multiple files.
 
   - [:material-snowflake: **Cooldowns**](ext/cooldowns)
 
@@ -66,7 +60,7 @@ Heres a bunch of guides for things you'll find useful! Please make a Github issu
 
     ---
 
-    Locales are used to localize your bot for different langauges.
+    Locales are used to localize your bot for different languages.
 
 </div>
 
