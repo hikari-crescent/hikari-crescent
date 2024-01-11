@@ -84,7 +84,7 @@ def command(
     Register a slash command.
 
     ### Example
-    ```
+    ```python
     import hikari
     import crescent
 
@@ -228,7 +228,7 @@ def user_command(
     user. Your bot can have up to 5 user commands.
 
     ### Example
-    ```
+    ```python
     import hikari
     import crescent
 
@@ -311,7 +311,7 @@ def message_command(
     message. Your bot can have up to 5 message commands.
 
     ### Example
-    ```
+    ```python
     import hikari
     import crescent
 

@@ -36,8 +36,8 @@ jobs:
         run: pip install poetry
       - name: Build docs
         run: |
-          poetry install --with docs
-          poetry run mkdocs -q build
+          poetry install
+          poetry run nox -s docs
       - name: Setup Node
         uses: actions/setup-node@v2
       - name: Publish

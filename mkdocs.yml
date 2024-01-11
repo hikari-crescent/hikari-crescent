@@ -49,6 +49,7 @@ theme:
     - navigation.indexes
     - navigation.footer
     - navigation.top
+    - navigation.tabs
     - content.action.view
     - content.action.edit
     - content.tooltips
@@ -92,6 +93,7 @@ plugins:
       default_handler: python
       handlers:
         python:
+          paths: ["", "crescent/ext/"]
           import:
             - https://docs.python.org/3.8/objects.inv
             - https://docs.hikari-py.dev/en/latest/objects.inv
@@ -110,6 +112,37 @@ plugins:
             show_symbol_type_heading: true
             extensions:
                 - griffe_inherited_docstrings
+nav:
+  - Welcome to Crescent: index.md
+  - getting_started.md
+  - Guides:
+    - guides/index.md
+    - guides/commands.md
+    - guides/plugins.md
+    - guides/events.md
+    - guides/hooks.md
+    - guides/error_handling.md
+    - Extension Libraries:
+      - guides/ext/cooldowns.md
+      - guides/ext/tasks.md
+      - guides/ext/locales.md
+  - API Reference:
+    - api_reference/index.md
+    - api_reference/client.md
+    - api_reference/commands.md
+    - api_reference/context.md
+    - api_reference/events.md
+    - api_reference/errors.md
+    - api_reference/plugin.md
+    - api_reference/locale.md
+    - api_reference/typedefs.md
+    - api_reference/mentionable.md
+    - api_reference/exceptions.md
+    - Extension Libraries:
+      - api_reference/ext/cooldowns.md
+      - api_reference/ext/tasks.md
+      - api_reference/ext/locales.md
+
 watch:
   - docs
   - README.md

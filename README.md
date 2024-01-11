@@ -30,9 +30,8 @@
 
 ### Links
 > 📦 | [Pypi](https://pypi.org/project/hikari-crescent/)<br>
-> 📖 | [User Guide](https://hikari-crescent.github.io/book)<br>
+> 🗃️ | [Docs](https://hikari-crescent.github.io/hikari-crescent/)<br>
 > 🎨 | [Template Project](https://github.com/hikari-crescent/template)<br>
-> 🗃️ | [API Reference](https://hikari-crescent.github.io/hikari-crescent/crescent.html)<br>
 
 ## Installation
 Crescent is supported in python3.8+.
