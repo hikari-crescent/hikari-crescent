@@ -47,6 +47,7 @@ dmypy.json
 # Docs
 site/
 .cache/
+docs/_build
 
 # coverage-py
 .coverage
