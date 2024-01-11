@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hikari
-import typing_extensions
 
 import crescent
 
@@ -26,16 +25,6 @@ async def fetch_autocomplete_options(
 
     # Return no options.
     return []
-
-
-# Both these commands function identically
-@client.include
-@crescent.command
-async def functional_example(
-    ctx: crescent.Context,
-    result: typing_extensions.Annotated[str, crescent.Autocomplete(autocomplete_response)],
-) -> None:
-    await ctx.respond(result, ephemeral=True)
 
 
 @client.include

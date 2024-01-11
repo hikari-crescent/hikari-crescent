@@ -43,7 +43,7 @@ __all__: Sequence[str] = (
     "AutocompleteValueT",
 )
 
-CommandCallbackT = Callable[["BaseContext"], Awaitable[Any]]
+CommandCallbackT = Callable[[Any], Awaitable[Any]]
 UserCommandCallbackT = Callable[[Any, User], Awaitable[None]]
 MessageCommandCallbackT = Callable[[Any, Message], Awaitable[None]]
 
