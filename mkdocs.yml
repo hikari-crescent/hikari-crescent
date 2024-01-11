@@ -117,11 +117,16 @@ nav:
     - home.md
     - getting_started.md
   - Guides:
+    - guides/index.md
     - guides/commands.md
     - guides/plugins.md
     - guides/hooks.md
     - guides/events.md
-    - guides/startup_shutdown.md
+    - guides/error_handling.md
+    - Extension Libraries:
+      - guides/ext/cooldowns.md
+      - guides/ext/tasks.md
+      - guides/ext/locales.md
   - API Reference:
     - api_reference/index.md
     - api_reference/client.md
@@ -134,9 +139,10 @@ nav:
     - api_reference/typedefs.md
     - api_reference/mentionable.md
     - api_reference/exceptions.md
-    - api_reference/ext/cooldowns.md
-    - api_reference/ext/tasks.md
-    - api_reference/ext/locales.md
+    - Extension Libraries:
+      - api_reference/ext/cooldowns.md
+      - api_reference/ext/tasks.md
+      - api_reference/ext/locales.md
 
 watch:
   - docs
