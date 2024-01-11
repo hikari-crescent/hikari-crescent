@@ -18,6 +18,11 @@ to get an idea of how your code will look.
 pip install hikari-crescent
 ```
 
+## Links
+
+> 📦 | [Pypi](https://pypi.org/project/hikari-crescent/)<br>
+> :material-github: | [Github](https://github.com/hikari-crescent/hikari-crescent)<br>
+
 ## Documentation Credits
 
 Thank you to [@hypergonial](https://github.com/Hypergonial) for help with setting up the docs.
