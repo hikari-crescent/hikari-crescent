@@ -6,28 +6,32 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-      
-      
-        <link rel="canonical" href="https://hikari-crescent.github.io/">
+        <meta name="description" content="User guides for `hikari-crescent`">
       
       
       
-        <link rel="next" href="getting_started/">
+        <link rel="canonical" href="https://hikari-crescent.github.io/guides/">
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+        <link rel="prev" href="../getting_started/">
+      
+      
+        <link rel="next" href="commands/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
     
     
       
-        <title>Welcome to Crescent - hikari-crescent documentation</title>
+        <title>Guides - hikari-crescent documentation</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
   
@@ -87,9 +91,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -98,11 +102,11 @@
       
         <meta  property="og:type"  content="website" >
       
-        <meta  property="og:title"  content="Welcome to Crescent" >
+        <meta  property="og:title"  content="Guides - hikari-crescent documentation" >
       
-        <meta  property="og:description"  content="None" >
+        <meta  property="og:description"  content="User guides for `hikari-crescent`" >
       
-        <meta  property="og:image"  content="https://hikari-crescent.github.io/assets/images/social/index.png" >
+        <meta  property="og:image"  content="https://hikari-crescent.github.io/assets/images/social/guides/index.png" >
       
         <meta  property="og:image:type"  content="image/png" >
       
@@ -110,15 +114,15 @@
       
         <meta  property="og:image:height"  content="630" >
       
-        <meta  property="og:url"  content="https://hikari-crescent.github.io/" >
+        <meta  property="og:url"  content="https://hikari-crescent.github.io/guides/" >
       
         <meta  name="twitter:card"  content="summary_large_image" >
       
-        <meta  name="twitter:title"  content="Welcome to Crescent" >
+        <meta  name="twitter:title"  content="Guides - hikari-crescent documentation" >
       
-        <meta  name="twitter:description"  content="None" >
+        <meta  name="twitter:description"  content="User guides for `hikari-crescent`" >
       
-        <meta  name="twitter:image"  content="https://hikari-crescent.github.io/assets/images/social/index.png" >
+        <meta  name="twitter:image"  content="https://hikari-crescent.github.io/assets/images/social/guides/index.png" >
       
     
     
@@ -140,11 +144,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#welcome-to-crescent" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -155,7 +154,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="hikari-crescent documentation" class="md-header__button md-logo" aria-label="hikari-crescent documentation" data-md-component="logo">
+    <a href=".." title="hikari-crescent documentation" class="md-header__button md-logo" aria-label="hikari-crescent documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.768 3.96v.001l-.002-.005a9.08 9.08 0 0 0-.218-.779c-.13-.394.21-.8.602-.67.29.096.575.205.855.328l.01.005A10.002 10.002 0 0 1 12 22a10.002 10.002 0 0 1-9.162-5.985l-.004-.01a9.722 9.722 0 0 1-.329-.855c-.13-.392.277-.732.67-.602.257.084.517.157.78.218l.004.002A9 9 0 0 0 14.999 6a9.09 9.09 0 0 0-.231-2.04ZM16.5 6c0 5.799-4.701 10.5-10.5 10.5-.426 0-.847-.026-1.26-.075A8.5 8.5 0 1 0 16.425 4.74c.05.413.075.833.075 1.259Z"/></svg>
@@ -175,7 +174,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Welcome to Crescent
+              Guides
             
           </span>
         </div>
@@ -287,11 +286,9 @@
         
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
         
   
     
@@ -308,7 +305,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="getting_started/" class="md-tabs__link">
+      <a href="../getting_started/" class="md-tabs__link">
         
   
     
@@ -323,11 +320,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="guides/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
           
   
     
@@ -347,7 +346,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="api_reference/" class="md-tabs__link">
+        <a href="../api_reference/" class="md-tabs__link">
           
   
     
@@ -371,6 +370,8 @@
           
             
               
+                
+              
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -384,7 +385,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="hikari-crescent documentation" class="md-nav__button md-logo" aria-label="hikari-crescent documentation" data-md-component="logo">
+    <a href=".." title="hikari-crescent documentation" class="md-nav__button md-logo" aria-label="hikari-crescent documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.768 3.96v.001l-.002-.005a9.08 9.08 0 0 0-.218-.779c-.13-.394.21-.8.602-.67.29.096.575.205.855.328l.01.005A10.002 10.002 0 0 1 12 22a10.002 10.002 0 0 1-9.162-5.985l-.004-.01a9.722 9.722 0 0 1-.329-.855c-.13-.392.277-.732.67-.602.257.084.517.157.78.218l.004.002A9 9 0 0 0 14.999 6a9.09 9.09 0 0 0-.231-2.04ZM16.5 6c0 5.799-4.701 10.5-10.5 10.5-.426 0-.847-.026-1.26-.075A8.5 8.5 0 1 0 16.425 4.74c.05.413.075.833.075 1.259Z"/></svg>
@@ -411,30 +412,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Welcome to Crescent
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -443,53 +424,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#resources" class="md-nav__link">
-    <span class="md-ellipsis">
-      Resources
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#acknowledgements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Acknowledgements
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -501,7 +435,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/" class="md-nav__link">
+      <a href="../getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -518,6 +452,8 @@
       
   
   
+    
+  
   
   
     
@@ -546,17 +482,17 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="guides/" class="md-nav__link ">
+            <a href="./" class="md-nav__link md-nav__link--active">
               
   
   <span class="md-ellipsis">
@@ -567,13 +503,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link md-nav__link--active" for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Guides
@@ -589,7 +525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/commands/" class="md-nav__link">
+      <a href="commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -610,7 +546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/plugins/" class="md-nav__link">
+      <a href="plugins/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -631,7 +567,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/events/" class="md-nav__link">
+      <a href="events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -652,7 +588,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/hooks/" class="md-nav__link">
+      <a href="hooks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -673,7 +609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/error_handling/" class="md-nav__link">
+      <a href="error_handling/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -739,7 +675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/ext/cooldowns/" class="md-nav__link">
+      <a href="ext/cooldowns/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -760,7 +696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/ext/tasks/" class="md-nav__link">
+      <a href="ext/tasks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -781,7 +717,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/ext/locales/" class="md-nav__link">
+      <a href="ext/locales/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -862,7 +798,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/" class="md-nav__link ">
+            <a href="../api_reference/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -895,7 +831,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/client/" class="md-nav__link">
+      <a href="../api_reference/client/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -916,7 +852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/commands/" class="md-nav__link">
+      <a href="../api_reference/commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -937,7 +873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/context/" class="md-nav__link">
+      <a href="../api_reference/context/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -958,7 +894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/events/" class="md-nav__link">
+      <a href="../api_reference/events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -979,7 +915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/errors/" class="md-nav__link">
+      <a href="../api_reference/errors/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1000,7 +936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/plugin/" class="md-nav__link">
+      <a href="../api_reference/plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1021,7 +957,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/locale/" class="md-nav__link">
+      <a href="../api_reference/locale/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1042,7 +978,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/typedefs/" class="md-nav__link">
+      <a href="../api_reference/typedefs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1063,7 +999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/mentionable/" class="md-nav__link">
+      <a href="../api_reference/mentionable/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1084,7 +1020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/" class="md-nav__link">
+      <a href="../api_reference/exceptions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1150,7 +1086,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/ext/cooldowns/" class="md-nav__link">
+      <a href="../api_reference/ext/cooldowns/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1171,7 +1107,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/ext/tasks/" class="md-nav__link">
+      <a href="../api_reference/ext/tasks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1192,7 +1128,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/ext/locales/" class="md-nav__link">
+      <a href="../api_reference/ext/locales/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1236,7 +1172,7 @@
                   
 
   
-    <a href="https://github.com/hikari-crescent/hikari-crescent/edit/main/docs/index.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/hikari-crescent/hikari-crescent/edit/main/docs/guides/index.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
     </a>
@@ -1245,46 +1181,65 @@
     
       
     
-    <a href="https://github.com/hikari-crescent/hikari-crescent/raw/main/docs/index.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/hikari-crescent/hikari-crescent/raw/main/docs/guides/index.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
     </a>
   
 
 
-<h1 id="welcome-to-crescent">Welcome to Crescent<a class="headerlink" href="#welcome-to-crescent" title="Permanent link">#</a></h1>
-<p><a href="https://github.com/hikari-crescent/crescent-chan">
-  <img src="https://raw.githubusercontent.com/hikari-crescent/crescent-chan/main/1x.png" align=right width="240">
-</a></p>
-<p>Crescent is a command handler for <a href="https://github.com/hikari-py/hikari">Hikari</a> that keeps
-your projects neat and tidy! It is designed from the ground up to function with application
-commands in a type safe manner. You won't run into silly bugs when using Crescent!
-<br>
-Take a look at <a href="https://github.com/magpie-dev/crescent-template">the crescent template</a>
-to see how your code will look when using Crescent.</p>
-<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">#</a></h2>
-<p><code>hikari-crescent</code> supports Python 3.8 and newer.</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>hikari-crescent
-</span></code></pre></div>
-<h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">#</a></h2>
+  <h1>Guides</h1>
+
+<p>Heres a bunch of guides for things you'll find useful! Please make a Github issue if you find any errors.</p>
 <div class="grid cards">
 <ul>
 <li>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="m8.878.392 5.25 3.045c.54.314.872.89.872 1.514v6.098a1.75 1.75 0 0 1-.872 1.514l-5.25 3.045a1.75 1.75 0 0 1-1.756 0l-5.25-3.045A1.75 1.75 0 0 1 1 11.049V4.951c0-.624.332-1.201.872-1.514L7.122.392a1.75 1.75 0 0 1 1.756 0ZM7.875 1.69l-4.63 2.685L8 7.133l4.755-2.758-4.63-2.685a.248.248 0 0 0-.25 0ZM2.5 5.677v5.372c0 .09.047.171.125.216l4.625 2.683V8.432Zm6.25 8.271 4.625-2.683a.25.25 0 0 0 .125-.216V5.677L8.75 8.432Z"/></svg></span> <a href="https://pypi.org/project/hikari-crescent/">Pypi</a><br></p>
+<p><a href="commands"><strong>/  Commands</strong></a></p>
+<hr />
+<p>The fundamentals for creating slash commands with crescent, and everything past
+the fundamentals.</p>
 </li>
 <li>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z"/></svg></span> <a href="https://github.com/hikari-crescent/hikari-crescent">Github</a><br></p>
+<p><a href="plugins"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4 8H2.5a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-1.5 0V9a2.5 2.5 0 0 1 2.5-2.5H4V5.133a1.75 1.75 0 0 1 1.533-1.737l2.831-.353.76-.913c.332-.4.825-.63 1.344-.63h.782c.966 0 1.75.784 1.75 1.75V4h2.25a.75.75 0 0 1 0 1.5H13v4h2.25a.75.75 0 0 1 0 1.5H13v.75a1.75 1.75 0 0 1-1.75 1.75h-.782c-.519 0-1.012-.23-1.344-.63l-.761-.912-2.83-.354A1.75 1.75 0 0 1 4 9.867Zm6.276-4.91-.95 1.14a.753.753 0 0 1-.483.265l-3.124.39a.25.25 0 0 0-.219.248v4.734c0 .126.094.233.219.249l3.124.39a.752.752 0 0 1 .483.264l.95 1.14a.25.25 0 0 0 .192.09h.782a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25h-.782a.25.25 0 0 0-.192.09Z"/></svg></span> <strong>Plugins</strong></a></p>
+<hr />
+<p>Plugins are used to split your bot into multiple files.</p>
 </li>
 <li>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"/></svg></span> <a href="getting_started">Getting Started</a><br></p>
+<p><a href="events"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2 2h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm4.655 8.595a.75.75 0 0 1 0 1.06L4.03 14.28a.75.75 0 0 1-1.06 0l-1.5-1.5a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l.97.97 2.095-2.095a.75.75 0 0 1 1.06 0ZM9.75 2.5h5.5a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5Zm0 5h5.5a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5Zm0 5h5.5a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5Zm-7.25-9v3h3v-3Z"/></svg></span> <strong>Events</strong></a></p>
+<hr />
+<p>Guides on how to to subscribe to events sent to your bot by Discord.</p>
 </li>
 <li>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 4v6l-2-2-2 2V4H9v16h10V4h-2M3 7V5h2V4a2 2 0 0 1 2-2h12c1.05 0 2 .95 2 2v16c0 1.05-.95 2-2 2H7c-1.05 0-2-.95-2-2v-1H3v-2h2v-4H3v-2h2V7H3m2-2v2h2V5H5m0 14h2v-2H5v2m0-6h2v-2H5v2Z"/></svg></span> <a href="guides">Guides</a><br></p>
+<p><a href="hooks"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 6a3.99 3.99 0 0 1-3 3.86V17a5 5 0 0 1-5 5 5 5 0 0 1-5-5v-5l5 5H7a3 3 0 0 0 3 3 3 3 0 0 0 3-3V9.86c-1.77-.46-3-2.06-3-3.89C10 3.76 11.8 2 14 2c2.22 0 4 1.79 4 4m-4 2a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2Z"/></svg></span> <strong>Hooks</strong></a></p>
+<hr />
+<p>Hooks are a powerful tool allowing you to run code before an after a
+command. Hooks can be used for command setup and cleanup code.</p>
+</li>
+<li>
+<p><a href="error_handling"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.11 5H21V3H3v2h1.89A9.93 9.93 0 0 0 2 12c0 3.97 2.31 7.39 5.66 9h8.68A9.973 9.973 0 0 0 22 12c0-2.73-1.11-5.2-2.89-7M6.32 6.41 7.7 5h8.6l1.38 1.41a7.87 7.87 0 0 1 1.37 1.84A7.272 7.272 0 0 1 16 7c-2.44 1.71-5.56 1.71-8 0-.94.66-2 1.09-3.05 1.25.36-.67.82-1.29 1.37-1.84M15.85 19h-7.7A7.93 7.93 0 0 1 4 12c0-.57.07-1.14.19-1.68A8.74 8.74 0 0 0 8 9.33c2.5 1.3 5.5 1.3 8 0 1.2.62 2.5.96 3.81.99.12.54.19 1.11.19 1.68a7.93 7.93 0 0 1-4.15 7M17 14.5c0 1.38-1.68 2.5-3.75 2.5-1.16 0-2.19-.36-2.92-.84-.66.84-2 .84-3.33.84 1.1 0 1.5-1.12 1.5-2.5S8.1 12 7 12c1.33 0 2.67 0 3.37.91.69-.55 1.72-.91 2.88-.91 2.07 0 3.75 1.12 3.75 2.5Z"/></svg></span> <strong>Error Handling</strong></a></p>
+<hr />
+<p>Crescent provides powerful tools for error handling, giving you control even
+when things go wrong.</p>
+</li>
+<li>
+<p><a href="ext/cooldowns"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m20.79 13.95-2.33.62-2-1.13v-2.88l2-1.13 2.33.62.52-1.93-1.77-.47.46-1.77-1.93-.52-.62 2.33-2 1.13L13 7.38V5.12l1.71-1.71L13.29 2 12 3.29 10.71 2 9.29 3.41 11 5.12v2.26L8.5 8.82l-2-1.13-.58-2.33L4 5.88l.47 1.77-1.77.47.52 1.93 2.33-.62 2 1.13v2.89l-2 1.13-2.33-.62-.52 1.93 1.77.47L4 18.12l1.93.52.62-2.33 2-1.13L11 16.62v2.26l-1.71 1.71L10.71 22 12 20.71 13.29 22l1.41-1.41-1.7-1.71v-2.26l2.5-1.45 2 1.13.62 2.33 1.88-.51-.47-1.77 1.77-.47-.51-1.93M9.5 10.56 12 9.11l2.5 1.45v2.88L12 14.89l-2.5-1.45v-2.88Z"/></svg></span> <strong>Cooldowns</strong></a></p>
+<hr />
+<p>Command rate-limiting tools built into Crescent. These tools allow you to give commands
+a cooldown for when they can be used.</p>
+</li>
+<li>
+<p><a href="ext/tasks"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M142.9 142.9c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2S334.3 224 344 224h128c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2S461.9 48.1 455 55l-41.6 41.6c-87.6-86.5-228.7-86.2-315.8 1-24.4 24.4-42 53.1-52.8 83.8-5.9 16.7 2.9 34.9 19.5 40.8s34.9-2.9 40.8-19.5c7.7-21.8 20.2-42.3 37.8-59.8zM16 312v128c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l41.6-41.6c87.6 86.5 228.7 86.2 315.8-1 24.4-24.4 42.1-53.1 52.9-83.7 5.9-16.7-2.9-34.9-19.5-40.8s-34.9 2.9-40.8 19.5c-7.7 21.8-20.2 42.3-37.8 59.8-62.2 62.2-162.7 62.5-225.3 1L185 329c6.9-6.9 8.9-17.2 5.2-26.2S177.7 288 168 288H40c-13.3 0-24 10.7-24 24z"/></svg></span> <strong>Tasks</strong></a></p>
+<hr />
+<p>Tools to loop functions on a specific time interval. Tasks automatically start and stop when
+the bot starts and stops.</p>
+</li>
+<li>
+<p><a href="ext/locales"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.9 17.39c-.26-.8-1.01-1.39-1.9-1.39h-1v-3a1 1 0 0 0-1-1H8v-2h2a1 1 0 0 0 1-1V7h2a2 2 0 0 0 2-2v-.41a7.984 7.984 0 0 1 2.9 12.8M11 19.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.22.21-1.79L9 15v1a2 2 0 0 0 2 2m1-16A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2Z"/></svg></span> <strong>Locales</strong></a></p>
+<hr />
+<p>Locales are used to localize your bot for different languages.</p>
 </li>
 </ul>
 </div>
-<h2 id="acknowledgements">Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permanent link">#</a></h2>
-<p>Thank you to <a href="https://github.com/Hypergonial">@hypergonial</a> for help with setting up the docs.</p>
 
 
 
@@ -1297,6 +1252,8 @@ to see how your code will look when using Crescent.</p>
 
 
 
+
+  
 
 
 
@@ -1322,17 +1279,35 @@ to see how your code will look when using Crescent.</p>
   
     
       
+        
+      
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../getting_started/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Getting Started">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Getting Started
+              </div>
+            </div>
+          </a>
         
         
           
-          <a href="getting_started/" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started">
+          <a href="commands/" class="md-footer__link md-footer__link--next" aria-label="Next: Commands">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Getting Started
+                Commands
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1372,10 +1347,10 @@ to see how your code will look when using Crescent.</p>
       <div class="md-progress" data-md-component="progress" role="progressbar"></div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["content.tabs.link", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.select", "navigation.instant", "navigation.instant.progress", "navigation.indexes", "navigation.footer", "navigation.top", "navigation.tabs", "content.action.view", "content.action.edit", "content.tooltips", "toc.follow", "toc.integrate"], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.tabs.link", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.select", "navigation.instant", "navigation.instant.progress", "navigation.indexes", "navigation.footer", "navigation.top", "navigation.tabs", "content.action.view", "content.action.edit", "content.tooltips", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7c377c4.min.js"></script>
       
     
   </body>
