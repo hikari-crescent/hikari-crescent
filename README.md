@@ -92,8 +92,7 @@ async def ping(ctx: crescent.Context):
 | `hikari.Role` | Role |
 | `crescent.Mentionable` | Role or User |
 | Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
-| `List[Channel Types]` (classes only) | Channel. ^ |
-| `Union[Channel Types]` (functions only) | Channel. ^ |
+| `List[Channel Types]` | Channel. ^ |
 | `hikari.Attachment` | Attachment |
 
 
