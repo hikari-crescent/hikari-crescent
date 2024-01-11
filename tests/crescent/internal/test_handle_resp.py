@@ -17,7 +17,6 @@ from pytest import mark
 from typing_extensions import Annotated
 
 from crescent import (
-    Autocomplete,
     BaseContext,
     Context,
     catch_autocomplete,
@@ -25,6 +24,7 @@ from crescent import (
     command,
     hook,
 )
+import crescent
 from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockClient, MockRESTClient
 
@@ -246,12 +246,12 @@ async def test_handle_autocomplete_error():
         raise Exception
 
     @client.include
-    @command
-    async def test_command(
-        ctx: CustomContext, option: Annotated[str, Autocomplete(autocomplete_resp)]
-    ):
-        nonlocal command_was_run
-        command_was_run = True
+    @command(name="test_command")
+    class TestCommand:
+        option = crescent.option(str, autocomplete=autocomplete_resp)
+        def callback(ctx: CustomContext):
+            nonlocal command_was_run
+            command_was_run = True
 
     await handle_resp(
         client, MockAutocompleteEvent("test_command", "option", client).interaction, None
@@ -285,12 +285,12 @@ async def test_unhandled_autocomplete_error():
         raise TypeError
 
     @client.include
-    @command
-    async def test_command(
-        ctx: CustomContext, option: Annotated[str, Autocomplete(autocomplete_resp)]
-    ):
-        nonlocal command_was_run
-        command_was_run = True
+    @command(name="test_command")
+    class TestCommand:
+        option = crescent.option(str, autocomplete=autocomplete_resp)
+        def callback(ctx: CustomContext):
+            nonlocal command_was_run
+            command_was_run = True
 
     await handle_resp(
         client, MockAutocompleteEvent("test_command", "option", client).interaction, None
