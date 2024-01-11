@@ -81,29 +81,6 @@ async def ping(ctx: crescent.Context):
     await ctx.respond("Pong!")
 ```
 
-Adding arguments to the function adds more options. Information for arguments can be provided using the `Annotated` type hint.
-See [this example](https://github.com/hikari-crescent/hikari-crescent/blob/main/examples/basic/function_commands.py) for more information.
-
-```python
-# python 3.9 +
-from typing import Annotated as Atd
-
-# python 3.8
-from typing_extensions import Annotated as Atd
-
-@client.include
-@crescent.command
-async def say(ctx: crescent.Context, word: str):
-    await ctx.respond(word)
-
-# The same command but with a description for `word`
-@client.include
-@crescent.command
-async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
-    await ctx.respond(word)
-```
-
-
 ### Typing to Option Types Lookup Table 
 | Type | Option Type |
 |---|---|
