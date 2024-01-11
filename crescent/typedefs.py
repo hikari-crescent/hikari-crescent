@@ -27,7 +27,7 @@ from hikari.api import EntityFactory
 
 if TYPE_CHECKING:
     from crescent.commands.hooks import HookResult
-    from crescent.context import BaseContext, Context
+    from crescent.context import BaseContext
     from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (
@@ -43,7 +43,7 @@ __all__: Sequence[str] = (
     "AutocompleteValueT",
 )
 
-CommandCallbackT = Callable[["Context"], Awaitable[Any]]
+CommandCallbackT = Callable[["BaseContext"], Awaitable[Any]]
 UserCommandCallbackT = Callable[[Any, User], Awaitable[None]]
 MessageCommandCallbackT = Callable[[Any, Message], Awaitable[None]]
 
