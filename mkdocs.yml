@@ -49,6 +49,7 @@ theme:
     - navigation.indexes
     - navigation.footer
     - navigation.top
+    - navigation.tabs
     - content.action.view
     - content.action.edit
     - content.tooltips
@@ -110,6 +111,15 @@ plugins:
             show_symbol_type_heading: true
             extensions:
                 - griffe_inherited_docstrings
+nav:
+  - Getting Started:
+    - home.md
+    - getting_started.md
+  - Guides:
+    - guides/making_a_bot.md
+  - API Reference:
+      api_reference/index.md
+
 watch:
   - docs
   - README.md
