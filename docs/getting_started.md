@@ -98,7 +98,7 @@ Copy this code into a python file, and run with `python filename.py`.
     import crescent
     import hikari
 
-    bot = hikari.RESTBot("YOUR_REST_URL")
+    bot = hikari.RESTBot("YOUR_TOKEN")
     client = crescent.Client(bot)
 
     @client.include
