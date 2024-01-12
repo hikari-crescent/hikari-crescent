@@ -16,7 +16,6 @@ from hikari.impl import RESTClientImpl
 from pytest import mark
 
 from crescent import (
-    BaseContext,
     Context,
     catch_autocomplete,
     catch_command,

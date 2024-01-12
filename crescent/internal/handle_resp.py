@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import Future
 from contextlib import suppress
 from logging import getLogger
-from typing import TYPE_CHECKING, NamedTuple 
+from typing import TYPE_CHECKING, NamedTuple
 
 from hikari import (
     AutocompleteInteraction,

@@ -1,10 +1,10 @@
 from pytest import mark
 
-from crescent.context import BaseContext
+from crescent.context import InteractionContext
 
 
 def test_into():
-    ctx = BaseContext(
+    ctx = InteractionContext(
         interaction=1,
         client=2,
         app=3,
@@ -28,7 +28,7 @@ def test_into():
         _rest_interaction_future=21,
     )
 
-    ctx2 = ctx.into(BaseContext)
+    ctx2 = ctx.into(InteractionContext)
 
     assert ctx.interaction == ctx2.interaction
     assert ctx.app == ctx2.app
