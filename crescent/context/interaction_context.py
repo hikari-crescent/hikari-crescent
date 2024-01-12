@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 
     from crescent.client import Client, GatewayTraits, RESTTraits
 
-    ContextT = TypeVar("ContextT", bound="BaseContext")
+    ContextT = TypeVar("ContextT", bound="InteractionContext")
 
 
-__all__: Sequence[str] = ("BaseContext",)
+__all__: Sequence[str] = ("InteractionContext",)
 
 
 @dataclass
-class BaseContext:
+class InteractionContext:
     """Represents the context for interactions"""
 
     __slots__ = (
