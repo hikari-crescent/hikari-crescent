@@ -5,10 +5,8 @@ from inspect import isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
-from sigparse import sigparse
 
 from crescent.commands.options import ClassCommandOption
-from crescent.commands.signature import gen_command_option, get_autocomplete_func
 from crescent.internal.registry import register_command
 from crescent.locale import LocaleBuilder
 
@@ -157,17 +155,6 @@ def command(
 
     elif isfunction(callback):
         callback_func = callback
-
-        for param in sigparse(callback_func).parameters:
-            option = gen_command_option(param)
-            if not option:
-                continue
-
-            options.append(option)
-
-            if autocomplete_func := get_autocomplete_func(param):
-                autocomplete[option.name] = autocomplete_func
-
     else:
         raise NotImplementedError("This function only works with classes and functions")
 

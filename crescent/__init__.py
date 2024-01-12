@@ -15,13 +15,6 @@ from crescent.typedefs import *
 __version__: str = version("hikari-crescent")
 
 __all__: Sequence[str] = (
-    "Description",
-    "Name",
-    "Choices",
-    "ChannelTypes",
-    "MaxValue",
-    "MinValue",
-    "Autocomplete",
     "command",
     "user_command",
     "message_command",

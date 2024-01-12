@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import hikari
-from typing_extensions import Annotated as Atd
-
 import crescent
 
 bot = hikari.GatewayBot(token="...")
@@ -42,11 +40,14 @@ async def on_autocomplete_random_error(
 
 # buggy command/event/autocompletes
 @client.include
-@crescent.command
-async def raise_error_cmd(ctx: crescent.Context, unhandled: bool) -> None:
-    if unhandled:
-        raise UnhandledError("Unhandled error!")
-    raise RandomError("Handled error")
+@crescent.command(name="raise-error-cmd")
+class RaiseErrorCmd:
+    unhandled = crescent.option(bool)
+
+    def callback(self, ctx: crescent.Context):
+        if self.unhandled:
+            raise UnhandledError("Unhandled error!")
+        raise RandomError("Handled error")
 
 
 @client.include
@@ -79,12 +80,12 @@ async def autocomplete(
 
 
 @client.include
-@crescent.command
-async def autocomplete_error(
-    ctx: crescent.Context,
-    option: Atd[str, "Type error to error out", crescent.Autocomplete(autocomplete)],
-) -> None:
-    await ctx.respond(f"{option} (type unhandled or error inside option)")
+@crescent.command(name="autocomplete-error")
+class AutocompleteError:
+    option = crescent.option(str, "Type error to error out", autocomplete=autocomplete)
+
+    async def callback(self, ctx: crescent.Context):
+        await ctx.respond(f"{self.option} (type unhandled or error inside option)")
 
 
 bot.run()
