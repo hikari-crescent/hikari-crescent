@@ -7,7 +7,7 @@ from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import EntityFactory
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
-from crescent.hooks import add_hooks
+from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type

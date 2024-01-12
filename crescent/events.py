@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, TypeVar, get_type_hints, overload, Generic
 from crescent.client import GatewayTraits
 from crescent.internal.includable import Includable
 from crescent.typedefs import EventHookCallbackT
-from crescent.hooks import add_hooks
+from crescent.utils import add_hooks
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
@@ -30,15 +30,9 @@ class EventMeta(Generic[EventT]):
     after_hooks: list[EventHookCallbackT[EventT]] = field(default_factory=list)
 
     def add_hooks(
-        self, hooks: Sequence[EventHookCallbackT[EventT]], prepend: bool = False, *, after: bool
+        self, hooks: Sequence[EventHookCallbackT[Any]], prepend: bool = False, *, after: bool
     ) -> None:
-        add_hooks(
-            self.hooks,
-            self.after_hooks,
-            hooks,
-            prepend=prepend,
-            after=after,
-        )
+        add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)
 
 
 @overload
@@ -119,7 +113,15 @@ def _event_callback(
 ) -> Callable[[Event], Coroutine[None, None, None]]:
     async def func(event: Event) -> None:
         try:
+            for callback in self.metadata.hooks:
+                res = await callback(event)
+                if res and res.exit == True:
+                    return
             await self.metadata.callback(event)
+            for callback in self.metadata.after_hooks:
+                res = await callback(event)
+                if res and res.exit == True:
+                    return
         except Exception as exc:
             handled = await self.client._event_error_handler.try_handle(exc, [exc, event])
             await self.client.on_crescent_event_error(exc, event, handled)
