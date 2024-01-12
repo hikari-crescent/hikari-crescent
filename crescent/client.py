@@ -40,7 +40,7 @@ if TYPE_CHECKING:
         HookCallbackT,
     )
 
-    INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[None])
+    INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
 
 
 __all__: Sequence[str] = ("Client", "GatewayTraits", "RESTTraits")

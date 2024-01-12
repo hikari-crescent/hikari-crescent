@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("PluginManager", "Plugin")
 
 
-T = TypeVar("T", bound="Includable[None]")
+T = TypeVar("T", bound="Includable[Any]")
 
 # NOTE: When mypy supports PEP 696 (type var defaults) a `default="GatewayTraits"` kwarg
 # should be added to improve ergonomics.

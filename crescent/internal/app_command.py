@@ -7,6 +7,7 @@ from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import EntityFactory
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
+from crescent.hooks import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
@@ -149,16 +150,13 @@ class AppCommandMeta:
     def add_hooks(
         self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool
     ) -> None:
-        def extend_or_prepend(list_to_edit: list[HookCallbackT]) -> None:
-            if prepend:
-                list_to_edit[:0] = hooks
-            else:
-                list_to_edit.extend(hooks)
-
-        if not after:
-            extend_or_prepend(self.hooks)
-        else:
-            extend_or_prepend(self.after_hooks)
+        add_hooks(
+            self.hooks,
+            self.after_hooks,
+            hooks,
+            prepend=prepend,
+            after=after,
+        )
 
     @property
     def unique(self) -> Unique:
