@@ -24,7 +24,6 @@
  - Error handling for commands, events, and autocomplete.
  - Hooks to run function before or after a command (or any command from a group!)
  - Plugin system to easily split bot into different modules.
- - Easily use a custom context class.
  - Makes typehinting easy.
  - RESTBot and GatewayBot support.
 
