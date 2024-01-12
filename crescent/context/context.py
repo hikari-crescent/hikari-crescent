@@ -18,7 +18,7 @@ from hikari.api import (
 )
 from hikari.traits import CacheAware
 
-from crescent.context.base_context import BaseContext
+from crescent.context.interaction_context import InteractionContext
 from crescent.exceptions import InteractionAlreadyAcknowledgedError
 
 if TYPE_CHECKING:
@@ -45,7 +45,7 @@ ResponseBuilderT = Union[
 ]
 
 
-class Context(BaseContext):
+class Context(InteractionContext):
     """Represents the context for command interactions"""
 
     interaction: CommandInteraction  # pyright: ignore [reportIncompatibleVariableOverride]

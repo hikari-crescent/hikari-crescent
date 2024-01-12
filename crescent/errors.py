@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Sequence, TypeVar
 
-from crescent.context.utils import support_custom_context
 from crescent.internal.includable import Includable
 from crescent.typedefs import (
     AutocompleteErrorHandlerCallbackT,
@@ -29,17 +28,8 @@ def _make_catch_function(
                 getattr(includable.client, error_handler_var).remove(exc)
 
         def decorator(callback: Any) -> Includable[Any]:
-            if supports_custom_ctx:
-                maybe_supports_custom_ctx: Callable[..., Awaitable[Any]] = support_custom_context(
-                    callback
-                )
-            else:
-                maybe_supports_custom_ctx = callback
-
             includable = Includable(
-                maybe_supports_custom_ctx,
-                client_set_hooks=[app_set_hook],
-                plugin_unload_hooks=[plugin_unload_hook],
+                callback, client_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
             )
 
             return includable
