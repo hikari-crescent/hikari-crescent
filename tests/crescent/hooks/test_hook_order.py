@@ -36,6 +36,7 @@ if TYPE_CHECKING:
 else:
     MockHook = _MockHook
 
+
 def test_hook_order():
     client = MockClient(command_hooks=[MockHook("client")])
     plugin = Plugin(command_hooks=[MockHook("plugin")])
@@ -145,13 +146,7 @@ def test_after_hook_order():
     assert c3.metadata.after_hooks == ["command", "subgroup", "group", "client"]
     assert c4.metadata.after_hooks == ["command", "plugin", "client"]
     assert c5.metadata.after_hooks == ["command", "group", "plugin", "client"]
-    assert c6.metadata.after_hooks == [
-        "command",
-        "subgroup",
-        "group",
-        "plugin",
-        "client",
-    ]
+    assert c6.metadata.after_hooks == ["command", "subgroup", "group", "plugin", "client"]
 
 
 def test_vargs_hooks():

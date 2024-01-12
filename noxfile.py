@@ -10,7 +10,7 @@ def poetry_session(
     *groups: str, extras: bool = False, **kwargs: typing.Any
 ) -> typing.Callable[[typing.Callable[[nox.Session], None]], typing.Callable[[nox.Session], None]]:
     def inner(
-        callback: typing.Callable[[nox.Session], None],
+        callback: typing.Callable[[nox.Session], None]
     ) -> typing.Callable[[nox.Session], None]:
         @nox.session(**kwargs)
         @functools.wraps(callback)

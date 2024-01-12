@@ -61,11 +61,13 @@ class ClassCommand:
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(f"{self.arg}, {self.another_arg}")
 
+
 @client.include
 @crescent.command
 async def reload_plugin(ctx: crescent.Context) -> None:
     client.plugins.load("tests.test_client.test_plugin", refresh=True)
     await ctx.respond("Done")
+
 
 @client.include
 @crescent.user_command(name="User")
@@ -149,10 +151,12 @@ async def error_autocomplete(
         hikari.CommandChoice(name="unhandled", value="unhandled"),
     ]
 
+
 async def autocomplete_response(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[hikari.CommandChoice]:
     return [hikari.CommandChoice(name="Some Option", value="1234")]
+
 
 @client.include
 @tasks.loop(seconds=5)

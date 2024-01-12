@@ -15,13 +15,7 @@ from hikari import (
 from hikari.impl import RESTClientImpl
 from pytest import mark
 
-from crescent import (
-    Context,
-    catch_autocomplete,
-    catch_command,
-    command,
-    hook,
-)
+from crescent import Context, catch_autocomplete, catch_command, command, hook
 import crescent
 from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockClient, MockRESTClient
@@ -83,6 +77,7 @@ def MockAutocompleteEvent(name, option_name, client):
             ],
         ),
     )
+
 
 @mark.asyncio
 async def test_handle_resp_slash_function():
@@ -233,6 +228,7 @@ async def test_handle_autocomplete_error():
     @command(name="test_command")
     class TestCommand:
         option = crescent.option(str, autocomplete=autocomplete_resp)
+
         def callback(ctx: Context):
             nonlocal command_was_run
             command_was_run = True
@@ -272,6 +268,7 @@ async def test_unhandled_autocomplete_error():
     @command(name="test_command")
     class TestCommand:
         option = crescent.option(str, autocomplete=autocomplete_resp)
+
         def callback(ctx: Context):
             nonlocal command_was_run
             command_was_run = True
