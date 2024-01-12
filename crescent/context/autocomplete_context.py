@@ -15,7 +15,7 @@ from hikari import (
 )
 from hikari.traits import CacheAware
 
-from crescent.context.base_context import BaseContext
+from crescent.context.interaction_context import InteractionContext
 from crescent.mentionable import Mentionable
 from crescent.utils import gather_iter
 
@@ -86,7 +86,7 @@ _serialization_map: dict[OptionType, Callable[[AutocompleteContext, Snowflake], 
 }
 
 
-class AutocompleteContext(BaseContext):
+class AutocompleteContext(InteractionContext):
     """Represents the context for autocomplete interactions"""
 
     interaction: AutocompleteInteraction  # pyright: ignore [reportIncompatibleVariableOverride]

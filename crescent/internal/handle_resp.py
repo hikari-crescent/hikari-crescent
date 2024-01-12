@@ -18,7 +18,7 @@ from hikari import (
 from hikari.api import InteractionResponseBuilder
 from hikari.impl import AutocompleteChoiceBuilder
 
-from crescent.context import AutocompleteContext, BaseContext, Context
+from crescent.context import AutocompleteContext, Context
 from crescent.internal.app_command import Unique
 from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
@@ -194,7 +194,7 @@ def _get_crescent_command_data(
 
 def _context_from_interaction_resp(
     client: Client, interaction: CommandInteraction | AutocompleteInteraction
-) -> BaseContext:
+) -> Context:
     command_name, group, sub_group, options = _get_crescent_command_data(interaction)
 
     if interaction.command_type is CommandType.SLASH:
@@ -205,7 +205,7 @@ def _context_from_interaction_resp(
         assert isinstance(interaction, CommandInteraction)
         callback_options = _resolved_data_to_kwargs(interaction)
 
-    return BaseContext(
+    return Context(
         interaction=interaction,
         app=client.app,
         client=client,
