@@ -29,9 +29,7 @@ def _make_catch_function(
 
         def decorator(callback: Any) -> Includable[Any]:
             includable = Includable(
-                callback,
-                client_set_hooks=[app_set_hook],
-                plugin_unload_hooks=[plugin_unload_hook],
+                callback, client_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
             )
 
             return includable

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
-    from crescent.typedefs import CommandCallbackT, HookCallbackT, AutocompleteCallbackT
+    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
 
     Self = TypeVar("Self")
 
