@@ -5,8 +5,8 @@ from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast, overload
 
-from crescent.commands.hooks import add_hooks
 from crescent.exceptions import PluginAlreadyLoadedError
+from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.includable import Includable
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 __all__: Sequence[str] = ("PluginManager", "Plugin")
 
 
-T = TypeVar("T", bound="Includable[Any]")
+T = TypeVar("T", bound="Includable[None]")
 
 # NOTE: When mypy supports PEP 696 (type var defaults) a `default="GatewayTraits"` kwarg
 # should be added to improve ergonomics.
@@ -205,8 +205,8 @@ class Plugin(Generic[BotT, ModelT]):
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
     ) -> None:
-        self.command_hooks = command_hooks
-        self.command_after_hooks = command_after_hooks
+        self.command_hooks = command_hooks or []
+        self.command_after_hooks = command_after_hooks or []
         self._client: Client | None = None
         self._model: ModelT | None = None
         self._children: list[Includable[Any]] = []
@@ -215,7 +215,9 @@ class Plugin(Generic[BotT, ModelT]):
         self._unload_hooks: list[PluginCallbackT] = []
 
     def include(self, obj: T) -> T:
-        add_hooks(self, obj)
+        if isinstance(obj.metadata, AppCommandMeta):
+            obj.metadata.add_hooks(self.command_hooks, after=False)
+            obj.metadata.add_hooks(self.command_after_hooks, after=True)
         self._children.append(obj)
         return obj
 
@@ -251,7 +253,9 @@ class Plugin(Generic[BotT, ModelT]):
         for callback in self._load_hooks:
             callback()
         for child in self._children:
-            add_hooks(client, child)
+            if isinstance(child.metadata, AppCommandMeta):
+                child.metadata.add_hooks(client.command_hooks, after=False)
+                child.metadata.add_hooks(client.command_after_hooks, after=True)
             child.register_to_client(client)
 
     def _unload(self) -> None:

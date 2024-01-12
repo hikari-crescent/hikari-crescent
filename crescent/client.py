@@ -18,8 +18,8 @@ from hikari import (
     StartedEvent,
 )
 from hikari.traits import EventManagerAware, RESTAware
+from crescent.internal.app_command import AppCommandMeta
 
-from crescent.commands.hooks import add_hooks
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
@@ -40,7 +40,7 @@ if TYPE_CHECKING:
         HookCallbackT,
     )
 
-    INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
+    INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[None])
 
 
 __all__: Sequence[str] = ("Client", "GatewayTraits", "RESTTraits")
@@ -151,8 +151,8 @@ class Client:
         self.allow_unknown_interactions = allow_unknown_interactions
         self.update_commands = update_commands
 
-        self.command_hooks = command_hooks
-        self.command_after_hooks = command_after_hooks
+        self.command_hooks = command_hooks or []
+        self.command_after_hooks = command_after_hooks or []
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
@@ -196,15 +196,15 @@ class Client:
         return self._command_handler.register_commands()
 
     @overload
-    def include(self, command: INCLUDABLE) -> INCLUDABLE:
+    def include(self, include: INCLUDABLE) -> INCLUDABLE:
         ...
 
     @overload
-    def include(self, command: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
+    def include(self, include: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
         ...
 
     def include(
-        self, command: INCLUDABLE | None = None
+        self, include: INCLUDABLE | None = None
     ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
         """
         Register an includable object, such as an event or command handler.
@@ -220,14 +220,16 @@ class Client:
             await ctx.respong("Pong")
         ```
         """
-        if command is None:
+        if include is None:
             return self.include
 
-        add_hooks(self, command)
+        if isinstance(include.metadata, AppCommandMeta):
+            include.metadata.add_hooks(self.command_hooks, after=False)
+            include.metadata.add_hooks(self.command_after_hooks, after=True)
 
-        command.register_to_client(self)
+        include.register_to_client(self)
 
-        return command
+        return include
 
     @property
     def plugins(self) -> PluginManager:

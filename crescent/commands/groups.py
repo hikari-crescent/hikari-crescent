@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from hikari import UNDEFINED, Permissions, UndefinedType
 
-from crescent.commands.hooks import add_hooks
 from crescent.exceptions import PermissionsError
 
 if TYPE_CHECKING:
@@ -57,9 +56,9 @@ class Group:
     description: str | LocaleBuilder | None = None
     """The description of the group. The discord API supports this feature but
     it does not do anything."""
-    hooks: list[HookCallbackT] | None = None
+    hooks: list[HookCallbackT] = field(default_factory=list)
     """A looks of hooks to run before all commands in this group."""
-    after_hooks: list[HookCallbackT] | None = None
+    after_hooks: list[HookCallbackT] = field(default_factory=list)
     """A list of hooks to run after all commands in this group."""
 
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
@@ -78,7 +77,11 @@ class Group:
         Create a sub group from this group.
         """
         return SubGroup(
-            name=name, parent=self, description=description, hooks=hooks, after_hooks=after_hooks
+            name=name,
+            parent=self,
+            description=description,
+            hooks=hooks or [],
+            after_hooks=after_hooks or [],
         )
 
     def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
@@ -89,7 +92,8 @@ class Group:
 
         includable.metadata.group = self
 
-        add_hooks(self, includable)
+        includable.metadata.add_hooks(self.hooks, after=False)
+        includable.metadata.add_hooks(self.after_hooks, after=True)
 
         return includable
 
@@ -118,9 +122,9 @@ class SubGroup:
     name: str | LocaleBuilder
     parent: Group
     description: str | LocaleBuilder | None = None
-    hooks: list[HookCallbackT] | None = None
+    hooks: list[HookCallbackT] = field(default_factory=list)
     """A looks of hooks to run before all commands in this group."""
-    after_hooks: list[HookCallbackT] | None = None
+    after_hooks: list[HookCallbackT] = field(default_factory=list)
     """A list of hooks to run after all commands in this group."""
 
     def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
@@ -132,7 +136,9 @@ class SubGroup:
         includable.metadata.group = self.parent
         includable.metadata.sub_group = self
 
-        add_hooks(self, includable)
-        add_hooks(self.parent, includable)
+        includable.metadata.add_hooks(self.hooks, after=False)
+        includable.metadata.add_hooks(self.after_hooks, after=True)
+        includable.metadata.add_hooks(self.parent.hooks, after=False)
+        includable.metadata.add_hooks(self.parent.after_hooks, after=True)
 
         return includable
