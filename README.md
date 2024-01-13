@@ -113,14 +113,6 @@ class ClassCommand:
 
     async def callback(self) -> None:
         await ctx.respond(self.option)
-
-@client.include
-@crescent.command
-async def function_command(
-    ctx: crescent.Context,
-    option: Annotated[str, crescent.Autocomplete(autocomplete)]
-) -> None:
-    await ctx.respond(option)
 ```
 
 ### Error Handling
