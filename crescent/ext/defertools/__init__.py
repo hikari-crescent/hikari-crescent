@@ -41,5 +41,7 @@ def defer(
     if ctx is not None:
         return ctx.defer(ephemeral=ephemeral)
 
-    return lambda ctx: ctx.defer(ephemeral=ephemeral)
+    async def do_defer(ctx: Context):
+        await ctx.defer(ephemeral=ephemeral)
 
+    return do_defer
