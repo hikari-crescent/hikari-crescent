@@ -95,7 +95,6 @@ def autodefer(
     async def task():
         assert ctx
         assert time is not None
-        print(time)
         await sleep(time.total_seconds())
         if ctx._has_deferred_response or ctx._has_created_response:
             return
