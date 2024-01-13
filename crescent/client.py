@@ -18,12 +18,14 @@ from hikari import (
     StartedEvent,
 )
 from hikari.traits import EventManagerAware, RESTAware
+from crescent.events import EventMeta 
 from crescent.internal.app_command import AppCommandMeta
 
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
+from crescent.typedefs import EventHookCallbackT
 from crescent.utils import create_task
 
 if TYPE_CHECKING:
@@ -91,6 +93,8 @@ class Client:
         allow_unknown_interactions: bool = False,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
+        event_hooks: list[EventHookCallbackT[hk_Event]] | None = None,
+        event_after_hooks: list[EventHookCallbackT[hk_Event]] | None = None,
     ):
         """
         Args:
@@ -153,6 +157,8 @@ class Client:
 
         self.command_hooks = command_hooks or []
         self.command_after_hooks = command_after_hooks or []
+        self.event_hooks = event_hooks or []
+        self.event_after_hooks = event_after_hooks or []
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
@@ -196,15 +202,15 @@ class Client:
         return self._command_handler.register_commands()
 
     @overload
-    def include(self, include: INCLUDABLE) -> INCLUDABLE:
+    def include(self, obj: INCLUDABLE) -> INCLUDABLE:
         ...
 
     @overload
-    def include(self, include: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
+    def include(self, obj: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
         ...
 
     def include(
-        self, include: INCLUDABLE | None = None
+        self, obj: INCLUDABLE | None = None
     ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
         """
         Register an includable object, such as an event or command handler.
@@ -220,16 +226,19 @@ class Client:
             await ctx.respong("Pong")
         ```
         """
-        if include is None:
+        if obj is None:
             return self.include
 
-        if isinstance(include.metadata, AppCommandMeta):
-            include.metadata.add_hooks(self.command_hooks, after=False)
-            include.metadata.add_hooks(self.command_after_hooks, after=True)
+        if isinstance(obj.metadata, AppCommandMeta):
+            obj.metadata.add_hooks(self.command_hooks, after=False)
+            obj.metadata.add_hooks(self.command_after_hooks, after=True)
+        if isinstance(obj.metadata, EventMeta):
+            obj.metadata.add_hooks(self.event_hooks, after=False)
+            obj.metadata.add_hooks(self.event_after_hooks, after=True)
 
-        include.register_to_client(self)
+        obj.register_to_client(self)
 
-        return include
+        return obj
 
     @property
     def plugins(self) -> PluginManager:

@@ -5,9 +5,12 @@ from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast, overload
 
+from hikari import Event
+from crescent.events import EventMeta
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.includable import Includable
+from crescent.typedefs import EventHookCallbackT
 
 if TYPE_CHECKING:
     from crescent.client import Client, GatewayTraits, RESTTraits
@@ -204,9 +207,13 @@ class Plugin(Generic[BotT, ModelT]):
         *,
         command_hooks: list[HookCallbackT] | None = None,
         command_after_hooks: list[HookCallbackT] | None = None,
+        event_hooks: list[EventHookCallbackT[Event]] | None = None,
+        event_after_hooks: list[EventHookCallbackT[Event]] | None = None,
     ) -> None:
         self.command_hooks = command_hooks or []
         self.command_after_hooks = command_after_hooks or []
+        self.event_hooks = event_hooks or []
+        self.event_after_hooks = event_after_hooks or []
         self._client: Client | None = None
         self._model: ModelT | None = None
         self._children: list[Includable[Any]] = []
@@ -218,6 +225,9 @@ class Plugin(Generic[BotT, ModelT]):
         if isinstance(obj.metadata, AppCommandMeta):
             obj.metadata.add_hooks(self.command_hooks, after=False)
             obj.metadata.add_hooks(self.command_after_hooks, after=True)
+        if isinstance(obj.metadata, EventMeta):
+            obj.metadata.add_hooks(self.event_hooks, after=False)
+            obj.metadata.add_hooks(self.event_after_hooks, after=True)
         self._children.append(obj)
         return obj
 

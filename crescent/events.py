@@ -6,7 +6,8 @@ from functools import partial
 from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, TypeVar, get_type_hints, overload, Generic
 
-from crescent.client import GatewayTraits
+from hikari import EventManagerAware
+
 from crescent.internal.includable import Includable
 from crescent.typedefs import EventHookCallbackT
 from crescent.utils import add_hooks
@@ -83,17 +84,19 @@ def event(
         raise ValueError(f"`{callback.__name__}` must be an async function.")
 
     def hook(includable: Includable[EventMeta[EventT]]) -> None:
-        if isinstance(includable.client.app, GatewayTraits):
+        if isinstance(includable.client.app, EventManagerAware):
             includable.client.app.event_manager.subscribe(
                 event_type=unwrap(event_type), callback=event_callback
             )
         else:
-            raise ValueError("Events can only be used with GatewayBot.")
+            raise ValueError(
+                "Events can only be used with bots that implement `hikari.EventManagerAware`."
+            )
 
     def on_remove(includable: Includable[EventMeta[EventT]]) -> None:
         # if it's not `GatewayTraits`, the event could never have been
         # added in the first place.
-        assert isinstance(includable.client.app, GatewayTraits)
+        assert isinstance(includable.client.app, EventManagerAware)
         includable.client.app.event_manager.unsubscribe(
             event_type=unwrap(event_type), callback=event_callback
         )
