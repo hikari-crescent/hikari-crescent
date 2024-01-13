@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import sleep
+from asyncio import sleep, Future
 from collections.abc import Awaitable
 from datetime import timedelta
 from typing import Callable, overload
@@ -11,10 +11,6 @@ from crescent.utils import create_task
 
 async def defer(ctx: Context) -> None:
     await ctx.defer()
-
-
-async def _noop():
-    pass
 
 
 @overload
@@ -43,4 +39,4 @@ def autodefer(
 
     create_task(task())
 
-    return _noop()
+    return Future()
