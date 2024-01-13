@@ -18,13 +18,14 @@ async def defer(ctx: Context) -> None:
     ```python
     from crescent.ext.defer import defer
 
+    async def lengthy_hook_that_takes_a_lot_time(ctx: crescent.Context):
+        # Simulate something that takes a lot of time...
+        await asyncio.sleep(5)
+
     @client.include
-    @crescent.hook(defer)
+    @crescent.hook(defer, lengthy_hook_that_takes_a_lot_time)
     @crescent.command
     async def command(ctx: crescent.Context) -> None:
-        # Simulate a long task...
-        await asyncio.sleep(10)
-
         await ctx.respond("Hello world!!")
     ```
     """
@@ -36,12 +37,12 @@ async def _noop():
 
 
 @overload
-def autodefer(ctx: Context) -> Awaitable[None]:
+def autodefer(*, time: timedelta | None = None) -> Callable[[Context], Awaitable[None]]:
     ...
 
 
 @overload
-def autodefer(*, time: timedelta | None = None) -> Callable[[Context], Awaitable[None]]:
+def autodefer(ctx: Context, *, time: timedelta | None = None) -> Awaitable[None]:
     ...
 
 
@@ -80,12 +81,22 @@ def autodefer(
             The time to wait before automatically deferring the task. By default
             this is two seconds.
     """
-    if not time and not ctx:
-        return autodefer()
+    if not ctx:
+
+        async def partial(ctx: Context) -> None:
+            return await autodefer(ctx, time=time)
+
+        return partial
+
+    # bool(timedelta()) is False
+    if time is None:
+        time = timedelta(seconds=2)
 
     async def task():
         assert ctx
-        await sleep((time or timedelta(seconds=2)).total_seconds())
+        assert time is not None
+        print(time)
+        await sleep(time.total_seconds())
         if ctx._has_deferred_response or ctx._has_created_response:
             return
         else:
