@@ -32,7 +32,7 @@ async def defer(ctx: Context) -> None:
     await ctx.defer()
 
 
-async def _noop():
+async def _noop() -> None:
     pass
 
 
@@ -92,7 +92,7 @@ def autodefer(
     if time is None:
         time = timedelta(seconds=2)
 
-    async def task():
+    async def task() -> None:
         assert ctx
         assert time is not None
         await sleep(time.total_seconds())
