@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Sequence, TypeVar, Generic, overload, Any, cast
-
+from typing import TYPE_CHECKING, Sequence, TypeVar, Generic, overload, Any
 from hikari import Event
 from crescent.events import EventMeta
 from crescent.internal.app_command import AppCommandMeta
@@ -12,9 +11,8 @@ if TYPE_CHECKING:
     from crescent.internal.includable import Includable
     from crescent.typedefs import HookCallbackT
 
-T = TypeVar("T")
 IncludableT = TypeVar("IncludableT")
-EventT = TypeVar("EventT", bound=Event, covariant=True)
+EventT = TypeVar("EventT", bound=Event, contravariant=True)
 
 __all__: Sequence[str] = ("HookResult", "hook")
 
@@ -72,13 +70,27 @@ class _Hook(Generic[IncludableT]):
         self.callbacks = callbacks
         self.after = after
 
-    def __call__(self, obj: Includable[IncludableT]) -> Includable[IncludableT]:
+    @overload
+    def __call__(
+        self: _Hook[AppCommandMeta], obj: Includable[AppCommandMeta]
+    ) -> Includable[AppCommandMeta]:
+        ...
+
+    @overload
+    def __call__(
+        self: _Hook[EventMeta[EventT]], obj: Includable[EventMeta[EventT]]
+    ) -> Includable[EventMeta[EventT]]:
+        ...
+
+    def __call__(self, obj: Includable[Any]) -> Includable[Any]:
         if isinstance(obj.metadata, AppCommandMeta):
             obj.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
         elif isinstance(obj.metadata, EventMeta):
             # Pyright isn't happy with the type of obj.metadata not being known, but that doesn't matter
             # for this code to function properly.
-            obj.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)  # pyright: ignore
+            obj.metadata.add_hooks(
+                self.callbacks, prepend=True, after=self.after
+            )  # pyright: ignore # mypy: ignore
         else:
             raise TypeError("Unsupported type, this should never happen.")
 

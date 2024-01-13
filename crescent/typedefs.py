@@ -58,7 +58,7 @@ AutocompleteCallbackT = Callable[
 
 HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
 
-EventT = TypeVar("EventT", bound=Event, contravariant=True)
+EventT = TypeVar("EventT", bound=Event)
 EventHookCallbackT = Callable[["EventT"], Awaitable[Optional["HookResult"]]]
 
 PluginCallbackT = Callable[[], None]

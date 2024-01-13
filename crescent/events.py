@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from hikari import Event
     from hikari.api.event_manager import CallbackT
 
-EventT = TypeVar("EventT", bound="Event")
+EventT = TypeVar("EventT", bound="Event", contravariant=True)
 
 __all__: Sequence[str] = ("event",)
 
