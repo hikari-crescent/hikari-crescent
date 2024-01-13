@@ -150,13 +150,7 @@ class AppCommandMeta:
     def add_hooks(
         self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool
     ) -> None:
-        add_hooks(
-            self.hooks,
-            self.after_hooks,
-            hooks,
-            prepend=prepend,
-            after=after,
-        )
+        add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)
 
     @property
     def unique(self) -> Unique:

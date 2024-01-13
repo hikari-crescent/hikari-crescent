@@ -18,7 +18,7 @@ from hikari import (
     StartedEvent,
 )
 from hikari.traits import EventManagerAware, RESTAware
-from crescent.events import EventMeta 
+from crescent.events import EventMeta
 from crescent.internal.app_command import AppCommandMeta
 
 from crescent.internal.handle_resp import handle_resp
