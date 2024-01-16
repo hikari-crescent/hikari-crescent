@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable
-from typing import Callable, overload
+from datetime import timedelta
+from typing import Callable, overload, Sequence
 
 from crescent import Context
 
-__all__ = ["defer"]
+__all__: Sequence[str] = ("defer",)
 
 
 @overload
@@ -42,3 +43,26 @@ def defer(
         return ctx.defer(ephemeral=ephemeral)
 
     return lambda ctx: ctx.defer(ephemeral=ephemeral)
+
+
+_autodefer_scheduled: dict[int, None] = {}
+
+@overload
+def autodefer(
+    *, ephemeral: bool = ..., delay: timedelta = ...
+) -> Callable[[Context], Awaitable[None]]:
+    ...
+
+
+@overload
+def autodefer(ctx: Context) -> Awaitable[None]:
+    ...
+
+
+def autodefer(
+    ctx: Context | None = None,
+    *,
+    ephemeral: bool = False,
+    delay: timedelta = timedelta(seconds=2.5),
+) -> Callable[[Context], Awaitable[None]] | Awaitable[None]:
+    ...
