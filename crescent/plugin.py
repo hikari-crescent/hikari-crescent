@@ -227,12 +227,12 @@ class Plugin(Generic[BotT, ModelT]):
             obj.metadata.add_hooks(self.command_hooks, after=False)
             obj.metadata.add_hooks(self.command_after_hooks, after=True)
         if isinstance(obj.metadata, EventMeta):
-            obj.metadata.add_hooks(
+            obj.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
                 self.event_hooks, after=False
-            )  # pyright: ignore [reportUnknownMemberType]
-            obj.metadata.add_hooks(
+            )
+            obj.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
                 self.event_after_hooks, after=True
-            )  # pyright: ignore [reportUnknownMemberType]
+            )
         self._children.append(obj)
         return obj
 
@@ -272,12 +272,12 @@ class Plugin(Generic[BotT, ModelT]):
                 child.metadata.add_hooks(client.command_hooks, after=False)
                 child.metadata.add_hooks(client.command_after_hooks, after=True)
             if isinstance(child.metadata, EventMeta):
-                child.metadata.add_hooks(
+                child.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
                     client.event_hooks, after=False
-                )  # pyright: ignore [reportUnknownMemberType]
-                child.metadata.add_hooks(
+                )
+                child.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
                     client.event_after_hooks, after=True
-                )  # pyright: ignore [reportUnknownMemberType]
+                )
             child.register_to_client(client)
 
     def _unload(self) -> None:
