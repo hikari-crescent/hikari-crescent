@@ -11,7 +11,6 @@ from hikari import (
     PartialChannel,
     User,
 )
-from typing_extensions import Annotated
 
 from crescent import Context, command, message_command, user_command
 from crescent.internal.app_command import AppCommand, AppCommandMeta
