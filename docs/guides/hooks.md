@@ -110,3 +110,21 @@ async def my_command(ctx: crescent.Context) -> None:
 ```
 
 To see more information on this function, check the API reference for `crescent.ext.cooldowns`.
+
+
+## Event Hooks
+
+Hooks can also be used for events. An event callback can use any hook for the event type
+or supertype of the event type in the callback.
+
+```python
+async def event_hook(event: hikari.MessageCreateEvent) -> None:
+    print("event gotten")
+
+@client.include
+@crescent.hook(event_hook)
+@crescent.event
+async def event(event: hikari.MessageCreateEvent):
+    pass
+
+```
