@@ -211,10 +211,10 @@ class Plugin(Generic[BotT, ModelT]):
         event_hooks: list[EventHookCallbackT[Event]] | None = None,
         event_after_hooks: list[EventHookCallbackT[Event]] | None = None,
     ) -> None:
-        self.command_hooks = command_hooks or []
-        self.command_after_hooks = command_after_hooks or []
-        self.event_hooks = event_hooks or []
-        self.event_after_hooks = event_after_hooks or []
+        self.command_hooks: list[CommandHookCallbackT] = command_hooks or []
+        self.command_after_hooks: list[CommandHookCallbackT] = command_after_hooks or []
+        self.event_hooks: list[EventHookCallbackT[Event]] = event_hooks or []
+        self.event_after_hooks: list[EventHookCallbackT[Event]] = event_after_hooks or []
         self._client: Client | None = None
         self._model: ModelT | None = None
         self._children: list[Includable[Any]] = []
@@ -227,8 +227,8 @@ class Plugin(Generic[BotT, ModelT]):
             obj.metadata.add_hooks(self.command_hooks, after=False)
             obj.metadata.add_hooks(self.command_after_hooks, after=True)
         if isinstance(obj.metadata, EventMeta):
-            obj.metadata.add_hooks(self.event_hooks, after=False)
-            obj.metadata.add_hooks(self.event_after_hooks, after=True)
+            obj.metadata.add_hooks(self.event_hooks, after=False)  # pyright: ignore [reportUnknownMemberType]
+            obj.metadata.add_hooks(self.event_after_hooks, after=True)  # pyright: ignore [reportUnknownMemberType]
         self._children.append(obj)
         return obj
 
@@ -268,8 +268,8 @@ class Plugin(Generic[BotT, ModelT]):
                 child.metadata.add_hooks(client.command_hooks, after=False)
                 child.metadata.add_hooks(client.command_after_hooks, after=True)
             if isinstance(child.metadata, EventMeta):
-                child.metadata.add_hooks(client.event_hooks, after=False)
-                child.metadata.add_hooks(client.event_after_hooks, after=True)
+                child.metadata.add_hooks(client.event_hooks, after=False)  # pyright: ignore [reportUnknownMemberType]
+                child.metadata.add_hooks(client.event_after_hooks, after=True)  # pyright: ignore [reportUnknownMemberType]
             child.register_to_client(client)
 
     def _unload(self) -> None:

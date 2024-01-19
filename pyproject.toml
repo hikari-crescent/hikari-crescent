@@ -84,7 +84,6 @@ reportPrivateUsage = false
 reportImportCycles = false
 reportIncompatibleMethodOverride = false
 reportWildcardImportFromLibrary = false
-reportUnknownMemberType = false
 
 [tool.ruff]
 ignore = [

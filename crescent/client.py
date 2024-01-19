@@ -155,10 +155,10 @@ class Client:
         self.allow_unknown_interactions = allow_unknown_interactions
         self.update_commands = update_commands
 
-        self.command_hooks = command_hooks or []
-        self.command_after_hooks = command_after_hooks or []
-        self.event_hooks = event_hooks or []
-        self.event_after_hooks = event_after_hooks or []
+        self.command_hooks: list[CommandHookCallbackT] = command_hooks or []
+        self.command_after_hooks: list[CommandHookCallbackT] = command_after_hooks or []
+        self.event_hooks: list[EventHookCallbackT[hk_Event]] = event_hooks or []
+        self.event_after_hooks: list[EventHookCallbackT[hk_Event]] = event_after_hooks or []
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
@@ -233,8 +233,8 @@ class Client:
             obj.metadata.add_hooks(self.command_hooks, after=False)
             obj.metadata.add_hooks(self.command_after_hooks, after=True)
         if isinstance(obj.metadata, EventMeta):
-            obj.metadata.add_hooks(self.event_hooks, after=False)
-            obj.metadata.add_hooks(self.event_after_hooks, after=True)
+            obj.metadata.add_hooks(self.event_hooks, after=False)  # pyright: ignore [reportUnknownMemberType]
+            obj.metadata.add_hooks(self.event_after_hooks, after=True)  # pyright: ignore [reportUnknownMemberType]
 
         obj.register_to_client(self)
 
