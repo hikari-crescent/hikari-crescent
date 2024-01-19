@@ -1,14 +1,9 @@
 from types import FunctionType
-from typing import Optional
 
 from hikari import (
     UNDEFINED,
-    ChannelType,
-    CommandOption,
     CommandType,
     Message,
-    OptionType,
-    PartialChannel,
     User,
 )
 

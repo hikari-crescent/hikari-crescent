@@ -5,7 +5,7 @@ import hikari
 import crescent
 
 if typing.TYPE_CHECKING:
-    from examples.plugins.example import Model
+    pass
 
 # If you are not using the model property you can typehint as
 # `crescent.Plugin[hikari.GatewayBot, None]` instead.

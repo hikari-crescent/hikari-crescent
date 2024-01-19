@@ -18,9 +18,9 @@ from hikari import (
     StartedEvent,
 )
 from hikari.traits import EventManagerAware, RESTAware
+
 from crescent.events import EventMeta
 from crescent.internal.app_command import AppCommandMeta
-
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
@@ -38,8 +38,8 @@ if TYPE_CHECKING:
     from crescent.typedefs import (
         AutocompleteErrorHandlerCallbackT,
         CommandErrorHandlerCallbackT,
-        EventErrorHandlerCallbackT,
         CommandHookCallbackT,
+        EventErrorHandlerCallbackT,
     )
 
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])

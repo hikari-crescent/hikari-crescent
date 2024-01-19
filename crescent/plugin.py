@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast, overload
 
 from hikari import Event
+
 from crescent.events import EventMeta
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.internal.app_command import AppCommandMeta

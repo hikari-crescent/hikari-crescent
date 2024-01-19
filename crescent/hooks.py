@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Sequence, TypeVar, Generic, overload, Any
+from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, overload
+
 from hikari import Event
+
 from crescent.events import EventMeta
 from crescent.internal.app_command import AppCommandMeta
 
 if TYPE_CHECKING:
-    from crescent.typedefs import EventHookCallbackT
     from crescent.internal.includable import Includable
-    from crescent.typedefs import CommandHookCallbackT
+    from crescent.typedefs import CommandHookCallbackT, EventHookCallbackT
 
 IncludableT = TypeVar("IncludableT")
 EventT = TypeVar("EventT", bound=Event, contravariant=True)

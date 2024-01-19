@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, TypeVar, get_type_hints, overload, Generic
+from typing import TYPE_CHECKING, Generic, TypeVar, get_type_hints, overload
 
 from hikari import EventManagerAware
 
@@ -118,12 +117,12 @@ def _event_callback(
         try:
             for callback in self.metadata.hooks:
                 res = await callback(event)
-                if res and res.exit == True:
+                if res and res.exit is True:
                     return
             await self.metadata.callback(event)
             for callback in self.metadata.after_hooks:
                 res = await callback(event)
-                if res and res.exit == True:
+                if res and res.exit is True:
                     return
         except Exception as exc:
             handled = await self.client._event_error_handler.try_handle(exc, [exc, event])

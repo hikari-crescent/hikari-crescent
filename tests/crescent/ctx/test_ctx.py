@@ -1,4 +1,3 @@
-from pytest import mark
 
 from crescent.context import InteractionContext
 

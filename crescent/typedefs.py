@@ -26,8 +26,8 @@ from hikari import (
 from hikari.api import EntityFactory
 
 if TYPE_CHECKING:
-    from crescent.hooks import HookResult
     from crescent.context import AutocompleteContext, Context
+    from crescent.hooks import HookResult
     from crescent.mentionable import Mentionable
 
 __all__: Sequence[str] = (

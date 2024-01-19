@@ -128,7 +128,7 @@ async def human_only(event: hikari.MessageCreateEvent) -> crescent.HookResult:
 @crescent.hook(human_only)
 @crescent.event
 async def on_message(event: hikari.MessageCreateEvent):
-    print("Recieved an event from a human.")
+    print("Received an event from a human.")
 ```
 
 Similar to command hooks, `HookResult` can be used to exit early from a function in a event hook.
