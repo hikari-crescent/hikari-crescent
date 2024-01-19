@@ -49,4 +49,18 @@ class TestCommand2:
         await ctx.respond("Done!")
 
 
+# You can also use hooks on events.
+async def human_only(event: hikari.MessageCreateEvent) -> crescent.HookResult:
+    if not event.is_human:
+        return crescent.HookResult(exit=True)
+    return crescent.HookResult()
+
+
+@client.include
+@crescent.hook(human_only)
+@crescent.event
+async def on_message(event: hikari.MessageCreateEvent):
+    print("Recieved an event from a human.")
+
+
 bot.run()

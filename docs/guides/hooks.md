@@ -1,9 +1,9 @@
 # Hooks
 
-Hooks allow you to run code before or after a command is run. They also allow you
+Hooks allow you to run code before or after a command is run or an event is processed. They also allow you
 to create checks for a certain command.
 
-This is a simple hook that says "hello there" before every command you hook it to.
+This is a simple command hook that says "hello there" before every command you hook it to.
 
 ```python
 async def my_hook(ctx: crescent.Context) -> None:
@@ -114,17 +114,22 @@ To see more information on this function, check the API reference for `crescent.
 
 ## Event Hooks
 
-Hooks can also be used for events. An event callback can use any hook for the event type
+Hooks can be used for events. An event callback can use any hook for the event type
 or supertype of the event type in the callback.
 
 ```python
-async def event_hook(event: hikari.MessageCreateEvent) -> None:
-    print("event gotten")
+async def human_only(event: hikari.MessageCreateEvent) -> crescent.HookResult:
+    if not event.is_human:
+        return crescent.HookResult(exit=True)
+    return crescent.HookResult()
+
 
 @client.include
-@crescent.hook(event_hook)
+@crescent.hook(human_only)
 @crescent.event
-async def event(event: hikari.MessageCreateEvent):
-    pass
-
+async def on_message(event: hikari.MessageCreateEvent):
+    print("Recieved an event from a human.")
 ```
+
+Similar to command hooks, `HookResult` can be used to exit early from a function in a event hook.
+After hooks can also be used.
