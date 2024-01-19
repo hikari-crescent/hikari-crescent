@@ -266,6 +266,9 @@ class Plugin(Generic[BotT, ModelT]):
             if isinstance(child.metadata, AppCommandMeta):
                 child.metadata.add_hooks(client.command_hooks, after=False)
                 child.metadata.add_hooks(client.command_after_hooks, after=True)
+            if isinstance(child.metadata, EventMeta):
+                child.metadata.add_hooks(client.event_hooks, after=False)
+                child.metadata.add_hooks(client.event_after_hooks, after=True)
             child.register_to_client(client)
 
     def _unload(self) -> None:
