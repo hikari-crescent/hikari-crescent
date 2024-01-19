@@ -39,7 +39,7 @@ if TYPE_CHECKING:
         AutocompleteErrorHandlerCallbackT,
         CommandErrorHandlerCallbackT,
         EventErrorHandlerCallbackT,
-        HookCallbackT,
+        CommandHookCallbackT,
     )
 
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
@@ -91,8 +91,8 @@ class Client:
         default_guild: Snowflakeish | None = None,
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
-        command_hooks: list[HookCallbackT] | None = None,
-        command_after_hooks: list[HookCallbackT] | None = None,
+        command_hooks: list[CommandHookCallbackT] | None = None,
+        command_after_hooks: list[CommandHookCallbackT] | None = None,
         event_hooks: list[EventHookCallbackT[hk_Event]] | None = None,
         event_after_hooks: list[EventHookCallbackT[hk_Event]] | None = None,
     ):

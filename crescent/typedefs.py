@@ -40,7 +40,7 @@ __all__: Sequence[str] = (
     "CommandErrorHandlerCallbackT",
     "AutocompleteCallbackT",
     "AutocompleteValueT",
-    "HookCallbackT",
+    "CommandHookCallbackT",
     "EventHookCallbackT",
 )
 
@@ -56,7 +56,7 @@ AutocompleteCallbackT = Callable[
     Awaitable[Sequence[Tuple[str, AutocompleteValueT]]],
 ]
 
-HookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
+CommandHookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]
 
 EventT = TypeVar("EventT", bound=Event)
 EventHookCallbackT = Callable[["EventT"], Awaitable[Optional["HookResult"]]]

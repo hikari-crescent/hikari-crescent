@@ -9,7 +9,7 @@ from crescent.internal.app_command import AppCommandMeta
 if TYPE_CHECKING:
     from crescent.typedefs import EventHookCallbackT
     from crescent.internal.includable import Includable
-    from crescent.typedefs import HookCallbackT
+    from crescent.typedefs import CommandHookCallbackT
 
 IncludableT = TypeVar("IncludableT")
 EventT = TypeVar("EventT", bound=Event, contravariant=True)
@@ -31,7 +31,7 @@ class HookResult:
 
 
 @overload
-def hook(*callbacks: HookCallbackT, after: bool = False) -> _Hook[AppCommandMeta]:
+def hook(*callbacks: CommandHookCallbackT, after: bool = False) -> _Hook[AppCommandMeta]:
     ...
 
 
@@ -41,7 +41,7 @@ def hook(*callbacks: EventHookCallbackT[EventT], after: bool = False) -> _Hook[E
 
 
 def hook(
-    *callbacks: HookCallbackT | EventHookCallbackT[EventT], after: bool = False
+    *callbacks: CommandHookCallbackT | EventHookCallbackT[EventT], after: bool = False
 ) -> _Hook[Any]:
     # TODO: Example for events
     """

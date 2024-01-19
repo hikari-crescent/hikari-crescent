@@ -42,7 +42,7 @@ __all__: Sequence[str] = (
     "CommandCallbackT",
     "CommandOptionsT",
     "OptionTypesT",
-    "HookCallbackT",
+    "CommandHookCallbackT",
     "AutocompleteCallbackT",
     "ClassCommandProto",
     "Plugin",

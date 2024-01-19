@@ -94,7 +94,7 @@ def event(
             )
 
     def on_remove(includable: Includable[EventMeta[EventT]]) -> None:
-        # if it's not `GatewayTraits`, the event could never have been
+        # if it's not `EventManagerAware`, the event could never have been
         # added in the first place.
         assert isinstance(includable.client.app, EventManagerAware)
         includable.client.app.event_manager.unsubscribe(

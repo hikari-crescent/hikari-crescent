@@ -14,7 +14,7 @@ from crescent.typedefs import EventHookCallbackT
 
 if TYPE_CHECKING:
     from crescent.client import Client, GatewayTraits, RESTTraits
-    from crescent.typedefs import HookCallbackT, PluginCallbackT
+    from crescent.typedefs import CommandHookCallbackT, PluginCallbackT
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
 
@@ -205,8 +205,8 @@ class Plugin(Generic[BotT, ModelT]):
     def __init__(
         self,
         *,
-        command_hooks: list[HookCallbackT] | None = None,
-        command_after_hooks: list[HookCallbackT] | None = None,
+        command_hooks: list[CommandHookCallbackT] | None = None,
+        command_after_hooks: list[CommandHookCallbackT] | None = None,
         event_hooks: list[EventHookCallbackT[Event]] | None = None,
         event_after_hooks: list[EventHookCallbackT[Event]] | None = None,
     ) -> None:

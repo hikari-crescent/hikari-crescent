@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable
     from crescent.locale import LocaleBuilder
-    from crescent.typedefs import HookCallbackT
+    from crescent.typedefs import CommandHookCallbackT
 
 __all__: Sequence[str] = ("Group", "SubGroup")
 
@@ -56,9 +56,9 @@ class Group:
     description: str | LocaleBuilder | None = None
     """The description of the group. The discord API supports this feature but
     it does not do anything."""
-    hooks: list[HookCallbackT] = field(default_factory=list)
+    hooks: list[CommandHookCallbackT] = field(default_factory=list)
     """A looks of hooks to run before all commands in this group."""
-    after_hooks: list[HookCallbackT] = field(default_factory=list)
+    after_hooks: list[CommandHookCallbackT] = field(default_factory=list)
     """A list of hooks to run after all commands in this group."""
 
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
@@ -70,8 +70,8 @@ class Group:
         self,
         name: str | LocaleBuilder,
         description: str | LocaleBuilder | None = None,
-        hooks: list[HookCallbackT] | None = None,
-        after_hooks: list[HookCallbackT] | None = None,
+        hooks: list[CommandHookCallbackT] | None = None,
+        after_hooks: list[CommandHookCallbackT] | None = None,
     ) -> SubGroup:
         """
         Create a sub group from this group.
@@ -122,9 +122,9 @@ class SubGroup:
     name: str | LocaleBuilder
     parent: Group
     description: str | LocaleBuilder | None = None
-    hooks: list[HookCallbackT] = field(default_factory=list)
+    hooks: list[CommandHookCallbackT] = field(default_factory=list)
     """A looks of hooks to run before all commands in this group."""
-    after_hooks: list[HookCallbackT] = field(default_factory=list)
+    after_hooks: list[CommandHookCallbackT] = field(default_factory=list)
     """A list of hooks to run after all commands in this group."""
 
     def child(self, includable: Includable[AppCommandMeta]) -> Includable[AppCommandMeta]:
