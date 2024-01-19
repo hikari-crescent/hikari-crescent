@@ -1,11 +1,6 @@
 from types import FunctionType
 
-from hikari import (
-    UNDEFINED,
-    CommandType,
-    Message,
-    User,
-)
+from hikari import UNDEFINED, CommandType, Message, User
 
 from crescent import Context, command, message_command, user_command
 from crescent.internal.app_command import AppCommand, AppCommandMeta

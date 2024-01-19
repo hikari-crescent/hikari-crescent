@@ -1,4 +1,3 @@
-
 from crescent.context import InteractionContext
 
 

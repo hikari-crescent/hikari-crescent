@@ -87,7 +87,9 @@ class _Hook(Generic[IncludableT]):
         if isinstance(obj.metadata, AppCommandMeta):
             obj.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
         elif isinstance(obj.metadata, EventMeta):
-            obj.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)  # pyright: ignore [reportUnknownMemberType]
+            obj.metadata.add_hooks(
+                self.callbacks, prepend=True, after=self.after
+            )  # pyright: ignore [reportUnknownMemberType]
         else:
             raise TypeError("Unsupported type, this should never happen.")
 
