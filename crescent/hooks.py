@@ -100,7 +100,7 @@ def add_hooks(
     command_after_hooks: Sequence[CommandHookCallbackT],
     event_hooks: Sequence[EventHookCallbackT[Event]],
     event_after_hooks: Sequence[EventHookCallbackT[Event]],
-):
+) -> None:
     if isinstance(obj.metadata, AppCommandMeta):
         obj.metadata.add_hooks(command_hooks, after=False)
         obj.metadata.add_hooks(command_after_hooks, after=True)
