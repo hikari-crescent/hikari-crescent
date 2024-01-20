@@ -266,16 +266,7 @@ class Plugin(Generic[BotT, ModelT]):
         for callback in self._load_hooks:
             callback()
         for child in self._children:
-            if isinstance(child.metadata, AppCommandMeta):
-                child.metadata.add_hooks(client.command_hooks, after=False)
-                child.metadata.add_hooks(client.command_after_hooks, after=True)
-            if isinstance(child.metadata, EventMeta):
-                child.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
-                    client.event_hooks, after=False
-                )
-                child.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
-                    client.event_after_hooks, after=True
-                )
+            add_hooks(child, self.command_hooks, self.command_after_hooks, self.event_hooks, self.event_after_hooks)
             child.register_to_client(client)
 
     def _unload(self) -> None:
