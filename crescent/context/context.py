@@ -39,7 +39,7 @@ __all__: Sequence[str] = ("Context",)
 class Context(BaseContext):
     """Represents the context for command interactions"""
 
-    interaction: CommandInteraction
+    interaction: CommandInteraction  # pyright: ignore [reportIncompatibleVariableOverride]
 
     @property
     def channel(self) -> PermissibleGuildChannel | GuildThreadChannel | None:
@@ -188,7 +188,7 @@ class Context(BaseContext):
                 a list of roles is provided, only those roles will be mentioned.
             ensure_message:
                 A message is not returned the first time you use
-                `Contex.respond`. Set `ensure_message=True` to automatically
+                `Context.respond`. Set `ensure_message=True` to automatically
                 fetch a message and return it.
         """
         if ephemeral:
