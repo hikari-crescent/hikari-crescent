@@ -233,12 +233,8 @@ class Client:
             obj.metadata.add_hooks(self.command_hooks, after=False)
             obj.metadata.add_hooks(self.command_after_hooks, after=True)
         if isinstance(metadata := obj.metadata, EventMeta):
-            metadata.add_hooks(
-                self.event_hooks, after=False
-            )
-            metadata.add_hooks(
-                self.event_after_hooks, after=True
-            )
+            metadata.add_hooks(self.event_hooks, after=False)
+            metadata.add_hooks(self.event_after_hooks, after=True)
 
         obj.register_to_client(self)
 

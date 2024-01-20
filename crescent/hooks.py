@@ -87,9 +87,7 @@ class _Hook(Generic[IncludableT]):
         if isinstance(obj.metadata, AppCommandMeta):
             obj.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
         elif isinstance(metadata := obj.metadata, EventMeta):
-            metadata.add_hooks(
-                self.callbacks, prepend=True, after=self.after
-            )
+            metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
         else:
             raise TypeError("Unsupported type, this should never happen.")
 
