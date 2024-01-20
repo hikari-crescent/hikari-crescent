@@ -266,10 +266,10 @@ class Plugin(Generic[BotT, ModelT]):
         for child in self._children:
             add_hooks(
                 child,
-                self.command_hooks,
-                self.command_after_hooks,
-                self.event_hooks,
-                self.event_after_hooks,
+                client.command_hooks,
+                client.command_after_hooks,
+                client.event_hooks,
+                client.event_after_hooks,
             )
             child.register_to_client(client)
 
