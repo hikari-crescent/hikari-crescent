@@ -3,7 +3,8 @@ from __future__ import annotations
 from types import MethodType
 from typing import TYPE_CHECKING, Any
 
-from crescent import Group, Plugin, command, hook
+from crescent import Group, Plugin, command, hook, event
+from hikari import Event
 from tests.utils import MockClient
 
 
@@ -37,7 +38,7 @@ else:
     MockHook = _MockHook
 
 
-def test_hook_order():
+def test_command_hook_order():
     client = MockClient(command_hooks=[MockHook("client")])
     plugin = Plugin(command_hooks=[MockHook("plugin")])
     group = Group("BOT_GROUP", hooks=[MockHook("group")])
@@ -93,7 +94,7 @@ def test_hook_order():
     assert c6.metadata.hooks == ["command", "subgroup", "group", "plugin", "client"]
 
 
-def test_after_hook_order():
+def test_command_after_hook_order():
     client = MockClient("NO TOKEN", command_after_hooks=[MockHook("client")])
     plugin = Plugin(command_after_hooks=[MockHook("plugin")])
     group = Group("BOT_GROUP", after_hooks=[MockHook("group")])
@@ -163,3 +164,47 @@ def test_vargs_hooks():
         ...
 
     assert command_a.metadata.hooks == command_b.metadata.hooks
+
+
+def test_event_hook_order():
+    client = MockClient(event_hooks=[MockHook("client")])
+    plugin = Plugin(event_hooks=[MockHook("plugin")])
+
+    @client.include
+    @hook(MockHook("command"))
+    @event
+    async def e1(event: Event) -> None:
+        ...
+
+    @plugin.include
+    @hook(MockHook("command"))
+    @event
+    async def e2(event: Event) -> None:
+        ...
+
+    client.plugins._add_plugin("", plugin)
+
+    assert e1.metadata.hooks == ["command", "client"]
+    assert e2.metadata.hooks == ["command", "plugin", "client"]
+
+
+def test_event_after_hook_order():
+    client = MockClient("NO TOKEN", event_after_hooks=[MockHook("client")])
+    plugin = Plugin(event_after_hooks=[MockHook("plugin")])
+
+    @client.include
+    @hook(MockHook("command"), after=True)
+    @event
+    async def e1(event: Event) -> None:
+        ...
+
+    @plugin.include
+    @hook(MockHook("command"), after=True)
+    @event
+    async def e2(event: Event) -> None:
+        ...
+
+    client.plugins._add_plugin("", plugin)
+
+    assert e1.metadata.after_hooks == ["command", "client"]
+    assert e2.metadata.after_hooks == ["command", "plugin", "client"]

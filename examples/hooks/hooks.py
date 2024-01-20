@@ -14,7 +14,7 @@ async def first_hook(ctx: crescent.Context) -> crescent.HookResult:  # you can a
     return crescent.HookResult(exit=True)
 
 
-def second_hook(number: int) -> crescent.HookCallbackT:
+def second_hook(number: int) -> crescent.CommandHookCallbackT:
     async def inner(ctx: crescent.Context) -> None:
         print(f"Here second. Number is {number}")
         ctx.options["number"] = number
@@ -47,6 +47,20 @@ class TestCommand2:
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond("Done!")
+
+
+# You can also use hooks on events.
+async def human_only(event: hikari.MessageCreateEvent) -> crescent.HookResult:
+    if not event.is_human:
+        return crescent.HookResult(exit=True)
+    return crescent.HookResult()
+
+
+@client.include
+@crescent.hook(human_only)
+@crescent.event
+async def on_message(event: hikari.MessageCreateEvent):
+    print("Recieved an event from a human.")
 
 
 bot.run()
