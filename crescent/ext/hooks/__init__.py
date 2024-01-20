@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable
-from datetime import timedelta
-from typing import Callable, overload, Sequence
+from typing import Callable, Protocol, overload, Sequence
+
+from hikari import MessageCreateEvent
 
 from crescent import Context
+from crescent.hooks import HookResult
 
-__all__: Sequence[str] = ("defer",)
+__all__: Sequence[str] = ("defer", "is_human")
 
 
 @overload
@@ -45,24 +47,13 @@ def defer(
     return lambda ctx: ctx.defer(ephemeral=ephemeral)
 
 
-_autodefer_scheduled: dict[int, None] = {}
-
-@overload
-def autodefer(
-    *, ephemeral: bool = ..., delay: timedelta = ...
-) -> Callable[[Context], Awaitable[None]]:
-    ...
+async def is_human(event: MessageCreateEvent) -> HookResult:
+    if event.is_human:
+        return HookResult()
+    return HookResult(exit=True)
 
 
-@overload
-def autodefer(ctx: Context) -> Awaitable[None]:
-    ...
-
-
-def autodefer(
-    ctx: Context | None = None,
-    *,
-    ephemeral: bool = False,
-    delay: timedelta = timedelta(seconds=2.5),
-) -> Callable[[Context], Awaitable[None]] | Awaitable[None]:
-    ...
+async def is_bot(event: MessageCreateEvent) -> HookResult:
+    if event.is_bot:
+        return HookResult()
+    return HookResult(exit=True)
