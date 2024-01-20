@@ -19,9 +19,7 @@ from hikari import (
 )
 from hikari.traits import EventManagerAware, RESTAware
 
-from crescent.events import EventMeta
 from crescent.hooks import add_hooks
-from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler

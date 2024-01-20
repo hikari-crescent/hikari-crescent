@@ -7,10 +7,8 @@ from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast
 
 from hikari import Event
 
-from crescent.events import EventMeta
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.hooks import add_hooks
-from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.includable import Includable
 from crescent.typedefs import EventHookCallbackT
 
@@ -266,7 +264,13 @@ class Plugin(Generic[BotT, ModelT]):
         for callback in self._load_hooks:
             callback()
         for child in self._children:
-            add_hooks(child, self.command_hooks, self.command_after_hooks, self.event_hooks, self.event_after_hooks)
+            add_hooks(
+                child,
+                self.command_hooks,
+                self.command_after_hooks,
+                self.event_hooks,
+                self.event_after_hooks,
+            )
             child.register_to_client(client)
 
     def _unload(self) -> None:
