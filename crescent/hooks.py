@@ -104,6 +104,6 @@ def add_hooks(
     if isinstance(obj.metadata, AppCommandMeta):
         obj.metadata.add_hooks(command_hooks, after=False)
         obj.metadata.add_hooks(command_after_hooks, after=True)
-    if isinstance(metadata := obj.metadata, EventMeta):
+    else if isinstance(metadata := obj.metadata, EventMeta):
         metadata.add_hooks(event_hooks, after=False)
         metadata.add_hooks(event_after_hooks, after=True)
