@@ -232,11 +232,11 @@ class Client:
         if isinstance(obj.metadata, AppCommandMeta):
             obj.metadata.add_hooks(self.command_hooks, after=False)
             obj.metadata.add_hooks(self.command_after_hooks, after=True)
-        if isinstance(obj.metadata, EventMeta):
-            obj.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
+        if isinstance(metadata := obj.metadata, EventMeta):
+            metadata.add_hooks(
                 self.event_hooks, after=False
             )
-            obj.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
+            metadata.add_hooks(
                 self.event_after_hooks, after=True
             )
 

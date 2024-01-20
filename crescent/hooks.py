@@ -86,8 +86,8 @@ class _Hook(Generic[IncludableT]):
     def __call__(self, obj: Includable[Any]) -> Includable[Any]:
         if isinstance(obj.metadata, AppCommandMeta):
             obj.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
-        elif isinstance(obj.metadata, EventMeta):
-            obj.metadata.add_hooks(  # pyright: ignore [reportUnknownMemberType]
+        elif isinstance(metadata := obj.metadata, EventMeta):
+            metadata.add_hooks(
                 self.callbacks, prepend=True, after=self.after
             )
         else:
