@@ -140,8 +140,7 @@ class ClassCommandOption(Generic[In, Out]):
     converter: Callable[[In], Out | Awaitable[Out]] | None
 
     def convert(self, converter: Callable[[In], T | Awaitable[T]]) -> ClassCommandOption[In, T]:
-        new = replace(self, converter=converter)
-        return cast("ClassCommandOption[In, T]", new)
+        return replace(cast("ClassCommandOption[In, T]", self), converter=converter)
 
     def _gen_option(self, name: str) -> CommandOption:
         name, name_localizations = str_or_build_locale(self.name or name)

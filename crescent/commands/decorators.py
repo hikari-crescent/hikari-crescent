@@ -150,7 +150,7 @@ def command(
                 continue
 
             if TYPE_CHECKING:
-                v = cast("ClassCommandOption[Any, Any]", v)
+                v = cast("ClassCommandOption[Any, Any]", v)  # type: ignore[redundant-cast]
 
             generated = v._gen_option(n)
             options.append(generated)
