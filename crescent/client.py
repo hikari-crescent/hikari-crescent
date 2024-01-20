@@ -230,7 +230,13 @@ class Client:
         if obj is None:
             return self.include
 
-        add_hooks(obj, self.command_hooks, self.command_after_hooks, self.event_hooks, self.event_after_hooks)
+        add_hooks(
+            obj,
+            self.command_hooks,
+            self.command_after_hooks,
+            self.event_hooks,
+            self.event_after_hooks,
+        )
 
         obj.register_to_client(self)
 

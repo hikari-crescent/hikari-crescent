@@ -224,7 +224,13 @@ class Plugin(Generic[BotT, ModelT]):
         self._unload_hooks: list[PluginCallbackT] = []
 
     def include(self, obj: T) -> T:
-        add_hooks(obj, self.command_hooks, self.command_after_hooks, self.event_hooks, self.event_after_hooks)
+        add_hooks(
+            obj,
+            self.command_hooks,
+            self.command_after_hooks,
+            self.event_hooks,
+            self.event_after_hooks,
+        )
         self._children.append(obj)
         return obj
 
