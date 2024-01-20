@@ -40,12 +40,14 @@ def apply_lint(session: nox.Session) -> None:
     session.run("black", "crescent")
     session.run("isort", "crescent")
     session.run("codespell", "crescent", "-i", "2", "-w")
+    session.run("codespell", "docs", "-i", "2", "-w")
 
 
 @poetry_session("linting")
 def lint(session: nox.Session) -> None:
     session.run("black", "--check", "crescent")
     session.run("codespell", "crescent")
+    session.run("codespell", "docs")
     session.run("ruff", "crescent")
     session.run("isort", "--check", "crescent")
 
@@ -69,4 +71,9 @@ def pytest(session: nox.Session) -> None:
 
 @poetry_session("doc")
 def docs(session: nox.Session) -> None:
-    session.run("pdoc", "crescent", "-d", "google", "-o", "docs/_build")
+    session.run("poetry", "run", "mkdocs", "-q", "build")
+
+
+@poetry_session("doc")
+def servedocs(session: nox.Session) -> None:
+    session.run("poetry", "run", "mkdocs", "serve")

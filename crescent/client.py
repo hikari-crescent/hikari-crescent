@@ -102,7 +102,7 @@ class Client:
 
                 ### Example
 
-                ```
+                ```python
                 # In bot.py
                 bot = hikari.GatewayBot("your token")
                 client = crescent.Client(bot, "I am a model")

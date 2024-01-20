@@ -24,8 +24,8 @@ include = ["crescent/banner.txt"]
 packages = [{ include = "crescent" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-hikari = "==2.0.0.dev121"
+python = ">=3.8,<3.13"
+hikari = "==2.0.0.dev122"
 sigparse = "^3.0.0"
 floodgate-rs = { version = "^0.1.1", optional = true }
 types-croniter = { version = "==1.0.11", optional = true }
@@ -45,11 +45,16 @@ nox = "^2023.4.22"
 [tool.poetry.group.linting.dependencies]
 ruff = ">=0.0.274,<0.0.284"
 isort = "^5.12.0"
-black = "^23.3.0"
+black = ">=23.12.1,<23.13"
 codespell = "^2.2.5"
 
 [tool.poetry.group.doc.dependencies]
-pdoc = ">=12.1,<15.0"
+mkdocs-material = { version = ">=9.5.3,<9.6", extras = ["imaging"] }
+mkdocs = ">=1.5.3,<1.6"
+mkdocstrings-python = ">=1.8.0,<1.9"
+black = ">=23.12.1,<23.13"
+griffe-inherited-docstrings = "1.0.0"
+
 
 [tool.poetry.group.tests.dependencies]
 pytest = "^7.3.2"
@@ -63,7 +68,7 @@ target-version = ['py38']
 skip-magic-trailing-comma = true
 
 [tool.mypy]
-python_version = 3.8
+python_version = "3.8"
 strict = true
 warn_unused_configs = true
 warn_return_any = true

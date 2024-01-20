@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 
     from crescent.client import Client, GatewayTraits, RESTTraits
 
-    ContextT = TypeVar("ContextT", bound="BaseContext")
+    ContextT = TypeVar("ContextT", bound="InteractionContext")
 
 
-__all__: Sequence[str] = ("BaseContext",)
+__all__: Sequence[str] = ("InteractionContext",)
 
 
 @dataclass
-class BaseContext:
+class InteractionContext:
     """Represents the context for interactions"""
 
     __slots__ = (
@@ -43,7 +43,7 @@ class BaseContext:
         "group",
         "sub_group",
         "options",
-        "_has_created_message",
+        "_has_created_response",
         "_has_deferred_response",
         "_rest_interaction_future",
     )
@@ -83,7 +83,7 @@ class BaseContext:
     options: dict[str, Any]
     """The options that were provided by the user."""
 
-    _has_created_message: bool
+    _has_created_response: bool
     """
     Whether the user has responded to this interaction.
 
@@ -136,7 +136,7 @@ class BaseContext:
             group=self.group,
             sub_group=self.sub_group,
             options=self.options,
-            _has_created_message=self._has_created_message,
+            _has_created_response=self._has_created_response,
             _has_deferred_response=self._has_deferred_response,
             _rest_interaction_future=self._rest_interaction_future,
         )

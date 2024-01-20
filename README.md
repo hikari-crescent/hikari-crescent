@@ -24,15 +24,13 @@
  - Error handling for commands, events, and autocomplete.
  - Hooks to run function before or after a command (or any command from a group!)
  - Plugin system to easily split bot into different modules.
- - Easily use a custom context class.
  - Makes typehinting easy.
  - RESTBot and GatewayBot support.
 
 ### Links
 > 📦 | [Pypi](https://pypi.org/project/hikari-crescent/)<br>
-> 📖 | [User Guide](https://hikari-crescent.github.io/book)<br>
+> 🗃️ | [Docs](https://hikari-crescent.github.io/hikari-crescent/)<br>
 > 🎨 | [Template Project](https://github.com/hikari-crescent/template)<br>
-> 🗃️ | [API Reference](https://hikari-crescent.github.io/hikari-crescent/crescent.html)<br>
 
 ## Installation
 Crescent is supported in python3.8+.
@@ -82,29 +80,6 @@ async def ping(ctx: crescent.Context):
     await ctx.respond("Pong!")
 ```
 
-Adding arguments to the function adds more options. Information for arguments can be provided using the `Annotated` type hint.
-See [this example](https://github.com/hikari-crescent/hikari-crescent/blob/main/examples/basic/function_commands.py) for more information.
-
-```python
-# python 3.9 +
-from typing import Annotated as Atd
-
-# python 3.8
-from typing_extensions import Annotated as Atd
-
-@client.include
-@crescent.command
-async def say(ctx: crescent.Context, word: str):
-    await ctx.respond(word)
-
-# The same command but with a description for `word`
-@client.include
-@crescent.command
-async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
-    await ctx.respond(word)
-```
-
-
 ### Typing to Option Types Lookup Table 
 | Type | Option Type |
 |---|---|
@@ -116,8 +91,7 @@ async def say(ctx: crescent.Context, word: Atd[str, "The word to say"]) -> None:
 | `hikari.Role` | Role |
 | `crescent.Mentionable` | Role or User |
 | Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
-| `List[Channel Types]` (classes only) | Channel. ^ |
-| `Union[Channel Types]` (functions only) | Channel. ^ |
+| `List[Channel Types]` | Channel. ^ |
 | `hikari.Attachment` | Attachment |
 
 
@@ -139,14 +113,6 @@ class ClassCommand:
 
     async def callback(self) -> None:
         await ctx.respond(self.option)
-
-@client.include
-@crescent.command
-async def function_command(
-    ctx: crescent.Context,
-    option: Annotated[str, crescent.Autocomplete(autocomplete)]
-) -> None:
-    await ctx.respond(option)
 ```
 
 ### Error Handling

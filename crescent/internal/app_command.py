@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, ClassVar, TypeVar
 from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import EntityFactory
 
-from crescent.context.utils import support_custom_context
 from crescent.locale import LocaleBuilder, str_or_build_locale
 
 if TYPE_CHECKING:
@@ -16,12 +15,7 @@ if TYPE_CHECKING:
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
-    from crescent.typedefs import (
-        CommandCallbackT,
-        HookCallbackT,
-        TransformedAutocompleteCallbackT,
-        TransformedHookCallbackT,
-    )
+    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
 
     Self = TypeVar("Self")
 
@@ -146,24 +140,20 @@ class AppCommandMeta:
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
-    autocomplete: dict[str, TransformedAutocompleteCallbackT[Any]] = field(default_factory=dict)
+    autocomplete: dict[str, AutocompleteCallbackT[Any]] = field(default_factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[TransformedHookCallbackT] = field(default_factory=list)
-    after_hooks: list[TransformedHookCallbackT] = field(default_factory=list)
+    hooks: list[HookCallbackT] = field(default_factory=list)
+    after_hooks: list[HookCallbackT] = field(default_factory=list)
 
     def add_hooks(
         self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool
     ) -> None:
-        transformed_hooks: list[TransformedHookCallbackT] = [
-            support_custom_context(hook) for hook in hooks
-        ]
-
-        def extend_or_prepend(list_to_edit: list[TransformedHookCallbackT]) -> None:
+        def extend_or_prepend(list_to_edit: list[HookCallbackT]) -> None:
             if prepend:
-                list_to_edit[:0] = transformed_hooks
+                list_to_edit[:0] = hooks
             else:
-                list_to_edit.extend(transformed_hooks)
+                list_to_edit.extend(hooks)
 
         if not after:
             extend_or_prepend(self.hooks)

@@ -4,7 +4,6 @@ from typing import Sequence
 
 import dotenv
 import hikari
-from typing_extensions import Annotated
 
 import crescent
 from crescent.ext import tasks
@@ -65,30 +64,9 @@ class ClassCommand:
 
 @client.include
 @crescent.command
-async def command(ctx: crescent.Context, arg: str) -> None:
-    await ctx.respond(arg)
-
-
-@client.include
-@crescent.command
 async def reload_plugin(ctx: crescent.Context) -> None:
     client.plugins.load("tests.test_client.test_plugin", refresh=True)
     await ctx.respond("Done")
-
-
-@client.include
-@group.child
-@crescent.command
-async def group_command(ctx: crescent.Context, arg: str) -> None:
-    await ctx.respond(arg)
-
-
-@client.include
-@subgroup.child
-@crescent.hook(myhook)
-@crescent.command
-async def subgroup_command(ctx: crescent.Context, arg: str) -> None:
-    await ctx.respond(arg)
 
 
 @client.include
@@ -174,26 +152,10 @@ async def error_autocomplete(
     ]
 
 
-@client.include
-@crescent.command
-async def error_autocomplete_command(
-    ctx: crescent.Context, option: Annotated[str, crescent.Autocomplete(error_autocomplete)]
-) -> None:
-    await ctx.respond(option)
-
-
 async def autocomplete_response(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[hikari.CommandChoice]:
     return [hikari.CommandChoice(name="Some Option", value="1234")]
-
-
-@client.include
-@crescent.command
-async def autocomplete_interaction(
-    ctx: crescent.Context, result: Annotated[str, crescent.Autocomplete(autocomplete_response)]
-) -> None:
-    await ctx.respond(result, ephemeral=True)
 
 
 @client.include

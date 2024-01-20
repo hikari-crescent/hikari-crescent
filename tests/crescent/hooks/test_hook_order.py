@@ -4,7 +4,6 @@ from types import MethodType
 from typing import TYPE_CHECKING, Any
 
 from crescent import Group, Plugin, command, hook
-from crescent.context.utils import support_custom_context
 from tests.utils import MockClient
 
 
@@ -36,16 +35,6 @@ if TYPE_CHECKING:
     MockHook = Any
 else:
     MockHook = _MockHook
-
-
-def unwrap_hooks(hooks: list[Any]):
-    print(hooks)
-    return [hook.__wrapped__ for hook in hooks]
-
-
-def assert_all_supports_custom_ctx(hooks: list[Any]):
-    for callable in hooks:
-        assert f"{support_custom_context.__name__}.<locals>.inner" in str(callable)
 
 
 def test_hook_order():
@@ -96,19 +85,12 @@ def test_hook_order():
 
     client.plugins._add_plugin("", plugin)
 
-    assert_all_supports_custom_ctx(c1.metadata.hooks)
-    assert_all_supports_custom_ctx(c2.metadata.hooks)
-    assert_all_supports_custom_ctx(c3.metadata.hooks)
-    assert_all_supports_custom_ctx(c4.metadata.hooks)
-    assert_all_supports_custom_ctx(c5.metadata.hooks)
-    assert_all_supports_custom_ctx(c6.metadata.hooks)
-
-    assert unwrap_hooks(c1.metadata.hooks) == ["command", "client"]
-    assert unwrap_hooks(c2.metadata.hooks) == ["command", "group", "client"]
-    assert unwrap_hooks(c3.metadata.hooks) == ["command", "subgroup", "group", "client"]
-    assert unwrap_hooks(c4.metadata.hooks) == ["command", "plugin", "client"]
-    assert unwrap_hooks(c5.metadata.hooks) == ["command", "group", "plugin", "client"]
-    assert unwrap_hooks(c6.metadata.hooks) == ["command", "subgroup", "group", "plugin", "client"]
+    assert c1.metadata.hooks == ["command", "client"]
+    assert c2.metadata.hooks == ["command", "group", "client"]
+    assert c3.metadata.hooks == ["command", "subgroup", "group", "client"]
+    assert c4.metadata.hooks == ["command", "plugin", "client"]
+    assert c5.metadata.hooks == ["command", "group", "plugin", "client"]
+    assert c6.metadata.hooks == ["command", "subgroup", "group", "plugin", "client"]
 
 
 def test_after_hook_order():
@@ -159,25 +141,12 @@ def test_after_hook_order():
 
     client.plugins._add_plugin("", plugin)
 
-    assert_all_supports_custom_ctx(c1.metadata.hooks)
-    assert_all_supports_custom_ctx(c2.metadata.hooks)
-    assert_all_supports_custom_ctx(c3.metadata.hooks)
-    assert_all_supports_custom_ctx(c4.metadata.hooks)
-    assert_all_supports_custom_ctx(c5.metadata.hooks)
-    assert_all_supports_custom_ctx(c6.metadata.hooks)
-
-    assert unwrap_hooks(c1.metadata.after_hooks) == ["command", "client"]
-    assert unwrap_hooks(c2.metadata.after_hooks) == ["command", "group", "client"]
-    assert unwrap_hooks(c3.metadata.after_hooks) == ["command", "subgroup", "group", "client"]
-    assert unwrap_hooks(c4.metadata.after_hooks) == ["command", "plugin", "client"]
-    assert unwrap_hooks(c5.metadata.after_hooks) == ["command", "group", "plugin", "client"]
-    assert unwrap_hooks(c6.metadata.after_hooks) == [
-        "command",
-        "subgroup",
-        "group",
-        "plugin",
-        "client",
-    ]
+    assert c1.metadata.after_hooks == ["command", "client"]
+    assert c2.metadata.after_hooks == ["command", "group", "client"]
+    assert c3.metadata.after_hooks == ["command", "subgroup", "group", "client"]
+    assert c4.metadata.after_hooks == ["command", "plugin", "client"]
+    assert c5.metadata.after_hooks == ["command", "group", "plugin", "client"]
+    assert c6.metadata.after_hooks == ["command", "subgroup", "group", "plugin", "client"]
 
 
 def test_vargs_hooks():
@@ -193,4 +162,4 @@ def test_vargs_hooks():
     async def command_b(ctx):
         ...
 
-    assert unwrap_hooks(command_a.metadata.hooks) == unwrap_hooks(command_b.metadata.hooks)
+    assert command_a.metadata.hooks == command_b.metadata.hooks
