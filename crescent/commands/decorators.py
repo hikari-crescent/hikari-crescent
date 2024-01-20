@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial, wraps
-from inspect import isclass, isfunction
+from inspect import isawaitable, isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
@@ -29,7 +29,10 @@ __all__: Sequence[str] = ("command", "user_command", "message_command")
 
 
 def _class_command_callback(
-    cls: type[ClassCommandProto], defaults: dict[str, Any], name_map: dict[str, str]
+    cls: type[ClassCommandProto],
+    defaults: dict[str, Any],
+    name_map: dict[str, str],
+    converters: dict[str, Callable[[Any], Any]],
 ) -> CommandCallbackT:
     @wraps(cls.callback)
     async def callback(*args: Any, **kwargs: Any) -> Any:
@@ -38,6 +41,11 @@ def _class_command_callback(
 
         cmd = cls()
         for k, v in values.items():
+            if conv := converters.get(k):
+                v = conv(v)
+                if isawaitable(v):
+                    v = await v
+
             k = name_map.get(k, k)
             setattr(cmd, k, v)
 
@@ -135,10 +143,14 @@ def command(
 
         name_map: dict[str, str] = {}
         defaults: dict[str, Any] = {}
+        converters: dict[str, Callable[[Any], Any]] = {}
 
         for n, v in callback.__dict__.items():
             if not isinstance(v, ClassCommandOption):
                 continue
+
+            if TYPE_CHECKING:
+                v = cast("ClassCommandOption[Any, Any]", v)
 
             generated = v._gen_option(n)
             options.append(generated)
@@ -146,12 +158,15 @@ def command(
             if v.autocomplete:
                 autocomplete[generated.name] = v.autocomplete
 
+            if v.converter:
+                converters[generated.name] = v.converter
+
             if generated.name != n:
                 name_map[generated.name] = n
 
             defaults[generated.name] = v.default
 
-        callback_func = _class_command_callback(callback, defaults, name_map)
+        callback_func = _class_command_callback(callback, defaults, name_map, converters)
 
     elif isfunction(callback):
         callback_func = callback

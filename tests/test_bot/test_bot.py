@@ -57,9 +57,10 @@ subgroup = group.sub_group("sub")
 class ClassCommand:
     arg = crescent.option(str, "description")
     another_arg = crescent.option(str, name="another-arg")
+    converted = crescent.option(str, name="str-to-num").convert(lambda v: int(v))
 
     async def callback(self, ctx: crescent.Context) -> None:
-        await ctx.respond(f"{self.arg}, {self.another_arg}")
+        await ctx.respond(f"{self.arg}, {self.another_arg}, {self.converted}: {type(self.converted)}")
 
 
 @client.include
