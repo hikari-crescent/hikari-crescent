@@ -5,13 +5,16 @@ from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast, overload
 
-from crescent.commands.hooks import add_hooks
+from hikari import Event
+
 from crescent.exceptions import PluginAlreadyLoadedError
+from crescent.hooks import add_hooks
 from crescent.internal.includable import Includable
+from crescent.typedefs import EventHookCallbackT
 
 if TYPE_CHECKING:
     from crescent.client import Client, GatewayTraits, RESTTraits
-    from crescent.typedefs import HookCallbackT, PluginCallbackT
+    from crescent.typedefs import CommandHookCallbackT, PluginCallbackT
 
 __all__: Sequence[str] = ("PluginManager", "Plugin")
 
@@ -202,11 +205,15 @@ class Plugin(Generic[BotT, ModelT]):
     def __init__(
         self,
         *,
-        command_hooks: list[HookCallbackT] | None = None,
-        command_after_hooks: list[HookCallbackT] | None = None,
+        command_hooks: list[CommandHookCallbackT] | None = None,
+        command_after_hooks: list[CommandHookCallbackT] | None = None,
+        event_hooks: list[EventHookCallbackT[Event]] | None = None,
+        event_after_hooks: list[EventHookCallbackT[Event]] | None = None,
     ) -> None:
-        self.command_hooks = command_hooks
-        self.command_after_hooks = command_after_hooks
+        self.command_hooks: list[CommandHookCallbackT] = command_hooks or []
+        self.command_after_hooks: list[CommandHookCallbackT] = command_after_hooks or []
+        self.event_hooks: list[EventHookCallbackT[Event]] = event_hooks or []
+        self.event_after_hooks: list[EventHookCallbackT[Event]] = event_after_hooks or []
         self._client: Client | None = None
         self._model: ModelT | None = None
         self._children: list[Includable[Any]] = []
@@ -215,7 +222,13 @@ class Plugin(Generic[BotT, ModelT]):
         self._unload_hooks: list[PluginCallbackT] = []
 
     def include(self, obj: T) -> T:
-        add_hooks(self, obj)
+        add_hooks(
+            obj,
+            self.command_hooks,
+            self.command_after_hooks,
+            self.event_hooks,
+            self.event_after_hooks,
+        )
         self._children.append(obj)
         return obj
 
@@ -251,7 +264,13 @@ class Plugin(Generic[BotT, ModelT]):
         for callback in self._load_hooks:
             callback()
         for child in self._children:
-            add_hooks(client, child)
+            add_hooks(
+                child,
+                client.command_hooks,
+                client.command_after_hooks,
+                client.event_hooks,
+                client.event_after_hooks,
+            )
             child.register_to_client(client)
 
     def _unload(self) -> None:

@@ -1,6 +1,5 @@
 from collections import defaultdict
-from contextlib import ExitStack
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 from hikari import Message, User
 from hikari.impl import CacheImpl, RESTClientImpl
@@ -9,7 +8,6 @@ from pytest import fixture, mark
 from crescent import Context, command
 from crescent import message_command as _message_command
 from crescent import user_command as _user_command
-from crescent.internal.registry import CommandHandler
 from tests.utils import MockClient
 
 GUILD_ID = 123456789

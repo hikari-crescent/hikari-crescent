@@ -7,6 +7,7 @@ from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
 from hikari.api import EntityFactory
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
+from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
-    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
+    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, CommandHookCallbackT
 
     Self = TypeVar("Self")
 
@@ -143,22 +144,13 @@ class AppCommandMeta:
     autocomplete: dict[str, AutocompleteCallbackT[Any]] = field(default_factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[HookCallbackT] = field(default_factory=list)
-    after_hooks: list[HookCallbackT] = field(default_factory=list)
+    hooks: list[CommandHookCallbackT] = field(default_factory=list)
+    after_hooks: list[CommandHookCallbackT] = field(default_factory=list)
 
     def add_hooks(
-        self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool
+        self, hooks: Sequence[CommandHookCallbackT], prepend: bool = False, *, after: bool
     ) -> None:
-        def extend_or_prepend(list_to_edit: list[HookCallbackT]) -> None:
-            if prepend:
-                list_to_edit[:0] = hooks
-            else:
-                list_to_edit.extend(hooks)
-
-        if not after:
-            extend_or_prepend(self.hooks)
-        else:
-            extend_or_prepend(self.after_hooks)
+        add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)
 
     @property
     def unique(self) -> Unique:

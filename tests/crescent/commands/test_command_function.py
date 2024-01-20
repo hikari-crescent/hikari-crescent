@@ -1,17 +1,6 @@
 from types import FunctionType
-from typing import Optional
 
-from hikari import (
-    UNDEFINED,
-    ChannelType,
-    CommandOption,
-    CommandType,
-    Message,
-    OptionType,
-    PartialChannel,
-    User,
-)
-from typing_extensions import Annotated
+from hikari import UNDEFINED, CommandType, Message, User
 
 from crescent import Context, command, message_command, user_command
 from crescent.internal.app_command import AppCommand, AppCommandMeta

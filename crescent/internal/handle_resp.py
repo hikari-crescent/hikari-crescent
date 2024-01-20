@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
     from crescent.client import Client
     from crescent.internal import AppCommandMeta, Includable
-    from crescent.typedefs import HookCallbackT
+    from crescent.typedefs import CommandHookCallbackT
 
 
 _log = getLogger(__name__)
@@ -69,7 +69,7 @@ async def handle_resp(
         await _handle_slash_resp(command, ctx.into(Context))
 
 
-async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
+async def _handle_hooks(hooks: Sequence[CommandHookCallbackT], ctx: Context) -> bool:
     """Returns `False` if the command should not be run."""
     for hook in hooks:
         hook_res = await hook(ctx)

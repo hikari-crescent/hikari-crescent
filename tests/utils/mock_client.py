@@ -13,6 +13,8 @@ class MockClient(Client):
         update_commands=True,
         command_hooks=[],
         command_after_hooks=[],
+        event_hooks=[],
+        event_after_hooks=[],
     ) -> None:
         super().__init__(
             app=MockBot(),
@@ -20,6 +22,8 @@ class MockClient(Client):
             update_commands=update_commands,
             command_hooks=command_hooks,
             command_after_hooks=command_after_hooks,
+            event_hooks=event_hooks,
+            event_after_hooks=event_after_hooks,
         )
 
         self.default_guild = default_guild
