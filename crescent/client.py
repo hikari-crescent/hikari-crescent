@@ -20,6 +20,7 @@ from hikari import (
 from hikari.traits import EventManagerAware, RESTAware
 
 from crescent.events import EventMeta
+from crescent.hooks import add_hooks
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
@@ -229,12 +230,7 @@ class Client:
         if obj is None:
             return self.include
 
-        if isinstance(obj.metadata, AppCommandMeta):
-            obj.metadata.add_hooks(self.command_hooks, after=False)
-            obj.metadata.add_hooks(self.command_after_hooks, after=True)
-        if isinstance(metadata := obj.metadata, EventMeta):
-            metadata.add_hooks(self.event_hooks, after=False)
-            metadata.add_hooks(self.event_after_hooks, after=True)
+        add_hooks(obj, self.command_hooks, self.command_after_hooks, self.event_hooks, self.event_after_hooks)
 
         obj.register_to_client(self)
 

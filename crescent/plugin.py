@@ -9,6 +9,7 @@ from hikari import Event
 
 from crescent.events import EventMeta
 from crescent.exceptions import PluginAlreadyLoadedError
+from crescent.hooks import add_hooks
 from crescent.internal.app_command import AppCommandMeta
 from crescent.internal.includable import Includable
 from crescent.typedefs import EventHookCallbackT
@@ -223,12 +224,7 @@ class Plugin(Generic[BotT, ModelT]):
         self._unload_hooks: list[PluginCallbackT] = []
 
     def include(self, obj: T) -> T:
-        if isinstance(obj.metadata, AppCommandMeta):
-            obj.metadata.add_hooks(self.command_hooks, after=False)
-            obj.metadata.add_hooks(self.command_after_hooks, after=True)
-        if isinstance(metadata := obj.metadata, EventMeta):
-            metadata.add_hooks(self.event_hooks, after=False)
-            metadata.add_hooks(self.event_after_hooks, after=True)
+        add_hooks(obj, self.command_hooks, self.command_after_hooks, self.event_hooks, self.event_after_hooks)
         self._children.append(obj)
         return obj
 

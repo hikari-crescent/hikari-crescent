@@ -92,3 +92,18 @@ class _Hook(Generic[IncludableT]):
             raise TypeError("Unsupported type, this should never happen.")
 
         return obj
+
+
+def add_hooks(
+    obj: Includable[Any],
+    command_hooks: Sequence[CommandHookCallbackT],
+    command_after_hooks: Sequence[CommandHookCallbackT],
+    event_hooks: Sequence[EventHookCallbackT[Event]],
+    event_after_hooks: Sequence[EventHookCallbackT[Event]],
+):
+    if isinstance(obj.metadata, AppCommandMeta):
+        obj.metadata.add_hooks(command_hooks, after=False)
+        obj.metadata.add_hooks(command_after_hooks, after=True)
+    if isinstance(metadata := obj.metadata, EventMeta):
+        metadata.add_hooks(event_hooks, after=False)
+        metadata.add_hooks(event_after_hooks, after=True)
