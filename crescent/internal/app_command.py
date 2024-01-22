@@ -85,28 +85,29 @@ class AppCommand:
         name, name_localizations = str_or_build_locale(self.name)
 
         if isinstance(other, SlashCommand):
-            # Description will always be set for slash commands
-            if not self.description:
-                return False
+            if self.description:
+                description, description_localizations = str_or_build_locale(self.description)
+            else:
+                description = None
+                description_localizations = None
 
-            description, description_localizations = str_or_build_locale(self.description)
             if any(
-                [
+                (
                     description != other.description,
                     self.options or None != other.options or None,
                     description_localizations != other.description_localizations,
-                ]
+                )
             ):
                 return False
 
         return all(
-            [
+            (
                 self.type == other.type,
                 name == other.name,
                 name_localizations == other.name_localizations,
                 self.build_default_member_perms() == other.default_member_permissions,
                 self.is_dm_enabled == other.is_dm_enabled,
-            ]
+            )
         )
 
     def build_default_member_perms(self) -> Permissions | None:
