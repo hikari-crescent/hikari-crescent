@@ -23,7 +23,6 @@ from hikari import (
     Role,
     User,
 )
-from hikari.api import EntityFactory
 
 if TYPE_CHECKING:
     from crescent.context import AutocompleteContext, Context
@@ -78,8 +77,3 @@ EventErrorHandlerCallbackT = Callable[[ErrorT, Event], Awaitable[None]]
 AutocompleteErrorHandlerCallbackT = Callable[
     [ErrorT, Any, AutocompleteInteractionOption], Awaitable[None]
 ]
-
-
-class CanBuild(Protocol):
-    def build(self, encoder: EntityFactory) -> dict[str, Any]:
-        ...
