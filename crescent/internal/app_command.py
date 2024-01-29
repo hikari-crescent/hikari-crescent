@@ -81,7 +81,7 @@ class AppCommand:
     nsfw: bool | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
-    def is_partial_command(self, other: PartialCommand) -> bool:
+    def eq_partial_command(self, other: PartialCommand) -> bool:
         name, name_localizations = str_or_build_locale(self.name)
 
         if isinstance(other, SlashCommand):
@@ -94,7 +94,7 @@ class AppCommand:
             if any(
                 (
                     description != other.description,
-                    self.options or None != other.options or None,
+                    (self.options or None) != (other.options or None),
                     description_localizations != other.description_localizations,
                 )
             ):
@@ -110,10 +110,12 @@ class AppCommand:
             )
         )
 
-    def build_default_member_perms(self) -> Permissions | None:
+    def build_default_member_perms(self) -> Permissions:
+        if isinstance(self.default_member_permissions, Permissions):
+            return self.default_member_permissions
         if isinstance(self.default_member_permissions, int):
             return Permissions(self.default_member_permissions)
-        return self.default_member_permissions or Permissions(0)
+        return Permissions(0)
 
     def build(self, encoder: EntityFactory) -> dict[str, Any]:
         name, name_localizations = str_or_build_locale(self.name)
@@ -134,7 +136,7 @@ class AppCommand:
         if self.nsfw is not None:
             out["nsfw"] = self.nsfw
 
-        out["default_member_permissions"] = self.build_default_member_perms()
+        out["default_member_permissions"] = str(self.build_default_member_perms().value)
 
         out["dm_permission"] = self.is_dm_enabled
 
