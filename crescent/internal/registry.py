@@ -314,15 +314,10 @@ class CommandHandler:
                 application=self._application_id
             )
 
-            if all(
-                any(
-                    map(
-                        lambda partial_command: command.eq_partial_command(partial_command),
-                        existing_commands,
-                    )
-                )
-                for command in commands
-            ):
+            def exists(command: AppCommand) -> bool:
+                return any(command.eq_partial_command(existing) for existing in existing_commands)
+
+            if all(exists(command) for command in commands):
                 if guild:
                     _log.info("No application commands need to be updated for guild %s.", guild)
                 else:
