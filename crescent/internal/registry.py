@@ -317,7 +317,7 @@ class CommandHandler:
             if all(
                 any(
                     map(
-                        lambda partial_command: command.is_partial_command(partial_command),
+                        lambda partial_command: command.eq_partial_command(partial_command),
                         existing_commands,
                     )
                 )

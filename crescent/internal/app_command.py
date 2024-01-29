@@ -110,12 +110,10 @@ class AppCommand:
             )
         )
 
-    def build_default_member_perms(self) -> Permissions:
+    def build_default_member_perms(self) -> Permissions | None:
         if isinstance(self.default_member_permissions, Permissions):
             return self.default_member_permissions
-        if isinstance(self.default_member_permissions, int):
-            return Permissions(self.default_member_permissions)
-        return Permissions(0)
+        return Permissions(self.default_member_permissions or 0)
 
     def build(self, encoder: EntityFactory) -> dict[str, Any]:
         name, name_localizations = str_or_build_locale(self.name)
