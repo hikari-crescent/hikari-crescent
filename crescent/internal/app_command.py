@@ -110,7 +110,7 @@ class AppCommand:
             )
         )
 
-    def build_default_member_perms(self) -> Permissions | None:
+    def build_default_member_perms(self) -> Permissions:
         if isinstance(self.default_member_permissions, Permissions):
             return self.default_member_permissions
         return Permissions(self.default_member_permissions or 0)

@@ -339,12 +339,12 @@ class CommandHandler:
                 _log.info("Updated application commands for guild %s.", guild)
             else:
                 _log.info("Updated global application commands.")
-                
+
         except ForbiddenError:
             if not isinstance(self._client.app, CacheAware):
                 return
 
-            # We will not get a forbidden error when publishing globally, so the guild specifc
+            # We will not get a forbidden error when publishing globally, so the guild specific
             # error message is proper.
             if guild in self._client.app.cache.get_guilds_view():
                 _log.warning(
