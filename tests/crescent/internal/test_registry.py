@@ -22,6 +22,7 @@ class TestRegistry:
             self.posted_commands[guild] = commands
 
         RESTClientImpl.fetch_application = AsyncMock(return_value=MagicMock())
+        RESTClientImpl.fetch_application_commands = AsyncMock(return_value=[])
         RESTClientImpl.set_application_commands = AsyncMock(return_value=None)
         RESTClientImpl.set_application_commands.side_effect = set_application_commands
 
