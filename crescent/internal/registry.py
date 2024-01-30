@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from asyncio import gather
 from collections import defaultdict
 from inspect import iscoroutinefunction
