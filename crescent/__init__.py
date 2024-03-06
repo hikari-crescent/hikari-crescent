@@ -33,6 +33,7 @@ __all__: Sequence[str] = (
     "catch_autocomplete",
     "event",
     "CrescentException",
+    "ConverterException",
     "AlreadyRegisteredError",
     "PluginAlreadyLoadedError",
     "PermissionsError",
