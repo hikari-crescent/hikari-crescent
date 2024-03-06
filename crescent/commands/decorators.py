@@ -56,6 +56,7 @@ def _class_command_callback(
                     v = conv(v)
                 except Exception as e:
                     errors.append(e)
+                    continue
 
             k = name_map.get(k, k)
             tasks.append(create_task(set_later(k, v)))
