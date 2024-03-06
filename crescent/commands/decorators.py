@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from asyncio import Task, create_task
 from functools import partial, wraps
-from inspect import isawaitable, isclass, isfunction, iscoroutinefunction
-from types import coroutine
+from inspect import isawaitable, isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
