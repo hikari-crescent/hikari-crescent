@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+from asyncio import Task, create_task
 from functools import partial, wraps
-from inspect import isawaitable, isclass, isfunction
+from inspect import isawaitable, isclass, isfunction, iscoroutinefunction
+from types import coroutine
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
 
 from crescent.commands.options import ClassCommandOption
+from crescent.exceptions import ConverterException
 from crescent.internal.registry import register_command
 from crescent.locale import LocaleBuilder
 
@@ -40,14 +43,35 @@ def _class_command_callback(
         values.update(kwargs)
 
         cmd = cls()
+
+        async def set_later(key: str, value: object | Awaitable[object]) -> None:
+            if isawaitable(value):
+                value = await value
+            setattr(cmd, key, value)
+
+        errors: list[Exception] = []
+        tasks: list[Task[None]] = []
         for k, v in values.items():
             if conv := converters.get(k):
-                v = conv(v)
-                if isawaitable(v):
-                    v = await v
+                try:
+                    v = conv(v)
+                except Exception as e:
+                    errors.append(e)
+                    # TODO: do we want to break after the first error, or
+                    #       do we wait for other converters so that all errors
+                    #       are shown?
 
             k = name_map.get(k, k)
-            setattr(cmd, k, v)
+            tasks.append(create_task(set_later(k, v)))
+
+        for t in tasks:
+            try:
+                await t
+            except Exception as e:
+                errors.append(e)
+
+        if errors:
+            raise ConverterException(errors)
 
         return await cmd.callback(*args)
 

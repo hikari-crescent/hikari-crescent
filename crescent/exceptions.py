@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Any, Sequence
 
 __all__: Sequence[str] = (
     "CrescentException",
@@ -10,6 +10,17 @@ __all__: Sequence[str] = (
 
 class CrescentException(Exception):
     """Base Exception for all exceptions Crescent throws"""
+
+
+class ConverterException(CrescentException):
+    """One or more errors occurred while running the converters for a command."""
+
+    def __init__(self, errors: list[Exception]) -> None:
+        self.errors = errors
+        args: list[Any] = []
+        for e in errors:
+            args.extend(e.args)
+        super().__init__(*args)
 
 
 class AlreadyRegisteredError(CrescentException):
