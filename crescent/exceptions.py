@@ -4,6 +4,7 @@ from typing import Any, Sequence
 
 __all__: Sequence[str] = (
     "CrescentException",
+    "ConverterException",
     "AlreadyRegisteredError",
     "PluginAlreadyLoadedError",
     "PermissionsError",
