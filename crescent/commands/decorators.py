@@ -57,9 +57,6 @@ def _class_command_callback(
                     v = conv(v)
                 except Exception as e:
                     errors.append(e)
-                    # TODO: do we want to break after the first error, or
-                    #       do we wait for other converters so that all errors
-                    #       are shown?
 
             k = name_map.get(k, k)
             tasks.append(create_task(set_later(k, v)))
