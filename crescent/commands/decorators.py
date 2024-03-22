@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
 
 from crescent.commands.options import ClassCommandOption
-from crescent.exceptions import ConverterException
+from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
 from crescent.locale import LocaleBuilder
 
@@ -48,27 +48,37 @@ def _class_command_callback(
                 value = await value
             setattr(cmd, key, value)
 
-        errors: list[Exception] = []
-        tasks: list[Task[None]] = []
-        for k, v in values.items():
-            if conv := converters.get(k):
+        errors: list[ConverterExceptionMeta] = []
+        tasks: list[tuple[Task[None], str, Any]] = []
+        # [(Task, option key, raw value)]
+
+        for key, raw_val in values.items():
+            # val: The converted (if a converter existed) value
+            # raw_val: The original value passed by Discord
+            # key: The key of the option on the class
+            # name: The name of the option used by Discord
+
+            key = name_map.get(key, key)
+
+            if conv := converters.get(key):
                 try:
-                    v = conv(v)
+                    val = conv(raw_val)
                 except Exception as e:
-                    errors.append(e)
+                    errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
                     continue
+            else:
+                val = raw_val
 
-            k = name_map.get(k, k)
-            tasks.append(create_task(set_later(k, v)))
+            tasks.append((create_task(set_later(key, val)), key, raw_val))
 
-        for t in tasks:
+        for t, key, raw_val in tasks:
             try:
                 await t
             except Exception as e:
-                errors.append(e)
+                errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
 
         if errors:
-            raise ConverterException(errors)
+            raise ConverterExceptions(errors)
 
         return await cmd.callback(*args)
 

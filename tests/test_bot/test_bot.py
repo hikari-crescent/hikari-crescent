@@ -7,7 +7,7 @@ import dotenv
 import hikari
 
 import crescent
-from crescent.exceptions import ConverterException
+from crescent.exceptions import ConverterExceptions
 from crescent.ext import tasks
 
 dotenv.load_dotenv()
@@ -74,9 +74,13 @@ async def fancy_validate_url(url: str) -> str:
 
 
 @client.include
-@crescent.catch_command(ConverterException)
-async def handle_converter_err(e: ConverterException, ctx: crescent.Context) -> None:
-    await ctx.respond(repr(e))
+@crescent.catch_command(ConverterExceptions)
+async def handle_converter_err(e: ConverterExceptions, ctx: crescent.Context) -> None:
+    res = "```\n"
+    for o in e.errors:
+        res += repr(o) + "\n"
+    res += "\n```"
+    await ctx.respond(res)
 
 
 @client.include
