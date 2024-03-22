@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from asyncio import Task, create_task
 from functools import partial, wraps
-from inspect import isclass, isfunction
+from inspect import isawaitable, isclass, isfunction
 from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
 
 from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
 
 from crescent.commands.options import ClassCommandOption
+from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
 from crescent.locale import LocaleBuilder
 
@@ -29,7 +31,10 @@ __all__: Sequence[str] = ("command", "user_command", "message_command")
 
 
 def _class_command_callback(
-    cls: type[ClassCommandProto], defaults: dict[str, Any], name_map: dict[str, str]
+    cls: type[ClassCommandProto],
+    defaults: dict[str, Any],
+    name_map: dict[str, str],
+    converters: dict[str, Callable[[Any], Any]],
 ) -> CommandCallbackT:
     @wraps(cls.callback)
     async def callback(*args: Any, **kwargs: Any) -> Any:
@@ -37,9 +42,43 @@ def _class_command_callback(
         values.update(kwargs)
 
         cmd = cls()
-        for k, v in values.items():
-            k = name_map.get(k, k)
-            setattr(cmd, k, v)
+
+        async def set_later(key: str, value: object | Awaitable[object]) -> None:
+            if isawaitable(value):
+                value = await value
+            setattr(cmd, key, value)
+
+        errors: list[ConverterExceptionMeta] = []
+        tasks: list[tuple[Task[None], str, Any]] = []
+        # [(Task, option key, raw value)]
+
+        for key, raw_val in values.items():
+            # val: The converted (if a converter existed) value
+            # raw_val: The original value passed by Discord
+            # key: The key of the option on the class
+            # name: The name of the option used by Discord
+
+            key = name_map.get(key, key)
+
+            if conv := converters.get(key):
+                try:
+                    val = conv(raw_val)
+                except Exception as e:
+                    errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
+                    continue
+            else:
+                val = raw_val
+
+            tasks.append((create_task(set_later(key, val)), key, raw_val))
+
+        for t, key, raw_val in tasks:
+            try:
+                await t
+            except Exception as e:
+                errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
+
+        if errors:
+            raise ConverterExceptions(errors)
 
         return await cmd.callback(*args)
 
@@ -135,10 +174,14 @@ def command(
 
         name_map: dict[str, str] = {}
         defaults: dict[str, Any] = {}
+        converters: dict[str, Callable[[Any], Any]] = {}
 
         for n, v in callback.__dict__.items():
             if not isinstance(v, ClassCommandOption):
                 continue
+
+            if TYPE_CHECKING:
+                v = cast("ClassCommandOption[Any, Any]", v)  # type: ignore[redundant-cast]
 
             generated = v._gen_option(n)
             options.append(generated)
@@ -146,12 +189,15 @@ def command(
             if v.autocomplete:
                 autocomplete[generated.name] = v.autocomplete
 
+            if v.converter:
+                converters[generated.name] = v.converter
+
             if generated.name != n:
                 name_map[generated.name] = n
 
             defaults[generated.name] = v.default
 
-        callback_func = _class_command_callback(callback, defaults, name_map)
+        callback_func = _class_command_callback(callback, defaults, name_map, converters)
 
     elif isfunction(callback):
         callback_func = callback
