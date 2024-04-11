@@ -1,5 +1,5 @@
 from asyncio import get_event_loop
-from typing import List
+from typing import List, cast
 from unittest.mock import AsyncMock, Mock
 
 from hikari import (
@@ -7,6 +7,7 @@ from hikari import (
     AutocompleteInteractionOption,
     CommandChoice,
     CommandInteraction,
+    CommandInteractionOption,
     CommandType,
     InteractionCreateEvent,
     InteractionType,
@@ -17,11 +18,22 @@ from pytest import mark
 
 from crescent import Context, catch_autocomplete, catch_command, command, hook
 import crescent
+from crescent.commands.options import option
+from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockClient, MockRESTClient
 
 
-def MockEvent(name, client):
+def MockEvent(name, client, arg: str | None = None):
+    if arg:
+        options = (
+            CommandInteractionOption(
+                name="arg", type=OptionType.STRING, value=arg, options=None
+            ),
+        )
+    else:
+        options = None
+
     return InteractionCreateEvent(
         shard=None,
         interaction=CommandInteraction(
@@ -41,7 +53,7 @@ def MockEvent(name, client):
             command_name=name,
             command_type=CommandType.SLASH,
             resolved=None,
-            options=None,
+            options=options,
             app_permissions=None,
         ),
     )
@@ -77,6 +89,62 @@ def MockAutocompleteEvent(name, option_name, client):
             ],
         ),
     )
+
+
+@mark.asyncio
+async def test_converter_ok() -> None:
+    client = MockClient()
+
+    arg_val = None
+
+    @client.include
+    @command
+    class test_command:
+        arg = option(str).convert(int)
+
+        async def callback(self, ctx: Context) -> None:
+            nonlocal arg_val
+            arg_val = self.arg
+
+    await handle_resp(client, MockEvent("test_command", client, "1").interaction, None)
+
+    assert arg_val == 1
+
+
+@mark.asyncio
+async def test_converter_error() -> None:
+    client = MockClient()
+
+    arg_val = None
+    exc: "ConverterExceptions | None" = None
+
+    @client.include
+    @catch_command(ConverterExceptions)
+    async def error(_exc: ConverterExceptions, ctx:  Context) -> None:
+        nonlocal exc
+        exc = _exc
+
+    class test_command:
+        arg = option(str).convert(int)
+
+        async def callback(self, ctx: Context) -> None:
+            nonlocal arg_val
+            arg_val = self.arg
+
+    client.include(command(test_command))
+
+    await handle_resp(client, MockEvent("test_command", client, "oops").interaction, None)
+
+    assert arg_val is None
+    assert exc is not None
+
+    exc = cast("ConverterExceptions", exc)
+    assert len(exc.errors) == 1
+
+    meta = exc.errors[0]
+    assert meta.option_key == "arg"
+    assert meta.value == "oops"
+    assert meta.command is test_command
 
 
 @mark.asyncio
@@ -234,7 +302,9 @@ async def test_handle_autocomplete_error():
             command_was_run = True
 
     await handle_resp(
-        client, MockAutocompleteEvent("test_command", "option", client).interaction, None
+        client,
+        MockAutocompleteEvent("test_command", "option", client).interaction,
+        None,
     )
 
     assert error_handler_was_run
@@ -274,7 +344,9 @@ async def test_unhandled_autocomplete_error():
             command_was_run = True
 
     await handle_resp(
-        client, MockAutocompleteEvent("test_command", "option", client).interaction, None
+        client,
+        MockAutocompleteEvent("test_command", "option", client).interaction,
+        None,
     )
 
     assert autocomplete_was_run
@@ -328,6 +400,8 @@ async def test_rest_future_is_set():
         print(ctx._rest_interaction_future.set_result)
         await ctx.followup("something")
 
-    await handle_resp(client, MockEvent("test_command", client).interaction, future=mock_future)
+    await handle_resp(
+        client, MockEvent("test_command", client).interaction, future=mock_future
+    )
 
     set_result.assert_called_once()
