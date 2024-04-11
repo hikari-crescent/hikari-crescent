@@ -24,7 +24,7 @@ from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockClient, MockRESTClient
 
 
-def MockEvent(name, client, arg: str | None = None):
+def MockEvent(name, client, arg: "str | None" = None):
     if arg:
         options = (
             CommandInteractionOption(
