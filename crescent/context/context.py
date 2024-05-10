@@ -164,15 +164,15 @@ class Context(InteractionContext):
         Args:
             content:
                 The content to send.
-            ephermial:
-                Send this message as ephermial if set to true. Ephermial
+            ephemeral:
+                Send this message as ephemeral if set to true. Ephemeral
                 messages can be dismissed by the user, similar to Clyde
                 messages. This kwarg only affects the initial response to an
                 interaction.
             flags:
                 Message flags to send with the message. You do not need to use
                 this, and exists for compatibility in the future. Instead set
-                the `ephermial` kwarg  to `True`.
+                the `ephemeral` kwarg  to `True`.
             tts:
                 If true, send a text to speech message.
             attachment:
