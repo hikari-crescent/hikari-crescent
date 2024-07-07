@@ -69,10 +69,14 @@ class InteractionContext:
     """The channel ID of the channel that the interaction was used in."""
     guild_id: Snowflake | None
     """The guild ID of the guild that this interaction was used in."""
+    registered_guild_id: Snowflake | None
+    """The guild ID of the guild that this command is registered to."""
     user: User
     """The user who triggered this command interaction."""
     member: Member | None
     """The member object for the user that triggered this interaction, if used in a guild."""
+    entitlements: Sequence[hikari.Entitlement]
+    """For monetized apps, any entitlements involving this user. Represents access to SKUs."""
     locale: Locale
 
     command: str
@@ -128,8 +132,10 @@ class InteractionContext:
             version=self.version,
             channel_id=self.channel_id,
             guild_id=self.guild_id,
+            registered_guild_id=self.registered_guild_id,
             user=self.user,
             member=self.member,
+            entitlements=self.entitlements,
             locale=self.locale,
             command=self.command,
             command_type=self.command_type,
