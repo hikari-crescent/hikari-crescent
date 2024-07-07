@@ -280,6 +280,8 @@ def option(
 ) -> ClassCommandOption[Mentionable | DEFAULT]:
     ...
 
+# We have type ignores here because bool and float both inherit from int.
+# This makes the typechecker wrongly believe that the overloads overlap.
 
 @overload
 def option(  # type: ignore
@@ -303,7 +305,7 @@ def option(  # type: ignore
 
 
 @overload
-def option(
+def option(  # type: ignore
     option_type: type[int],
     description: str | LocaleBuilder = ...,
     *,
@@ -317,7 +319,7 @@ def option(
 
 
 @overload
-def option(
+def option(  # type: ignore
     option_type: type[int],
     description: str | LocaleBuilder = ...,
     *,
