@@ -38,7 +38,7 @@ class InteractionContext:
         "registered_guild_id",
         "user",
         "member",
-        "entitlments",
+        "entitlements",
         "locale",
         "command",
         "command_type",
