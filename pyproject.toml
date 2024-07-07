@@ -57,9 +57,8 @@ griffe-inherited-docstrings = "1.0.0"
 
 
 [tool.poetry.group.tests.dependencies]
-pytest = "^7.3.2"
-pytest-asyncio = "^0.21.0"
-pytest-cov = "^4.1.0"
+pytest = "^8.2.2"
+pytest-asyncio = "^0.23.7"
 python-dotenv = "^1.0.0"
 
 [tool.black]

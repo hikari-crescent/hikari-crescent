@@ -33,6 +33,7 @@ def MockEvent(name, client):
             version=0,
             channel_id=0,
             guild_id=None,
+            registered_guild_id=None,
             guild_locale=None,
             member=None,
             user=None,
@@ -43,6 +44,7 @@ def MockEvent(name, client):
             resolved=None,
             options=None,
             app_permissions=None,
+            entitlements=None,
         ),
     )
 
@@ -66,6 +68,8 @@ def MockAutocompleteEvent(name, option_name, client):
             command_id=None,
             command_name=name,
             command_type=CommandType.SLASH,
+            registered_guild_id=None,
+            entitlements=None,
             options=[
                 AutocompleteInteractionOption(
                     name=option_name,
