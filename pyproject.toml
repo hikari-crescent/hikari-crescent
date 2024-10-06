@@ -24,7 +24,7 @@ include = ["crescent/banner.txt"]
 packages = [{ include = "crescent" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.13"
+python = ">=3.9,<3.13"
 hikari = "^2.0.0"
 sigparse = "^3.0.0"
 floodgate-rs = { version = "^0.1.1", optional = true }
@@ -63,11 +63,11 @@ python-dotenv = "^1.0.0"
 
 [tool.black]
 line-length = 99
-target-version = ['py38']
+target-version = ['py39']
 skip-magic-trailing-comma = true
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 strict = true
 warn_unused_configs = true
 warn_return_any = true
@@ -78,7 +78,7 @@ warn_unused_ignores = false
 [tool.pyright]
 include = ["crescent", "examples"]
 exclude = ["tests"]
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 typeCheckingMode = "strict"
 reportPrivateUsage = false
 reportImportCycles = false

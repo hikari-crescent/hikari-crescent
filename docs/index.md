@@ -16,7 +16,7 @@ to see how your code will look when using Crescent.
 
 ## Installation
 
-`hikari-crescent` supports Python 3.8 and newer.
+`hikari-crescent` supports Python 3.9 and newer.
 
 ```sh
 pip install hikari-crescent
