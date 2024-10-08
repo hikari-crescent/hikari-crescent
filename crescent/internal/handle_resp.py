@@ -173,7 +173,8 @@ def _get_crescent_command_data(
     command_name: str = interaction.command_name
     group: str | None = None
     sub_group: str | None = None
-    options = interaction.options
+    # I am not writing out that whole type - CircuitSacul
+    options = interaction.options or None
 
     if options:
         option = options[0]
@@ -216,8 +217,10 @@ def _context_from_interaction_resp(
         version=interaction.version,
         channel_id=interaction.channel_id,
         guild_id=interaction.guild_id,
+        registered_guild_id=interaction.registered_guild_id,
         user=interaction.user,
         member=interaction.member,
+        entitlements=interaction.entitlements,
         locale=Locale(interaction.locale),
         command=command_name,
         group=group,

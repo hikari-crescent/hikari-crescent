@@ -16,7 +16,7 @@ def test_build():
         "type": CommandType.SLASH,
         "description": "test description",
         "description_localizations": {},
-        "default_member_permissions": None,
+        "default_member_permissions": str(0),
         "dm_permission": True,
     }
 

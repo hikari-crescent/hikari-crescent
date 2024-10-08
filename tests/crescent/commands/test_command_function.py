@@ -24,6 +24,7 @@ class TestCommandFunction:
                 default_member_permissions=UNDEFINED,
                 is_dm_enabled=True,
                 description="1234",
+                options=[],
             ),
         )
 

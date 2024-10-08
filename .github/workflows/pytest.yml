@@ -5,7 +5,7 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
+        python-version: [ '3.9', '3.10', '3.11', '3.12' ]
         os: [ ubuntu ]
       fail-fast: false
 
@@ -20,39 +20,4 @@ jobs:
       - name: Install Nox
         run: pip install nox
       - name: run Pytest
-        run: |
-          nox -s pytest
-          mv .coverage .coverage.${{ matrix.python-version }}.${{ matrix.os }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: .coverage
-          path: .coverage.${{ matrix.python-version }}.${{ matrix.os }}
-
-  upload:
-    needs: [pytest]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-          architecture: 'x64'
-      - name: Install Poetry
-        run: pip install poetry
-      - name: Download Coverage
-        uses: actions/download-artifact@v2
-        with:
-          name: .coverage
-          path: .cov
-      - name: Combine Coverage
-        run: |
-          poetry install
-          poetry run coverage combine .cov/
-          poetry run coverage xml -i
-      - name: Upload Coverage
-        uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: 8850708be44055b46a895acbd4e3c8aba8337e093508668eef486d7dac931e30
-        with:
-          coverageLocations: coverage.xml:coverage.py
+        run: nox -s pytest

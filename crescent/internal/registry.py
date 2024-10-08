@@ -13,6 +13,7 @@ from hikari import (
     OptionType,
     Permissions,
     Snowflake,
+    UndefinedOr,
     UndefinedType,
 )
 from hikari.traits import CacheAware
@@ -29,7 +30,7 @@ if TYPE_CHECKING:
     from hikari import PartialGuild, Snowflakeish, SnowflakeishOr
 
     from crescent.client import Client
-    from crescent.typedefs import AutocompleteCallbackT, CanBuild, CommandCallbackT
+    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT
 
     T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 
@@ -301,22 +302,44 @@ class CommandHandler:
 
         return tuple(built_commands.values())
 
-    async def __post_guild_commands(
-        self, commands: Sequence[CanBuild], guild: Snowflakeish
+    async def __post_application_commands(
+        self, commands: Sequence[AppCommand], guild: UndefinedOr[Snowflakeish]
     ) -> None:
         try:
             if self._application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
+
+            existing_commands = await self._client.app.rest.fetch_application_commands(
+                application=self._application_id
+            )
+
+            def exists(command: AppCommand) -> bool:
+                return any(command.eq_partial_command(existing) for existing in existing_commands)
+
+            if all(exists(command) for command in commands):
+                if guild:
+                    _log.info("No application commands need to be updated for guild %s.", guild)
+                else:
+                    _log.info("No global application commands need to be updated.")
+                return
+
             await self._client.app.rest.set_application_commands(
                 application=self._application_id,
                 # The only method that is called has been implemented.
                 commands=commands,  # type: ignore
                 guild=guild,
             )
+            if guild:
+                _log.info("Updated application commands for guild %s.", guild)
+            else:
+                _log.info("Updated global application commands.")
+
         except ForbiddenError:
             if not isinstance(self._client.app, CacheAware):
                 return
 
+            # We will not get a forbidden error when publishing globally, so the guild specific
+            # error message is proper.
             if guild in self._client.app.cache.get_guilds_view():
                 _log.warning(
                     "Cannot post application commands to guild %s. Consider removing this"
@@ -385,13 +408,9 @@ class CommandHandler:
             self._application_id = me.id
 
         await gather(
-            self._client.app.rest.set_application_commands(
-                application=self._application_id,
-                # The only method that is called has been implemented.
-                commands=global_commands,  # type: ignore
-            ),
+            self.__post_application_commands(global_commands, UNDEFINED),
             gather_iter(
-                self.__post_guild_commands(commands, guild)
+                self.__post_application_commands(commands, guild)
                 for guild, commands in command_guilds.items()
             ),
             gather_iter(
