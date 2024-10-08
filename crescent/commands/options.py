@@ -101,7 +101,7 @@ def get_channel_types(*channels: type[PartialChannel]) -> set[ChannelType]:
 
     types: set[ChannelType] = set()
     for k, v in CHANNEL_TYPE_MAP.items():
-        if issubclass(k, channels):
+        if issubclass(k, channels):  # pyright: ignore
             types.add(v)
 
     return types

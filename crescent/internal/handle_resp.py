@@ -173,7 +173,8 @@ def _get_crescent_command_data(
     command_name: str = interaction.command_name
     group: str | None = None
     sub_group: str | None = None
-    options = interaction.options
+    # I am not writing out that whole type - CircuitSacul
+    options = interaction.options or None
 
     if options:
         option = options[0]
