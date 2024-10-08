@@ -321,8 +321,8 @@ sync or async functions. They must accept a single argument of the type that the
 return the converted value or raise an error.
 
 ```python
-def to_number(in: str) -> int:
-    return int(in)
+def to_number(value: str) -> int:
+    return int(value)
 
 @client.include
 @crescent.command
