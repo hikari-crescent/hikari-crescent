@@ -1,7 +1,18 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, Union, cast, overload
+from dataclasses import dataclass, replace
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Awaitable,
+    Callable,
+    Generic,
+    Sequence,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 
 from hikari import (
     UNDEFINED,
@@ -108,11 +119,13 @@ def get_channel_types(*channels: type[PartialChannel]) -> set[ChannelType]:
 
 
 T = TypeVar("T")
+In = TypeVar("In")
+Out = TypeVar("Out")
 Self = TypeVar("Self")
 
 
 @dataclass
-class ClassCommandOption(Generic[T]):
+class ClassCommandOption(Generic[In, Out]):
     name: str | LocaleBuilder | None
     type: OptionType
     description: str | LocaleBuilder
@@ -124,6 +137,10 @@ class ClassCommandOption(Generic[T]):
     min_length: int | None
     max_length: int | None
     autocomplete: AutocompleteCallbackT[Any] | None
+    converter: Callable[[In], Out | Awaitable[Out]] | None
+
+    def convert(self, converter: Callable[[In], T | Awaitable[T]]) -> ClassCommandOption[In, T]:
+        return replace(cast("ClassCommandOption[In, T]", self), converter=converter)
 
     def _gen_option(self, name: str) -> CommandOption:
         name, name_localizations = str_or_build_locale(self.name or name)
@@ -150,7 +167,7 @@ class ClassCommandOption(Generic[T]):
         ...
 
     @overload
-    def __get__(self, inst: object, cls: Any) -> T:
+    def __get__(self, inst: object, cls: Any) -> Out:
         ...
 
     def __get__(self, inst: Any | None, cls: Any) -> Any:
@@ -176,7 +193,7 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[InteractionChannel]:
+) -> ClassCommandOption[InteractionChannel, InteractionChannel]:
     ...
 
 
@@ -187,7 +204,7 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[InteractionChannel | DEFAULT]:
+) -> ClassCommandOption[InteractionChannel | DEFAULT, InteractionChannel | DEFAULT]:
     ...
 
 
@@ -198,7 +215,7 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[User]:
+) -> ClassCommandOption[User, User]:
     ...
 # fmt: on
 
@@ -210,7 +227,7 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[User | DEFAULT]:
+) -> ClassCommandOption[User | DEFAULT, User | DEFAULT]:
     ...
 
 
@@ -221,7 +238,7 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Role]:
+) -> ClassCommandOption[Role, Role]:
     ...
 # fmt: on
 
@@ -233,7 +250,7 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Role | DEFAULT]:
+) -> ClassCommandOption[Role | DEFAULT, Role | DEFAULT]:
     ...
 
 
@@ -244,7 +261,7 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Attachment]:
+) -> ClassCommandOption[Attachment, Attachment]:
     ...
 # fmt: on
 
@@ -256,7 +273,7 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Attachment | DEFAULT]:
+) -> ClassCommandOption[Attachment | DEFAULT, Attachment | DEFAULT]:
     ...
 
 
@@ -266,7 +283,7 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Mentionable]:
+) -> ClassCommandOption[Mentionable, Mentionable]:
     ...
 
 
@@ -277,7 +294,7 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Mentionable | DEFAULT]:
+) -> ClassCommandOption[Mentionable | DEFAULT, Mentionable | DEFAULT]:
     ...
 
 
@@ -291,7 +308,7 @@ def option(  # type: ignore
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[bool]:
+) -> ClassCommandOption[bool, bool]:
     ...
 
 
@@ -302,7 +319,7 @@ def option(  # type: ignore
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[bool | DEFAULT]:
+) -> ClassCommandOption[bool | DEFAULT, bool | DEFAULT]:
     ...
 
 
@@ -316,7 +333,7 @@ def option(  # type: ignore
     min_value: int | None = ...,
     max_value: int | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[int]:
+) -> ClassCommandOption[int, int]:
     ...
 
 
@@ -331,7 +348,7 @@ def option(  # type: ignore
     min_value: int | None = ...,
     max_value: int | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[int | DEFAULT]:
+) -> ClassCommandOption[int | DEFAULT, int | DEFAULT]:
     ...
 
 
@@ -345,7 +362,7 @@ def option(
     min_value: float | None = ...,
     max_value: float | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[float]:
+) -> ClassCommandOption[float, float]:
     ...
 
 
@@ -360,7 +377,7 @@ def option(
     min_value: float | None = ...,
     max_value: float | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[float | DEFAULT]:
+) -> ClassCommandOption[float | DEFAULT, float | DEFAULT]:
     ...
 
 
@@ -374,7 +391,7 @@ def option(
     choices: Sequence[tuple[str | LocaleBuilder, str]] | None = ...,
     autocomplete: AutocompleteCallbackT[str] | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[str]:
+) -> ClassCommandOption[str, str]:
     ...
 
 
@@ -389,7 +406,7 @@ def option(
     choices: Sequence[tuple[str | LocaleBuilder, str]] | None = ...,
     autocomplete: AutocompleteCallbackT[str] | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[str | DEFAULT]:
+) -> ClassCommandOption[str | DEFAULT, int | DEFAULT]:
     ...
 
 
@@ -405,7 +422,7 @@ def option(
     min_length: int | None = None,
     max_length: int | None = None,
     autocomplete: AutocompleteCallbackT[Any] | None = None,
-) -> ClassCommandOption[Any]:
+) -> ClassCommandOption[Any, Any]:
     """
     An option when declaring a command using class syntax.
 
@@ -491,4 +508,5 @@ def option(
         max_length=max_length,
         name=name,
         autocomplete=autocomplete,
+        converter=None,
     )
