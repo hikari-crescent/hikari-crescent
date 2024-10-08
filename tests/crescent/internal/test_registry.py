@@ -1,6 +1,5 @@
 from collections import defaultdict
-from contextlib import ExitStack
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 from hikari import Message, User
 from hikari.impl import CacheImpl, RESTClientImpl
@@ -9,7 +8,6 @@ from pytest import fixture, mark
 from crescent import Context, command
 from crescent import message_command as _message_command
 from crescent import user_command as _user_command
-from crescent.internal.registry import CommandHandler
 from tests.utils import MockClient
 
 GUILD_ID = 123456789
@@ -24,6 +22,7 @@ class TestRegistry:
             self.posted_commands[guild] = commands
 
         RESTClientImpl.fetch_application = AsyncMock(return_value=MagicMock())
+        RESTClientImpl.fetch_application_commands = AsyncMock(return_value=[])
         RESTClientImpl.set_application_commands = AsyncMock(return_value=None)
         RESTClientImpl.set_application_commands.side_effect = set_application_commands
 

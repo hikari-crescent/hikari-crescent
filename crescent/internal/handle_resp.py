@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
     from crescent.client import Client
     from crescent.internal import AppCommandMeta, Includable
-    from crescent.typedefs import HookCallbackT
+    from crescent.typedefs import CommandHookCallbackT
 
 
 _log = getLogger(__name__)
@@ -69,7 +69,7 @@ async def handle_resp(
         await _handle_slash_resp(command, ctx.into(Context))
 
 
-async def _handle_hooks(hooks: Sequence[HookCallbackT], ctx: Context) -> bool:
+async def _handle_hooks(hooks: Sequence[CommandHookCallbackT], ctx: Context) -> bool:
     """Returns `False` if the command should not be run."""
     for hook in hooks:
         hook_res = await hook(ctx)
@@ -173,7 +173,8 @@ def _get_crescent_command_data(
     command_name: str = interaction.command_name
     group: str | None = None
     sub_group: str | None = None
-    options = interaction.options
+    # I am not writing out that whole type - CircuitSacul
+    options = interaction.options or None
 
     if options:
         option = options[0]
@@ -216,8 +217,10 @@ def _context_from_interaction_resp(
         version=interaction.version,
         channel_id=interaction.channel_id,
         guild_id=interaction.guild_id,
+        registered_guild_id=interaction.registered_guild_id,
         user=interaction.user,
         member=interaction.member,
+        entitlements=interaction.entitlements,
         locale=Locale(interaction.locale),
         command=command_name,
         group=group,

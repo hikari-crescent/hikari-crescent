@@ -7,6 +7,7 @@ from crescent.context import *
 from crescent.errors import *
 from crescent.events import *
 from crescent.exceptions import *
+from crescent.hooks import *
 from crescent.locale import *
 from crescent.mentionable import *
 from crescent.plugin import *
@@ -43,7 +44,7 @@ __all__: Sequence[str] = (
     "CommandCallbackT",
     "CommandOptionsT",
     "OptionTypesT",
-    "HookCallbackT",
+    "CommandHookCallbackT",
     "AutocompleteCallbackT",
     "ClassCommandProto",
     "Plugin",

@@ -5,27 +5,27 @@ description = "🌙 A command handler for Hikari that keeps your project neat an
 readme = "README.md"
 authors = ["Lunarmagpie <bambolambo0@gmail.com>"]
 maintainers = [
-    "Lunarmagpie <bambolambo0@gmail.com>",
-    "Circuit <circuitsacul@icloud.com>",
+  "Lunarmagpie <bambolambo0@gmail.com>",
+  "Circuit <circuitsacul@icloud.com>",
 ]
 license = "MPL-2.0"
 homepage = "https://github.com/hikari-crescent/hikari-crescent"
 repository = "https://github.com/hikari-crescent/hikari-crescent"
 documentation = "https://hikari-crescent.github.io/hikari-crescent/crescent.html"
 keywords = [
-    "discord",
-    "hikari",
-    "command handler",
-    "slash commands",
-    "application commands",
+  "discord",
+  "hikari",
+  "command handler",
+  "slash commands",
+  "application commands",
 ]
 classifiers = ["Development Status :: 5 - Production/Stable"]
 include = ["crescent/banner.txt"]
 packages = [{ include = "crescent" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.13"
-hikari = "==2.0.0.dev122"
+python = ">=3.9,<3.13"
+hikari = "^2.0.0"
 sigparse = "^3.0.0"
 floodgate-rs = { version = "^0.1.1", optional = true }
 types-croniter = { version = "==1.0.11", optional = true }
@@ -49,36 +49,36 @@ black = ">=23.12.1,<23.13"
 codespell = "^2.2.5"
 
 [tool.poetry.group.doc.dependencies]
-mkdocs-material = { version = ">=9.5.3,<9.6", extras = ["imaging"] }
-mkdocs = ">=1.5.3,<1.6"
-mkdocstrings-python = ">=1.8.0,<1.9"
+mkdocs-material = { version = "^9.5.39", extras = ["imaging"] }
+mkdocs = "^1.6.1"
+mkdocstrings-python = "^1.11.1"
 black = ">=23.12.1,<23.13"
-griffe-inherited-docstrings = "1.0.0"
+griffe-inherited-docstrings = "^1.0.0"
 
 
 [tool.poetry.group.tests.dependencies]
-pytest = "^7.3.2"
-pytest-asyncio = "^0.21.0"
-pytest-cov = "^4.1.0"
+pytest = "^8.2.2"
+pytest-asyncio = "^0.23.7"
 python-dotenv = "^1.0.0"
 
 [tool.black]
 line-length = 99
-target-version = ['py38']
+target-version = ['py39']
 skip-magic-trailing-comma = true
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 strict = true
 warn_unused_configs = true
 warn_return_any = true
 warn_redundant_casts = true
 namespace_packages = true
+warn_unused_ignores = false
 
 [tool.pyright]
 include = ["crescent", "examples"]
 exclude = ["tests"]
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 typeCheckingMode = "strict"
 reportPrivateUsage = false
 reportImportCycles = false
@@ -87,16 +87,16 @@ reportWildcardImportFromLibrary = false
 
 [tool.ruff]
 ignore = [
-    # Allow * imports to be used in the module level
-    "F403",
-    "F405",
+  # Allow * imports to be used in the module level
+  "F403",
+  "F405",
 ]
 select = [
-    # Pyflakes
-    "E",
-    "F",
-    # Dangling Tasks
-    "RUF006",
+  # Pyflakes
+  "E",
+  "F",
+  # Dangling Tasks
+  "RUF006",
 ]
 line-length = 99
 

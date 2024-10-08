@@ -108,7 +108,6 @@ MyPlugin = crescent.Plugin[MyBot, None]
 typing.reveal_type(MyPlugin().app)  # `MyBot`
 ```
 ## Sharing State Between Plugins
-
 Sharing objects between different files is hard, Crescent provides the `model` attribute on plugins to solve this problem.
 A `model` is any object you want that will be injected into your plugins.
 

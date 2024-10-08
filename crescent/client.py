@@ -19,11 +19,12 @@ from hikari import (
 )
 from hikari.traits import EventManagerAware, RESTAware
 
-from crescent.commands.hooks import add_hooks
+from crescent.hooks import add_hooks
 from crescent.internal.handle_resp import handle_resp
 from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
+from crescent.typedefs import EventHookCallbackT
 from crescent.utils import create_task
 
 if TYPE_CHECKING:
@@ -36,8 +37,8 @@ if TYPE_CHECKING:
     from crescent.typedefs import (
         AutocompleteErrorHandlerCallbackT,
         CommandErrorHandlerCallbackT,
+        CommandHookCallbackT,
         EventErrorHandlerCallbackT,
-        HookCallbackT,
     )
 
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
@@ -89,8 +90,10 @@ class Client:
         default_guild: Snowflakeish | None = None,
         update_commands: bool = True,
         allow_unknown_interactions: bool = False,
-        command_hooks: list[HookCallbackT] | None = None,
-        command_after_hooks: list[HookCallbackT] | None = None,
+        command_hooks: list[CommandHookCallbackT] | None = None,
+        command_after_hooks: list[CommandHookCallbackT] | None = None,
+        event_hooks: list[EventHookCallbackT[hk_Event]] | None = None,
+        event_after_hooks: list[EventHookCallbackT[hk_Event]] | None = None,
     ):
         """
         Args:
@@ -151,8 +154,10 @@ class Client:
         self.allow_unknown_interactions = allow_unknown_interactions
         self.update_commands = update_commands
 
-        self.command_hooks = command_hooks
-        self.command_after_hooks = command_after_hooks
+        self.command_hooks: list[CommandHookCallbackT] = command_hooks or []
+        self.command_after_hooks: list[CommandHookCallbackT] = command_after_hooks or []
+        self.event_hooks: list[EventHookCallbackT[hk_Event]] = event_hooks or []
+        self.event_after_hooks: list[EventHookCallbackT[hk_Event]] = event_after_hooks or []
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
@@ -196,15 +201,15 @@ class Client:
         return self._command_handler.register_commands()
 
     @overload
-    def include(self, command: INCLUDABLE) -> INCLUDABLE:
+    def include(self, obj: INCLUDABLE) -> INCLUDABLE:
         ...
 
     @overload
-    def include(self, command: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
+    def include(self, obj: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
         ...
 
     def include(
-        self, command: INCLUDABLE | None = None
+        self, obj: INCLUDABLE | None = None
     ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
         """
         Register an includable object, such as an event or command handler.
@@ -220,14 +225,20 @@ class Client:
             await ctx.respong("Pong")
         ```
         """
-        if command is None:
+        if obj is None:
             return self.include
 
-        add_hooks(self, command)
+        add_hooks(
+            obj,
+            self.command_hooks,
+            self.command_after_hooks,
+            self.event_hooks,
+            self.event_after_hooks,
+        )
 
-        command.register_to_client(self)
+        obj.register_to_client(self)
 
-        return command
+        return obj
 
     @property
     def plugins(self) -> PluginManager:

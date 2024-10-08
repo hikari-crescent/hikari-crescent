@@ -1,12 +1,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, ClassVar, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
-from hikari import UNDEFINED, CommandOption, Permissions, Snowflakeish
+from hikari import (
+    UNDEFINED,
+    CommandOption,
+    PartialCommand,
+    Permissions,
+    SlashCommand,
+    Snowflakeish,
+)
 from hikari.api import EntityFactory
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
+from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
     from typing import Any, Sequence, Type
@@ -15,7 +23,7 @@ if TYPE_CHECKING:
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
-    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, HookCallbackT
+    from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, CommandHookCallbackT
 
     Self = TypeVar("Self")
 
@@ -73,33 +81,39 @@ class AppCommand:
     nsfw: bool | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
-    __eq__props: ClassVar[Sequence[str]] = (
-        "type",
-        "name",
-        "description",
-        "guild_id",
-        "options",
-        "default_member_permissions",
-        "is_dm_enabled",
-    )
+    def eq_partial_command(self, other: PartialCommand) -> bool:
+        name, name_localizations = str_or_build_locale(self.name)
 
-    def __eq__(self, __o: object) -> bool:
-        """
-        Compares properties or class. Any two attributes that are `False` when
-        converted to a bool with be considered equal so different methods of
-        saying an attribute doesn't exist won't cause issues.
-        """
-        for prop in self.__eq__props:
-            my_attr = getattr(self, prop)
-            o_attr = getattr(__o, prop)
+        if isinstance(other, SlashCommand):
+            if self.description:
+                description, description_localizations = str_or_build_locale(self.description)
+            else:
+                description = None
+                description_localizations = None
 
-            if my_attr != o_attr and (my_attr or o_attr):
+            if any(
+                (
+                    description != other.description,
+                    (self.options or None) != (other.options or None),
+                    description_localizations != other.description_localizations,
+                )
+            ):
                 return False
 
-        return True
+        return all(
+            (
+                self.type == other.type,
+                name == other.name,
+                name_localizations == other.name_localizations,
+                self.build_default_member_perms() == other.default_member_permissions,
+                self.is_dm_enabled == other.is_dm_enabled,
+            )
+        )
 
-    def is_same_command(self, o: AppCommand) -> bool:
-        return self.guild_id == o.guild_id and self.name == o.name and self.type == o.type
+    def build_default_member_perms(self) -> Permissions:
+        if isinstance(self.default_member_permissions, Permissions):
+            return self.default_member_permissions
+        return Permissions(self.default_member_permissions or 0)
 
     def build(self, encoder: EntityFactory) -> dict[str, Any]:
         name, name_localizations = str_or_build_locale(self.name)
@@ -117,17 +131,10 @@ class AppCommand:
         if self.options:
             out["options"] = [encoder.serialize_command_option(option) for option in self.options]
 
-        if isinstance(self.default_member_permissions, Permissions):
-            perms = str(self.default_member_permissions.value)
-        elif not self.default_member_permissions:
-            perms = None
-        else:
-            perms = str(self.default_member_permissions)
-
         if self.nsfw is not None:
             out["nsfw"] = self.nsfw
 
-        out["default_member_permissions"] = perms
+        out["default_member_permissions"] = str(self.build_default_member_perms().value)
 
         out["dm_permission"] = self.is_dm_enabled
 
@@ -143,22 +150,13 @@ class AppCommandMeta:
     autocomplete: dict[str, AutocompleteCallbackT[Any]] = field(default_factory=dict)
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[HookCallbackT] = field(default_factory=list)
-    after_hooks: list[HookCallbackT] = field(default_factory=list)
+    hooks: list[CommandHookCallbackT] = field(default_factory=list)
+    after_hooks: list[CommandHookCallbackT] = field(default_factory=list)
 
     def add_hooks(
-        self, hooks: Sequence[HookCallbackT], prepend: bool = False, *, after: bool
+        self, hooks: Sequence[CommandHookCallbackT], prepend: bool = False, *, after: bool
     ) -> None:
-        def extend_or_prepend(list_to_edit: list[HookCallbackT]) -> None:
-            if prepend:
-                list_to_edit[:0] = hooks
-            else:
-                list_to_edit.extend(hooks)
-
-        if not after:
-            extend_or_prepend(self.hooks)
-        else:
-            extend_or_prepend(self.after_hooks)
+        add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)
 
     @property
     def unique(self) -> Unique:
