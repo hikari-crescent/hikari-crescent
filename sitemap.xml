@@ -2,127 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://hikari-crescent.github.io/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/getting_started/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/client/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/commands/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/context/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/errors/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/events/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/exceptions/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/locale/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/mentionable/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/plugin/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/typedefs/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/ext/cooldowns/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/ext/locales/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/api_reference/ext/tasks/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/commands/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/error_handling/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/events/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/hooks/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/plugins/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/ext/cooldowns/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/ext/locales/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
     <url>
          <loc>https://hikari-crescent.github.io/guides/ext/tasks/</loc>
-         <lastmod>2024-07-07</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-10-08</lastmod>
     </url>
 </urlset>
