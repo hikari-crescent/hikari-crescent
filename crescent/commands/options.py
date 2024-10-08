@@ -85,7 +85,7 @@ CHANNEL_TYPE_MAP: dict[type[VALID_CHANNEL_TYPES], ChannelType] = {
 
 
 def build_choices(
-    choices: Sequence[tuple[str | LocaleBuilder, str | int | float]],
+    choices: Sequence[tuple[str | LocaleBuilder, str | int | float]]
 ) -> list[CommandChoice]:
     result: list[CommandChoice] = []
     for name, value in choices:
@@ -146,10 +146,12 @@ class ClassCommandOption(Generic[T]):
         )
 
     @overload
-    def __get__(self: Self, inst: None, cls: Any) -> Self: ...
+    def __get__(self: Self, inst: None, cls: Any) -> Self:
+        ...
 
     @overload
-    def __get__(self, inst: object, cls: Any) -> T: ...
+    def __get__(self, inst: object, cls: Any) -> T:
+        ...
 
     def __get__(self, inst: Any | None, cls: Any) -> Any:
         if inst is None:
@@ -174,7 +176,8 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[InteractionChannel]: ...
+) -> ClassCommandOption[InteractionChannel]:
+    ...
 
 
 @overload
@@ -184,7 +187,8 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[InteractionChannel | DEFAULT]: ...
+) -> ClassCommandOption[InteractionChannel | DEFAULT]:
+    ...
 
 
 # fmt: off
@@ -206,7 +210,8 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[User | DEFAULT]: ...
+) -> ClassCommandOption[User | DEFAULT]:
+    ...
 
 
 # fmt: off
@@ -228,7 +233,8 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Role | DEFAULT]: ...
+) -> ClassCommandOption[Role | DEFAULT]:
+    ...
 
 
 # fmt: off
@@ -250,7 +256,8 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Attachment | DEFAULT]: ...
+) -> ClassCommandOption[Attachment | DEFAULT]:
+    ...
 
 
 @overload
@@ -259,7 +266,8 @@ def option(
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Mentionable]: ...
+) -> ClassCommandOption[Mentionable]:
+    ...
 
 
 @overload
@@ -269,7 +277,8 @@ def option(
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Mentionable | DEFAULT]: ...
+) -> ClassCommandOption[Mentionable | DEFAULT]:
+    ...
 
 
 # We have type ignores here because bool and float both inherit from int.
@@ -282,7 +291,8 @@ def option(  # type: ignore
     description: str | LocaleBuilder = ...,
     *,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[bool]: ...
+) -> ClassCommandOption[bool]:
+    ...
 
 
 @overload
@@ -292,7 +302,8 @@ def option(  # type: ignore
     *,
     default: DEFAULT,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[bool | DEFAULT]: ...
+) -> ClassCommandOption[bool | DEFAULT]:
+    ...
 
 
 @overload
@@ -305,7 +316,8 @@ def option(  # type: ignore
     min_value: int | None = ...,
     max_value: int | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[int]: ...
+) -> ClassCommandOption[int]:
+    ...
 
 
 @overload
@@ -319,7 +331,8 @@ def option(  # type: ignore
     min_value: int | None = ...,
     max_value: int | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[int | DEFAULT]: ...
+) -> ClassCommandOption[int | DEFAULT]:
+    ...
 
 
 @overload
@@ -332,7 +345,8 @@ def option(
     min_value: float | None = ...,
     max_value: float | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[float]: ...
+) -> ClassCommandOption[float]:
+    ...
 
 
 @overload
@@ -346,7 +360,8 @@ def option(
     min_value: float | None = ...,
     max_value: float | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[float | DEFAULT]: ...
+) -> ClassCommandOption[float | DEFAULT]:
+    ...
 
 
 @overload
@@ -359,7 +374,8 @@ def option(
     choices: Sequence[tuple[str | LocaleBuilder, str]] | None = ...,
     autocomplete: AutocompleteCallbackT[str] | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[str]: ...
+) -> ClassCommandOption[str]:
+    ...
 
 
 @overload
@@ -373,7 +389,8 @@ def option(
     choices: Sequence[tuple[str | LocaleBuilder, str]] | None = ...,
     autocomplete: AutocompleteCallbackT[str] | None = ...,
     name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[str | DEFAULT]: ...
+) -> ClassCommandOption[str | DEFAULT]:
+    ...
 
 
 def option(
