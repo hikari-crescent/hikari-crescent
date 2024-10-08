@@ -1,6 +1,5 @@
 # Commands
 
-
 Before you can create a command, you need to create a bot.
 
 === "Gateway"
@@ -28,15 +27,11 @@ Before you can create a command, you need to create a bot.
     bot.run()
     ```
 
-
-
 !!! warning
 
     Storing your token in your source code is a bad idea. Store your TOKEN in a `.env` file.
 
-
 The first command we will make is the ping command.
-
 
 === "Gateway"
     ```python
@@ -74,7 +69,6 @@ The first command we will make is the ping command.
 
 > ⚠️ Commands must call `await ctx.respond()` within 3 seconds or call `await ctx.defer()` to
 > get 15 minutes to respond.
-
 
 So what's going on here? `@crescent.command` turns your class into a command object.
 `@bot.include` adds the command to your bot. Many objects in Crescent can be added
@@ -153,14 +147,14 @@ async def message_command(ctx: crescent.Context, message: hikari.Message):
     ...
 ```
 
-
 ## Command Options
+
 This is what a command with an option called `name` looks like in the Discord client..
 
 ![Example of what name option looks like](../resources/name_option.png)
 
 Options can also have a custom description and name. If no description is provided,
-the description will default to "No Description". This example shows an option 
+the description will default to "No Description". This example shows an option
 amed "option" with the description "your custom description". The secondoption, `option2`,
 has the name "custom-name" and description "also your custom description".
 
@@ -179,6 +173,7 @@ class MyCommand:
 ```
 
 ## Option Types
+
 Crescent provides these option types. You can find more information on option types [here](https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type) (You can ignore `SUBCOMMAND` and `SUBCOMMAND_GROUP` for now.)
 This might look a bit daunting, but we will go into detail on what each option type is in this section.
 
@@ -196,6 +191,7 @@ This might look a bit daunting, but we will go into detail on what each option t
 | [`hikari.Attachment`][hikari.messages.Attachment] | Attachment |
 
 ### Making Parameters Optional
+
 Options will be optional if a default value is provided. This example
 shows an option with the default value `None`.
 
@@ -208,7 +204,6 @@ class MyCommand:
     async def callback(self, ctx: crescent.Context) -> None:
         ...
 ```
-
 
 ### More Information on Types
 
@@ -235,6 +230,7 @@ class MyCommand:
 ```
 
 These types use a hikari object.
+
 ```python
 import hikari
 
@@ -318,11 +314,33 @@ async def fetch_autocomplete_options(
 bot.run()
 ```
 
+### Converters
+
+Converters allow you to easily have command options converted into custom values. Converters can be
+sync or async functions. They must accept a single argument of the type that the option is, and
+return the converted value or raise an error.
+
+```python
+def to_number(in: str) -> int:
+    return int(in)
+
+@client.include
+@crescent.command
+class converter_example:
+    value = crescent.option(str, "Actually a number").convert(to_number)
+
+    async def callback(self, ctx: crescent.Context) -> None:
+        reveal_type(self.value)  # int
+```
+
+Once all converters have finished running, any exceptions will be combined into a single
+[`ConverterExceptions`][crescent.exceptions.ConverterExceptions], which can be caught by using the
+`catch_command` decorator (see the error handling guide).
+
 ## Command Groups
 
 Commands can be grouped or grouped into groups of groups.
 In Crescent these groups are called `groups` and `sub_groups`.
-
 
 ```python
 import crescent
@@ -353,6 +371,7 @@ Do not combine the `group` and `sub_group` decorators. This will cause a command
 registered multiple times.
 
 You can not create a group with the same name as a command.
+
 ```python
 help_group = crescent.Group("help")
 
