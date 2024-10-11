@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable
-from typing import Callable, Protocol, overload, Sequence
+from typing import Callable, overload, Sequence
 
 from hikari import MessageCreateEvent
 
 from crescent import Context
 from crescent.hooks import HookResult
 
-__all__: Sequence[str] = ("defer", "is_human")
+__all__: Sequence[str] = ("defer", "is_human", "is_bot")
 
 
 @overload
@@ -28,7 +28,7 @@ def defer(
     Hook used to defer a task.
 
     ```python
-    from crescent.ext.defer import defer
+    from crescent.ext.hooks import defer
 
     async def lengthy_hook_that_takes_a_lot_time(ctx: crescent.Context):
         # Simulate something that takes a lot of time...
