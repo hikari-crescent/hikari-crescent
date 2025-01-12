@@ -105,15 +105,11 @@ class AppCommand:
                 self.type == other.type,
                 name == other.name,
                 name_localizations == other.name_localizations,
-                self.build_default_member_perms() == other.default_member_permissions,
                 self.is_dm_enabled == other.is_dm_enabled,
             )
         )
 
-    def build_default_member_perms(self) -> Permissions:
-        if isinstance(self.default_member_permissions, Permissions):
-            return self.default_member_permissions
-        return Permissions(self.default_member_permissions or 0)
+    
 
     def build(self, encoder: EntityFactory) -> dict[str, Any]:
         name, name_localizations = str_or_build_locale(self.name)
@@ -130,11 +126,9 @@ class AppCommand:
             out["description_localizations"] = description_localizations
         if self.options:
             out["options"] = [encoder.serialize_command_option(option) for option in self.options]
-
         if self.nsfw is not None:
             out["nsfw"] = self.nsfw
 
-        out["default_member_permissions"] = str(self.build_default_member_perms().value)
 
         out["dm_permission"] = self.is_dm_enabled
 
