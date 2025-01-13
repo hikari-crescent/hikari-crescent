@@ -1,12 +1,10 @@
 from crescent.utils import any_issubclass
 
 
-class A:
-    ...
+class A: ...
 
 
-class B(A):
-    ...
+class B(A): ...
 
 
 def test_any_issubclass_with_any():

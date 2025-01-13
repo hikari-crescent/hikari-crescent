@@ -102,8 +102,7 @@ class Context(InteractionContext):
         mentions_everyone: UndefinedOr[bool] = UNDEFINED,
         user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     @overload
     async def respond(
@@ -123,8 +122,7 @@ class Context(InteractionContext):
         user_mentions: UndefinedOr[SnowflakeishSequence[PartialUser] | bool] = UNDEFINED,
         role_mentions: UndefinedOr[SnowflakeishSequence[PartialRole] | bool] = UNDEFINED,
         ensure_message: Literal[False] = ...,
-    ) -> Message | None:
-        ...
+    ) -> Message | None: ...
 
     async def respond(
         self,

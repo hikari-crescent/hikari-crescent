@@ -5,8 +5,7 @@ from crescent import Context, command, message_command, user_command
 
 def test_defaults():
     @command
-    async def test_command(ctx: Context):
-        ...
+    async def test_command(ctx: Context): ...
 
     assert test_command.metadata.app_command.name == "test_command"
     assert test_command.metadata.app_command.guild_id is None
@@ -18,8 +17,7 @@ def test_defaults():
 
 def test_user_command_defaults():
     @user_command
-    async def test_command(ctx: Context, user: User):
-        ...
+    async def test_command(ctx: Context, user: User): ...
 
     assert test_command.metadata.app_command.name == "test_command"
     assert test_command.metadata.app_command.guild_id is None
@@ -30,8 +28,7 @@ def test_user_command_defaults():
 
 def test_message_command_defaults():
     @user_command
-    async def test_command(ctx: Context, user: Message):
-        ...
+    async def test_command(ctx: Context, user: Message): ...
 
     assert test_command.metadata.app_command.name == "test_command"
     assert test_command.metadata.app_command.guild_id is None
@@ -49,8 +46,7 @@ def test_not_default():
         dm_enabled=False,
         nsfw=True,
     )
-    async def test_command(ctx: Context):
-        ...
+    async def test_command(ctx: Context): ...
 
     assert test_command.metadata.app_command.name == "test_name"
     assert test_command.metadata.app_command.guild_id == 123456
@@ -68,8 +64,7 @@ def test_message_command_not_default():
         dm_enabled=False,
         nsfw=True,
     )
-    async def test_command(ctx: Context):
-        ...
+    async def test_command(ctx: Context): ...
 
     assert test_command.metadata.app_command.name == "Test Name"
     assert test_command.metadata.app_command.guild_id == 123456
@@ -86,8 +81,7 @@ def test_user_command_not_default():
         dm_enabled=False,
         nsfw=True,
     )
-    async def test_command(ctx: Context):
-        ...
+    async def test_command(ctx: Context): ...
 
     assert test_command.metadata.app_command.name == "Test Name"
     assert test_command.metadata.app_command.guild_id == 123456

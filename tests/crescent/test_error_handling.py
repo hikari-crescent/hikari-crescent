@@ -13,8 +13,7 @@ class TestErrorHandling:
 
         @client.include
         @crescent.catch_command(TestException)
-        async def command(exc: Exception, ctx: crescent.Context):
-            ...
+        async def command(exc: Exception, ctx: crescent.Context): ...
 
         assert client._command_error_handler.registry.get(TestException) is command
 
@@ -26,8 +25,7 @@ class TestErrorHandling:
 
         @client.include
         @crescent.catch_event(TestException)
-        async def command(exc: Exception, event: hikari.Event):
-            ...
+        async def command(exc: Exception, event: hikari.Event): ...
 
         assert client._event_error_handler.registry.get(TestException) is command
 
@@ -41,7 +39,6 @@ class TestErrorHandling:
         @crescent.catch_autocomplete(TestException)
         async def command(
             exc: Exception, ctx: crescent.Context, option: hikari.AutocompleteInteractionOption
-        ):
-            ...
+        ): ...
 
         assert client._autocomplete_error_handler.registry.get(TestException) is command

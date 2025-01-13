@@ -8,8 +8,7 @@ from hikari import Event
 from tests.utils import MockClient
 
 
-async def async_func(*a, **k) -> None:
-    ...
+async def async_func(*a, **k) -> None: ...
 
 
 class _MockHook:
@@ -25,8 +24,7 @@ class _MockHook:
     def __eq__(self, ot: object) -> bool:
         return self.name == ot
 
-    def __call__(self):
-        ...
+    def __call__(self): ...
 
     def __hash__(self) -> int:
         return 0
@@ -47,42 +45,36 @@ def test_command_hook_order():
     @client.include
     @hook(MockHook("command"))
     @command
-    async def c1(ctx) -> None:
-        ...
+    async def c1(ctx) -> None: ...
 
     @client.include
     @hook(MockHook("command"))
     @group.child
     @command
-    async def c2(ctx) -> None:
-        ...
+    async def c2(ctx) -> None: ...
 
     @client.include
     @hook(MockHook("command"))
     @subgroup.child
     @command
-    async def c3(ctx) -> None:
-        ...
+    async def c3(ctx) -> None: ...
 
     @plugin.include
     @hook(MockHook("command"))
     @command
-    async def c4(ctx) -> None:
-        ...  # *pytest explodes*
+    async def c4(ctx) -> None: ...  # *pytest explodes*
 
     @plugin.include
     @hook(MockHook("command"))
     @group.child
     @command
-    async def c5(ctx) -> None:
-        ...
+    async def c5(ctx) -> None: ...
 
     @plugin.include
     @hook(MockHook("command"))
     @subgroup.child
     @command
-    async def c6(ctx) -> None:
-        ...
+    async def c6(ctx) -> None: ...
 
     client.plugins._add_plugin("", plugin)
 
@@ -103,42 +95,36 @@ def test_command_after_hook_order():
     @client.include
     @hook(MockHook("command"), after=True)
     @command
-    async def c1(ctx) -> None:
-        ...
+    async def c1(ctx) -> None: ...
 
     @client.include
     @hook(MockHook("command"), after=True)
     @group.child
     @command
-    async def c2(ctx) -> None:
-        ...
+    async def c2(ctx) -> None: ...
 
     @client.include
     @hook(MockHook("command"), after=True)
     @subgroup.child
     @command
-    async def c3(ctx) -> None:
-        ...
+    async def c3(ctx) -> None: ...
 
     @plugin.include
     @hook(MockHook("command"), after=True)
     @command
-    async def c4(ctx) -> None:
-        ...
+    async def c4(ctx) -> None: ...
 
     @plugin.include
     @hook(MockHook("command"), after=True)
     @group.child
     @command
-    async def c5(ctx) -> None:
-        ...
+    async def c5(ctx) -> None: ...
 
     @plugin.include
     @hook(MockHook("command"), after=True)
     @subgroup.child
     @command
-    async def c6(ctx) -> None:
-        ...
+    async def c6(ctx) -> None: ...
 
     client.plugins._add_plugin("", plugin)
 
@@ -155,13 +141,11 @@ def test_vargs_hooks():
     @hook(MockHook("b"))
     @hook(MockHook("c"))
     @command
-    async def command_a(ctx):
-        ...
+    async def command_a(ctx): ...
 
     @hook(MockHook("a"), MockHook("b"), MockHook("c"))
     @command
-    async def command_b(ctx):
-        ...
+    async def command_b(ctx): ...
 
     assert command_a.metadata.hooks == command_b.metadata.hooks
 
@@ -173,14 +157,12 @@ def test_event_hook_order():
     @client.include
     @hook(MockHook("command"))
     @event
-    async def e1(event: Event) -> None:
-        ...
+    async def e1(event: Event) -> None: ...
 
     @plugin.include
     @hook(MockHook("command"))
     @event
-    async def e2(event: Event) -> None:
-        ...
+    async def e2(event: Event) -> None: ...
 
     client.plugins._add_plugin("", plugin)
 
@@ -195,14 +177,12 @@ def test_event_after_hook_order():
     @client.include
     @hook(MockHook("command"), after=True)
     @event
-    async def e1(event: Event) -> None:
-        ...
+    async def e1(event: Event) -> None: ...
 
     @plugin.include
     @hook(MockHook("command"), after=True)
     @event
-    async def e2(event: Event) -> None:
-        ...
+    async def e2(event: Event) -> None: ...
 
     client.plugins._add_plugin("", plugin)
 
