@@ -37,7 +37,7 @@ def poetry_session(
 
 @poetry_session("linting", name="format")
 def apply_lint(session: nox.Session) -> None:
-    session.run("black", "crescent")
+    session.run("ruff", "--fix", "crescent")
     session.run("isort", "crescent")
     session.run("codespell", "crescent", "-i", "2", "-w")
     session.run("codespell", "docs", "-i", "2", "-w")
@@ -45,10 +45,9 @@ def apply_lint(session: nox.Session) -> None:
 
 @poetry_session("linting")
 def lint(session: nox.Session) -> None:
-    session.run("black", "--check", "crescent")
     session.run("codespell", "crescent")
     session.run("codespell", "docs")
-    session.run("ruff", "crescent")
+    session.run("ruff", "--check", "crescent")
     session.run("isort", "--check", "crescent")
 
 
