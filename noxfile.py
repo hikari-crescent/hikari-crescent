@@ -10,14 +10,12 @@ def poetry_session(
     *groups: str, extras: bool = False, **kwargs: typing.Any
 ) -> typing.Callable[[typing.Callable[[nox.Session], None]], typing.Callable[[nox.Session], None]]:
     def inner(
-        callback: typing.Callable[[nox.Session], None]
+        callback: typing.Callable[[nox.Session], None],
     ) -> typing.Callable[[nox.Session], None]:
         @nox.session(**kwargs)
         @functools.wraps(callback)
         def inner(session: nox.Session) -> None:
             session.install("poetry")
-            session.run("poetry", "shell")
-
             command = ["poetry", "install"]
 
             if groups:
@@ -37,19 +35,18 @@ def poetry_session(
 
 @poetry_session("linting", name="format")
 def apply_lint(session: nox.Session) -> None:
-    session.run("black", "crescent")
-    session.run("isort", "crescent")
-    session.run("codespell", "crescent", "-i", "2", "-w")
-    session.run("codespell", "docs", "-i", "2", "-w")
+    session.run("poetry", "run", "ruff", "format", "crescent")
+    session.run("poetry", "run", "isort", "crescent")
+    session.run("poetry", "run", "codespell", "crescent", "-i", "2", "-w")
+    session.run("poetry", "run", "codespell", "docs", "-i", "2", "-w")
 
 
 @poetry_session("linting")
 def lint(session: nox.Session) -> None:
-    session.run("black", "--check", "crescent")
-    session.run("codespell", "crescent")
-    session.run("codespell", "docs")
-    session.run("ruff", "crescent")
-    session.run("isort", "--check", "crescent")
+    session.run("poetry", "run", "codespell", "crescent")
+    session.run("poetry", "run", "codespell", "docs")
+    session.run("poetry", "run", "ruff", "check", "crescent")
+    session.run("poetry", "run", "isort", "--check", "crescent")
 
 
 @poetry_session("typing", extras=True)
@@ -65,7 +62,6 @@ def pyright(session: nox.Session) -> None:
 
 @poetry_session("tests")
 def pytest(session: nox.Session) -> None:
-    session.install("hikari[server]")
     session.run("poetry", "run", "pytest", "tests/crescent")
 
 

@@ -25,8 +25,7 @@ def test_option_types():
         channel_list = option([GuildTextChannel, GuildVoiceChannel])
         attachment = option(Attachment)
 
-        async def callback(self, ctx):
-            ...
+        async def callback(self, ctx): ...
 
     options = AllOptionTypes.metadata.app_command.options
 

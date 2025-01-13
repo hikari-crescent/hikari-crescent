@@ -161,13 +161,13 @@ class Client:
 
         self._command_handler: CommandHandler = CommandHandler(self, tracked_guilds)
 
-        self._command_error_handler: ErrorHandler[
-            CommandErrorHandlerCallbackT[Any]
-        ] = ErrorHandler()
+        self._command_error_handler: ErrorHandler[CommandErrorHandlerCallbackT[Any]] = (
+            ErrorHandler()
+        )
         self._event_error_handler: ErrorHandler[EventErrorHandlerCallbackT[Any]] = ErrorHandler()
-        self._autocomplete_error_handler: ErrorHandler[
-            AutocompleteErrorHandlerCallbackT[Any]
-        ] = ErrorHandler()
+        self._autocomplete_error_handler: ErrorHandler[AutocompleteErrorHandlerCallbackT[Any]] = (
+            ErrorHandler()
+        )
 
         self.default_guild: Snowflakeish | None = default_guild
 
@@ -201,12 +201,10 @@ class Client:
         return self._command_handler.register_commands()
 
     @overload
-    def include(self, obj: INCLUDABLE) -> INCLUDABLE:
-        ...
+    def include(self, obj: INCLUDABLE) -> INCLUDABLE: ...
 
     @overload
-    def include(self, obj: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]:
-        ...
+    def include(self, obj: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]: ...
 
     def include(
         self, obj: INCLUDABLE | None = None

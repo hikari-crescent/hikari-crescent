@@ -36,15 +36,13 @@ class EventMeta(Generic[EventT]):
 
 
 @overload
-def event(callback: CallbackT[EventT], /) -> Includable[EventMeta[EventT]]:
-    ...
+def event(callback: CallbackT[EventT], /) -> Includable[EventMeta[EventT]]: ...
 
 
 @overload
 def event(
     *, event_type: type[EventT] | None
-) -> Callable[[CallbackT[EventT]], Includable[EventMeta[EventT]]]:
-    ...
+) -> Callable[[CallbackT[EventT]], Includable[EventMeta[EventT]]]: ...
 
 
 def event(

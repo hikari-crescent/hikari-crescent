@@ -86,8 +86,9 @@ def _class_command_callback(
 
 
 @overload
-def command(callback: CommandCallbackT | type[ClassCommandProto], /) -> Includable[AppCommandMeta]:
-    ...
+def command(
+    callback: CommandCallbackT | type[ClassCommandProto], /
+) -> Includable[AppCommandMeta]: ...
 
 
 @overload
@@ -99,8 +100,7 @@ def command(
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     nsfw: bool | None = ...,
-) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]:
-    ...
+) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]: ...
 
 
 def command(
@@ -220,7 +220,7 @@ def command(
 
 
 def _kwargs_to_args_callback(
-    callback: Callable[..., Awaitable[Any]]
+    callback: Callable[..., Awaitable[Any]],
 ) -> Callable[..., Awaitable[Any]]:
     @wraps(callback)
     async def inner(*args: Any, **kwargs: Any) -> Any:
@@ -230,8 +230,7 @@ def _kwargs_to_args_callback(
 
 
 @overload
-def user_command(callback: UserCommandCallbackT, /) -> Includable[AppCommandMeta]:
-    ...
+def user_command(callback: UserCommandCallbackT, /) -> Includable[AppCommandMeta]: ...
 
 
 @overload
@@ -242,8 +241,7 @@ def user_command(
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     nsfw: bool | None = ...,
-) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]]:
-    ...
+) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]]: ...
 
 
 def user_command(
@@ -313,8 +311,7 @@ def user_command(
 
 
 @overload
-def message_command(callback: MessageCommandCallbackT, /) -> Includable[AppCommandMeta]:
-    ...
+def message_command(callback: MessageCommandCallbackT, /) -> Includable[AppCommandMeta]: ...
 
 
 @overload
@@ -325,8 +322,7 @@ def message_command(
     default_member_permissions: UndefinedType | int | Permissions = ...,
     dm_enabled: bool = ...,
     nsfw: bool | None = ...,
-) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]]:
-    ...
+) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]]: ...
 
 
 def message_command(
