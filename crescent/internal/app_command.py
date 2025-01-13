@@ -113,8 +113,8 @@ class AppCommand:
     def build_default_member_perms(self) -> Permissions | None:
         if isinstance(self.default_member_permissions, Permissions):
             return self.default_member_permissions
-		if isinstance(self.default_member_permissions, int):
-	        return Permissions(self.default_member_permissions)
+        if isinstance(self.default_member_permissions, int):
+            return Permissions(self.default_member_permissions)
        return None
 
     def build(self, encoder: EntityFactory) -> dict[str, Any]:
