@@ -102,7 +102,9 @@ class ClassCommand:
     converted = crescent.option(str, name="str-to-num").convert(lambda v: int(v))
 
     async def callback(self, ctx: crescent.Context) -> None:
-        await ctx.respond(f"{self.arg}, {self.another_arg}, {self.converted}: {type(self.converted)}")
+        await ctx.respond(
+            f"{self.arg}, {self.another_arg}, {self.converted}: {type(self.converted)}"
+        )
 
 
 @client.include

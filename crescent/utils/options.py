@@ -16,13 +16,11 @@ def unwrap(o: T | None) -> T:
 
 
 @overload
-def map_or(o: T | None, func: Callable[[T], U]) -> U | None:
-    ...
+def map_or(o: T | None, func: Callable[[T], U]) -> U | None: ...
 
 
 @overload
-def map_or(o: T | None, func: Callable[[T], U], default: V) -> U | V:
-    ...
+def map_or(o: T | None, func: Callable[[T], U], default: V) -> U | V: ...
 
 
 def map_or(o: T | None, func: Callable[[T], U], default: V | None = None) -> U | V | None:

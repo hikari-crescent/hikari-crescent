@@ -27,9 +27,7 @@ from tests.utils import MockClient, MockRESTClient
 def MockEvent(name, client, arg: "str | None" = None):
     if arg:
         options = (
-            CommandInteractionOption(
-                name="arg", type=OptionType.STRING, value=arg, options=None
-            ),
+            CommandInteractionOption(name="arg", type=OptionType.STRING, value=arg, options=None),
         )
     else:
         options = None
@@ -124,7 +122,7 @@ async def test_converter_error() -> None:
 
     @client.include
     @catch_command(ConverterExceptions)
-    async def error(_exc: ConverterExceptions, ctx:  Context) -> None:
+    async def error(_exc: ConverterExceptions, ctx: Context) -> None:
         nonlocal exc
         exc = _exc
 
@@ -404,8 +402,6 @@ async def test_rest_future_is_set():
         print(ctx._rest_interaction_future.set_result)
         await ctx.followup("something")
 
-    await handle_resp(
-        client, MockEvent("test_command", client).interaction, future=mock_future
-    )
+    await handle_resp(client, MockEvent("test_command", client).interaction, future=mock_future)
 
     set_result.assert_called_once()

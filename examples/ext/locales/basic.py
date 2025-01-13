@@ -25,8 +25,7 @@ i18n.add_translation("description", "french-description", locale="fr")
 # This command will have its name and translation in the french and english locales.
 @client.include
 @crescent.command(name=locales.i18n("name"), description=locales.i18n("description"))
-async def command(ctx: crescent.Context) -> None:
-    ...
+async def command(ctx: crescent.Context) -> None: ...
 
 
 # There is also `locales.LocaleMap` which allows you to declare translation as kwargs
@@ -41,8 +40,7 @@ async def command(ctx: crescent.Context) -> None:
         fr="french-description",
     ),
 )
-async def command_2(ctx: crescent.Context) -> None:
-    ...
+async def command_2(ctx: crescent.Context) -> None: ...
 
 
 bot.run()

@@ -29,12 +29,12 @@ class Loop(Task):
         self.first_loop = False
 
     @overload
-    def set_interval(self, *, hours: int = ..., minutes: int = ..., seconds: int = ...) -> None:
-        ...
+    def set_interval(
+        self, *, hours: int = ..., minutes: int = ..., seconds: int = ...
+    ) -> None: ...
 
     @overload
-    def set_interval(self, timedelta: _timedelta, /) -> None:
-        ...
+    def set_interval(self, timedelta: _timedelta, /) -> None: ...
 
     def set_interval(
         self,
@@ -84,13 +84,11 @@ retT = Callable[[TaskCallbackT], Includable[Loop]]
 
 
 @overload
-def loop(*, hours: int = ..., minutes: int = ..., seconds: int = ...) -> retT:
-    ...
+def loop(*, hours: int = ..., minutes: int = ..., seconds: int = ...) -> retT: ...
 
 
 @overload
-def loop(timedelta: _timedelta, /) -> retT:
-    ...
+def loop(timedelta: _timedelta, /) -> retT: ...
 
 
 def loop(

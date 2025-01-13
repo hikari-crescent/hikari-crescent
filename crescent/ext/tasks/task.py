@@ -17,8 +17,7 @@ TaskCallbackT = Callable[[], Awaitable[None]]
 __all__: Sequence[str] = ("TaskCallbackT", "Task", "TaskError")
 
 
-class TaskError(CrescentException):
-    ...
+class TaskError(CrescentException): ...
 
 
 class Task(ABC):

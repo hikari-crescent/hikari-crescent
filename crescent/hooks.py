@@ -32,13 +32,13 @@ class HookResult:
 
 
 @overload
-def hook(*callbacks: CommandHookCallbackT, after: bool = False) -> _Hook[AppCommandMeta]:
-    ...
+def hook(*callbacks: CommandHookCallbackT, after: bool = False) -> _Hook[AppCommandMeta]: ...
 
 
 @overload
-def hook(*callbacks: EventHookCallbackT[EventT], after: bool = False) -> _Hook[EventMeta[EventT]]:
-    ...
+def hook(
+    *callbacks: EventHookCallbackT[EventT], after: bool = False
+) -> _Hook[EventMeta[EventT]]: ...
 
 
 def hook(
@@ -74,14 +74,12 @@ class _Hook(Generic[IncludableT]):
     @overload
     def __call__(
         self: _Hook[AppCommandMeta], obj: Includable[AppCommandMeta]
-    ) -> Includable[AppCommandMeta]:
-        ...
+    ) -> Includable[AppCommandMeta]: ...
 
     @overload
     def __call__(
         self: _Hook[EventMeta[EventT]], obj: Includable[EventMeta[EventT]]
-    ) -> Includable[EventMeta[EventT]]:
-        ...
+    ) -> Includable[EventMeta[EventT]]: ...
 
     def __call__(self, obj: Includable[Any]) -> Includable[Any]:
         if isinstance(obj.metadata, AppCommandMeta):
