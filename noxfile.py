@@ -16,8 +16,6 @@ def poetry_session(
         @functools.wraps(callback)
         def inner(session: nox.Session) -> None:
             session.install("poetry")
-            session.run("poetry", "shell")
-
             command = ["poetry", "install"]
 
             if groups:
