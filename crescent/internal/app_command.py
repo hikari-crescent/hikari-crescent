@@ -136,7 +136,9 @@ class AppCommand:
         if self.nsfw is not None:
             out["nsfw"] = self.nsfw
 
-        out["default_member_permissions"] = str(self.build_default_member_perms().value)
+        perms = self.build_default_member_perms()
+        if (perms):
+            out["default_member_permissions"] = perms.value
 
         out["dm_permission"] = self.is_dm_enabled
 
