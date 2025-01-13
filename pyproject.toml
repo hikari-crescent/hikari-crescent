@@ -58,6 +58,7 @@ griffe-inherited-docstrings = "^1.0.0"
 pytest = "^8.2.2"
 pytest-asyncio = "^0.23.7"
 python-dotenv = "^1.0.0"
+hikari = { version = "*", extras = ["server"] }
 
 [tool.mypy]
 python_version = "3.9"
