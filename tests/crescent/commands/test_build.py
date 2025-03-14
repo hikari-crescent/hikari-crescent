@@ -7,7 +7,7 @@ from tests.utils import MockBot
 FACTORY = EntityFactoryImpl(MockBot())
 
 
-def test_build():
+def test_build_no_perms():
     assert AppCommand(
         type=CommandType.SLASH, name="test_command", description="test description", guild_id=1234
     ).build(FACTORY) == {
@@ -16,8 +16,25 @@ def test_build():
         "type": CommandType.SLASH,
         "description": "test description",
         "description_localizations": {},
-        "default_member_permissions": str(0),
         "dm_permission": True,
+    }
+
+
+def test_build_denied_all_perms():
+    assert AppCommand(
+        type=CommandType.SLASH,
+        name="test_command",
+        description="test description",
+        guild_id=1234,
+        default_member_permissions=Permissions.NONE,
+    ).build(FACTORY) == {
+        "name": "test_command",
+        "name_localizations": {},
+        "type": CommandType.SLASH,
+        "description": "test description",
+        "description_localizations": {},
+        "dm_permission": True,
+        "default_member_permissions": "0",
     }
 
 

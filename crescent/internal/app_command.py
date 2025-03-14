@@ -110,10 +110,10 @@ class AppCommand:
             )
         )
 
-    def build_default_member_perms(self) -> Permissions:
-        if isinstance(self.default_member_permissions, Permissions):
-            return self.default_member_permissions
-        return Permissions(self.default_member_permissions or 0)
+    def build_default_member_perms(self) -> Permissions | None:
+        if self.default_member_permissions is UNDEFINED:
+            return None
+        return Permissions(self.default_member_permissions)
 
     def build(self, encoder: EntityFactory) -> dict[str, Any]:
         name, name_localizations = str_or_build_locale(self.name)
@@ -134,7 +134,8 @@ class AppCommand:
         if self.nsfw is not None:
             out["nsfw"] = self.nsfw
 
-        out["default_member_permissions"] = str(self.build_default_member_perms().value)
+        if (perms := self.build_default_member_perms()) is not None:
+            out["default_member_permissions"] = str(perms.value)
 
         out["dm_permission"] = self.is_dm_enabled
 
