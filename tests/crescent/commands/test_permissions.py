@@ -10,12 +10,6 @@ def test_no_perms_in_subcommand_group():
     with raises(PermissionsError):
 
         @group.child
-        @command(dm_enabled=False)
-        async def _command(ctx: Context) -> None: ...
-
-    with raises(PermissionsError):
-
-        @group.child
         @command(default_member_permissions=PermissionOverwrite(id=0, type=0))
         async def _command(ctx: Context) -> None: ...
 
@@ -27,12 +21,6 @@ def test_no_perms_in_subcommand_group():
 def test_no_perms_in_subcommand_subgroup():
     group = Group("abcd")
     sub_group = group.sub_group("abcd")
-
-    with raises(PermissionsError):
-
-        @sub_group.child
-        @command(dm_enabled=False)
-        async def _command(ctx: Context) -> None: ...
 
     with raises(PermissionsError):
 
