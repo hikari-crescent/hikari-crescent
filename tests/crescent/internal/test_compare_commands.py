@@ -3,7 +3,17 @@ from unittest.mock import Mock
 from hikari.events import guild_events
 from crescent.internal.app_command import AppCommand
 
-from hikari import PartialCommand, Permissions, SlashCommand
+from hikari import (
+    ApplicationContextType,
+    ApplicationIntegrationType,
+    PartialCommand,
+    Permissions,
+    SlashCommand,
+)
+
+
+DEFAULT_CONTEXT = (ApplicationContextType.GUILD, ApplicationContextType.BOT_DM)
+DEFAULT_INT = (ApplicationIntegrationType.GUILD_INSTALL,)
 
 
 def test_compare_commands():
@@ -25,6 +35,8 @@ def test_compare_commands():
             guild_id=None,
             version=None,
             name_localizations={},
+            context_types=DEFAULT_CONTEXT,
+            integration_types=DEFAULT_INT,
         )
     )
 
@@ -53,6 +65,8 @@ def test_compare_commands_no_options():
             description="desc",
             description_localizations={},
             options=[],
+            context_types=DEFAULT_CONTEXT,
+            integration_types=DEFAULT_INT,
         )
     )
 
@@ -90,6 +104,8 @@ def test_compare_should_succeed_with_options():
             description="desc",
             description_localizations={},
             options=[mock_option_a, mock_option_b, mock_option_c],
+            context_types=DEFAULT_CONTEXT,
+            integration_types=DEFAULT_INT,
         )
     )
 
@@ -116,5 +132,7 @@ def test_compare_should_succeed_with_options():
             description="desc",
             description_localizations={},
             options=[mock_option_a],
+            context_types=DEFAULT_CONTEXT,
+            integration_types=DEFAULT_INT,
         )
     )
