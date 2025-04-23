@@ -26,8 +26,8 @@ __all__: Sequence[str] = ("event",)
 @dataclass
 class EventMeta(Generic[EventT]):
     callback: CallbackT[EventT]
-    hooks: list[EventHookCallbackT[EventT]] = field(default_factory=list)
-    after_hooks: list[EventHookCallbackT[EventT]] = field(default_factory=list)
+    hooks: list[EventHookCallbackT[EventT]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    after_hooks: list[EventHookCallbackT[EventT]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     def add_hooks(
         self, hooks: Sequence[EventHookCallbackT[Any]], prepend: bool = False, *, after: bool

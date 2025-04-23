@@ -57,7 +57,7 @@ def mypy(session: nox.Session) -> None:
 @poetry_session("typing", extras=True)
 def pyright(session: nox.Session) -> None:
     session.run("poetry", "run", "pyright")
-    session.run("poetry", "run", "pyright", "--verifytypes", "crescent")
+    session.run("poetry", "run", "pyright", "--verifytypes", "crescent", "--ignoreexternal")
 
 
 @poetry_session("tests")

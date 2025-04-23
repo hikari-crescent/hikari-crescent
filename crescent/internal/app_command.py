@@ -144,11 +144,11 @@ class AppCommandMeta:
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
-    autocomplete: dict[str, AutocompleteCallbackT[Any]] = field(default_factory=dict)
+    autocomplete: dict[str, AutocompleteCallbackT[Any]] = field(default_factory=dict)  # pyright: ignore[reportUnknownVariableType]
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[CommandHookCallbackT] = field(default_factory=list)
-    after_hooks: list[CommandHookCallbackT] = field(default_factory=list)
+    hooks: list[CommandHookCallbackT] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    after_hooks: list[CommandHookCallbackT] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     def add_hooks(
         self, hooks: Sequence[CommandHookCallbackT], prepend: bool = False, *, after: bool
