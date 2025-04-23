@@ -44,7 +44,6 @@ def test_build_with_perms():
         name="test_command",
         description="test description",
         default_member_permissions=Permissions.ATTACH_FILES,
-        is_dm_enabled=False,
         guild_id=1234,
     ).build(FACTORY) == {
         "name": "test_command",
@@ -61,7 +60,6 @@ def test_build_with_perms():
         name="test_command",
         description="test description",
         default_member_permissions=32768,
-        is_dm_enabled=False,
         guild_id=1234,
     ).build(FACTORY) == {
         "name": "test_command",

@@ -20,10 +20,7 @@ __all__: Sequence[str] = ("Group", "SubGroup")
 
 def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
     """Raise an exception if permissions are declared in a subcommand."""
-    if (
-        includable.metadata.app_command.default_member_permissions
-        or not includable.metadata.app_command.is_dm_enabled
-    ):
+    if includable.metadata.app_command.default_member_permissions:
         raise PermissionsError(
             "`dm_enabled` and `default_member_permissions` cannot be declared for subcommands."
             " Permissions must be declared in the `crescent.Group` object."
