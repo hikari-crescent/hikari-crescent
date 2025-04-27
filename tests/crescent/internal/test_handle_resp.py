@@ -3,12 +3,14 @@ from typing import List, cast
 from unittest.mock import AsyncMock, Mock
 
 from hikari import (
+    ApplicationContextType,
     AutocompleteInteraction,
     AutocompleteInteractionOption,
     CommandChoice,
     CommandInteraction,
     CommandInteractionOption,
     CommandType,
+    InteractionChannel,
     InteractionCreateEvent,
     InteractionType,
     OptionType,
@@ -24,6 +26,18 @@ from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockClient, MockRESTClient
 
 
+def MockChannel(client):
+    return InteractionChannel(
+        app=client.app,
+        id=0,
+        name="channel",
+        type=0,
+        permissions=0,
+        parent_id=None,
+        thread_metadata=None,
+    )
+
+
 def MockEvent(name, client, arg: "str | None" = None):
     if arg:
         options = (
@@ -37,16 +51,18 @@ def MockEvent(name, client, arg: "str | None" = None):
         interaction=CommandInteraction(
             app=client.app,
             id=None,
+            context=ApplicationContextType.GUILD,
+            authorizing_integration_owners={},
             application_id=...,
             type=InteractionType.APPLICATION_COMMAND,
             token=None,
             version=0,
-            channel_id=0,
             guild_id=None,
             registered_guild_id=None,
             guild_locale=None,
             member=None,
             user=None,
+            channel=MockChannel(client),
             locale=None,
             command_id=None,
             command_name=name,
@@ -64,16 +80,19 @@ def MockAutocompleteEvent(name, option_name, client):
         shard=None,
         interaction=AutocompleteInteraction(
             app=client.app,
+            app_permissions=0,
             id=None,
+            context=ApplicationContextType.GUILD,
+            authorizing_integration_owners={},
             application_id=...,
             type=InteractionType.AUTOCOMPLETE,
             token=client.app._token,
             version=0,
-            channel_id=0,
             guild_id=None,
             guild_locale=None,
             member=None,
             user=None,
+            channel=MockChannel(client),
             locale=None,
             command_id=None,
             command_name=name,

@@ -84,7 +84,7 @@ class PluginManager:
             old_plugin = self.plugins.pop(path)
             old_plugin._unload()
 
-        plugin: Plugin[Any, Any] | None = Plugin._from_module(path, refresh=refresh, strict=strict)
+        plugin: Plugin[Any, Any] | None = Plugin._from_module(path, refresh=refresh, strict=strict)  # pyright: ignore[reportUnknownVariableType]
         if not plugin:
             return None
         self._add_plugin(path, plugin, refresh=refresh)

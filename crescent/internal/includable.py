@@ -22,8 +22,8 @@ class Includable(Generic[T]):
     manager: Any | None = None
     _client: Client | None = None
 
-    client_set_hooks: list[Callable[[Includable[T]], None]] = field(default_factory=list)
-    plugin_unload_hooks: list[Callable[[Includable[T]], None]] = field(default_factory=list)
+    client_set_hooks: list[Callable[[Includable[T]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    plugin_unload_hooks: list[Callable[[Includable[T]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     @property
     def client(self) -> Client:

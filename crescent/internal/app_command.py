@@ -77,7 +77,6 @@ class AppCommand:
     description: str | LocaleBuilder | None = None
     options: Sequence[CommandOption] | None = None
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
-    is_dm_enabled: bool = True
     nsfw: bool | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
@@ -106,7 +105,6 @@ class AppCommand:
                 name == other.name,
                 name_localizations == other.name_localizations,
                 self.build_default_member_perms() == other.default_member_permissions,
-                self.is_dm_enabled == other.is_dm_enabled,
             )
         )
 
@@ -137,8 +135,6 @@ class AppCommand:
         if (perms := self.build_default_member_perms()) is not None:
             out["default_member_permissions"] = str(perms.value)
 
-        out["dm_permission"] = self.is_dm_enabled
-
         return out
 
 
@@ -148,11 +144,11 @@ class AppCommandMeta:
     owner: Any
     """The function or class that was used to create the command"""
     callback: CommandCallbackT
-    autocomplete: dict[str, AutocompleteCallbackT[Any]] = field(default_factory=dict)
+    autocomplete: dict[str, AutocompleteCallbackT[Any]] = field(default_factory=dict)  # pyright: ignore[reportUnknownVariableType]
     group: Group | None = None
     sub_group: SubGroup | None = None
-    hooks: list[CommandHookCallbackT] = field(default_factory=list)
-    after_hooks: list[CommandHookCallbackT] = field(default_factory=list)
+    hooks: list[CommandHookCallbackT] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    after_hooks: list[CommandHookCallbackT] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     def add_hooks(
         self, hooks: Sequence[CommandHookCallbackT], prepend: bool = False, *, after: bool

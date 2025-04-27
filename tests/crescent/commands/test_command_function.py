@@ -22,7 +22,6 @@ class TestCommandFunction:
                 name="test",
                 guild_id=12345678,
                 default_member_permissions=UNDEFINED,
-                is_dm_enabled=True,
                 description="1234",
                 options=[],
             ),
@@ -40,7 +39,6 @@ class TestCommandFunction:
                 type=CommandType.MESSAGE,
                 name="callback",
                 default_member_permissions=UNDEFINED,
-                is_dm_enabled=True,
                 guild_id=None,
             ),
         )
@@ -59,7 +57,6 @@ class TestCommandFunction:
                 type=CommandType.USER,
                 name="callback",
                 default_member_permissions=UNDEFINED,
-                is_dm_enabled=True,
                 guild_id=None,
             ),
         )

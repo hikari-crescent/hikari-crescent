@@ -76,7 +76,6 @@ def register_command(
                 name=name,
                 options=options,
                 default_member_permissions=default_member_permissions,
-                is_dm_enabled=dm_enabled,
                 nsfw=nsfw,
             ),
         ),
@@ -190,7 +189,6 @@ class CommandHandler:
                         default_member_permissions=(
                             unwrap(command.metadata.group).default_member_permissions
                         ),
-                        is_dm_enabled=unwrap(command.metadata.group).dm_enabled,
                     )
 
                 # The top-level command now exists. A subcommand group now if placed
@@ -275,7 +273,6 @@ class CommandHandler:
                         default_member_permissions=(
                             command.metadata.group.default_member_permissions
                         ),
-                        is_dm_enabled=command.metadata.group.dm_enabled,
                     )
 
                 # No checking has to be done before appending `command` since it is the

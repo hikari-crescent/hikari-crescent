@@ -25,7 +25,7 @@ packages = [{ include = "crescent" }]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.14"
-hikari = "^2.1.0"
+hikari = "^2.3.0"
 sigparse = "^3.0.0"
 floodgate-rs = { version = "^0.1.1", optional = true }
 types-croniter = { version = "^5.0.0", optional = true }

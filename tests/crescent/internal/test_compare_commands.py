@@ -3,7 +3,17 @@ from unittest.mock import Mock
 from hikari.events import guild_events
 from crescent.internal.app_command import AppCommand
 
-from hikari import PartialCommand, Permissions, SlashCommand
+from hikari import (
+    ApplicationContextType,
+    ApplicationIntegrationType,
+    PartialCommand,
+    Permissions,
+    SlashCommand,
+)
+
+
+DEFAULT_CONTEXT = (ApplicationContextType.GUILD, ApplicationContextType.BOT_DM)
+DEFAULT_INT = (ApplicationIntegrationType.GUILD_INSTALL,)
 
 
 def test_compare_commands():
@@ -12,7 +22,6 @@ def test_compare_commands():
         name="hello",
         guild_id=None,
         default_member_permissions=0,
-        is_dm_enabled=True,
         nsfw=False,
     ).eq_partial_command(
         PartialCommand(
@@ -22,11 +31,12 @@ def test_compare_commands():
             application_id=None,
             name="hello",
             default_member_permissions=Permissions(0),
-            is_dm_enabled=True,
             is_nsfw=False,
             guild_id=None,
             version=None,
             name_localizations={},
+            context_types=DEFAULT_CONTEXT,
+            integration_types=DEFAULT_INT,
         )
     )
 
@@ -37,7 +47,6 @@ def test_compare_commands_no_options():
         name="hello",
         guild_id=None,
         default_member_permissions=0,
-        is_dm_enabled=True,
         nsfw=False,
         description="desc",
         options=[],
@@ -49,7 +58,6 @@ def test_compare_commands_no_options():
             application_id=None,
             name="hello",
             default_member_permissions=Permissions(0),
-            is_dm_enabled=True,
             is_nsfw=False,
             guild_id=None,
             version=None,
@@ -57,6 +65,8 @@ def test_compare_commands_no_options():
             description="desc",
             description_localizations={},
             options=[],
+            context_types=DEFAULT_CONTEXT,
+            integration_types=DEFAULT_INT,
         )
     )
 
@@ -76,7 +86,6 @@ def test_compare_should_succeed_with_options():
         name="hello",
         guild_id=None,
         default_member_permissions=0,
-        is_dm_enabled=True,
         nsfw=False,
         description="desc",
         options=[mock_option_a, mock_option_b, mock_option_c],
@@ -88,7 +97,6 @@ def test_compare_should_succeed_with_options():
             application_id=None,
             name="hello",
             default_member_permissions=Permissions(0),
-            is_dm_enabled=True,
             is_nsfw=False,
             guild_id=None,
             version=None,
@@ -96,6 +104,8 @@ def test_compare_should_succeed_with_options():
             description="desc",
             description_localizations={},
             options=[mock_option_a, mock_option_b, mock_option_c],
+            context_types=DEFAULT_CONTEXT,
+            integration_types=DEFAULT_INT,
         )
     )
 
@@ -104,7 +114,6 @@ def test_compare_should_succeed_with_options():
         name="hello",
         guild_id=None,
         default_member_permissions=0,
-        is_dm_enabled=True,
         nsfw=False,
         description="desc",
         options=[],
@@ -116,7 +125,6 @@ def test_compare_should_succeed_with_options():
             application_id=None,
             name="hello",
             default_member_permissions=Permissions(0),
-            is_dm_enabled=True,
             is_nsfw=False,
             guild_id=None,
             version=None,
@@ -124,5 +132,7 @@ def test_compare_should_succeed_with_options():
             description="desc",
             description_localizations={},
             options=[mock_option_a],
+            context_types=DEFAULT_CONTEXT,
+            integration_types=DEFAULT_INT,
         )
     )
