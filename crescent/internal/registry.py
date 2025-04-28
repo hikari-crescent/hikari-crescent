@@ -55,7 +55,7 @@ def register_command(
     description: str | LocaleBuilder | None = None,
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
-    dm_enabled: bool = True,
+    context_types: UndefinedOr[list[ApplicationContextType]] = UNDEFINED,
     autocomplete: dict[str, AutocompleteCallbackT[Any]] = {},
     nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta]:
@@ -75,6 +75,7 @@ def register_command(
                 guild_id=guild,
                 name=name,
                 options=options,
+                context_types=context_types,
                 default_member_permissions=default_member_permissions,
                 nsfw=nsfw,
             ),
