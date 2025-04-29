@@ -77,6 +77,7 @@ class AppCommand:
     description: str | LocaleBuilder | None = None
     options: Sequence[CommandOption] | None = None
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
+    context_types: UndefinedOr[list[hikari.ContextTypes]] = UNDEFINED
     nsfw: bool | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
@@ -134,6 +135,9 @@ class AppCommand:
 
         if (perms := self.build_default_member_perms()) is not None:
             out["default_member_permissions"] = str(perms.value)
+
+        if self.context_types:
+            out["context_types"] = encoder.serialize_context_types(self.context_types)
 
         return out
 
