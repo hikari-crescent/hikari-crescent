@@ -316,12 +316,25 @@ class CommandHandler:
             def exists(command: AppCommand) -> bool:
                 return any(command.eq_partial_command(existing) for existing in existing_commands)
 
-            if all(exists(command) for command in commands):
+            all_exists = True
+            missing: list[str] = []
+            updated: list[str] = []
+            for command in commands:
+                if not exists(command):
+                    missing.append(str_or_build_locale(command.name)[0])
+                    all_exists = False
+                else:
+                    updated.append(str_or_build_locale(command.name)[0])
+
+            if all_exists:
                 if guild:
                     _log.info("No application commands need to be updated for guild %s.", guild)
                 else:
                     _log.info("No global application commands need to be updated.")
                 return
+            else:
+                _log.info(f"Outdated commands: {', '.join(missing)}")
+                _log.info(f"Already updated: {', '.join(updated)}")
 
             await self._client.app.rest.set_application_commands(
                 application=self._application_id,
@@ -332,7 +345,7 @@ class CommandHandler:
             if guild:
                 _log.info("Updated application commands for guild %s.", guild)
             else:
-                _log.info("Updated global application commands.")
+                _log.info(f"Updated global application commands.")
 
         except ForbiddenError:
             if not isinstance(self._client.app, CacheAware):

@@ -101,11 +101,16 @@ class AppCommand:
             ):
                 return False
 
+        context_types: set[ApplicationContextType] = (
+            set(self.context_types) if self.context_types is not UNDEFINED else set()
+        )
+
         return all(
             (
                 self.type == other.type,
                 name == other.name,
                 name_localizations == other.name_localizations,
+                context_types == set(other.context_types),
                 self.build_default_member_perms() == other.default_member_permissions,
             )
         )
@@ -138,7 +143,7 @@ class AppCommand:
             out["default_member_permissions"] = str(perms.value)
 
         if self.context_types:
-            out["context_types"] = ",".join(str(c.value) for c in self.context_types)
+            out["contexts"] = [c.value for c in self.context_types]
 
         return out
 

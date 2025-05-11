@@ -74,6 +74,19 @@ async def fancy_validate_url(url: str) -> str:
 
 
 @client.include
+@crescent.command(name="dm-only", context_types=(hikari.ApplicationContextType.BOT_DM,))
+class DMCommand:
+    async def callback(self, ctx: crescent.Context) -> None:
+        await ctx.respond("hi!")
+
+@client.include
+@crescent.command(name="guild-only", context_types=(hikari.ApplicationContextType.GUILD,))
+class GuildCommand:
+    async def callback(self, ctx: crescent.Context) -> None:
+        await ctx.respond("hi!")
+
+
+@client.include
 @crescent.catch_command(ConverterExceptions)
 async def handle_converter_err(e: ConverterExceptions, ctx: crescent.Context) -> None:
     res = "```\n"
