@@ -111,7 +111,7 @@ class AppCommand:
                 name == other.name,
                 name_localizations == other.name_localizations,
                 context_types == set(other.context_types),
-                self.build_default_member_perms() == other.default_member_permissions,
+                self.build_default_member_perms() or 0 == other.default_member_permissions,
             )
         )
 
