@@ -7,13 +7,13 @@ from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, cast, overload
 
 from hikari import (
     UNDEFINED,
+    ApplicationContextType,
     CommandOption,
     CommandType,
     Permissions,
     Snowflakeish,
     UndefinedOr,
     UndefinedType,
-    ApplicationContextType,
 )
 
 from crescent.commands.options import ClassCommandOption
