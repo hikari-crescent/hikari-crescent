@@ -3,9 +3,18 @@ from __future__ import annotations
 from asyncio import Task, create_task
 from functools import partial, wraps
 from inspect import isawaitable, isclass, isfunction
-from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
+from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, cast, overload
 
-from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType, ApplicationContextType
+from hikari import (
+    UNDEFINED,
+    CommandOption,
+    CommandType,
+    Permissions,
+    Snowflakeish,
+    UndefinedOr,
+    UndefinedType,
+    ApplicationContextType,
+)
 
 from crescent.commands.options import ClassCommandOption
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
@@ -98,8 +107,7 @@ def command(
     name: str | LocaleBuilder | None = ...,
     description: str | LocaleBuilder | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
-    context_types: UndefinedOr[list[ApplicationContextType]] = ...,
-    dm_enabled: bool = ...,
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = ...,
     nsfw: bool | None = ...,
 ) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]: ...
 
@@ -112,7 +120,7 @@ def command(
     name: str | LocaleBuilder | None = None,
     description: str | LocaleBuilder | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
-    context_types: UndefinedOr[list[ApplicationContextType]] = UNDEFINED,
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = UNDEFINED,
     nsfw: bool | None = None,
 ) -> (
     Includable[AppCommandMeta]
@@ -376,7 +384,7 @@ def message_command(
             guild=guild,
             name=name,
             default_member_permissions=default_member_permissions,
-            dm_enabled=dm_enabled,
+            context_types=context_types,
             nsfw=nsfw,
         )  # pyright: ignore
 

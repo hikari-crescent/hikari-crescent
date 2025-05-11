@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Iterable, TypeVar
 
 from hikari import (
     UNDEFINED,
+    ApplicationContextType,
     CommandOption,
     PartialCommand,
     Permissions,
@@ -77,7 +78,7 @@ class AppCommand:
     description: str | LocaleBuilder | None = None
     options: Sequence[CommandOption] | None = None
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
-    context_types: UndefinedOr[list[hikari.ContextTypes]] = UNDEFINED
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = UNDEFINED
     nsfw: bool | None = None
     id: UndefinedOr[Snowflake] = UNDEFINED
 
@@ -137,7 +138,7 @@ class AppCommand:
             out["default_member_permissions"] = str(perms.value)
 
         if self.context_types:
-            out["context_types"] = encoder.serialize_context_types(self.context_types)
+            out["context_types"] = ",".join(str(c.value) for c in self.context_types)
 
         return out
 

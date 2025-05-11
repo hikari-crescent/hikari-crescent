@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from hikari import (
     UNDEFINED,
+    ApplicationContextType,
     CommandOption,
     CommandType,
     ForbiddenError,
@@ -55,7 +56,7 @@ def register_command(
     description: str | LocaleBuilder | None = None,
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
-    context_types: UndefinedOr[list[ApplicationContextType]] = UNDEFINED,
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = UNDEFINED,
     autocomplete: dict[str, AutocompleteCallbackT[Any]] = {},
     nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta]:
