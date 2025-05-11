@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable
 
-from hikari import UNDEFINED, Permissions, UndefinedType
+from hikari import UNDEFINED, ApplicationContextType, Permissions, UndefinedType
 
 from crescent.exceptions import PermissionsError
 
@@ -22,7 +22,7 @@ def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
     """Raise an exception if permissions are declared in a subcommand."""
     if includable.metadata.app_command.default_member_permissions:
         raise PermissionsError(
-            "`dm_enabled` and `default_member_permissions` cannot be declared for subcommands."
+            "`default_member_permissions` cannot be declared for subcommands."
             " Permissions must be declared in the `crescent.Group` object."
         )
 
@@ -60,8 +60,8 @@ class Group:
 
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED
     """The default permissions for all commands in this group."""
-    dm_enabled: bool = True
-    """Whether commands in this group can be used in DMs."""
+    context_types: UndefinedType | Iterable[ApplicationContextType] = UNDEFINED
+    """The contexts in which the command can be used."""
 
     def sub_group(
         self,

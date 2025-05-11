@@ -157,8 +157,8 @@ def command(
             The default permissions for this command. For more information see
             [the discord api docs](https://discord.com/developers/docs/topics/permissions)
             and [the hikari docs](https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/).
-        dm_enabled:
-            Set to `False` to disable in dms. Defaults to `True`.
+        context_types:
+            The contexts in which the command can be used. Defaults to all.
         nsfw:
             Set to `True` to mark this command as nsfw. Defaults to `None`.
     """
@@ -292,8 +292,8 @@ def user_command(
             The default permissions for this command. For more information see
             [the discord api docs](https://discord.com/developers/docs/topics/permissions)
             and [the hikari docs](https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/).
-        dm_enabled:
-            Set to `False` to disable in dms. Defaults to `True`.
+        context_types:
+            The contexts in which the command can be used. Defaults to all.
         nsfw:
             Set to `True` to mark this command as nsfw. Defaults to `None`.
     """
@@ -373,8 +373,8 @@ def message_command(
             The default permissions for this command. For more information see
             [the discord api docs](https://discord.com/developers/docs/topics/permissions)
             and [the hikari docs](https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/).
-        dm_enabled:
-            Set to `False` to disable in dms. Defaults to `True`.
+        context_types:
+            The contexts in which the command can be used. Defaults to all.
         nsfw:
             Set to `True` to mark this command as nsfw. Defaults to `None`.
     """

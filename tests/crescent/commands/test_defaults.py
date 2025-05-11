@@ -31,6 +31,7 @@ def test_message_command_defaults():
     assert test_command.metadata.app_command.name == "test_command"
     assert test_command.metadata.app_command.guild_id is None
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
+    assert test_command.metadata.app_command.context_types is UNDEFINED
     assert test_command.metadata.app_command.nsfw is None
 
 
@@ -40,7 +41,7 @@ def test_not_default():
         guild=123456,
         description="test description",
         default_member_permissions=Permissions.BAN_MEMBERS,
-        dm_enabled=False,
+        context_types=(),
         nsfw=True,
     )
     async def test_command(ctx: Context): ...
@@ -49,6 +50,7 @@ def test_not_default():
     assert test_command.metadata.app_command.guild_id == 123456
     assert test_command.metadata.app_command.description == "test description"
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
+    assert test_command.metadata.app_command.context_types is ()
     assert test_command.metadata.app_command.nsfw
 
 
@@ -57,7 +59,7 @@ def test_message_command_not_default():
         name="Test Name",
         guild=123456,
         default_member_permissions=Permissions.BAN_MEMBERS,
-        dm_enabled=False,
+        context_types=(),
         nsfw=True,
     )
     async def test_command(ctx: Context): ...
@@ -65,6 +67,7 @@ def test_message_command_not_default():
     assert test_command.metadata.app_command.name == "Test Name"
     assert test_command.metadata.app_command.guild_id == 123456
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
+    assert test_command.metadata.app_command.context_types is ()
     assert test_command.metadata.app_command.nsfw
 
 
@@ -73,7 +76,7 @@ def test_user_command_not_default():
         name="Test Name",
         guild=123456,
         default_member_permissions=Permissions.BAN_MEMBERS,
-        dm_enabled=False,
+        context_types=(),
         nsfw=True,
     )
     async def test_command(ctx: Context): ...
@@ -81,4 +84,5 @@ def test_user_command_not_default():
     assert test_command.metadata.app_command.name == "Test Name"
     assert test_command.metadata.app_command.guild_id == 123456
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
+    assert test_command.metadata.app_command.context_types is ()
     assert test_command.metadata.app_command.nsfw
