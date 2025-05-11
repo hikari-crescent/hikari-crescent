@@ -345,7 +345,7 @@ class CommandHandler:
             if guild:
                 _log.info("Updated application commands for guild %s.", guild)
             else:
-                _log.info(f"Updated global application commands.")
+                _log.info("Updated global application commands.")
 
         except ForbiddenError:
             if not isinstance(self._client.app, CacheAware):
