@@ -3,9 +3,18 @@ from __future__ import annotations
 from asyncio import Task, create_task
 from functools import partial, wraps
 from inspect import isawaitable, isclass, isfunction
-from typing import TYPE_CHECKING, Awaitable, Callable, cast, overload
+from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, cast, overload
 
-from hikari import UNDEFINED, CommandOption, CommandType, Permissions, Snowflakeish, UndefinedType
+from hikari import (
+    UNDEFINED,
+    ApplicationContextType,
+    CommandOption,
+    CommandType,
+    Permissions,
+    Snowflakeish,
+    UndefinedOr,
+    UndefinedType,
+)
 
 from crescent.commands.options import ClassCommandOption
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
@@ -98,7 +107,7 @@ def command(
     name: str | LocaleBuilder | None = ...,
     description: str | LocaleBuilder | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
-    dm_enabled: bool = ...,
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = ...,
     nsfw: bool | None = ...,
 ) -> Callable[[CommandCallbackT | type[ClassCommandProto]], Includable[AppCommandMeta]]: ...
 
@@ -111,7 +120,7 @@ def command(
     name: str | LocaleBuilder | None = None,
     description: str | LocaleBuilder | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
-    dm_enabled: bool = True,
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = UNDEFINED,
     nsfw: bool | None = None,
 ) -> (
     Includable[AppCommandMeta]
@@ -148,8 +157,8 @@ def command(
             The default permissions for this command. For more information see
             [the discord api docs](https://discord.com/developers/docs/topics/permissions)
             and [the hikari docs](https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/).
-        dm_enabled:
-            Set to `False` to disable in dms. Defaults to `True`.
+        context_types:
+            The contexts in which the command can be used. Defaults to all.
         nsfw:
             Set to `True` to mark this command as nsfw. Defaults to `None`.
     """
@@ -160,7 +169,7 @@ def command(
             name=name,
             description=description,
             default_member_permissions=default_member_permissions,
-            dm_enabled=dm_enabled,
+            context_types=context_types,
             nsfw=nsfw,
         )  # pyright: ignore
 
@@ -213,7 +222,7 @@ def command(
         description=description or "No Description",
         options=options,
         default_member_permissions=default_member_permissions,
-        dm_enabled=dm_enabled,
+        context_types=context_types,
         autocomplete=autocomplete,
         nsfw=nsfw,
     )
@@ -239,7 +248,7 @@ def user_command(
     guild: Snowflakeish | None = ...,
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
-    dm_enabled: bool = ...,
+    context_types: UndefinedOr[list[ApplicationContextType]] = ...,
     nsfw: bool | None = ...,
 ) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]]: ...
 
@@ -251,7 +260,7 @@ def user_command(
     guild: Snowflakeish | None = None,
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
-    dm_enabled: bool = True,
+    context_types: UndefinedOr[list[ApplicationContextType]] = UNDEFINED,
     nsfw: bool | None = None,
 ) -> Callable[[UserCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     """
@@ -283,8 +292,8 @@ def user_command(
             The default permissions for this command. For more information see
             [the discord api docs](https://discord.com/developers/docs/topics/permissions)
             and [the hikari docs](https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/).
-        dm_enabled:
-            Set to `False` to disable in dms. Defaults to `True`.
+        context_types:
+            The contexts in which the command can be used. Defaults to all.
         nsfw:
             Set to `True` to mark this command as nsfw. Defaults to `None`.
     """
@@ -294,7 +303,7 @@ def user_command(
             guild=guild,
             name=name,
             default_member_permissions=default_member_permissions,
-            dm_enabled=dm_enabled,
+            context_types=context_types,
             nsfw=nsfw,
         )  # pyright: ignore
 
@@ -305,7 +314,7 @@ def user_command(
         name=name or callback.__name__,
         guild=guild,
         default_member_permissions=default_member_permissions,
-        dm_enabled=dm_enabled,
+        context_types=context_types,
         nsfw=nsfw,
     )
 
@@ -320,7 +329,7 @@ def message_command(
     guild: Snowflakeish | None = ...,
     name: str | None = ...,
     default_member_permissions: UndefinedType | int | Permissions = ...,
-    dm_enabled: bool = ...,
+    context_types: UndefinedOr[list[ApplicationContextType]] = ...,
     nsfw: bool | None = ...,
 ) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]]: ...
 
@@ -332,7 +341,7 @@ def message_command(
     guild: Snowflakeish | None = None,
     name: str | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
-    dm_enabled: bool = True,
+    context_types: UndefinedOr[list[ApplicationContextType]] = UNDEFINED,
     nsfw: bool | None = None,
 ) -> Callable[[MessageCommandCallbackT], Includable[AppCommandMeta]] | Includable[AppCommandMeta]:
     """
@@ -364,8 +373,8 @@ def message_command(
             The default permissions for this command. For more information see
             [the discord api docs](https://discord.com/developers/docs/topics/permissions)
             and [the hikari docs](https://docs.hikari-py.dev/en/latest/reference/hikari/permissions/).
-        dm_enabled:
-            Set to `False` to disable in dms. Defaults to `True`.
+        context_types:
+            The contexts in which the command can be used. Defaults to all.
         nsfw:
             Set to `True` to mark this command as nsfw. Defaults to `None`.
     """
@@ -375,7 +384,7 @@ def message_command(
             guild=guild,
             name=name,
             default_member_permissions=default_member_permissions,
-            dm_enabled=dm_enabled,
+            context_types=context_types,
             nsfw=nsfw,
         )  # pyright: ignore
 
@@ -386,6 +395,6 @@ def message_command(
         name=name or callback.__name__,
         guild=guild,
         default_member_permissions=default_member_permissions,
-        dm_enabled=dm_enabled,
+        context_types=context_types,
         nsfw=nsfw,
     )

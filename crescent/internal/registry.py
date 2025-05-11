@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from hikari import (
     UNDEFINED,
+    ApplicationContextType,
     CommandOption,
     CommandType,
     ForbiddenError,
@@ -55,7 +56,7 @@ def register_command(
     description: str | LocaleBuilder | None = None,
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
-    dm_enabled: bool = True,
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = UNDEFINED,
     autocomplete: dict[str, AutocompleteCallbackT[Any]] = {},
     nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta]:
@@ -75,6 +76,7 @@ def register_command(
                 guild_id=guild,
                 name=name,
                 options=options,
+                context_types=context_types,
                 default_member_permissions=default_member_permissions,
                 nsfw=nsfw,
             ),
@@ -314,12 +316,25 @@ class CommandHandler:
             def exists(command: AppCommand) -> bool:
                 return any(command.eq_partial_command(existing) for existing in existing_commands)
 
-            if all(exists(command) for command in commands):
+            all_exists = True
+            missing: list[str] = []
+            updated: list[str] = []
+            for command in commands:
+                if not exists(command):
+                    missing.append(str_or_build_locale(command.name)[0])
+                    all_exists = False
+                else:
+                    updated.append(str_or_build_locale(command.name)[0])
+
+            if all_exists:
                 if guild:
                     _log.info("No application commands need to be updated for guild %s.", guild)
                 else:
                     _log.info("No global application commands need to be updated.")
                 return
+            else:
+                _log.info(f"Outdated commands: {', '.join(missing)}")
+                _log.info(f"Already updated: {', '.join(updated)}")
 
             await self._client.app.rest.set_application_commands(
                 application=self._application_id,

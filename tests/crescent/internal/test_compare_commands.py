@@ -4,7 +4,7 @@ from hikari.events import guild_events
 from crescent.internal.app_command import AppCommand
 
 from hikari import (
-    ApplicationContextType,
+    UNDEFINED,
     ApplicationIntegrationType,
     PartialCommand,
     Permissions,
@@ -12,7 +12,7 @@ from hikari import (
 )
 
 
-DEFAULT_CONTEXT = (ApplicationContextType.GUILD, ApplicationContextType.BOT_DM)
+DEFAULT_CONTEXT = ()
 DEFAULT_INT = (ApplicationIntegrationType.GUILD_INSTALL,)
 
 
