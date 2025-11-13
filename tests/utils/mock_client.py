@@ -51,7 +51,10 @@ class MockRESTClient(Client):
 
 class MockBot(GatewayBot):
     def __init__(self):
-        super().__init__(token="")
+        super().__init__(
+            token="OTgzOTExMDgwMjkwMDM3Nzkx.GpodEi.2tKHB3u864K1keSzreNqL5DJUeyHYiQviekslY"
+            # oh no! dont hack me pls :(
+        )
 
     def run(self):
         self.dispatch(StartedEvent(app=self))
