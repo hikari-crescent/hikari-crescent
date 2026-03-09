@@ -1,5 +1,5 @@
 name: ci
-on: [push, pull_request]
+on: [push]
 jobs:
   check:
     runs-on: ubuntu-latest
