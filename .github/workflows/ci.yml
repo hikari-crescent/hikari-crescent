@@ -1,67 +1,42 @@
 name: ci
 on: [push, pull_request]
 jobs:
-  lint:
-    name: lint
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-      - name: Install Nox
-        run: |
-          pip install nox
-      - run: nox -s lint
+      - uses: astral-sh/setup-uv@v7
+      - run: uv python install
+      - run: uv sync --all-extras --dev
+      - run: uv run ruff check
+        if: ${{ !cancelled() }}
+      - run: uv run codespell crescent
+        if: ${{ !cancelled() }}
+      - run: uv run codespell docs
+        if: ${{ !cancelled() }}
+      - run: uv run mypy .
+        if: ${{ !cancelled() }}
+      - run: uv run pyright
+        if: ${{ !cancelled() }}
+      - run: uv run pyright --verifytypes crescent --ignoreexternal
+        if: ${{ !cancelled() }}
+      - run: uv run mkdocs -q build
+        if: ${{ !cancelled() }}
 
-  mypy:
-    name: "mypy"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.10"
-          architecture: "x64"
-      - name: Install Poetry
-        run: |
-          pip install poetry
-      - name: run
-        run: |
-          poetry install
-          poetry run nox -s mypy
+  test:
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        os: ['ubuntu']
+      fail-fast: false
 
-  pyright:
-    name: "pyright"
-    runs-on: ubuntu-latest
+    name: test python ${{ matrix.python }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.10"
-          architecture: "x64"
-      - name: Install Poetry
-        run: |
-          pip install poetry
-      - name: run
-        run: |
-          poetry install
-          poetry run nox -s pyright
-
-  docs:
-    name: "build docs"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.10"
-          architecture: "x64"
-      - name: Install Poetry
-        run: |
-          pip install poetry
-      - name: run
-        run: |
-          poetry install
-          poetry run nox -s docs
+          python-version: ${{ matrix.python }}
+      - run: uv python install
+      - run: uv sync --all-extras --dev
+      - run: uv run pytest tests/crescent
