@@ -9,39 +9,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.10"
-      - name: Install Poetry
-        run: pip install poetry
-      - name: Build & Upload
+      - uses: astral-sh/setup-uv@v7
+
+      - run: uv version "$(git describe --tags --abbrev=0 | sed 's/^v//')" --frozen
+      - run: uv build
+      - name: Run uv publish
         env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          poetry config pypi-token.pypi $PYPI_TOKEN
-          poetry version $(git describe --tags --abbrev=0)
-          poetry build
-          poetry publish
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish
 
   publish-docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.10"
-      - name: Install Poetry
-        run: pip install poetry
-      - name: Build docs
-        run: |
-          poetry install
-          poetry run nox -s docs
-      - name: Setup Node
-        uses: actions/setup-node@v2
-      - name: Publish
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: astral-sh/setup-uv@v7
+
+      - run: uv sync --all-extras --dev
+      - run: uv run mkdocs -q build
+
+      - uses: actions/setup-node@v2
+      - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_branch: gh-pages

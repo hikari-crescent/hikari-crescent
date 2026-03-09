@@ -1,66 +1,76 @@
-[tool.poetry]
+[project]
 name = "hikari-crescent"
 version = "0"
 description = "🌙 A command handler for Hikari that keeps your project neat and tidy."
+authors = [
+    { name = "Lunarmagpie", email = "bambolambo0@gmail.com" },
+    { name = "circuitsacul", email = "circuitsacul@icloud.com" },
+]
+requires-python = ">=3.10"
 readme = "README.md"
-authors = ["Lunarmagpie <bambolambo0@gmail.com>"]
-maintainers = [
-  "Lunarmagpie <bambolambo0@gmail.com>",
-  "Circuit <circuitsacul@icloud.com>",
-]
 license = "MPL-2.0"
-homepage = "https://github.com/hikari-crescent/hikari-crescent"
-repository = "https://github.com/hikari-crescent/hikari-crescent"
-documentation = "https://hikari-crescent.github.io/hikari-crescent/crescent.html"
-keywords = [
-  "discord",
-  "hikari",
-  "command handler",
-  "slash commands",
-  "application commands",
+maintainers = [
+    { name = "Lunarmagpie", email = "bambolambo0@gmail.com" },
+    { name = "circuitsacul", email = "circuitsacul@icloud.com" },
 ]
-classifiers = ["Development Status :: 5 - Production/Stable"]
-include = ["crescent/banner.txt"]
-packages = [{ include = "crescent" }]
+keywords = [
+    "discord",
+    "hikari",
+    "command handler",
+    "slash commands",
+    "application commands",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = ["hikari>=2.3.0,<3"]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.15"
-hikari = "^2.3.0"
-sigparse = "^3.0.0"
-floodgate-rs = { version = "^0.1.1", optional = true }
-types-croniter = { version = "^5.0.0", optional = true }
-croniter = { version = "^5.0.0", optional = true }
-python-i18n = { version = ">=0.2", optional = true }
+[project.optional-dependencies]
+i18n = ["python-i18n>=0.2"]
+cron = [
+    "croniter>=5.0.0,<6",
+    "types-croniter>=5.0.0,<6",
+]
+cooldowns = ["floodgate-rs>=0.1.1,<0.2"]
 
-[tool.poetry.extras]
-i18n = ["python-i18n"]
-cron = ["croniter", "types-croniter"]
-cooldowns = ["floodgate-rs"]
+[project.urls]
+Homepage = "https://github.com/hikari-crescent/hikari-crescent"
+Repository = "https://github.com/hikari-crescent/hikari-crescent"
+Documentation = "https://hikari-crescent.github.io/hikari-crescent/crescent.html"
 
-[tool.poetry.group.typing.dependencies]
-mypy = "^1.4.0"
-pyright = "^1.1.315"
-nox = "^2023.4.22"
+[dependency-groups]
+dev = [
+    "mypy>=1.4.0,<2",
+    "pyright>=1.1.315,<2",
+    "ruff>=0.10.0,<0.11",
+    "codespell>=2.2.5,<3",
+    "mkdocs-material[imaging]>=9.5.39,<10",
+    "mkdocs>=1.6.1,<2",
+    "mkdocstrings-python>=1.11.1,<2",
+    "griffe-inherited-docstrings>=1.0.0,<2",
+    "pytest>=8.2.2,<9",
+    "pytest-asyncio>=0.23.7,<0.24",
+    "python-dotenv>=1.0.0,<2",
+    "hikari[server]",
+]
 
-[tool.poetry.group.linting.dependencies]
-ruff = "^0.10.0"
-isort = "^5.12.0"
-codespell = "^2.2.5"
+[tool.uv.build-backend]
+module-name = ["crescent"]
+module-root = ""
+source-include = ["crescent/banner.txt"]
 
-[tool.poetry.group.doc.dependencies]
-mkdocs-material = { version = "^9.5.39", extras = ["imaging"] }
-mkdocs = "^1.6.1"
-mkdocstrings-python = "^1.11.1"
-griffe-inherited-docstrings = "^1.0.0"
-
-[tool.poetry.group.tests.dependencies]
-pytest = "^8.2.2"
-pytest-asyncio = "^0.23.7"
-python-dotenv = "^1.0.0"
-hikari = { version = "*", extras = ["server"] }
+[build-system]
+requires = ["uv_build>=0.9.9,<0.10.0"]
+build-backend = "uv_build"
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 strict = true
 warn_unused_configs = true
 warn_return_any = true
@@ -71,7 +81,7 @@ warn_unused_ignores = false
 [tool.pyright]
 include = ["crescent", "examples"]
 exclude = ["tests"]
-pythonVersion = "3.9"
+pythonVersion = "3.10"
 typeCheckingMode = "strict"
 reportPrivateUsage = false
 reportImportCycles = false
@@ -79,6 +89,7 @@ reportIncompatibleMethodOverride = false
 reportWildcardImportFromLibrary = false
 
 [tool.ruff]
+target-version = "py310"
 lint.ignore = [
   # Allow * imports to be used in the module level
   "F403",
@@ -93,14 +104,10 @@ lint.select = [
 ]
 line-length = 99
 
-[tool.isort]
-profile = "black"
-skip = "examples/basic/basic.py"
-line_length = 99
+[tool.ruff.lint.pyflakes]
+extend-generics = [
+    "crescent.Plugin"
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = 'strict'
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"

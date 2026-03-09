@@ -13,7 +13,7 @@ client = crescent.Client(bot)
 # If you have installed i18n you can use `locales.i18n`
 # You must run `pip install hikari-crescent[i18n]` before you can use i18n.
 
-import i18n
+import i18n  # noqa: E402
 
 i18n.add_translation("name", "english-name", locale="en")
 i18n.add_translation("name", "french-name", locale="fr")
