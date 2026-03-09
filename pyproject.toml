@@ -115,6 +115,11 @@ lint.select = [
 ]
 line-length = 99
 
+[tool.ruff.lint.pyflakes]
+extend-generics = [
+    "crescent.Plugin"
+]
+
 [tool.isort]
 profile = "black"
 skip = "examples/basic/basic.py"

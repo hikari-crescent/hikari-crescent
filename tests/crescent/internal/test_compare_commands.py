@@ -1,10 +1,8 @@
 from unittest.mock import Mock
 
-from hikari.events import guild_events
 from crescent.internal.app_command import AppCommand
 
 from hikari import (
-    UNDEFINED,
     ApplicationIntegrationType,
     PartialCommand,
     Permissions,

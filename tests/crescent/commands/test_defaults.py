@@ -50,7 +50,7 @@ def test_not_default():
     assert test_command.metadata.app_command.guild_id == 123456
     assert test_command.metadata.app_command.description == "test description"
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
-    assert test_command.metadata.app_command.context_types is ()
+    assert test_command.metadata.app_command.context_types == ()
     assert test_command.metadata.app_command.nsfw
 
 
@@ -67,7 +67,7 @@ def test_message_command_not_default():
     assert test_command.metadata.app_command.name == "Test Name"
     assert test_command.metadata.app_command.guild_id == 123456
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
-    assert test_command.metadata.app_command.context_types is ()
+    assert test_command.metadata.app_command.context_types == ()
     assert test_command.metadata.app_command.nsfw
 
 
@@ -84,5 +84,5 @@ def test_user_command_not_default():
     assert test_command.metadata.app_command.name == "Test Name"
     assert test_command.metadata.app_command.guild_id == 123456
     assert test_command.metadata.app_command.default_member_permissions is Permissions.BAN_MEMBERS
-    assert test_command.metadata.app_command.context_types is ()
+    assert test_command.metadata.app_command.context_types == ()
     assert test_command.metadata.app_command.nsfw
