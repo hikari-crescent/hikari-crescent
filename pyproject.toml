@@ -45,31 +45,20 @@ Repository = "https://github.com/hikari-crescent/hikari-crescent"
 Documentation = "https://hikari-crescent.github.io/hikari-crescent/crescent.html"
 
 [dependency-groups]
-typing = [
+dev = [
     "mypy>=1.4.0,<2",
     "pyright>=1.1.315,<2",
-    "nox>=2023.4.22,<2024",
-]
-linting = [
     "ruff>=0.10.0,<0.11",
-    "isort>=5.12.0,<6",
     "codespell>=2.2.5,<3",
-]
-doc = [
     "mkdocs-material[imaging]>=9.5.39,<10",
     "mkdocs>=1.6.1,<2",
     "mkdocstrings-python>=1.11.1,<2",
     "griffe-inherited-docstrings>=1.0.0,<2",
-]
-tests = [
     "pytest>=8.2.2,<9",
     "pytest-asyncio>=0.23.7,<0.24",
     "python-dotenv>=1.0.0,<2",
     "hikari[server]",
 ]
-
-[tool.uv]
-default-groups = "all"
 
 [tool.uv.build-backend]
 module-name = ["crescent"]
@@ -119,11 +108,6 @@ line-length = 99
 extend-generics = [
     "crescent.Plugin"
 ]
-
-[tool.isort]
-profile = "black"
-skip = "examples/basic/basic.py"
-line_length = 99
 
 [tool.pytest.ini_options]
 asyncio_mode = 'strict'

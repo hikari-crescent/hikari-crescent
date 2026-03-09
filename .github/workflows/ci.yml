@@ -6,8 +6,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: astral-sh/setup-uv@v7
-      - run: uv python install
       - run: uv sync --all-extras --dev
+
       - run: uv run ruff check
         if: ${{ !cancelled() }}
       - run: uv run codespell crescent
@@ -37,6 +37,5 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python }}
-      - run: uv python install
       - run: uv sync --all-extras --dev
       - run: uv run pytest tests/crescent
