@@ -19,6 +19,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+uv.lock
 poetry.lock
 .Python
 build/
