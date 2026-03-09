@@ -14,7 +14,7 @@ jobs:
         if: ${{ !cancelled() }}
       - run: uv run codespell docs
         if: ${{ !cancelled() }}
-      - run: uv run mypy .
+      - run: uv run mypy crescent
         if: ${{ !cancelled() }}
       - run: uv run pyright
         if: ${{ !cancelled() }}

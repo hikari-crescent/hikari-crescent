@@ -6,7 +6,7 @@ lint:
     uv run ruff check
 
 mypy:
-    uv run --all-extras --dev mypy .
+    uv run --all-extras --dev mypy crescent
 
 pyright:
     uv run --all-extras --dev pyright
