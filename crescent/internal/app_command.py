@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any
 
 from hikari import (
     UNDEFINED,
@@ -25,8 +25,6 @@ if TYPE_CHECKING:
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, CommandHookCallbackT
-
-    Self = TypeVar("Self")
 
 
 @dataclass(frozen=True)
