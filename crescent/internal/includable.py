@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-    from typing import Any
 
     from crescent.client import Client
 

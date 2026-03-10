@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, TypeVar
 
 if TYPE_CHECKING:
     import builtins
     from asyncio import Future
     from collections.abc import Sequence
-    from typing import Any, TypeVar
 
     import hikari
     from hikari import Locale, Member, PartialInteraction, Snowflake, User

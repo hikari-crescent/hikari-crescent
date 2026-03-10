@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Generic, TypeVar, get_type_hints, overload
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, get_type_hints, overload
 
 from hikari import EventManagerAware
 
@@ -13,7 +13,6 @@ from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine, Sequence
-    from typing import Any
 
     from hikari import Event
     from hikari.api.event_manager import CallbackT

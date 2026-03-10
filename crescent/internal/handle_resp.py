@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 from logging import getLogger
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from hikari import (
     AutocompleteInteraction,
@@ -24,7 +24,6 @@ from crescent.utils import unwrap
 if TYPE_CHECKING:
     from asyncio import Future
     from collections.abc import Sequence
-    from typing import Any
 
     from hikari import CommandInteractionOption, Message, PartialInteraction, User
     from hikari.api import InteractionResponseBuilder

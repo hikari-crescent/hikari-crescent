@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import Task, create_task
 from functools import partial, wraps
 from inspect import isawaitable, isclass, isfunction
-from typing import TYPE_CHECKING, cast, overload
+from typing import TYPE_CHECKING, Any, TypeVar, cast, overload
 
 from hikari import (
     UNDEFINED,
@@ -22,7 +22,6 @@ from crescent.internal.registry import register_command
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Iterable
-    from typing import Any, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable

@@ -4,7 +4,7 @@ from asyncio import gather
 from collections import defaultdict
 from inspect import iscoroutinefunction
 from logging import getLogger
-from typing import TYPE_CHECKING, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast
 
 from hikari import (
     UNDEFINED,
@@ -28,7 +28,6 @@ from crescent.utils import gather_iter, unwrap
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Iterable, Sequence
-    from typing import Any
 
     from hikari import PartialGuild, Snowflakeish, SnowflakeishOr
 
