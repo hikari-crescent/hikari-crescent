@@ -33,13 +33,11 @@ class Task(ABC):
         if self.running:
             raise TaskError("Task is already running.")
 
-        if self.client is None:
-            raise TaskError("Task is not registered to a client.")
+        assert self.client is not None
         self.client._run_future(self._start_inner())
 
     async def _start_inner(self) -> None:
-        if self.client is None:
-            raise TaskError("Task is not registered to a client.")
+        assert self.client is not None
 
         self.event_loop = get_running_loop()
         self._call_next()
@@ -59,8 +57,7 @@ class Task(ABC):
         self._call_next()
 
     def _call_next(self) -> None:
-        if self.event_loop is None:
-            raise TaskError("Task does not have an active event loop.")
+        assert self.event_loop
         self.timer_handle = self.event_loop.call_later(self._next_iteration(), self._call_async)
 
     @abstractmethod

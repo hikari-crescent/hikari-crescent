@@ -40,8 +40,7 @@ async def _fetch_user(ctx: AutocompleteContext, value: Snowflake) -> User | Memb
 
 
 async def _fetch_role(ctx: AutocompleteContext, value: Snowflake) -> Role:
-    if ctx.guild_id is None:
-        raise ValueError("Cannot fetch a guild role for an interaction without a guild.")
+    assert ctx.guild_id
 
     if isinstance(ctx.app, CacheAware) and (role := ctx.app.cache.get_role(value)):
         return role
@@ -102,8 +101,7 @@ class AutocompleteContext(InteractionContext):
             if func := _serialization_map.get(OptionType(option.type)):
                 # `option.value` is a `Snowflake` or `int` for all option types
                 # in `_serialization_map`.
-                if option.value is None:
-                    raise ValueError("Autocomplete option unexpectedly had no value.")
+                assert option.value
                 out[option.name] = await func(self, Snowflake(option.value))
             else:
                 out[option.name] = option.value

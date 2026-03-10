@@ -230,8 +230,9 @@ class CommandHandler:
                     children.append(sub_command_group)
 
                 name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
+                assert command.metadata.app_command.description
                 description, description_localizations = str_or_build_locale(
-                    command.metadata.app_command.description or "No Description",
+                    command.metadata.app_command.description,
                 )
 
                 cast("list[CommandOption]", sub_command_group.options).append(
@@ -280,8 +281,9 @@ class CommandHandler:
                 # No checking has to be done before appending `command` since it is the
                 # lowest level.
                 name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
+                assert command.metadata.app_command.description
                 description, description_localizations = str_or_build_locale(
-                    command.metadata.app_command.description or "No Description",
+                    command.metadata.app_command.description,
                 )
 
                 cast("list[CommandOption]", built_commands[key].options).append(

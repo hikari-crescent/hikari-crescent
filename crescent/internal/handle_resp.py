@@ -223,8 +223,7 @@ def _context_from_interaction_resp(
     else:
         # This will never be `AutocompleteInteraction` because message and user
         # commands don't have autocomplete.
-        if not isinstance(interaction, CommandInteraction):
-            raise TypeError("Autocomplete interactions are only valid for slash commands.")
+        assert isinstance(interaction, CommandInteraction)
         callback_options = _resolved_data_to_kwargs(interaction)
 
     return Context(
@@ -282,8 +281,7 @@ def _extract_value(
     interaction: CommandInteraction | AutocompleteInteraction,
 ) -> Any:
     # `option.value` is guaranteed to have a value because this is not a command group.
-    if option.value is None:
-        raise ValueError("Command option unexpectedly had no value.")
+    assert option.value is not None
 
     if isinstance(interaction, AutocompleteInteraction):
         return option.value
