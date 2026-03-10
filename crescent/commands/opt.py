@@ -16,32 +16,47 @@ from hikari import (
     User,
 )
 
-from crescent.commands.options import build_choices
 from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.mentionable import Mentionable
 from crescent.typedefs import AutocompleteCallbackT
 
 
 # fmt: off
-class _Marker: ...
-class _StrMarker(_Marker): ...
-class _BoolMarker(_Marker): ...
-class _IntMarker(_Marker): ...
-class _FloatMarker(_Marker): ...
-class _ChannelMarker(_Marker): ...
-class _RoleMarker(_Marker): ...
-class _UserMarker(_Marker): ...
-class _MentionableMarker(_Marker): ...
-class _AttachmentMarker(_Marker): ...
+class Marker: ...
+class StrMarker(Marker): ...
+class BoolMarker(Marker): ...
+class IntMarker(Marker): ...
+class FloatMarker(Marker): ...
+class ChannelMarker(Marker): ...
+class RoleMarker(Marker): ...
+class UserMarker(Marker): ...
+class MentionableMarker(Marker): ...
+class AttachmentMarker(Marker): ...
 # fmt: on
 
 
-MarkT = TypeVar("MarkT", bound=_Marker)
+MarkT = TypeVar("MarkT", bound=Marker)
 InT = TypeVar("InT")
 ConverterT = TypeVar("ConverterT")
 DefaultT = TypeVar("DefaultT")
 ChannelTypeT = TypeVar("ChannelTypeT", bound=PartialChannel)
 T = TypeVar("T")
+
+
+def build_choices(
+    choices: Sequence[tuple[str | LocaleBuilder, str | int | float] | CommandChoice],
+) -> list[CommandChoice]:
+    result: list[CommandChoice] = []
+    for choice in choices:
+        if isinstance(choice, CommandChoice):
+            result.append(choice)
+            continue
+
+        name, value = choice
+        name, name_localizations = str_or_build_locale(name)
+        result.append(CommandChoice(name=name, name_localizations=name_localizations, value=value))
+
+    return result
 
 
 @dataclass(slots=True)
@@ -69,7 +84,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         )
 
     def convert(
-        self, converter: Callable[[InT], T]
+        self, converter: Callable[[InT], T | Awaitable[T]]
     ) -> "ClassCommandOption[MarkT, InT, T, DefaultT]":
         return replace(
             cast("ClassCommandOption[MarkT, InT, T, DefaultT]", self),
@@ -77,45 +92,45 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         )
 
     def channel_types(
-        self: "ClassCommandOption[_ChannelMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT]",
         types: Sequence[ChannelType],
-    ) -> "ClassCommandOption[_ChannelMarker, InT, ConverterT, DefaultT]":
+    ) -> "ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT]":
         return replace(self, _channel_types=types)
 
     @overload
     def autocomplete(
-        self: "ClassCommandOption[_IntMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
         autocomplete: AutocompleteCallbackT[int],
-    ) -> "ClassCommandOption[_IntMarker, InT, ConverterT, DefaultT]": ...
+    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]": ...
     @overload
     def autocomplete(
-        self: "ClassCommandOption[_FloatMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]",
         autocomplete: AutocompleteCallbackT[float],
-    ) -> "ClassCommandOption[_FloatMarker, InT, ConverterT, DefaultT]": ...
+    ) -> "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]": ...
     @overload
     def autocomplete(
-        self: "ClassCommandOption[_StrMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
         autocomplete: AutocompleteCallbackT[str],
-    ) -> "ClassCommandOption[_StrMarker, InT, ConverterT, DefaultT]": ...
+    ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]": ...
 
     def autocomplete(self, autocomplete: AutocompleteCallbackT[Any]) -> Any:
         return replace(self, _autocomplete=autocomplete)
 
     @overload
     def choices(
-        self: "ClassCommandOption[_IntMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
         choices: Sequence[tuple[str | LocaleBuilder, int] | CommandChoice],
-    ) -> "ClassCommandOption[_IntMarker, InT, ConverterT, DefaultT]": ...
+    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]": ...
     @overload
     def choices(
-        self: "ClassCommandOption[_FloatMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]",
         choices: Sequence[tuple[str | LocaleBuilder, float] | CommandChoice],
-    ) -> "ClassCommandOption[_FloatMarker, InT, ConverterT, DefaultT]": ...
+    ) -> "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]": ...
     @overload
     def choices(
-        self: "ClassCommandOption[_StrMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
         choices: Sequence[tuple[str | LocaleBuilder, str] | CommandChoice],
-    ) -> "ClassCommandOption[_StrMarker, InT, ConverterT, DefaultT]": ...
+    ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]": ...
 
     def choices(
         self, choices: Sequence[tuple[str | LocaleBuilder, int | str | float] | CommandChoice]
@@ -123,28 +138,28 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         return replace(self, _choices=build_choices(choices))
 
     def min_value(
-        self: "ClassCommandOption[_IntMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
         value: int,
-    ) -> "ClassCommandOption[_IntMarker, InT, ConverterT, DefaultT]":
+    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]":
         return replace(self, _min_value=value)
 
     def max_value(
-        self: "ClassCommandOption[_IntMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
         value: int,
-    ) -> "ClassCommandOption[_IntMarker, InT, ConverterT, DefaultT]":
+    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]":
         return replace(self, _max_value=value)
 
     def min_length(
-        self: "ClassCommandOption[_StrMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
         value: int,
-    ) -> "ClassCommandOption[_StrMarker, InT, ConverterT, DefaultT]":
-        return replace(self, _min_value=value)
+    ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]":
+        return replace(self, _min_length=value)
 
     def max_length(
-        self: "ClassCommandOption[_StrMarker, InT, ConverterT, DefaultT]",
+        self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
         value: int,
-    ) -> "ClassCommandOption[_StrMarker, InT, ConverterT, DefaultT]":
-        return replace(self, _max_value=value)
+    ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]":
+        return replace(self, _max_length=value)
 
     @overload
     def __get__(self, inst: None, cls: Any) -> Self: ...
@@ -183,7 +198,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
             name_localizations=name_localizations,
             description=description,
             description_localizations=description_localizations,
-            is_required=self.default is UNDEFINED,
+            is_required=self._default is UNDEFINED,
             choices=self._choices,
             channel_types=self._channel_types,
             min_value=self._min_value,
@@ -204,14 +219,14 @@ class _OptionBuilder(Generic[MarkT, InT]):
         return ClassCommandOption(_description=description, _type=self._type)
 
 
-string: _OptionBuilder[_StrMarker, str] = _OptionBuilder(OptionType.STRING)
-boolean: _OptionBuilder[_BoolMarker, bool] = _OptionBuilder(OptionType.BOOLEAN)
-number: _OptionBuilder[_IntMarker, int] = _OptionBuilder(OptionType.INTEGER)
-floating: _OptionBuilder[_FloatMarker, float] = _OptionBuilder(OptionType.FLOAT)
-channel: _OptionBuilder[_ChannelMarker, InteractionChannel] = _OptionBuilder(OptionType.CHANNEL)
-role: _OptionBuilder[_RoleMarker, Role] = _OptionBuilder(OptionType.ROLE)
-user: _OptionBuilder[_UserMarker, User] = _OptionBuilder(OptionType.USER)
-mentionable: _OptionBuilder[_MentionableMarker, Mentionable] = _OptionBuilder(
+string: _OptionBuilder[StrMarker, str] = _OptionBuilder(OptionType.STRING)
+boolean: _OptionBuilder[BoolMarker, bool] = _OptionBuilder(OptionType.BOOLEAN)
+number: _OptionBuilder[IntMarker, int] = _OptionBuilder(OptionType.INTEGER)
+floating: _OptionBuilder[FloatMarker, float] = _OptionBuilder(OptionType.FLOAT)
+channel: _OptionBuilder[ChannelMarker, InteractionChannel] = _OptionBuilder(OptionType.CHANNEL)
+role: _OptionBuilder[RoleMarker, Role] = _OptionBuilder(OptionType.ROLE)
+user: _OptionBuilder[UserMarker, User] = _OptionBuilder(OptionType.USER)
+mentionable: _OptionBuilder[MentionableMarker, Mentionable] = _OptionBuilder(
     OptionType.MENTIONABLE
 )
-attachment: _OptionBuilder[_AttachmentMarker, Attachment] = _OptionBuilder(OptionType.ATTACHMENT)
+attachment: _OptionBuilder[AttachmentMarker, Attachment] = _OptionBuilder(OptionType.ATTACHMENT)

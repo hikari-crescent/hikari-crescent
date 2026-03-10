@@ -17,7 +17,7 @@ async def hook(ctx: crescent.Context) -> None:
 @crescent.hook(hook, after=True)
 @crescent.command(name="say")
 class Say:
-    word = crescent.option(str)
+    word = crescent.opt.string("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)

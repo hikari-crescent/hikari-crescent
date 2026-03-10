@@ -99,9 +99,9 @@ async def handle_converter_err(e: ConverterExceptions, ctx: crescent.Context) ->
 @client.include
 @crescent.command(name="converters", description="converters!")
 class ConverterCommand:
-    username = crescent.option(str, "username").convert(normalize_name)
-    url1 = crescent.option(str, "url1").convert(fancy_validate_url)
-    url2 = crescent.option(str, "url2").convert(fancy_validate_url)
+    username = crescent.opt.string("username").convert(normalize_name)
+    url1 = crescent.opt.string("url1").convert(fancy_validate_url)
+    url2 = crescent.opt.string("url2").convert(fancy_validate_url)
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(str((self.username, self.url1, self.url2)))
@@ -110,9 +110,9 @@ class ConverterCommand:
 @client.include
 @crescent.command(name="class-command", description="testing testing 123")
 class ClassCommand:
-    arg = crescent.option(str, "description")
-    another_arg = crescent.option(str, name="another-arg")
-    converted = crescent.option(str, name="str-to-num").convert(lambda v: int(v))
+    arg = crescent.opt.string("description")
+    another_arg = crescent.opt.string("another arg").name("another-arg")
+    converted = crescent.opt.string("number as text").name("str-to-num").convert(lambda v: int(v))
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(

@@ -32,7 +32,7 @@ async def ping(ctx: crescent.Context) -> None:
 @client.include
 @crescent.command(name="autcomplete", description="Autocomplete Test")
 class AutocompleteTest:
-    option = crescent.option(str, "An option", autocomplete=autocomplete_callback)
+    option = crescent.opt.string("An option").autocomplete(autocomplete_callback)
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(f"You said {self.option}!")
