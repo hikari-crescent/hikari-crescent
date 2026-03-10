@@ -67,11 +67,11 @@ def hook(
     Args:
         after: If true, run this hook after the command or event has completed.
     """
-    return _Hook(callbacks, after)
+    return _Hook(callbacks, after=after)
 
 
 class _Hook(Generic[IncludableT]):
-    def __init__(self, callbacks: Any, after: bool) -> None:
+    def __init__(self, callbacks: Any, *, after: bool) -> None:
         self.callbacks = callbacks
         self.after = after
 

@@ -42,6 +42,7 @@ class Cronjob(Task):
 def cronjob(
     cron: str,
     /,
+    *,
     on_startup: bool = False,
 ) -> Callable[[TaskCallbackT], Includable[Cronjob]]:
     """

@@ -65,6 +65,7 @@ class PluginManager:
     def load(
         self,
         path: str,
+        *,
         refresh: bool = ...,
         strict: bool = ...,
     ) -> Plugin[Any, Any] | None: ...
@@ -72,6 +73,7 @@ class PluginManager:
     def load(
         self,
         path: str,
+        *,
         refresh: bool = False,
         strict: bool = True,
     ) -> Plugin[Any, Any] | None:
@@ -107,6 +109,7 @@ class PluginManager:
     def load_folder(
         self,
         path: str,
+        *,
         refresh: bool = False,
         strict: bool = True,
     ) -> list[Plugin[Any, Any]]:
@@ -176,7 +179,13 @@ class PluginManager:
                 self.unload(plugin_path)
             raise e
 
-    def _add_plugin(self, path: str, plugin: Plugin[Any, Any], refresh: bool = False) -> None:
+    def _add_plugin(
+        self,
+        path: str,
+        plugin: Plugin[Any, Any],
+        *,
+        refresh: bool = False,
+    ) -> None:
         if path in self.plugins and not refresh:
             raise PluginAlreadyLoadedError(
                 f"Plugin `{path}` is already loaded."
@@ -329,6 +338,7 @@ class Plugin(Generic[BotT, ModelT]):
     def _from_module(
         cls,
         path: str,
+        *,
         refresh: bool = ...,
         strict: bool = ...,
     ) -> Plugin[BotT, ModelT] | None: ...
@@ -337,6 +347,7 @@ class Plugin(Generic[BotT, ModelT]):
     def _from_module(
         cls,
         path: str,
+        *,
         refresh: bool = False,
         strict: bool = True,
     ) -> Plugin[BotT, ModelT] | None:

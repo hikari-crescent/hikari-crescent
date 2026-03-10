@@ -34,8 +34,8 @@ class EventMeta(Generic[EventT]):
     def add_hooks(
         self,
         hooks: Sequence[EventHookCallbackT[Any]],
-        prepend: bool = False,
         *,
+        prepend: bool = False,
         after: bool,
     ) -> None:
         add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)

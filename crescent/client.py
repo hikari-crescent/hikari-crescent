@@ -265,7 +265,8 @@ class Client:
         self,
         exc: Exception,
         ctx: Context,
-        was_handled: bool,
+        was_handled: bool,  # noqa: FBT001
+        /,
     ) -> None:
         """
         This function is run when there is an error in a crescent command
@@ -286,7 +287,8 @@ class Client:
         self,
         exc: Exception,
         event: hk_Event,
-        was_handled: bool,
+        was_handled: bool,  # noqa: FBT001
+        /,
     ) -> None:
         """
         This function is run when there is an error in a crescent event
@@ -306,7 +308,8 @@ class Client:
         exc: Exception,
         ctx: AutocompleteContext,
         option: AutocompleteInteractionOption,
-        was_handled: bool,
+        was_handled: bool,  # noqa: FBT001
+        /,
     ) -> None:
         """
         This function is run when there is an error in an autocomplete handler

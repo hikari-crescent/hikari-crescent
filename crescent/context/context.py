@@ -65,7 +65,7 @@ class Context(InteractionContext):
         """Get this context's guild from the cache."""
         return self.interaction.get_guild()
 
-    async def defer(self, ephemeral: bool = False) -> None:
+    async def defer(self, *, ephemeral: bool = False) -> None:
         """
         Defer this interaction response, allowing you to respond within the next 15
         minutes.
@@ -308,6 +308,7 @@ class Context(InteractionContext):
     async def respond_with_builder(
         self,
         builder: ResponseBuilderT,
+        *,
         ensure_message: bool = False,
     ) -> Message | None:
         """Respond to an interaction with a builder.

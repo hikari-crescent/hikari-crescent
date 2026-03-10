@@ -46,7 +46,7 @@ select = [
     # --- Best Practices & Clean Code ---
     "A",    # flake8-builtins
     "ARG",  # flake8-unused-arguments
-    #"FBT",  # flake8-boolean-trap
+    "FBT",  # flake8-boolean-trap
     #"EM",   # flake8-errmsg
     #"TRY",  # tryceratops
     #"SLF",  # flake8-self
