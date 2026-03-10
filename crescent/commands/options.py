@@ -193,7 +193,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         value: float,
     ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
 
-    def min_value(self, value: int | float) -> Any:
+    def min_value(self, value: float) -> Any:
         """Set the inclusive minimum numeric value for this option."""
         return replace(self, _min_value=value)
 
@@ -209,7 +209,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         value: float,
     ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
 
-    def max_value(self, value: int | float) -> Any:
+    def max_value(self, value: float) -> Any:
         """Set the inclusive maximum numeric value for this option."""
         return replace(self, _max_value=value)
 

@@ -1,27 +1,101 @@
 extend = "../pyproject.toml"
 
 [lint]
-extend-select = [
-    # bugs/correctness (bugbear, unused args, builtin shadowing,
-    # async rules, security, blind excepts)
-    "B", "ARG", "A", "ASYNC", "S",
-    # readability/refactoring (simplicity, flake8-comp, pie, raise/return,
-    # slots, refurb)
-    "SIM", "C4", "PIE", "RSE", "RET", "SLOT", "FURB",
-    # style/formatting (isort, import conventions, tidy imports, pathlib,
-    # quotes, string concat, commas, naming, type-checking, annotations)
-    "I", "ICN", "TID", "PTH", "Q", "ISC", "COM", "N", "TC", "ANN",
-    # logging/project hygiene (logging, namespace packages, print/debugger,
-    # executable, pygrep hooks)
-    "G", "LOG", "INP", "T20", "T10", "EXE", "PGH",
-    # time/modernization (future annotations, datetime rules, 2020 checks,
-    # pyupgrade, flynt, performance)
-    "FA", "DTZ", "YTT", "UP", "FLY", "PERF",
-    # lib-specific (pytest)
-    "PT"
+select = [
+    # --- Correctness & Bug Prevention ---
+    "F",    # Pyflakes
+    "E",    # pycodestyle (errors)
+    "W",    # pycodestyle (warnings)
+    "B",    # flake8-bugbear
+    #"BLE",  # flake8-blind-except
+    #"PL",   # Pylint
+    "PGH",  # pygrep-hooks
+    "RSE",  # flake8-raise
+    "RET",  # flake8-return
+
+    # --- Security ---
+    #"S",    # flake8-bandit
+
+    # --- Style & Formatting ---
+    "N",    # pep8-naming
+    "Q",    # flake8-quotes
+    "COM",  # flake8-commas
+    "I",    # isort
+    #"D",    # pydocstyle
+    #"DOC",  # pydoclint
+
+    # --- Simplification & Modernization ---
+    "UP",   # pyupgrade
+    "SIM",  # flake8-simplify
+    "FURB", # refurb
+    "PIE",  # flake8-pie
+    "C4",   # flake8-comprehensions
+    "FLY",  # flynt
+    "ERA",  # eradicate
+
+    # --- Performance & Complexity ---
+    "PERF", # Perflint
+    #"C90",  # mccabe
+
+    # --- Type Annotations & Checking ---
+    "ANN",  # flake8-annotations
+    "TC",   # flake8-type-checking
+    "FA",   # flake8-future-annotations
+    "PYI",  # flake8-pyi
+
+    # --- Best Practices & Clean Code ---
+    "A",    # flake8-builtins
+    "ARG",  # flake8-unused-arguments
+    #"FBT",  # flake8-boolean-trap
+    #"EM",   # flake8-errmsg
+    #"TRY",  # tryceratops
+    #"SLF",  # flake8-self
+    "PTH",  # flake8-use-pathlib
+    "ISC",  # flake8-implicit-str-concat
+    "ICN",  # flake8-import-conventions
+    "TID",  # flake8-tidy-imports
+    "INP",  # flake8-no-pep420
+    "SLOT", # flake8-slots
+
+    # --- Logging ---
+    "LOG",  # flake8-logging
+    "G",    # flake8-logging-format
+
+    # --- Async ---
+    "ASYNC", # flake8-async
+
+    # --- Development Hygiene ---
+    "T10",  # flake8-debugger
+    "T20",  # flake8-print
+    #"FIX",  # flake8-fixme
+    #"TD",   # flake8-todos
+    "EXE",  # flake8-executable
+    "DTZ",  # flake8-datetimez
+    #"CPY",  # flake8-copyright
+
+    # --- Framework-Specific ---
+    #"AIR",  # Airflow
+    #"FAST", # FastAPI
+    #"DJ",   # flake8-django
+    #"PT",   # flake8-pytest-style
+    #"NPY",  # NumPy-specific rules
+    #"PD",   # pandas-vet
+
+    # --- Miscellaneous ---
+    "YTT",  # flake8-2020
+    "INT",  # flake8-gettext
+    "RUF",  # Ruff-specific rules
 ]
-ignore = ["COM812", "ANN401"]
+ignore = [
+    "ANN401", # we allow use of Any
+    "COM812", # conflicts with formatter
+]
 
 [lint.per-file-ignores]
-"ext/locales/__init__.py" = ["N801", "N815"]
-"locale.py" = ["A005"]
+"ext/locales/__init__.py" = [
+    "N801", # class
+    "N815", # mixed
+]
+"locale.py" = [
+    "A005", # stdlib
+]

@@ -95,7 +95,7 @@ def event(
     def on_remove(includable: Includable[EventMeta[EventT]]) -> None:
         # if it's not `EventManagerAware`, the event could never have been
         # added in the first place.
-        assert isinstance(includable.client.app, EventManagerAware)  # noqa: S101
+        assert isinstance(includable.client.app, EventManagerAware)
         includable.client.app.event_manager.unsubscribe(
             event_type=unwrap(event_type), callback=event_callback
         )
