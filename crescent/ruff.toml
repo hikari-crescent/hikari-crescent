@@ -1,0 +1,27 @@
+extend = "../pyproject.toml"
+
+[lint]
+extend-select = [
+    # bugs/correctness (bugbear, unused args, builtin shadowing,
+    # async rules, security, blind excepts)
+    "B", "ARG", "A", "ASYNC", "S",
+    # readability/refactoring (simplicity, flake8-comp, pie, raise/return,
+    # slots, refurb)
+    "SIM", "C4", "PIE", "RSE", "RET", "SLOT", "FURB",
+    # style/formatting (isort, import conventions, tidy imports, pathlib,
+    # quotes, string concat, commas, naming, type-checking, annotations)
+    "I", "ICN", "TID", "PTH", "Q", "ISC", "COM", "N", "TC", "ANN",
+    # logging/project hygiene (logging, namespace packages, print/debugger,
+    # executable, pygrep hooks)
+    "G", "LOG", "INP", "T20", "T10", "EXE", "PGH",
+    # time/modernization (future annotations, datetime rules, 2020 checks,
+    # pyupgrade, flynt, performance)
+    "FA", "DTZ", "YTT", "UP", "FLY", "PERF",
+    # lib-specific (pytest)
+    "PT"
+]
+ignore = ["COM812", "ANN401"]
+
+[lint.per-file-ignores]
+"ext/locales/__init__.py" = ["N801", "N815"]
+"locale.py" = ["A005"]

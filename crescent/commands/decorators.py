@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import Task, create_task
 from functools import partial, wraps
 from inspect import isawaitable, isclass, isfunction
-from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, cast, overload
+from typing import TYPE_CHECKING, cast, overload
 
 from hikari import (
     UNDEFINED,
@@ -19,13 +19,14 @@ from hikari import (
 from crescent.commands.options import ClassCommandOption, Marker
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
-from crescent.locale import LocaleBuilder
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, TypeVar
+    from collections.abc import Awaitable, Callable, Iterable
+    from typing import Any, TypeVar
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable
+    from crescent.locale import LocaleBuilder
     from crescent.typedefs import (
         AutocompleteCallbackT,
         ClassCommandProto,
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
 
     T = TypeVar("T")
 
-__all__: Sequence[str] = ("command", "user_command", "message_command")
+__all__ = ("command", "message_command", "user_command")
 
 
 def _class_command_callback(
@@ -80,10 +81,11 @@ def _class_command_callback(
 
             tasks.append((create_task(set_later(key, val)), key, raw_val))
 
+        # TODO: can we gather these tasks?
         for t, key, raw_val in tasks:
             try:
                 await t
-            except Exception as e:
+            except Exception as e:  # noqa: PERF203
                 errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
 
         if errors:
@@ -171,7 +173,7 @@ def command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore
+        )  # pyright: ignore[reportReturnType]
 
     autocomplete: dict[str, AutocompleteCallbackT[Any]] = {}
     options: list[CommandOption] = []
@@ -305,7 +307,7 @@ def user_command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore
+        )  # pyright: ignore[reportReturnType]
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
@@ -386,7 +388,7 @@ def message_command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore
+        )  # pyright: ignore[reportReturnType]
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),

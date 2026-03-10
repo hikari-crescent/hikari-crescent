@@ -6,13 +6,14 @@ from typing import TYPE_CHECKING, Generic, TypeVar
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Sequence
+    from collections.abc import Callable
+    from typing import Any
 
     from crescent.client import Client
 
 T = TypeVar("T", contravariant=True)
 
-__all__: Sequence[str] = ("Includable",)
+__all__ = ("Includable",)
 
 
 @dataclass

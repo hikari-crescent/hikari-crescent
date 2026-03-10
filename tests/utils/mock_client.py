@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hikari import GatewayBot, Snowflake, StartedEvent, RESTBot
 
 from crescent import Client

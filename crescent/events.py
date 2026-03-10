@@ -8,19 +8,21 @@ from typing import TYPE_CHECKING, Generic, TypeVar, get_type_hints, overload
 from hikari import EventManagerAware
 
 from crescent.internal.includable import Includable
-from crescent.typedefs import EventHookCallbackT
 from crescent.utils import add_hooks
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Coroutine, Sequence
+    from collections.abc import Callable, Coroutine, Sequence
+    from typing import Any
 
     from hikari import Event
     from hikari.api.event_manager import CallbackT
 
+    from crescent.typedefs import EventHookCallbackT
+
 EventT = TypeVar("EventT", bound="Event", contravariant=True)
 
-__all__: Sequence[str] = ("event",)
+__all__ = ("event",)
 
 
 @dataclass
@@ -69,7 +71,7 @@ def event(
     to use type annotations.
     """
     if callback is None:
-        return partial(event, event_type=event_type)  # pyright: ignore
+        return partial(event, event_type=event_type)  # pyright: ignore[reportReturnType]
 
     if not event_type:
         event_type = next(iter(get_type_hints(callback).values()))
@@ -93,7 +95,7 @@ def event(
     def on_remove(includable: Includable[EventMeta[EventT]]) -> None:
         # if it's not `EventManagerAware`, the event could never have been
         # added in the first place.
-        assert isinstance(includable.client.app, EventManagerAware)
+        assert isinstance(includable.client.app, EventManagerAware)  # noqa: S101
         includable.client.app.event_manager.unsubscribe(
             event_type=unwrap(event_type), callback=event_callback
         )

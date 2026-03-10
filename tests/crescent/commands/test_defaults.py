@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hikari import UNDEFINED, Message, Permissions, User
 
 from crescent import Context, command, message_command, user_command

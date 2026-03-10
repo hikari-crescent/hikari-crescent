@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union, overload
+from typing import TYPE_CHECKING, Any, Literal, overload
 
 from hikari import (
     UNDEFINED,
@@ -22,7 +22,7 @@ from crescent.context.interaction_context import InteractionContext
 from crescent.exceptions import InteractionAlreadyAcknowledgedError
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Sequence
+    from collections.abc import Sequence
 
     from hikari import (
         Attachment,
@@ -38,11 +38,9 @@ if TYPE_CHECKING:
         UndefinedType,
     )
 
-__all__: Sequence[str] = ("Context",)
+__all__ = ("Context",)
 
-ResponseBuilderT = Union[
-    InteractionMessageBuilder, InteractionDeferredBuilder, InteractionModalBuilder
-]
+ResponseBuilderT = InteractionMessageBuilder | InteractionDeferredBuilder | InteractionModalBuilder
 
 
 class Context(InteractionContext):
@@ -204,18 +202,18 @@ class Context(InteractionContext):
             else:
                 flags |= MessageFlag.EPHEMERAL
 
-        kwargs: dict[str, Any] = dict(
-            content=content,
-            attachment=attachment,
-            attachments=attachments,
-            component=component,
-            components=components,
-            embed=embed,
-            embeds=embeds,
-            mentions_everyone=mentions_everyone,
-            user_mentions=user_mentions,
-            role_mentions=role_mentions,
-        )
+        kwargs: dict[str, Any] = {
+            "content": content,
+            "attachment": attachment,
+            "attachments": attachments,
+            "component": component,
+            "components": components,
+            "embed": embed,
+            "embeds": embeds,
+            "mentions_everyone": mentions_everyone,
+            "user_mentions": user_mentions,
+            "role_mentions": role_mentions,
+        }
 
         if not (self._has_deferred_response or self._has_created_response):
             if future := self._unset_future:

@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from typing import Sequence, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
-__all__: Sequence[str] = ("add_hooks",)
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+__all__ = ("add_hooks",)
 
 T = TypeVar("T")
 

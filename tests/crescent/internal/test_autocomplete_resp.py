@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hikari import AutocompleteInteractionOption, OptionType
 from pytest import mark
 

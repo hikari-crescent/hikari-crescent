@@ -1,15 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Awaitable, Callable, Sequence
 from typing import (
     TYPE_CHECKING,
     Any,
-    Awaitable,
-    Callable,
-    Dict,
     Optional,
     Protocol,
-    Sequence,
-    Tuple,
     TypeVar,
     Union,
 )
@@ -29,18 +25,18 @@ if TYPE_CHECKING:
     from crescent.hooks import HookResult
     from crescent.mentionable import Mentionable
 
-__all__: Sequence[str] = (
-    "CommandCallbackT",
-    "OptionTypesT",
-    "UserCommandCallbackT",
-    "MessageCommandCallbackT",
-    "CommandOptionsT",
-    "ClassCommandProto",
-    "CommandErrorHandlerCallbackT",
+__all__ = (
     "AutocompleteCallbackT",
     "AutocompleteValueT",
+    "ClassCommandProto",
+    "CommandCallbackT",
+    "CommandErrorHandlerCallbackT",
     "CommandHookCallbackT",
+    "CommandOptionsT",
     "EventHookCallbackT",
+    "MessageCommandCallbackT",
+    "OptionTypesT",
+    "UserCommandCallbackT",
 )
 
 CommandCallbackT = Callable[["Context"], Awaitable[Any]]
@@ -48,11 +44,11 @@ UserCommandCallbackT = Callable[["Context", User], Awaitable[None]]
 MessageCommandCallbackT = Callable[["Context", Message], Awaitable[None]]
 
 OptionTypesT = Union[str, bool, int, float, PartialChannel, Role, User, "Mentionable", Attachment]
-CommandOptionsT = Dict[str, Union[OptionTypesT, User, Message]]
+CommandOptionsT = dict[str, OptionTypesT | User | Message]
 AutocompleteValueT = TypeVar("AutocompleteValueT", str, int, float)
 AutocompleteCallbackT = Callable[
     ["AutocompleteContext", AutocompleteInteractionOption],
-    Awaitable[Sequence[Tuple[str, AutocompleteValueT]]],
+    Awaitable[Sequence[tuple[str, AutocompleteValueT]]],
 ]
 
 CommandHookCallbackT = Callable[["Context"], Awaitable[Optional["HookResult"]]]

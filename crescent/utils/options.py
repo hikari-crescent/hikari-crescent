@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import Callable, Sequence, TypeVar, overload
+from typing import TYPE_CHECKING, TypeVar, overload
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 T = TypeVar("T")
 U = TypeVar("U")
 V = TypeVar("V")
 
-__all__: Sequence[str] = ("unwrap", "map_or")
+__all__ = ("map_or", "unwrap")
 
 
 def unwrap(o: T | None) -> T:

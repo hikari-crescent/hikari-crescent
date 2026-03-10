@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 #  pyright: reportMissingTypeStubs=false, reportUnknownMemberType=false, reportUnknownVariableType=false
 
 # Crescent provides 2 implementations for `crescent.LocaleBuilder`

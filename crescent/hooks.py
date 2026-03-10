@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
 
 from hikari import Event
 
@@ -9,13 +9,15 @@ from crescent.events import EventMeta
 from crescent.internal.app_command import AppCommandMeta
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from crescent.internal.includable import Includable
     from crescent.typedefs import CommandHookCallbackT, EventHookCallbackT
 
 IncludableT = TypeVar("IncludableT")
 EventT = TypeVar("EventT", bound=Event, contravariant=True)
 
-__all__: Sequence[str] = ("HookResult", "hook")
+__all__ = ("HookResult", "hook")
 
 
 @dataclass
@@ -67,7 +69,7 @@ def hook(
 
 
 class _Hook(Generic[IncludableT]):
-    def __init__(self, callbacks: Any, after: bool):
+    def __init__(self, callbacks: Any, after: bool) -> None:
         self.callbacks = callbacks
         self.after = after
 

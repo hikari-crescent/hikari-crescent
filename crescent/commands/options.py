@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from typing import Any, Awaitable, Callable, Generic, Sequence, TypeVar, cast, overload
-from typing_extensions import Never, Self
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast, overload
 
 from hikari import (
     UNDEFINED,
@@ -19,32 +18,37 @@ from hikari import (
     UndefinedOr,
     User,
 )
+from typing_extensions import Never, Self
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
-from crescent.mentionable import Mentionable
-from crescent.typedefs import AutocompleteCallbackT
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable, Sequence
+
+    from crescent.mentionable import Mentionable
+    from crescent.typedefs import AutocompleteCallbackT
 
 __all__ = (
-    "Marker",
-    "StrMarker",
-    "BoolMarker",
-    "IntMarker",
-    "FloatMarker",
-    "ChannelMarker",
-    "RoleMarker",
-    "UserMarker",
-    "MentionableMarker",
     "AttachmentMarker",
+    "BoolMarker",
+    "ChannelMarker",
     "ClassCommandOption",
-    "string",
-    "boolean",
-    "number",
-    "floating",
-    "channel",
-    "role",
-    "user",
-    "mentionable",
+    "FloatMarker",
+    "IntMarker",
+    "Marker",
+    "MentionableMarker",
+    "RoleMarker",
+    "StrMarker",
+    "UserMarker",
     "attachment",
+    "boolean",
+    "channel",
+    "floating",
+    "mentionable",
+    "number",
+    "role",
+    "string",
+    "user",
 )
 
 
@@ -112,7 +116,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         """Set the Discord-facing name for this option."""
         return replace(self, _name=name)
 
-    def default(self, default: T) -> "ClassCommandOption[MarkT, InT, ConverterT, T]":
+    def default(self, default: T) -> ClassCommandOption[MarkT, InT, ConverterT, T]:
         """Set a default value, making this option optional."""
         return replace(
             cast("ClassCommandOption[MarkT, InT, ConverterT, T]", self),
@@ -121,7 +125,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
 
     def convert(
         self, converter: Callable[[InT], T | Awaitable[T]]
-    ) -> "ClassCommandOption[MarkT, InT, T, DefaultT]":
+    ) -> ClassCommandOption[MarkT, InT, T, DefaultT]:
         """Convert the raw option value before assigning it to the command instance."""
         return replace(
             cast("ClassCommandOption[MarkT, InT, T, DefaultT]", self),
@@ -129,27 +133,27 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         )
 
     def channel_types(
-        self: "ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT],
         types: Sequence[ChannelType],
-    ) -> "ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT]":
+    ) -> ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT]:
         """Restrict which Discord channel types may be selected for this option."""
         return replace(self, _channel_types=types)
 
     @overload
     def autocomplete(
-        self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[IntMarker, InT, ConverterT, DefaultT],
         autocomplete: AutocompleteCallbackT[int],
-    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]: ...
     @overload
     def autocomplete(
-        self: "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT],
         autocomplete: AutocompleteCallbackT[float],
-    ) -> "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
     @overload
     def autocomplete(
-        self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[StrMarker, InT, ConverterT, DefaultT],
         autocomplete: AutocompleteCallbackT[str],
-    ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]: ...
 
     def autocomplete(self, autocomplete: AutocompleteCallbackT[Any]) -> Any:
         """Attach an autocomplete callback to this option."""
@@ -157,19 +161,19 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
 
     @overload
     def choices(
-        self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[IntMarker, InT, ConverterT, DefaultT],
         choices: Sequence[tuple[str | LocaleBuilder, int] | CommandChoice],
-    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]: ...
     @overload
     def choices(
-        self: "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT],
         choices: Sequence[tuple[str | LocaleBuilder, float] | CommandChoice],
-    ) -> "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
     @overload
     def choices(
-        self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[StrMarker, InT, ConverterT, DefaultT],
         choices: Sequence[tuple[str | LocaleBuilder, str] | CommandChoice],
-    ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]: ...
 
     def choices(
         self, choices: Sequence[tuple[str | LocaleBuilder, int | str | float] | CommandChoice]
@@ -179,15 +183,15 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
 
     @overload
     def min_value(
-        self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[IntMarker, InT, ConverterT, DefaultT],
         value: int,
-    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]: ...
 
     @overload
     def min_value(
-        self: "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT],
         value: float,
-    ) -> "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
 
     def min_value(self, value: int | float) -> Any:
         """Set the inclusive minimum numeric value for this option."""
@@ -195,31 +199,31 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
 
     @overload
     def max_value(
-        self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[IntMarker, InT, ConverterT, DefaultT],
         value: int,
-    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]: ...
 
     @overload
     def max_value(
-        self: "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT],
         value: float,
-    ) -> "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]": ...
+    ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
 
     def max_value(self, value: int | float) -> Any:
         """Set the inclusive maximum numeric value for this option."""
         return replace(self, _max_value=value)
 
     def min_length(
-        self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[StrMarker, InT, ConverterT, DefaultT],
         value: int,
-    ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]":
+    ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]:
         """Set the inclusive minimum string length for this option."""
         return replace(self, _min_length=value)
 
     def max_length(
-        self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
+        self: ClassCommandOption[StrMarker, InT, ConverterT, DefaultT],
         value: int,
-    ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]":
+    ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]:
         """Set the inclusive maximum string length for this option."""
         return replace(self, _max_length=value)
 
@@ -228,19 +232,19 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
 
     @overload
     def __get__(
-        self: "ClassCommandOption[MarkT, InT, Never, Never]", inst: object, cls: Any
+        self: ClassCommandOption[MarkT, InT, Never, Never], inst: object, cls: Any
     ) -> InT: ...
     @overload
     def __get__(
-        self: "ClassCommandOption[MarkT, InT, ConverterT, Never]", inst: object, cls: Any
+        self: ClassCommandOption[MarkT, InT, ConverterT, Never], inst: object, cls: Any
     ) -> ConverterT: ...
     @overload
     def __get__(
-        self: "ClassCommandOption[MarkT, InT, Never, DefaultT]", inst: object, cls: Any
+        self: ClassCommandOption[MarkT, InT, Never, DefaultT], inst: object, cls: Any
     ) -> InT | DefaultT: ...
     @overload
     def __get__(
-        self: "ClassCommandOption[MarkT, InT, ConverterT, DefaultT]", inst: object, cls: Any
+        self: ClassCommandOption[MarkT, InT, ConverterT, DefaultT], inst: object, cls: Any
     ) -> ConverterT | DefaultT: ...
 
     def __get__(self, inst: Any | None, cls: Any) -> Any:

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Sequence
+from typing import Any
 
-__all__: Sequence[str] = ("arrays_contain_same_elements",)
+__all__ = ("arrays_contain_same_elements",)
 
 
 def arrays_contain_same_elements(arr1: list[Any], arr2: list[Any]) -> bool:

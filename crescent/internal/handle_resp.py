@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from asyncio import Future
 from contextlib import suppress
 from logging import getLogger
 from typing import TYPE_CHECKING, NamedTuple
@@ -15,7 +14,6 @@ from hikari import (
     OptionType,
     Snowflake,
 )
-from hikari.api import InteractionResponseBuilder
 from hikari.impl import AutocompleteChoiceBuilder
 
 from crescent.context import AutocompleteContext, Context
@@ -24,9 +22,12 @@ from crescent.mentionable import Mentionable
 from crescent.utils import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence
+    from asyncio import Future
+    from collections.abc import Sequence
+    from typing import Any
 
     from hikari import CommandInteractionOption, Message, PartialInteraction, User
+    from hikari.api import InteractionResponseBuilder
 
     from crescent.client import Client
     from crescent.internal import AppCommandMeta, Includable
@@ -35,7 +36,7 @@ if TYPE_CHECKING:
 
 _log = getLogger(__name__)
 
-__all__: Sequence[str] = ("handle_resp",)
+__all__ = ("handle_resp",)
 
 
 async def handle_resp(
@@ -43,7 +44,7 @@ async def handle_resp(
     interaction: PartialInteraction,
     future: Future[InteractionResponseBuilder] | None,
 ) -> None:
-    if not isinstance(interaction, (CommandInteraction, AutocompleteInteraction)):
+    if not isinstance(interaction, CommandInteraction | AutocompleteInteraction):
         return
 
     command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
@@ -136,12 +137,17 @@ def _get_option_recursive(
 def _get_command(
     client: Client,
     name: str,
-    type: CommandType | int,
+    command_type: CommandType | int,
     guild_id: Snowflake | None,
     group: str | None,
     sub_group: str | None,
 ) -> Includable[AppCommandMeta] | None:
-    kwargs: dict[str, Any] = dict(name=name, type=type, group=group, sub_group=sub_group)
+    kwargs: dict[str, Any] = {
+        "name": name,
+        "type": command_type,
+        "group": group,
+        "sub_group": sub_group,
+    }
 
     with suppress(KeyError):
         return client._command_handler._get(Unique(guild_id=guild_id, **kwargs))
@@ -203,7 +209,8 @@ def _context_from_interaction_resp(
     else:
         # This will never be `AutocompleteInteraction` because message and user
         # commands don't have autocomplete.
-        assert isinstance(interaction, CommandInteraction)
+        if not isinstance(interaction, CommandInteraction):
+            raise TypeError("Autocomplete interactions are only valid for slash commands.")
         callback_options = _resolved_data_to_kwargs(interaction)
 
     return Context(
@@ -260,7 +267,8 @@ def _extract_value(
     option: CommandInteractionOption, interaction: CommandInteraction | AutocompleteInteraction
 ) -> Any:
     # `option.value` is guaranteed to have a value because this is not a command group.
-    assert option.value is not None
+    if option.value is None:
+        raise ValueError("Command option unexpectedly had no value.")
 
     if isinstance(interaction, AutocompleteInteraction):
         return option.value

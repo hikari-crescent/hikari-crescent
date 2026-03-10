@@ -3,20 +3,20 @@ from __future__ import annotations
 from importlib import import_module, reload
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Generic, Literal, Sequence, TypeVar, cast, overload
-
-from hikari import Event
+from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, cast, overload
 
 from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.hooks import add_hooks
-from crescent.internal.includable import Includable
-from crescent.typedefs import EventHookCallbackT
 
 if TYPE_CHECKING:
-    from crescent.client import Client, GatewayTraits, RESTTraits
-    from crescent.typedefs import CommandHookCallbackT, PluginCallbackT
 
-__all__: Sequence[str] = ("PluginManager", "Plugin")
+    from hikari import Event
+
+    from crescent.client import Client, GatewayTraits, RESTTraits
+    from crescent.internal.includable import Includable
+    from crescent.typedefs import CommandHookCallbackT, EventHookCallbackT, PluginCallbackT
+
+__all__ = ("Plugin", "PluginManager")
 
 
 T = TypeVar("T", bound="Includable[Any]")
@@ -242,13 +242,13 @@ class Plugin(Generic[BotT, ModelT]):
     def app(self) -> BotT:
         if not self._client:
             raise AttributeError("`Plugin.app` can not be accessed before the plugin is loaded.")
-        return cast(BotT, self._client.app)
+        return cast("BotT", self._client.app)
 
     @property
     def model(self) -> ModelT:
         if not self._client:
             raise AttributeError("`Plugin.model` can not be accessed before the plugin is loaded.")
-        return cast(ModelT, self._client.model)
+        return cast("ModelT", self._client.model)
 
     @property
     def client(self) -> Client:

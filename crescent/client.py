@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from asyncio import get_running_loop
+import logging
+from asyncio import Future, get_running_loop
 from contextlib import suppress
 from functools import partial
 from itertools import chain
-from traceback import print_exception
-from typing import TYPE_CHECKING, Protocol, overload, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar, overload, runtime_checkable
 
-from hikari import AutocompleteInteraction, AutocompleteInteractionOption, CommandInteraction
-from hikari import Event as hk_Event
 from hikari import (
+    AutocompleteInteraction,
+    AutocompleteInteractionOption,
+    CommandInteraction,
     InteractionCreateEvent,
     InteractionServerAware,
     PartialInteraction,
@@ -17,34 +18,37 @@ from hikari import (
     Snowflakeish,
     StartedEvent,
 )
+from hikari import Event as hk_Event
 from hikari.traits import EventManagerAware, RESTAware
 
 from crescent.hooks import add_hooks
 from crescent.internal.handle_resp import handle_resp
-from crescent.internal.includable import Includable
 from crescent.internal.registry import CommandHandler, ErrorHandler
 from crescent.plugin import PluginManager
-from crescent.typedefs import EventHookCallbackT
 from crescent.utils import create_task
 
 if TYPE_CHECKING:
-    from asyncio import Future
-    from typing import Any, Awaitable, Callable, Coroutine, Sequence, TypeVar
+    from collections.abc import Awaitable, Callable, Coroutine, Sequence
 
     from hikari.api import InteractionResponseBuilder
 
     from crescent.context import AutocompleteContext, Context
+    from crescent.internal.includable import Includable
     from crescent.typedefs import (
         AutocompleteErrorHandlerCallbackT,
         CommandErrorHandlerCallbackT,
         CommandHookCallbackT,
         EventErrorHandlerCallbackT,
+        EventHookCallbackT,
     )
 
     INCLUDABLE = TypeVar("INCLUDABLE", bound=Includable[Any])
 
 
-__all__: Sequence[str] = ("Client", "GatewayTraits", "RESTTraits")
+__all__ = ("Client", "GatewayTraits", "RESTTraits")
+
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 @runtime_checkable
@@ -94,7 +98,7 @@ class Client:
         command_after_hooks: list[CommandHookCallbackT] | None = None,
         event_hooks: list[EventHookCallbackT[hk_Event]] | None = None,
         event_after_hooks: list[EventHookCallbackT[hk_Event]] | None = None,
-    ):
+    ) -> None:
         """
         Args:
             app:
@@ -179,12 +183,12 @@ class Client:
             app.event_manager.subscribe(InteractionCreateEvent, self._on_interaction_event)
             return
         app.interaction_server.set_listener(
-            CommandInteraction,  # pyright: ignore
-            self._on_rest_interaction,  # type: ignore
+            CommandInteraction,
+            self._on_rest_interaction,  # type: ignore[arg-type]
         )
         app.interaction_server.set_listener(
-            AutocompleteInteraction,  # type: ignore
-            self._on_rest_interaction,  # type: ignore
+            AutocompleteInteraction,  # type: ignore[arg-type]
+            self._on_rest_interaction,  # type: ignore[arg-type]
         )
 
     async def _on_rest_interaction(
@@ -267,8 +271,11 @@ class Client:
             return
         with suppress(Exception):
             await ctx.respond("An unexpected error occurred.", ephemeral=True)
-        print(f"Unhandled exception occurred in the command {ctx.command}:")
-        print_exception(exc.__class__, exc, exc.__traceback__)
+        logger.error(
+            "Unhandled exception occurred in the command %s",
+            ctx.command,
+            exc_info=(exc.__class__, exc, exc.__traceback__),
+        )
 
     async def on_crescent_event_error(
         self, exc: Exception, event: hk_Event, was_handled: bool
@@ -280,8 +287,11 @@ class Client:
         """
         if was_handled:
             return
-        print(f"Unhandled exception occurred for {type(event)}:")
-        print_exception(exc.__class__, exc, exc.__traceback__)
+        logger.error(
+            "Unhandled exception occurred for %s",
+            type(event),
+            exc_info=(exc.__class__, exc, exc.__traceback__),
+        )
 
     async def on_crescent_autocomplete_error(
         self,
@@ -297,11 +307,12 @@ class Client:
         """
         if was_handled:
             return
-        print(
-            f"Unhandled exception occurred in the autocomplete interaction for {ctx.command}"
-            f" (option: {option.name}):"
+        logger.error(
+            "Unhandled exception occurred in the autocomplete interaction for %s (option: %s)",
+            ctx.command,
+            option.name,
+            exc_info=(exc.__class__, exc, exc.__traceback__),
         )
-        print_exception(exc.__class__, exc, exc.__traceback__)
 
     def _run_future(self, callback: Coroutine[Any, Any, Any]) -> None:
         if self._started:
@@ -321,7 +332,7 @@ class Client:
         if isinstance(self.app, GatewayTraits):
             self.app.event_manager.subscribe(StartedEvent, on_start)
             return partial(self.app.event_manager.unsubscribe, StartedEvent, on_start)
-        elif isinstance(self.app, RESTBotAware):
+        if isinstance(self.app, RESTBotAware):
             self.app.add_startup_callback(on_start)
             return partial(self.app.remove_startup_callback, on_start)
         return None

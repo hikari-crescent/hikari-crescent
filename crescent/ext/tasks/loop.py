@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import timedelta as _timedelta
-from typing import Callable, Sequence, overload
+from typing import overload
 
 from crescent.ext.tasks.task import Task, TaskCallbackT
 from crescent.internal import Includable
 
-__all__: Sequence[str] = ("loop", "Loop")
+__all__ = ("Loop", "loop")
 
 
 class Loop(Task):
@@ -80,20 +81,20 @@ class Loop(Task):
             self.start()
 
 
-retT = Callable[[TaskCallbackT], Includable[Loop]]
+LoopFactoryT = Callable[[TaskCallbackT], Includable[Loop]]
 
 
 @overload
-def loop(*, hours: int = ..., minutes: int = ..., seconds: int = ...) -> retT: ...
+def loop(*, hours: int = ..., minutes: int = ..., seconds: int = ...) -> LoopFactoryT: ...
 
 
 @overload
-def loop(timedelta: _timedelta, /) -> retT: ...
+def loop(timedelta: _timedelta, /) -> LoopFactoryT: ...
 
 
 def loop(
     timedelta: _timedelta | None = None, *, hours: int = 0, minutes: int = 0, seconds: int = 0
-) -> retT:
+) -> LoopFactoryT:
     """
     Run a callback when the bot is started and every time the specified
     time interval has passed.

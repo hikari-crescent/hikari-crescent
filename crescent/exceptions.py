@@ -1,21 +1,23 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any
 
-from crescent.typedefs import ClassCommandProto
+if TYPE_CHECKING:
 
-__all__: Sequence[str] = (
-    "CrescentException",
-    "ConverterExceptions",
-    "ConverterExceptionMeta",
+    from crescent.typedefs import ClassCommandProto
+
+__all__ = (
     "AlreadyRegisteredError",
-    "PluginAlreadyLoadedError",
+    "ConverterExceptionMeta",
+    "ConverterExceptions",
+    "CrescentException",
     "PermissionsError",
+    "PluginAlreadyLoadedError",
 )
 
 
-class CrescentException(Exception):
+class CrescentException(Exception):  # noqa: N818
     """Base Exception for all exceptions Crescent throws"""
 
 

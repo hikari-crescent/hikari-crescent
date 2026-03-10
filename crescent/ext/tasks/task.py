@@ -2,19 +2,21 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import TimerHandle, get_running_loop
-from typing import TYPE_CHECKING, Awaitable, Callable, Sequence, TypeVar
+from collections.abc import Awaitable, Callable
+from typing import TYPE_CHECKING, TypeVar
 
-from crescent.client import Client
 from crescent.exceptions import CrescentException
-from crescent.internal.includable import Includable
 from crescent.utils import create_task
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
 
+    from crescent.client import Client
+    from crescent.internal.includable import Includable
+
 TaskCallbackT = Callable[[], Awaitable[None]]
 
-__all__: Sequence[str] = ("TaskCallbackT", "Task", "TaskError")
+__all__ = ("Task", "TaskCallbackT", "TaskError")
 
 
 class TaskError(CrescentException): ...
@@ -31,11 +33,13 @@ class Task(ABC):
         if self.running:
             raise TaskError("Task is already running.")
 
-        assert self.client
+        if self.client is None:
+            raise TaskError("Task is not registered to a client.")
         self.client._run_future(self._start_inner())
 
     async def _start_inner(self) -> None:
-        assert self.client is not None
+        if self.client is None:
+            raise TaskError("Task is not registered to a client.")
 
         self.event_loop = get_running_loop()
         self._call_next()
@@ -55,7 +59,8 @@ class Task(ABC):
         self._call_next()
 
     def _call_next(self) -> None:
-        assert self.event_loop
+        if self.event_loop is None:
+            raise TaskError("Task does not have an active event loop.")
         self.timer_handle = self.event_loop.call_later(self._next_iteration(), self._call_async)
 
     @abstractmethod

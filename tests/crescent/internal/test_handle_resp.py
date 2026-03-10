@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from asyncio import get_event_loop
 from typing import List, cast
 from unittest.mock import AsyncMock, Mock
