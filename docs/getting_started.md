@@ -84,7 +84,7 @@ Copy this code into a python file, and run with `python filename.py`.
     @client.include
     @crescent.command(name="say")
     class Say:
-        word = crescent.option(str, "The word to say")
+        word = crescent.opt.string("The word to say")
 
         async def callback(self, ctx: crescent.Context) -> None:
             await ctx.respond(self.word)
@@ -104,7 +104,7 @@ Copy this code into a python file, and run with `python filename.py`.
     @client.include
     @crescent.command(name="say")
     class Say:
-        word = crescent.option(str, "The word to say")
+        word = crescent.opt.string("The word to say")
 
         async def callback(self, ctx: crescent.Context) -> None:
             await ctx.respond(self.word)
