@@ -1,3 +1,7 @@
+"""Builder-based option declarations for class commands."""
+
+from __future__ import annotations
+
 from dataclasses import dataclass, replace
 from typing import Any, Awaitable, Callable, Generic, Sequence, TypeVar, cast, overload
 from typing_extensions import Never, Self
@@ -84,6 +88,13 @@ def _build_choices(
 
 @dataclass(slots=True)
 class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
+    """A declarative option definition used by class-based slash commands.
+
+    Instances of this class are usually created through the builder objects
+    exported by this module, such as [`string`][crescent.commands.options.string]
+    or [`channel`][crescent.commands.options.channel].
+    """
+
     _type: OptionType
     _description: str | LocaleBuilder
     _name: UndefinedOr[str | LocaleBuilder] = UNDEFINED
@@ -98,9 +109,11 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
     _converter: Callable[[InT], ConverterT | Awaitable[ConverterT]] | None = None
 
     def name(self, name: str | LocaleBuilder) -> Self:
+        """Set the Discord-facing name for this option."""
         return replace(self, _name=name)
 
     def default(self, default: T) -> "ClassCommandOption[MarkT, InT, ConverterT, T]":
+        """Set a default value, making this option optional."""
         return replace(
             cast("ClassCommandOption[MarkT, InT, ConverterT, T]", self),
             _default=default,
@@ -109,6 +122,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
     def convert(
         self, converter: Callable[[InT], T | Awaitable[T]]
     ) -> "ClassCommandOption[MarkT, InT, T, DefaultT]":
+        """Convert the raw option value before assigning it to the command instance."""
         return replace(
             cast("ClassCommandOption[MarkT, InT, T, DefaultT]", self),
             _converter=converter,
@@ -118,6 +132,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         self: "ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT]",
         types: Sequence[ChannelType],
     ) -> "ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT]":
+        """Restrict which Discord channel types may be selected for this option."""
         return replace(self, _channel_types=types)
 
     @overload
@@ -137,6 +152,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
     ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]": ...
 
     def autocomplete(self, autocomplete: AutocompleteCallbackT[Any]) -> Any:
+        """Attach an autocomplete callback to this option."""
         return replace(self, _autocomplete=autocomplete)
 
     @overload
@@ -158,30 +174,35 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
     def choices(
         self, choices: Sequence[tuple[str | LocaleBuilder, int | str | float] | CommandChoice]
     ) -> Any:
+        """Set the fixed choices users may select for this option."""
         return replace(self, _choices=_build_choices(choices))
 
     def min_value(
         self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
         value: int,
     ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]":
+        """Set the inclusive minimum numeric value for this option."""
         return replace(self, _min_value=value)
 
     def max_value(
         self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
         value: int,
     ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]":
+        """Set the inclusive maximum numeric value for this option."""
         return replace(self, _max_value=value)
 
     def min_length(
         self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
         value: int,
     ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]":
+        """Set the inclusive minimum string length for this option."""
         return replace(self, _min_length=value)
 
     def max_length(
         self: "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]",
         value: int,
     ) -> "ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]":
+        """Set the inclusive maximum string length for this option."""
         return replace(self, _max_length=value)
 
     @overload
@@ -234,11 +255,14 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
 
 @dataclass(slots=True, frozen=True)
 class _OptionBuilder(Generic[MarkT, InT]):
+    """Internal callable builder for a specific Discord option type."""
+
     _type: OptionType
 
     def __call__(
         self, description: str | LocaleBuilder
     ) -> ClassCommandOption[MarkT, InT, Never, Never]:
+        """Create an option declaration with the provided description."""
         return ClassCommandOption(_description=description, _type=self._type)
 
 
