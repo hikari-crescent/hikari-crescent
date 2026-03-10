@@ -63,7 +63,6 @@ dev = [
 [tool.uv.build-backend]
 module-name = ["crescent"]
 module-root = ""
-source-include = ["crescent/banner.txt"]
 
 [build-system]
 requires = ["uv_build>=0.9.9,<0.10.0"]
