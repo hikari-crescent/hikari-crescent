@@ -20,6 +20,29 @@ from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.mentionable import Mentionable
 from crescent.typedefs import AutocompleteCallbackT
 
+__all__ = (
+    "Marker",
+    "StrMarker",
+    "BoolMarker",
+    "IntMarker",
+    "FloatMarker",
+    "ChannelMarker",
+    "RoleMarker",
+    "UserMarker",
+    "MentionableMarker",
+    "AttachmentMarker",
+    "ClassCommandOption",
+    "string",
+    "boolean",
+    "number",
+    "floating",
+    "channel",
+    "role",
+    "user",
+    "mentionable",
+    "attachment",
+)
+
 
 # fmt: off
 class Marker: ...
@@ -43,7 +66,7 @@ ChannelTypeT = TypeVar("ChannelTypeT", bound=PartialChannel)
 T = TypeVar("T")
 
 
-def build_choices(
+def _build_choices(
     choices: Sequence[tuple[str | LocaleBuilder, str | int | float] | CommandChoice],
 ) -> list[CommandChoice]:
     result: list[CommandChoice] = []
@@ -135,7 +158,7 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
     def choices(
         self, choices: Sequence[tuple[str | LocaleBuilder, int | str | float] | CommandChoice]
     ) -> Any:
-        return replace(self, _choices=build_choices(choices))
+        return replace(self, _choices=_build_choices(choices))
 
     def min_value(
         self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
