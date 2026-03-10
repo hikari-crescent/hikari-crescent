@@ -9,7 +9,6 @@ from crescent.exceptions import PluginAlreadyLoadedError
 from crescent.hooks import add_hooks
 
 if TYPE_CHECKING:
-
     from hikari import Event
 
     from crescent.client import Client, GatewayTraits, RESTTraits
@@ -46,21 +45,35 @@ class PluginManager:
 
     @overload
     def load(
-        self, path: str, *, strict: Literal[True], refresh: bool = ...
+        self,
+        path: str,
+        *,
+        strict: Literal[True],
+        refresh: bool = ...,
     ) -> Plugin[Any, Any]: ...
 
     @overload
     def load(
-        self, path: str, *, strict: Literal[False], refresh: bool = ...
+        self,
+        path: str,
+        *,
+        strict: Literal[False],
+        refresh: bool = ...,
     ) -> Plugin[Any, Any] | None: ...
 
     @overload
     def load(
-        self, path: str, refresh: bool = ..., strict: bool = ...
+        self,
+        path: str,
+        refresh: bool = ...,
+        strict: bool = ...,
     ) -> Plugin[Any, Any] | None: ...
 
     def load(
-        self, path: str, refresh: bool = False, strict: bool = True
+        self,
+        path: str,
+        refresh: bool = False,
+        strict: bool = True,
     ) -> Plugin[Any, Any] | None:
         """Load a plugin from the module path.
 
@@ -92,7 +105,10 @@ class PluginManager:
         return plugin
 
     def load_folder(
-        self, path: str, refresh: bool = False, strict: bool = True
+        self,
+        path: str,
+        refresh: bool = False,
+        strict: bool = True,
     ) -> list[Plugin[Any, Any]]:
         """Loads plugins from a folder.
 
@@ -135,7 +151,8 @@ class PluginManager:
 
         if not loaded_plugins:
             _LOG.warning(
-                "No plugins were loaded! Are you sure `%s` is the correct directory?", pathlib_path
+                "No plugins were loaded! Are you sure `%s` is the correct directory?",
+                pathlib_path,
             )
 
         return loaded_plugins
@@ -163,7 +180,7 @@ class PluginManager:
         if path in self.plugins and not refresh:
             raise PluginAlreadyLoadedError(
                 f"Plugin `{path}` is already loaded."
-                " Add the kwarg `refresh=True` to the function call if this is intended."
+                " Add the kwarg `refresh=True` to the function call if this is intended.",
             )
 
         self.plugins[path] = plugin
@@ -254,7 +271,7 @@ class Plugin(Generic[BotT, ModelT]):
     def client(self) -> Client:
         if not self._client:
             raise AttributeError(
-                "`Plugin.client` can not be accessed before the plugin is loaded."
+                "`Plugin.client` can not be accessed before the plugin is loaded.",
             )
         return self._client
 
@@ -290,24 +307,38 @@ class Plugin(Generic[BotT, ModelT]):
     @overload
     @classmethod
     def _from_module(
-        cls, path: str, *, strict: Literal[True], refresh: bool = ...
+        cls,
+        path: str,
+        *,
+        strict: Literal[True],
+        refresh: bool = ...,
     ) -> Plugin[BotT, ModelT]: ...
 
     @overload
     @classmethod
     def _from_module(
-        cls, path: str, *, strict: Literal[False], refresh: bool = ...
+        cls,
+        path: str,
+        *,
+        strict: Literal[False],
+        refresh: bool = ...,
     ) -> Plugin[BotT, ModelT] | None: ...
 
     @overload
     @classmethod
     def _from_module(
-        cls, path: str, refresh: bool = ..., strict: bool = ...
+        cls,
+        path: str,
+        refresh: bool = ...,
+        strict: bool = ...,
     ) -> Plugin[BotT, ModelT] | None: ...
 
     @classmethod
     def _from_module(
-        cls, path: str, refresh: bool = False, strict: bool = True
+        cls,
+        path: str,
+        refresh: bool = False,
+        strict: bool = True,
     ) -> Plugin[BotT, ModelT] | None:
         parents = path.split(".")
 
@@ -323,7 +354,7 @@ class Plugin(Generic[BotT, ModelT]):
             raise ValueError(
                 f"Plugin {path} has no `plugin` or `plugin` is not of type Plugin. "
                 "If you want to name your plugin something else, you have to add an "
-                "alias (plugin = YOUR_PLUGIN_NAME)."
+                "alias (plugin = YOUR_PLUGIN_NAME).",
             )
 
         return plugin

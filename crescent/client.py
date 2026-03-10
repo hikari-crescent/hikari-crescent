@@ -192,7 +192,8 @@ class Client:
         )
 
     async def _on_rest_interaction(
-        self, interaction: PartialInteraction
+        self,
+        interaction: PartialInteraction,
     ) -> InteractionResponseBuilder:
         future: Future[InteractionResponseBuilder] = get_running_loop().create_future()
         create_task(handle_resp(self, interaction, future))
@@ -211,7 +212,8 @@ class Client:
     def include(self, obj: None = ...) -> Callable[[INCLUDABLE], INCLUDABLE]: ...
 
     def include(
-        self, obj: INCLUDABLE | None = None
+        self,
+        obj: INCLUDABLE | None = None,
     ) -> INCLUDABLE | Callable[[INCLUDABLE], INCLUDABLE]:
         """
         Register an includable object, such as an event or command handler.
@@ -260,7 +262,10 @@ class Client:
         return self._command_handler
 
     async def on_crescent_command_error(
-        self, exc: Exception, ctx: Context, was_handled: bool
+        self,
+        exc: Exception,
+        ctx: Context,
+        was_handled: bool,
     ) -> None:
         """
         This function is run when there is an error in a crescent command
@@ -278,7 +283,10 @@ class Client:
         )
 
     async def on_crescent_event_error(
-        self, exc: Exception, event: hk_Event, was_handled: bool
+        self,
+        exc: Exception,
+        event: hk_Event,
+        was_handled: bool,
     ) -> None:
         """
         This function is run when there is an error in a crescent event
@@ -324,7 +332,8 @@ class Client:
         self._started = True
 
     def _add_startup_callback(
-        self, callback: Callable[[], Awaitable[None]]
+        self,
+        callback: Callable[[], Awaitable[None]],
     ) -> Callable[[], None] | None:
         async def on_start(_: Any) -> None:
             await callback()

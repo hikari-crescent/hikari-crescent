@@ -104,7 +104,7 @@ class ErrorHandler(Generic[_E]):
             raise AlreadyRegisteredError(
                 f"`{includable.metadata.__name__}` can not catch `{exc.__name__}`."
                 f" `{exc.__name__}` is already registered to"
-                f" `{reg_includable.metadata.__name__}`."
+                f" `{reg_includable.metadata.__name__}`.",
             )
 
         self.registry[exc] = includable
@@ -203,7 +203,7 @@ class CommandHandler:
 
                 name, name_localizations = str_or_build_locale(command.metadata.sub_group.name)
                 description, description_localizations = str_or_build_locale(
-                    command.metadata.sub_group.description or "No Description"
+                    command.metadata.sub_group.description or "No Description",
                 )
 
                 sub_command_group = CommandOption(
@@ -231,7 +231,7 @@ class CommandHandler:
 
                 name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
                 description, description_localizations = str_or_build_locale(
-                    command.metadata.app_command.description or "No Description"
+                    command.metadata.app_command.description or "No Description",
                 )
 
                 cast("list[CommandOption]", sub_command_group.options).append(
@@ -243,7 +243,7 @@ class CommandHandler:
                         type=OptionType.SUB_COMMAND,
                         options=command.metadata.app_command.options,
                         is_required=False,
-                    )
+                    ),
                 )
 
             elif command.metadata.group:
@@ -281,7 +281,7 @@ class CommandHandler:
                 # lowest level.
                 name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
                 description, description_localizations = str_or_build_locale(
-                    command.metadata.app_command.description or "No Description"
+                    command.metadata.app_command.description or "No Description",
                 )
 
                 cast("list[CommandOption]", built_commands[key].options).append(
@@ -293,7 +293,7 @@ class CommandHandler:
                         type=command.metadata.app_command.type,
                         options=command.metadata.app_command.options,
                         is_required=False,
-                    )
+                    ),
                 )
 
             else:
@@ -302,14 +302,16 @@ class CommandHandler:
         return tuple(built_commands.values())
 
     async def __post_application_commands(
-        self, commands: Sequence[AppCommand], guild: UndefinedOr[Snowflakeish]
+        self,
+        commands: Sequence[AppCommand],
+        guild: UndefinedOr[Snowflakeish],
     ) -> None:
         try:
             if self._application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
 
             existing_commands = await self._client.app.rest.fetch_application_commands(
-                application=self._application_id
+                application=self._application_id,
             )
 
             def exists(command: AppCommand) -> bool:
@@ -423,7 +425,9 @@ class CommandHandler:
             ),
             gather_iter(
                 self._client.app.rest.set_application_commands(
-                    application=self._application_id, commands=[], guild=guild
+                    application=self._application_id,
+                    commands=[],
+                    guild=guild,
                 )
                 for guild in guilds
             ),

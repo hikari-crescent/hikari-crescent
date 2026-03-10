@@ -31,7 +31,11 @@ class Loop(Task):
 
     @overload
     def set_interval(
-        self, *, hours: int = ..., minutes: int = ..., seconds: int = ...
+        self,
+        *,
+        hours: int = ...,
+        minutes: int = ...,
+        seconds: int = ...,
     ) -> None: ...
 
     @overload
@@ -93,7 +97,11 @@ def loop(timedelta: _timedelta, /) -> LoopFactoryT: ...
 
 
 def loop(
-    timedelta: _timedelta | None = None, *, hours: int = 0, minutes: int = 0, seconds: int = 0
+    timedelta: _timedelta | None = None,
+    *,
+    hours: int = 0,
+    minutes: int = 0,
+    seconds: int = 0,
 ) -> LoopFactoryT:
     """
     Run a callback when the bot is started and every time the specified

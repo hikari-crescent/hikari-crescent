@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-
     from hikari import CommandInteraction, Role, User
 
 __all__ = ("Mentionable",)

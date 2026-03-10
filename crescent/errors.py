@@ -32,7 +32,9 @@ def _make_catch_function(
 
         def decorator(callback: Any) -> Includable[Any]:
             return Includable(
-                callback, client_set_hooks=[app_set_hook], plugin_unload_hooks=[plugin_unload_hook]
+                callback,
+                client_set_hooks=[app_set_hook],
+                plugin_unload_hooks=[plugin_unload_hook],
             )
 
         return decorator
@@ -98,7 +100,8 @@ def catch_event(
 def catch_autocomplete(
     *exceptions: type[Exception],
 ) -> Callable[
-    [AutocompleteErrorHandlerCallbackT[Any]], Includable[AutocompleteErrorHandlerCallbackT[Any]]
+    [AutocompleteErrorHandlerCallbackT[Any]],
+    Includable[AutocompleteErrorHandlerCallbackT[Any]],
 ]:
     """
     Catch an exception or subclasses of an exception passed into this function when the

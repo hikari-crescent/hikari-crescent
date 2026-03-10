@@ -50,14 +50,19 @@ async def handle_resp(
     command_name, group, sub_group, _ = _get_crescent_command_data(interaction)
 
     command = _get_command(
-        client, command_name, interaction.command_type, interaction.guild_id, group, sub_group
+        client,
+        command_name,
+        interaction.command_type,
+        interaction.guild_id,
+        group,
+        sub_group,
     )
 
     if not command:
         if not client.allow_unknown_interactions:
             _log.warning(
                 f"Handler for command `{command_name}` does not exist locally. (If this is"
-                " intended, add `allow_unknown_interactions=True` to the Client's constructor.)"
+                " intended, add `allow_unknown_interactions=True` to the Client's constructor.)",
             )
         return
 
@@ -95,7 +100,8 @@ async def _handle_slash_resp(command: Includable[AppCommandMeta], ctx: Context) 
 
 
 async def _handle_autocomplete_resp(
-    command: Includable[AppCommandMeta], ctx: AutocompleteContext
+    command: Includable[AppCommandMeta],
+    ctx: AutocompleteContext,
 ) -> None:
     if not command.metadata.autocomplete:
         return
@@ -114,10 +120,14 @@ async def _handle_autocomplete_resp(
             await ctx.interaction.create_response(choices)
     except Exception as exc:
         handled = await command.client._autocomplete_error_handler.try_handle(
-            exc, [exc, ctx, option]
+            exc,
+            [exc, ctx, option],
         )
         await command.client.on_crescent_autocomplete_error(
-            exc, ctx.into(AutocompleteContext), option, handled
+            exc,
+            ctx.into(AutocompleteContext),
+            option,
+            handled,
         )
 
 
@@ -195,12 +205,16 @@ def _get_crescent_command_data(
             options = unwrap(option.options)[0].options
 
     return CrescentCommandData(
-        command_name=command_name, group=group, sub_group=sub_group, options=options
+        command_name=command_name,
+        group=group,
+        sub_group=sub_group,
+        options=options,
     )
 
 
 def _context_from_interaction_resp(
-    client: Client, interaction: CommandInteraction | AutocompleteInteraction
+    client: Client,
+    interaction: CommandInteraction | AutocompleteInteraction,
 ) -> Context:
     command_name, group, sub_group, options = _get_crescent_command_data(interaction)
 
@@ -264,7 +278,8 @@ def _get_resolved(interaction: CommandInteraction, option_type: int) -> Any | No
 
 
 def _extract_value(
-    option: CommandInteractionOption, interaction: CommandInteraction | AutocompleteInteraction
+    option: CommandInteractionOption,
+    interaction: CommandInteraction | AutocompleteInteraction,
 ) -> Any:
     # `option.value` is guaranteed to have a value because this is not a command group.
     if option.value is None:
@@ -296,5 +311,5 @@ def _resolved_data_to_kwargs(interaction: CommandInteraction) -> dict[str, Messa
         return {"user": next(iter(interaction.resolved.users.values()))}
 
     raise AttributeError(
-        "interaction.resolved did not have property `messages`, `members`, or `users`"
+        "interaction.resolved did not have property `messages`, `members`, or `users`",
     )

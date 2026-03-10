@@ -32,7 +32,11 @@ class EventMeta(Generic[EventT]):
     after_hooks: list[EventHookCallbackT[EventT]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     def add_hooks(
-        self, hooks: Sequence[EventHookCallbackT[Any]], prepend: bool = False, *, after: bool
+        self,
+        hooks: Sequence[EventHookCallbackT[Any]],
+        prepend: bool = False,
+        *,
+        after: bool,
     ) -> None:
         add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)
 
@@ -43,12 +47,16 @@ def event(callback: CallbackT[EventT], /) -> Includable[EventMeta[EventT]]: ...
 
 @overload
 def event(
-    *, event_type: type[EventT] | None
+    *,
+    event_type: type[EventT] | None,
 ) -> Callable[[CallbackT[EventT]], Includable[EventMeta[EventT]]]: ...
 
 
 def event(
-    callback: CallbackT[EventT] | None = None, /, *, event_type: type[EventT] | None = None
+    callback: CallbackT[EventT] | None = None,
+    /,
+    *,
+    event_type: type[EventT] | None = None,
 ) -> Callable[[CallbackT[EventT]], Includable[EventMeta[EventT]]] | Includable[EventMeta[EventT]]:
     """
     Listen to an event. This function should be used instead of
@@ -85,11 +93,12 @@ def event(
     def hook(includable: Includable[EventMeta[EventT]]) -> None:
         if isinstance(includable.client.app, EventManagerAware):
             includable.client.app.event_manager.subscribe(
-                event_type=unwrap(event_type), callback=event_callback
+                event_type=unwrap(event_type),
+                callback=event_callback,
             )
         else:
             raise ValueError(
-                "Events can only be used with bots that implement `hikari.EventManagerAware`."
+                "Events can only be used with bots that implement `hikari.EventManagerAware`.",
             )
 
     def on_remove(includable: Includable[EventMeta[EventT]]) -> None:
@@ -97,7 +106,8 @@ def event(
         # added in the first place.
         assert isinstance(includable.client.app, EventManagerAware)
         includable.client.app.event_manager.unsubscribe(
-            event_type=unwrap(event_type), callback=event_callback
+            event_type=unwrap(event_type),
+            callback=event_callback,
         )
 
     includable = Includable(

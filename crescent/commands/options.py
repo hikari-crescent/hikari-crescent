@@ -124,7 +124,8 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         )
 
     def convert(
-        self, converter: Callable[[InT], T | Awaitable[T]]
+        self,
+        converter: Callable[[InT], T | Awaitable[T]],
     ) -> ClassCommandOption[MarkT, InT, T, DefaultT]:
         """Convert the raw option value before assigning it to the command instance."""
         return replace(
@@ -176,7 +177,8 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
     ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]: ...
 
     def choices(
-        self, choices: Sequence[tuple[str | LocaleBuilder, int | str | float] | CommandChoice]
+        self,
+        choices: Sequence[tuple[str | LocaleBuilder, int | str | float] | CommandChoice],
     ) -> Any:
         """Set the fixed choices users may select for this option."""
         return replace(self, _choices=_build_choices(choices))
@@ -232,19 +234,27 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
 
     @overload
     def __get__(
-        self: ClassCommandOption[MarkT, InT, Never, Never], inst: object, cls: Any
+        self: ClassCommandOption[MarkT, InT, Never, Never],
+        inst: object,
+        cls: Any,
     ) -> InT: ...
     @overload
     def __get__(
-        self: ClassCommandOption[MarkT, InT, ConverterT, Never], inst: object, cls: Any
+        self: ClassCommandOption[MarkT, InT, ConverterT, Never],
+        inst: object,
+        cls: Any,
     ) -> ConverterT: ...
     @overload
     def __get__(
-        self: ClassCommandOption[MarkT, InT, Never, DefaultT], inst: object, cls: Any
+        self: ClassCommandOption[MarkT, InT, Never, DefaultT],
+        inst: object,
+        cls: Any,
     ) -> InT | DefaultT: ...
     @overload
     def __get__(
-        self: ClassCommandOption[MarkT, InT, ConverterT, DefaultT], inst: object, cls: Any
+        self: ClassCommandOption[MarkT, InT, ConverterT, DefaultT],
+        inst: object,
+        cls: Any,
     ) -> ConverterT | DefaultT: ...
 
     def __get__(self, inst: Any | None, cls: Any) -> Any:
@@ -282,7 +292,8 @@ class _OptionBuilder(Generic[MarkT, InT]):
     _type: OptionType
 
     def __call__(
-        self, description: str | LocaleBuilder
+        self,
+        description: str | LocaleBuilder,
     ) -> ClassCommandOption[MarkT, InT, Never, Never]:
         """Create an option declaration with the provided description."""
         return ClassCommandOption(_description=description, _type=self._type)
@@ -296,6 +307,6 @@ channel: _OptionBuilder[ChannelMarker, InteractionChannel] = _OptionBuilder(Opti
 role: _OptionBuilder[RoleMarker, Role] = _OptionBuilder(OptionType.ROLE)
 user: _OptionBuilder[UserMarker, User] = _OptionBuilder(OptionType.USER)
 mentionable: _OptionBuilder[MentionableMarker, Mentionable] = _OptionBuilder(
-    OptionType.MENTIONABLE
+    OptionType.MENTIONABLE,
 )
 attachment: _OptionBuilder[AttachmentMarker, Attachment] = _OptionBuilder(OptionType.ATTACHMENT)

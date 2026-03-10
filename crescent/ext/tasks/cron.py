@@ -18,7 +18,7 @@ class Cronjob(Task):
             from croniter import croniter
         except ImportError as exc:
             raise ModuleNotFoundError(
-                "`hikari-crescent[cron]` must be installed to use `cooldowns.cronjob`."
+                "`hikari-crescent[cron]` must be installed to use `cooldowns.cronjob`.",
             ) from exc
 
         self.cron: croniter = croniter(cron, datetime.now(tz=timezone.utc))
@@ -40,7 +40,9 @@ class Cronjob(Task):
 
 
 def cronjob(
-    cron: str, /, on_startup: bool = False
+    cron: str,
+    /,
+    on_startup: bool = False,
 ) -> Callable[[TaskCallbackT], Includable[Cronjob]]:
     """
     Run a task at the time specified by the cron schedule expression.

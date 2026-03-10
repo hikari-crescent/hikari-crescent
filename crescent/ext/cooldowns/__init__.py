@@ -23,7 +23,8 @@ async def _default_callback(ctx: Context, retry: timedelta) -> None:
     seconds = round(retry.total_seconds())
     message = "1 second" if seconds <= 1 else f"{seconds} seconds"
     await ctx.respond(
-        f"You're using this command too much! Try again in {message}.", ephemeral=True
+        f"You're using this command too much! Try again in {message}.",
+        ephemeral=True,
     )
 
 
@@ -52,7 +53,7 @@ def cooldown(
         from floodgate import FixedMapping
     except ImportError as exc:
         raise ModuleNotFoundError(
-            "`hikari-crescent[cooldowns]` must be installed to use `crescent.ext.cooldowns`."
+            "`hikari-crescent[cooldowns]` must be installed to use `crescent.ext.cooldowns`.",
         ) from exc
 
     cooldown: FixedMapping[Any] = FixedMapping(period=period, capacity=capacity)

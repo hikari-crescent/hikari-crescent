@@ -56,7 +56,7 @@ class Context(InteractionContext):
         """
         if isinstance(self.app, CacheAware):
             return self.app.cache.get_guild_channel(self.channel_id) or self.app.cache.get_thread(
-                self.channel_id
+                self.channel_id,
             )
         return None
 
@@ -268,7 +268,10 @@ class Context(InteractionContext):
         return await self.followup(**kwargs)
 
     async def respond_with_modal(
-        self, title: str, custom_id: str, components: Sequence[ComponentBuilder]
+        self,
+        title: str,
+        custom_id: str,
+        components: Sequence[ComponentBuilder],
     ) -> None:
         """Respond to an interaction with a modal.
 
@@ -286,7 +289,7 @@ class Context(InteractionContext):
         """
         if self._has_created_response or self._has_deferred_response:
             raise InteractionAlreadyAcknowledgedError(
-                "You cannot use this method after already responding to an interaction."
+                "You cannot use this method after already responding to an interaction.",
             )
 
         if future := self._unset_future:
@@ -296,12 +299,16 @@ class Context(InteractionContext):
             future.set_result(builder)
         else:
             await self.interaction.create_modal_response(
-                title=title, custom_id=custom_id, components=components
+                title=title,
+                custom_id=custom_id,
+                components=components,
             )
         self._has_created_response = True
 
     async def respond_with_builder(
-        self, builder: ResponseBuilderT, ensure_message: bool = False
+        self,
+        builder: ResponseBuilderT,
+        ensure_message: bool = False,
     ) -> Message | None:
         """Respond to an interaction with a builder.
 
@@ -321,7 +328,7 @@ class Context(InteractionContext):
         """
         if self._has_created_response or self._has_deferred_response:
             raise InteractionAlreadyAcknowledgedError(
-                "This method cannot be used after already responding to an interaction."
+                "This method cannot be used after already responding to an interaction.",
             )
 
         if future := self._unset_future:
@@ -342,11 +349,14 @@ class Context(InteractionContext):
                 )
             elif isinstance(builder, InteractionDeferredBuilder):
                 await self.interaction.create_initial_response(
-                    response_type=ResponseType.DEFERRED_MESSAGE_CREATE, flags=builder.flags
+                    response_type=ResponseType.DEFERRED_MESSAGE_CREATE,
+                    flags=builder.flags,
                 )
             else:
                 await self.interaction.create_modal_response(
-                    title=builder.title, custom_id=builder.custom_id, components=builder.components
+                    title=builder.title,
+                    custom_id=builder.custom_id,
+                    components=builder.components,
                 )
         self._has_created_response = True
 
@@ -470,5 +480,6 @@ class Context(InteractionContext):
         ```
         """
         await self.app.rest.delete_interaction_response(
-            application=self.application_id, token=self.token
+            application=self.application_id,
+            token=self.token,
         )

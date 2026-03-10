@@ -23,7 +23,7 @@ def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
     if includable.metadata.app_command.default_member_permissions:
         raise PermissionsError(
             "`default_member_permissions` cannot be declared for subcommands."
-            " Permissions must be declared in the `crescent.Group` object."
+            " Permissions must be declared in the `crescent.Group` object.",
         )
 
 

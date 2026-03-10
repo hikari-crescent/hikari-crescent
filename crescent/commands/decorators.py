@@ -98,7 +98,8 @@ def _class_command_callback(
 
 @overload
 def command(
-    callback: CommandCallbackT | type[ClassCommandProto], /
+    callback: CommandCallbackT | type[ClassCommandProto],
+    /,
 ) -> Includable[AppCommandMeta]: ...
 
 

@@ -70,5 +70,6 @@ ErrorT = TypeVar("ErrorT", bound=Exception, contravariant=True)
 CommandErrorHandlerCallbackT = Callable[[ErrorT, Any], Awaitable[None]]
 EventErrorHandlerCallbackT = Callable[[ErrorT, Event], Awaitable[None]]
 AutocompleteErrorHandlerCallbackT = Callable[
-    [ErrorT, Any, AutocompleteInteractionOption], Awaitable[None]
+    [ErrorT, Any, AutocompleteInteractionOption],
+    Awaitable[None],
 ]

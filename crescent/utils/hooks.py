@@ -11,7 +11,12 @@ T = TypeVar("T")
 
 
 def add_hooks(
-    hooks: list[T], after_hooks: list[T], hooks_to_add: Sequence[T], *, prepend: bool, after: bool
+    hooks: list[T],
+    after_hooks: list[T],
+    hooks_to_add: Sequence[T],
+    *,
+    prepend: bool,
+    after: bool,
 ) -> None:
     def extend_or_prepend(list_to_edit: list[T]) -> None:
         if prepend:

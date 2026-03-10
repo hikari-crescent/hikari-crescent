@@ -97,7 +97,7 @@ class AppCommand:
                     description != other.description,
                     (self.options or None) != (other.options or None),
                     description_localizations != other.description_localizations,
-                )
+                ),
             ):
                 return False
 
@@ -112,7 +112,7 @@ class AppCommand:
                 name_localizations == other.name_localizations,
                 context_types == set(other.context_types),
                 other.default_member_permissions == self.build_default_member_perms() or 0,
-            )
+            ),
         )
 
     def build_default_member_perms(self) -> Permissions | None:
@@ -161,7 +161,11 @@ class AppCommandMeta:
     after_hooks: list[CommandHookCallbackT] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     def add_hooks(
-        self, hooks: Sequence[CommandHookCallbackT], prepend: bool = False, *, after: bool
+        self,
+        hooks: Sequence[CommandHookCallbackT],
+        prepend: bool = False,
+        *,
+        after: bool,
     ) -> None:
         add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)
 
