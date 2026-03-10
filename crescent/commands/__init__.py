@@ -1,8 +1,9 @@
 from typing import Sequence
 
 from crescent.commands.decorators import *
+from crescent.commands import options
+from crescent.commands.options import ClassCommandOption
 from crescent.commands.groups import *
-from crescent.commands.options import *
 
 __all__: Sequence[str] = (
     "command",
@@ -11,5 +12,5 @@ __all__: Sequence[str] = (
     "Group",
     "SubGroup",
     "ClassCommandOption",
-    "option",
+    "options",
 )

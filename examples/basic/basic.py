@@ -1,6 +1,7 @@
 import hikari
 
 import crescent
+from crescent import options
 
 import random
 
@@ -14,7 +15,7 @@ client = crescent.Client(bot)
 @client.include
 @crescent.command(name="random")
 class RandomNumber:
-    max = crescent.option(int)
+    max = options.number("The maximum random number to generate")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(random.randint(0, self.max))
@@ -23,8 +24,12 @@ class RandomNumber:
 @client.include
 @crescent.command(name="say")
 class Say:
-    to_say = crescent.option(str, "Make the bot say something", default="...", name="to-say")
-    channel = crescent.option(hikari.GuildTextChannel, "The channel to send in", default=None)
+    to_say = options.string("Make the bot say something").default("...").name("to-say")
+    channel = (
+        options.channel("The channel to send in")
+        .channel_types([hikari.ChannelType.GUILD_TEXT])
+        .default(None)
+    )
 
     async def callback(self, ctx: crescent.Context) -> None:
         if self.channel is None:

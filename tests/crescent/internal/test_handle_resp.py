@@ -20,7 +20,6 @@ from pytest import mark
 
 from crescent import Context, catch_autocomplete, catch_command, command, hook
 import crescent
-from crescent.commands.options import option
 from crescent.exceptions import ConverterExceptions
 from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockClient, MockRESTClient
@@ -121,7 +120,7 @@ async def test_converter_ok() -> None:
     @client.include
     @command
     class test_command:
-        arg = option(str).convert(int)
+        arg = crescent.options.string("arg").convert(int)
 
         async def callback(self, ctx: Context) -> None:
             nonlocal arg_val
@@ -146,7 +145,7 @@ async def test_converter_error() -> None:
         exc = _exc
 
     class test_command:
-        arg = option(str).convert(int)
+        arg = crescent.options.string("arg").convert(int)
 
         async def callback(self, ctx: Context) -> None:
             nonlocal arg_val
@@ -316,9 +315,9 @@ async def test_handle_autocomplete_error():
     @client.include
     @command(name="test_command")
     class TestCommand:
-        option = crescent.option(str, autocomplete=autocomplete_resp)
+        option = crescent.options.string("option").autocomplete(autocomplete_resp)
 
-        def callback(ctx: Context):
+        def callback(self, ctx: Context):
             nonlocal command_was_run
             command_was_run = True
 
@@ -358,9 +357,9 @@ async def test_unhandled_autocomplete_error():
     @client.include
     @command(name="test_command")
     class TestCommand:
-        option = crescent.option(str, autocomplete=autocomplete_resp)
+        option = crescent.options.string("option").autocomplete(autocomplete_resp)
 
-        def callback(ctx: Context):
+        def callback(self, ctx: Context):
             nonlocal command_was_run
             command_was_run = True
 

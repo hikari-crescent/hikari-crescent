@@ -16,7 +16,7 @@ from hikari import (
     UndefinedType,
 )
 
-from crescent.commands.options import ClassCommandOption
+from crescent.commands.options import ClassCommandOption, Marker
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
 from crescent.locale import LocaleBuilder
@@ -190,21 +190,21 @@ def command(
                 continue
 
             if TYPE_CHECKING:
-                v = cast("ClassCommandOption[Any, Any]", v)  # type: ignore[redundant-cast]
+                v = cast("ClassCommandOption[Marker, Any, Any, Any]", v)
 
             generated = v._gen_option(n)
             options.append(generated)
 
-            if v.autocomplete:
-                autocomplete[generated.name] = v.autocomplete
+            if v._autocomplete:
+                autocomplete[generated.name] = v._autocomplete
 
-            if v.converter:
-                converters[generated.name] = v.converter
+            if v._converter:
+                converters[generated.name] = v._converter
 
             if generated.name != n:
                 name_map[generated.name] = n
 
-            defaults[generated.name] = v.default
+            defaults[generated.name] = v._default
 
         callback_func = _class_command_callback(callback, defaults, name_map, converters)
 

@@ -19,7 +19,7 @@ __all__: Sequence[str] = (
     "command",
     "user_command",
     "message_command",
-    "option",
+    "options",
     "hook",
     "HookResult",
     "Group",
