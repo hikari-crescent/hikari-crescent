@@ -75,7 +75,7 @@ warn_unused_configs = true
 warn_return_any = true
 warn_redundant_casts = true
 namespace_packages = true
-warn_unused_ignores = false
+warn_unused_ignores = true
 
 [tool.pyright]
 include = ["crescent", "examples"]
@@ -85,7 +85,6 @@ typeCheckingMode = "strict"
 reportPrivateUsage = false
 reportImportCycles = false
 reportIncompatibleMethodOverride = false
-reportWildcardImportFromLibrary = false
 
 [tool.ruff]
 target-version = "py310"

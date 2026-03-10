@@ -6,7 +6,7 @@ import hikari
 from crescent import LocaleBuilder
 
 try:
-    import i18n as i18n_  # type: ignore[import-not-found,import-untyped]
+    import i18n as i18n_  # type: ignore[import-untyped]
 except ImportError:
     i18n_ = None
 

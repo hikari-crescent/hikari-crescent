@@ -201,11 +201,9 @@ class CommandHandler:
 
                 children = cast("list[CommandOption]", unwrap(built_commands[key].options))
 
-                name, name_localizations = str_or_build_locale(
-                    unwrap(command.metadata.sub_group).name
-                )
+                name, name_localizations = str_or_build_locale(command.metadata.sub_group.name)
                 description, description_localizations = str_or_build_locale(
-                    unwrap(command.metadata.sub_group).description or "No Description"
+                    command.metadata.sub_group.description or "No Description"
                 )
 
                 sub_command_group = CommandOption(
@@ -233,7 +231,7 @@ class CommandHandler:
 
                 name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
                 description, description_localizations = str_or_build_locale(
-                    unwrap(command.metadata.app_command.description)
+                    command.metadata.app_command.description or "No Description"
                 )
 
                 cast("list[CommandOption]", sub_command_group.options).append(
@@ -270,7 +268,7 @@ class CommandHandler:
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
                         name=command.metadata.group.name,
-                        description=unwrap(command.metadata.group).description or "No Description",
+                        description=command.metadata.group.description or "No Description",
                         type=command.metadata.app_command.type,
                         guild_id=command.metadata.app_command.guild_id,
                         options=[],
@@ -283,7 +281,7 @@ class CommandHandler:
                 # lowest level.
                 name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
                 description, description_localizations = str_or_build_locale(
-                    unwrap(command.metadata.app_command.description)
+                    command.metadata.app_command.description or "No Description"
                 )
 
                 cast("list[CommandOption]", built_commands[key].options).append(
