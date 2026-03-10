@@ -96,10 +96,15 @@ CHANNEL_TYPE_MAP: dict[type[VALID_CHANNEL_TYPES], ChannelType] = {
 
 
 def build_choices(
-    choices: Sequence[tuple[str | LocaleBuilder, str | int | float]],
+    choices: Sequence[tuple[str | LocaleBuilder, str | int | float] | CommandChoice],
 ) -> list[CommandChoice]:
     result: list[CommandChoice] = []
-    for name, value in choices:
+    for choice in choices:
+        if isinstance(choice, CommandChoice):
+            result.append(choice)
+            continue
+
+        name, value = choice
         name, name_localizations = str_or_build_locale(name)
         result.append(CommandChoice(name=name, name_localizations=name_localizations, value=value))
 
