@@ -177,17 +177,35 @@ class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
         """Set the fixed choices users may select for this option."""
         return replace(self, _choices=_build_choices(choices))
 
+    @overload
     def min_value(
         self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
         value: int,
-    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]":
+    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]": ...
+
+    @overload
+    def min_value(
+        self: "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]",
+        value: float,
+    ) -> "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]": ...
+
+    def min_value(self, value: int | float) -> Any:
         """Set the inclusive minimum numeric value for this option."""
         return replace(self, _min_value=value)
 
+    @overload
     def max_value(
         self: "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]",
         value: int,
-    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]":
+    ) -> "ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]": ...
+
+    @overload
+    def max_value(
+        self: "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]",
+        value: float,
+    ) -> "ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]": ...
+
+    def max_value(self, value: int | float) -> Any:
         """Set the inclusive maximum numeric value for this option."""
         return replace(self, _max_value=value)
 
