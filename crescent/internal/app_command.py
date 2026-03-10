@@ -27,6 +27,9 @@ if TYPE_CHECKING:
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, CommandHookCallbackT
 
 
+__all__ = ("AppCommand", "AppCommandMeta")
+
+
 @dataclass(frozen=True)
 class Unique:
     name: str
@@ -60,9 +63,6 @@ class Unique:
             if command.sub_group
             else None,
         )
-
-
-__all__ = ("AppCommand", "AppCommandMeta")
 
 
 @dataclass
