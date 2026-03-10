@@ -6,6 +6,7 @@ import random
 from hikari import AutocompleteInteractionOption, RESTBot, TokenType
 
 import crescent
+from crescent import options
 
 bot = RESTBot("...", TokenType.BOT)
 client = crescent.Client(bot)
@@ -32,7 +33,7 @@ async def ping(ctx: crescent.Context) -> None:
 @client.include
 @crescent.command(name="autcomplete", description="Autocomplete Test")
 class AutocompleteTest:
-    option = crescent.opt.string("An option").autocomplete(autocomplete_callback)
+    option = options.string("An option").autocomplete(autocomplete_callback)
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(f"You said {self.option}!")

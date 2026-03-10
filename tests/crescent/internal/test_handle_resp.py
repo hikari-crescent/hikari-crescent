@@ -120,7 +120,7 @@ async def test_converter_ok() -> None:
     @client.include
     @command
     class test_command:
-        arg = crescent.opt.string("arg").convert(int)
+        arg = crescent.options.string("arg").convert(int)
 
         async def callback(self, ctx: Context) -> None:
             nonlocal arg_val
@@ -145,7 +145,7 @@ async def test_converter_error() -> None:
         exc = _exc
 
     class test_command:
-        arg = crescent.opt.string("arg").convert(int)
+        arg = crescent.options.string("arg").convert(int)
 
         async def callback(self, ctx: Context) -> None:
             nonlocal arg_val
@@ -315,7 +315,7 @@ async def test_handle_autocomplete_error():
     @client.include
     @command(name="test_command")
     class TestCommand:
-        option = crescent.opt.string("option").autocomplete(autocomplete_resp)
+        option = crescent.options.string("option").autocomplete(autocomplete_resp)
 
         def callback(self, ctx: Context):
             nonlocal command_was_run
@@ -357,7 +357,7 @@ async def test_unhandled_autocomplete_error():
     @client.include
     @command(name="test_command")
     class TestCommand:
-        option = crescent.opt.string("option").autocomplete(autocomplete_resp)
+        option = crescent.options.string("option").autocomplete(autocomplete_resp)
 
         def callback(self, ctx: Context):
             nonlocal command_was_run

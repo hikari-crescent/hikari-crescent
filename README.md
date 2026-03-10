@@ -48,11 +48,12 @@ in over 17k servers.
 ## Usage
 Crescent uses [class commands](https://github.com/hikari-crescent/hikari-crescent/blob/main/examples/basic/basic.py)
 to simplify creating commands. Class commands allow you to create a command similar to how you declare a
-dataclass. Options are declared with builder objects on `crescent.opt`.
+dataclass. Options are declared with builder objects from `crescent.options`.
 
 ```python
 import crescent
 import hikari
+from crescent import options
 
 bot = hikari.GatewayBot("YOUR_TOKEN")
 client = crescent.Client(bot)
@@ -62,7 +63,7 @@ client = crescent.Client(bot)
 # Create a slash command
 @crescent.command(name="say")
 class Say:
-    word = crescent.opt.string("The word to say")
+    word = options.string("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)
@@ -83,15 +84,15 @@ async def ping(ctx: crescent.Context):
 ### Option Builders Lookup Table
 | Builder | Option Type |
 |---|---|
-| `crescent.opt.string(...)` | Text |
-| `crescent.opt.number(...)` | Integer |
-| `crescent.opt.boolean(...)` | Boolean |
-| `crescent.opt.floating(...)` | Number |
-| `crescent.opt.user(...)` | User |
-| `crescent.opt.role(...)` | Role |
-| `crescent.opt.mentionable(...)` | Role or User |
-| `crescent.opt.channel(...)` | Channel. Use `.channel_types([...])` to restrict channel kinds. |
-| `crescent.opt.attachment(...)` | Attachment |
+| `options.string(...)` | Text |
+| `options.number(...)` | Integer |
+| `options.boolean(...)` | Boolean |
+| `options.floating(...)` | Number |
+| `options.user(...)` | User |
+| `options.role(...)` | Role |
+| `options.mentionable(...)` | Role or User |
+| `options.channel(...)` | Channel. Use `.channel_types([...])` to restrict channel kinds. |
+| `options.attachment(...)` | Attachment |
 
 
 ### Autocomplete
@@ -100,6 +101,8 @@ value is the option name and the second value is the option value. `str`, `int`,
 can be used.
 
 ```python
+from crescent import options
+
 async def autocomplete(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> list[tuple[str, str]]:
@@ -108,7 +111,7 @@ async def autocomplete(
 @client.include
 @crescent.command(name="class-command")
 class ClassCommand:
-    option = crescent.opt.string("Choose a value").autocomplete(autocomplete)
+    option = options.string("Choose a value").autocomplete(autocomplete)
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.option)

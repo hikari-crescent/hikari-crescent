@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hikari
 import crescent
+from crescent import options
 
 bot = hikari.GatewayBot(token="...")
 client = crescent.Client(bot)
@@ -42,7 +43,7 @@ async def on_autocomplete_random_error(
 @client.include
 @crescent.command(name="raise-error-cmd")
 class RaiseErrorCmd:
-    unhandled = crescent.opt.boolean("Raise an unhandled error instead")
+    unhandled = options.boolean("Raise an unhandled error instead")
 
     def callback(self, ctx: crescent.Context):
         if self.unhandled:
@@ -82,7 +83,7 @@ async def autocomplete(
 @client.include
 @crescent.command(name="autocomplete-error")
 class AutocompleteError:
-    option = crescent.opt.string("Type error to error out").autocomplete(autocomplete)
+    option = options.string("Type error to error out").autocomplete(autocomplete)
 
     async def callback(self, ctx: crescent.Context):
         await ctx.respond(f"{self.option} (type unhandled or error inside option)")

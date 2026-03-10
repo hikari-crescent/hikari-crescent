@@ -16,7 +16,7 @@ from hikari import (
     UndefinedType,
 )
 
-from crescent.commands.opt import ClassCommandOption, Marker
+from crescent.commands.options import ClassCommandOption, Marker
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
 from crescent.locale import LocaleBuilder

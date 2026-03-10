@@ -93,14 +93,16 @@ def my_function(argument: SomeType) -> None:
 
 ### Adding Options
 
-Options are added by assigning builders from `crescent.opt` to class attributes.
+Options are added by assigning builders from `crescent.options` to class attributes.
 
 ```python
+from crescent import options
+
 @client.include
 @crescent.command(name="say")
 class SayCommand:
     # The attribute name becomes the option name by default.
-    word = crescent.opt.string("The word to say")
+    word = options.string("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         # Options are accessed as attributes on the class instance.
@@ -155,11 +157,13 @@ named "option" with the description "your custom description". The second option
 keeps a different Discord name by chaining `.name("custom-name")`.
 
 ```python
+from crescent import options
+
 @client.include
 @crescent.command
 class MyCommand:
-    option = crescent.opt.string("your custom description")
-    option2 = crescent.opt.string("also your custom description").name("custom-name")
+    option = options.string("your custom description")
+    option2 = options.string("also your custom description").name("custom-name")
 
     async def callback(self, ctx: crescent.Context) -> None:
         ...
@@ -175,15 +179,15 @@ This might look a bit daunting, but we will go into detail on what each option t
 
 | Builder | Option Type |
 |---|---|
-| `crescent.opt.string(...)` | Text |
-| `crescent.opt.number(...)` | Integer |
-| `crescent.opt.boolean(...)` | Boolean |
-| `crescent.opt.floating(...)` | Number |
-| `crescent.opt.user(...)` | User |
-| `crescent.opt.role(...)` | Role |
-| `crescent.opt.mentionable(...)` | Role or User |
-| `crescent.opt.channel(...)` | Channel. Use `.channel_types([...])` to restrict allowed kinds. |
-| `crescent.opt.attachment(...)` | Attachment |
+| `options.string(...)` | Text |
+| `options.number(...)` | Integer |
+| `options.boolean(...)` | Boolean |
+| `options.floating(...)` | Number |
+| `options.user(...)` | User |
+| `options.role(...)` | Role |
+| `options.mentionable(...)` | Role or User |
+| `options.channel(...)` | Channel. Use `.channel_types([...])` to restrict allowed kinds. |
+| `options.attachment(...)` | Attachment |
 
 ### Making Parameters Optional
 
@@ -191,10 +195,12 @@ Options will be optional if a default value is provided. This example
 shows an option with the default value `None`.
 
 ```python
+from crescent import options
+
 @client.include
 @crescent.command(name="command")
 class MyCommand:
-    optional_option = crescent.opt.string("An optional value").default(None)
+    optional_option = options.string("An optional value").default(None)
 
     async def callback(self, ctx: crescent.Context) -> None:
         ...
@@ -202,20 +208,22 @@ class MyCommand:
 
 ### More Information on Types
 
-Strings, integers, floats, and booleans use dedicated builders on `crescent.opt`.
+Strings, integers, floats, and booleans use dedicated builders on `crescent.options`.
 
 !!! note
 
-    If you are comfortable reading overloads you can look at [the source code](https://github.com/hikari-crescent/hikari-crescent/blob/main/crescent/commands/opt.py).
+    If you are comfortable reading overloads you can look at [the source code](https://github.com/hikari-crescent/hikari-crescent/blob/main/crescent/commands/options.py).
 
 ```python
+from crescent import options
+
 @client.include
 @crescent.command(name="command")
 class MyCommand:
-    word = crescent.opt.string("A word")
-    integer = crescent.opt.number("An integer")
-    number = crescent.opt.floating("A number")
-    boolean = crescent.opt.boolean("A boolean")
+    word = options.string("A word")
+    integer = options.number("An integer")
+    number = options.floating("A number")
+    boolean = options.boolean("A boolean")
 
     async def callback(self, ctx: crescent.Context) -> None:
         # You can now do something with the options.
@@ -228,21 +236,22 @@ These types use a hikari object.
 
 ```python
 import hikari
+from crescent import options
 
 @client.include
 @crescent.command(name="command")
 class MyCommand:
-    user = crescent.opt.user("A user")
-    role = crescent.opt.role("A role")
-    attachment = crescent.opt.attachment("An attachment")
+    user = options.user("A user")
+    role = options.role("A role")
+    attachment = options.attachment("An attachment")
 
     # You can restrict which channel kinds Discord will allow.
-    channel = crescent.opt.channel("A text channel").channel_types(
+    channel = options.channel("A text channel").channel_types(
         [hikari.ChannelType.GUILD_TEXT]
     )
 
     # This option can only be voice channels.
-    voice_channel = crescent.opt.channel("A voice channel").channel_types(
+    voice_channel = options.channel("A voice channel").channel_types(
         [hikari.ChannelType.GUILD_VOICE]
     )
 
@@ -254,11 +263,12 @@ The final option type is mentionable, which allows a user to choose a user or ro
 
 ```python
 import hikari
+from crescent import options
 
 @client.include
 @crescent.command(name="command")
 class MyCommand:
-    mentionable = crescent.opt.mentionable("A user or role")
+    mentionable = options.mentionable("A user or role")
 
     async def callback(self, ctx: crescent.Context) -> None:
         if self.mentionable.user:
@@ -275,6 +285,8 @@ Autocomplete is a way for your command to suggest values for an option.
 The `.autocomplete(...)` method can be used for `int`, `float`, and `str` option builders.
 
 ```python
+from crescent import options
+
 async def autocomplete_response(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> Sequence[tuple[str, str]]:
@@ -283,7 +295,7 @@ async def autocomplete_response(
 @client.include
 @crescent.command
 class class_example:
-    result = crescent.opt.string("Respond to the message").autocomplete(
+    result = options.string("Respond to the message").autocomplete(
         autocomplete_response
     )
 
@@ -319,13 +331,15 @@ sync or async functions. They must accept a single argument of the type that the
 return the converted value or raise an error.
 
 ```python
+from crescent import options
+
 def to_number(value: str) -> int:
     return int(value)
 
 @client.include
 @crescent.command
 class converter_example:
-    value = crescent.opt.string("Actually a number").convert(to_number)
+    value = options.string("Actually a number").convert(to_number)
 
     async def callback(self, ctx: crescent.Context) -> None:
         reveal_type(self.value)  # int

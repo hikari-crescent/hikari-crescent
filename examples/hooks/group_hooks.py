@@ -1,6 +1,7 @@
 import hikari
 
 import crescent
+from crescent import options
 
 # Groups can also have hooks. Hooks will resolved in the order of decorators.
 # When using a `crescent.SubGroup` the group's hooks will be executed before the
@@ -43,7 +44,7 @@ sub_group = group.sub_group("my_sub_group", hooks=[second_hook], after_hooks=[se
 @crescent.hook(third_hook, after=True)
 @crescent.command(name="say")
 class Say:
-    word = crescent.opt.string("The word to say")
+    word = options.string("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)
