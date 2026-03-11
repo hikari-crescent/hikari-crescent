@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import pytest
 from hikari import AutocompleteInteractionOption, OptionType
-from pytest import mark
 
 from crescent.internal.handle_resp import _get_option_recursive
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 class TestAutocompleteResp:
     async def test_top_level_command(self):
         options = [

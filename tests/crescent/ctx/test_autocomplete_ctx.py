@@ -3,9 +3,9 @@ from __future__ import annotations
 from copy import copy
 from unittest.mock import AsyncMock, Mock
 
+import pytest
 from hikari import CommandInteractionOption, InteractionType, OptionType
 from hikari.impl import CacheImpl, RESTClientImpl
-from pytest import mark
 
 from crescent import AutocompleteContext
 from crescent.mentionable import Mentionable
@@ -66,7 +66,7 @@ guild_ctx.interaction.guild_id = 1234
 guild_ctx.interaction.options = options_with_role
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_fetch_options_not_cached():
     fetch_member_mock = AsyncMock(return_value="member")
     fetch_user_mock = AsyncMock(return_value="user")
@@ -105,7 +105,7 @@ async def test_fetch_options_not_cached():
     }
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_fetch_options_guild_not_cached():
     fetch_member_mock = AsyncMock(return_value="member")
     fetch_user_mock = AsyncMock(return_value="user")
@@ -155,7 +155,7 @@ async def test_fetch_options_guild_not_cached():
     }
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_fetch_options_cached():
     get_member_mock = Mock(return_value="member")
     get_user_mock = Mock(return_value="user")
@@ -180,7 +180,7 @@ async def test_fetch_options_cached():
     }
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_fetch_options_guild_cached():
     role_mock = Mock()
     role_mock.id = 12345

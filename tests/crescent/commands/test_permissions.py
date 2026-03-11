@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import pytest
 from hikari import PermissionOverwrite
-from pytest import raises
 
 from crescent import Context, Group, PermissionsError, command
 
@@ -9,7 +9,7 @@ from crescent import Context, Group, PermissionsError, command
 def test_no_perms_in_subcommand_group():
     group = Group("abcd")
 
-    with raises(PermissionsError):
+    with pytest.raises(PermissionsError):
 
         @group.child
         @command(default_member_permissions=PermissionOverwrite(id=0, type=0))
@@ -24,7 +24,7 @@ def test_no_perms_in_subcommand_subgroup():
     group = Group("abcd")
     sub_group = group.sub_group("abcd")
 
-    with raises(PermissionsError):
+    with pytest.raises(PermissionsError):
 
         @sub_group.child
         @command(default_member_permissions=PermissionOverwrite(id=0, type=0))

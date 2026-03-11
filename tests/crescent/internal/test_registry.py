@@ -3,9 +3,9 @@ from __future__ import annotations
 from collections import defaultdict
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
 from hikari import Message, User
 from hikari.impl import CacheImpl, RESTClientImpl
-from pytest import fixture, mark
 
 from crescent import Context, command
 from crescent import message_command as _message_command
@@ -16,7 +16,7 @@ GUILD_ID = 123456789
 
 
 class TestRegistry:
-    @fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def mock_send(self):
         self.posted_commands = defaultdict(list)
 
@@ -30,7 +30,7 @@ class TestRegistry:
 
         CacheImpl.get_guilds_view = MagicMock(return_value={0: GUILD_ID})
 
-    @mark.asyncio
+    @pytest.mark.asyncio
     async def test_post_commands(self):
         client = MockClient(default_guild=GUILD_ID)
 

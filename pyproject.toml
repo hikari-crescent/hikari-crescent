@@ -81,7 +81,7 @@ reportPrivateUsage = false
 reportIncompatibleMethodOverride = false
 
 [tool.ruff]
-lint.select = ["E", "W", "F", "RUF", "I"]
+lint.select = ["E", "W", "F", "RUF", "I", "PT"]
 line-length = 99
 
 [tool.ruff.lint.pyflakes]

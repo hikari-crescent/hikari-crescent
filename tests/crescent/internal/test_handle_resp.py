@@ -4,6 +4,7 @@ from asyncio import get_event_loop
 from typing import List, cast
 from unittest.mock import AsyncMock, Mock
 
+import pytest
 from hikari import (
     ApplicationContextType,
     AutocompleteInteraction,
@@ -18,7 +19,6 @@ from hikari import (
     OptionType,
 )
 from hikari.impl import RESTClientImpl
-from pytest import mark
 
 import crescent
 from crescent import Context, catch_autocomplete, catch_command, command, hook
@@ -113,7 +113,7 @@ def MockAutocompleteEvent(name, option_name, client):
     )
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_converter_ok() -> None:
     client = MockClient()
 
@@ -133,7 +133,7 @@ async def test_converter_ok() -> None:
     assert arg_val == 1
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_converter_error() -> None:
     client = MockClient()
 
@@ -169,7 +169,7 @@ async def test_converter_error() -> None:
     assert meta.command is test_command
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_handle_resp_slash_function():
     client = MockClient()
 
@@ -186,7 +186,7 @@ async def test_handle_resp_slash_function():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_handle_resp_slash_class():
     client = MockClient()
 
@@ -204,7 +204,7 @@ async def test_handle_resp_slash_class():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_hooks():
     client = MockClient()
     command_was_run = False
@@ -240,7 +240,7 @@ async def test_hooks():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_handle_command_error():
     client = MockClient()
     command_was_run = False
@@ -266,7 +266,7 @@ async def test_handle_command_error():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_unhandled_command_error():
     client = MockClient()
     command_was_run = False
@@ -291,7 +291,7 @@ async def test_unhandled_command_error():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_handle_autocomplete_error():
     client = MockClient()
     command_was_run = False
@@ -334,7 +334,7 @@ async def test_handle_autocomplete_error():
     assert not command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_unhandled_autocomplete_error():
     client = MockClient()
     command_was_run = False
@@ -376,7 +376,7 @@ async def test_unhandled_autocomplete_error():
     assert not command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_rest_bot_command():
     client = MockRESTClient()
 
@@ -405,7 +405,7 @@ async def test_rest_bot_command():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_rest_future_is_set():
     client = MockRESTClient()
 
