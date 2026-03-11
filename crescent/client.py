@@ -280,7 +280,7 @@ class Client:
         logger.error(
             "Unhandled exception occurred in the command %s",
             ctx.command,
-            exc_info=(exc.__class__, exc, exc.__traceback__),
+            exc_info=exc,
         )
 
     async def on_crescent_event_error(
@@ -300,7 +300,7 @@ class Client:
         logger.error(
             "Unhandled exception occurred for %s",
             type(event),
-            exc_info=(exc.__class__, exc, exc.__traceback__),
+            exc_info=exc,
         )
 
     async def on_crescent_autocomplete_error(
@@ -322,7 +322,7 @@ class Client:
             "Unhandled exception occurred in the autocomplete interaction for %s (option: %s)",
             ctx.command,
             option.name,
-            exc_info=(exc.__class__, exc, exc.__traceback__),
+            exc_info=exc,
         )
 
     def _run_future(self, callback: Coroutine[Any, Any, Any]) -> None:
