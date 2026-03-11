@@ -20,8 +20,8 @@ from hikari import (
 from hikari.impl import RESTClientImpl
 from pytest import mark
 
-from crescent import Context, catch_autocomplete, catch_command, command, hook
 import crescent
+from crescent import Context, catch_autocomplete, catch_command, command, hook
 from crescent.exceptions import ConverterExceptions
 from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockClient, MockRESTClient

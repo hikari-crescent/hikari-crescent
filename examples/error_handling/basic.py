@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hikari
+
 import crescent
 from crescent import options
 

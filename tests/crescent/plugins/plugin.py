@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 # This plugin is loaded by the `test_plugins.py` tests
-
 from hikari import MessageCreateEvent
 
 from crescent import Context, Plugin, catch_command, command, event
