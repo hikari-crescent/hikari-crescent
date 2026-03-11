@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from crescent.locale import str_or_build_locale
 from tests.utils import Locale
 

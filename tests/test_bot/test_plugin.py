@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from hikari import GatewayBot
+
 import crescent
 
 

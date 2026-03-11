@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hikari import ChannelType, OptionType
 
 from crescent import command, options

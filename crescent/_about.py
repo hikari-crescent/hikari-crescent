@@ -1,6 +1,6 @@
-from typing import Sequence
+from __future__ import annotations
 
-__all__: Sequence[str] = ("__maintainer__", "__copyright__", "__license__")
+__all__ = ("__copyright__", "__license__", "__maintainer__")
 
 __maintainer__ = "Lunarmagpie"
 __copyright__ = "© 2021-present Lunarmagpie"

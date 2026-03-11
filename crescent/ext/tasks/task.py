@@ -2,19 +2,21 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import TimerHandle, get_running_loop
-from typing import TYPE_CHECKING, Awaitable, Callable, Sequence, TypeVar
+from collections.abc import Awaitable, Callable
+from typing import TYPE_CHECKING, TypeVar
 
-from crescent.client import Client
 from crescent.exceptions import CrescentException
-from crescent.internal.includable import Includable
 from crescent.utils import create_task
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
 
+    from crescent.client import Client
+    from crescent.internal.includable import Includable
+
 TaskCallbackT = Callable[[], Awaitable[None]]
 
-__all__: Sequence[str] = ("TaskCallbackT", "Task", "TaskError")
+__all__ = ("Task", "TaskCallbackT", "TaskError")
 
 
 class TaskError(CrescentException): ...
@@ -31,7 +33,7 @@ class Task(ABC):
         if self.running:
             raise TaskError("Task is already running.")
 
-        assert self.client
+        assert self.client is not None
         self.client._run_future(self._start_inner())
 
     async def _start_inner(self) -> None:

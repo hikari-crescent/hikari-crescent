@@ -1,9 +1,11 @@
+from __future__ import annotations
+
+import random
+
 import hikari
 
 import crescent
 from crescent import options
-
-import random
 
 # The bot object can be any impl that implements `hikari.traits.RESTAware` and
 # `hikari.traits.EventManagerAware`. For most users this will be `hikari.GatewayBot`.
