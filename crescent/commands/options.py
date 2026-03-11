@@ -13,7 +13,6 @@ from hikari import (
     CommandOption,
     InteractionChannel,
     OptionType,
-    PartialChannel,
     Role,
     UndefinedOr,
     User,
@@ -70,7 +69,6 @@ MarkT = TypeVar("MarkT", bound=Marker)
 InT = TypeVar("InT")
 ConverterT = TypeVar("ConverterT")
 DefaultT = TypeVar("DefaultT")
-ChannelTypeT = TypeVar("ChannelTypeT", bound=PartialChannel)
 T = TypeVar("T")
 
 

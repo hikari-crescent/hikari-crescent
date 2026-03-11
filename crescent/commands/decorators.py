@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import Task, create_task
 from functools import partial, wraps
 from inspect import isawaitable, isclass, isfunction
-from typing import TYPE_CHECKING, Any, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Any, cast, overload
 
 from hikari import (
     UNDEFINED,
@@ -33,8 +33,6 @@ if TYPE_CHECKING:
         MessageCommandCallbackT,
         UserCommandCallbackT,
     )
-
-    T = TypeVar("T")
 
 __all__ = ("command", "message_command", "user_command")
 

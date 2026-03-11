@@ -34,8 +34,6 @@ if TYPE_CHECKING:
     from crescent.client import Client
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT
 
-    T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
-
 _log = getLogger(__name__)
 
 
