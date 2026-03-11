@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import pytest
 from hikari import MessageCreateEvent
-from pytest import LogCaptureFixture, raises
 
 from crescent.exceptions import PluginAlreadyLoadedError
 from tests.crescent.plugins.plugin import (
@@ -34,7 +34,7 @@ class TestPlugins:
     def test_load_not_plugin(self):
         client = MockClient()
 
-        with raises(ValueError):
+        with pytest.raises(ValueError, match=r"has no `plugin`"):
             client.plugins.load("tests.crescent.plugins.not_plugin")
 
         plugin = client.plugins.load("tests.crescent.plugins.not_plugin", strict=False)
@@ -92,7 +92,7 @@ class TestPlugins:
         assert orig is orig2
         assert orig is not new
 
-    def test_load_folder(self, caplog: LogCaptureFixture):
+    def test_load_folder(self, caplog: pytest.LogCaptureFixture):
         client = MockClient()
 
         plugins = client.plugins.load_folder("tests.crescent.plugins.plugin_folder")
@@ -115,7 +115,7 @@ class TestPlugins:
 
         client.plugins.load_folder("tests.crescent.plugins.plugin_folder")
 
-        with raises(PluginAlreadyLoadedError):
+        with pytest.raises(PluginAlreadyLoadedError):
             client.plugins.load_folder("tests.crescent.plugins.plugin_folder", refresh=False)
 
         client.plugins.load_folder("tests.crescent.plugins.plugin_folder", refresh=True)
@@ -123,7 +123,7 @@ class TestPlugins:
     def test_load_folder_with_not_plugins(self):
         client = MockClient()
 
-        with raises(ValueError):
+        with pytest.raises(ValueError, match=r"has no `plugin`"):
             client.plugins.load_folder("tests.crescent.plugins.plugin_folder_not_strict")
 
         # Plugins should be empty after loading fails
@@ -137,7 +137,7 @@ class TestPlugins:
 
         assert arrays_contain_same_elements([plugin], plugins)
 
-    def test_load_dir_not_exists(self, caplog: LogCaptureFixture):
+    def test_load_dir_not_exists(self, caplog: pytest.LogCaptureFixture):
         client = MockClient()
 
         client.plugins.load_folder("does.not.exist")
@@ -171,7 +171,7 @@ class TestPlugins:
 
         client.plugins.load("tests.crescent.plugins.plugin")
 
-        with raises(PluginAlreadyLoadedError):
+        with pytest.raises(PluginAlreadyLoadedError):
             client.plugins.load("tests.crescent.plugins.plugin")
 
     def test_client_loaded(self):
@@ -187,7 +187,7 @@ class TestPlugins:
         plugin = client.plugins.load("tests.crescent.plugins.plugin")
         client.plugins.unload("tests.crescent.plugins.plugin")
 
-        with raises(AttributeError):
+        with pytest.raises(AttributeError):
             plugin.app
 
     def test_model(self):

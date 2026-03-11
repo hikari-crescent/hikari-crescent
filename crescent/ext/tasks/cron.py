@@ -1,22 +1,27 @@
-from datetime import datetime
-from typing import Callable, Sequence
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from crescent.ext.tasks.task import Task, TaskCallbackT
 from crescent.internal import Includable
 
-__all__: Sequence[str] = ("cronjob", "Cronjob")
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+__all__ = ("Cronjob", "cronjob")
 
 
 class Cronjob(Task):
     def __init__(self, cron: str, callback: TaskCallbackT, *, first_loop: bool) -> None:
         try:
             from croniter import croniter
-        except ImportError:
+        except ImportError as exc:
             raise ModuleNotFoundError(
-                "`hikari-crescent[cron]` must be installed to use `cooldowns.cronjob`."
-            )
+                "`hikari-crescent[cron]` must be installed to use `cooldowns.cronjob`.",
+            ) from exc
 
-        self.cron: croniter = croniter(cron, datetime.now())
+        self.cron: croniter = croniter(cron, datetime.now(tz=timezone.utc))
         self.first_loop: bool = first_loop
 
         super().__init__(callback)
@@ -26,7 +31,7 @@ class Cronjob(Task):
             return 0
 
         call_next_at: datetime = self.cron.get_next(datetime)
-        time_to_next = call_next_at - datetime.now()
+        time_to_next = call_next_at - datetime.now(tz=timezone.utc)
         return time_to_next.total_seconds()
 
     def _call_next(self) -> None:
@@ -35,7 +40,10 @@ class Cronjob(Task):
 
 
 def cronjob(
-    cron: str, /, on_startup: bool = False
+    cron: str,
+    /,
+    *,
+    on_startup: bool = False,
 ) -> Callable[[TaskCallbackT], Includable[Cronjob]]:
     """
     Run a task at the time specified by the cron schedule expression.

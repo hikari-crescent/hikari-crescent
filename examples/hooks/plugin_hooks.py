@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import hikari
 
 import crescent
+from crescent import options
 
 # Plugins can be added to plugins or the client. Adding hooks to the client works
 # exactly the same as plugins.
@@ -30,7 +33,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, None](
 @crescent.hook(second_hook)
 @crescent.command(name="say")
 class Say:
-    word = crescent.option(str)
+    word = options.string("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)

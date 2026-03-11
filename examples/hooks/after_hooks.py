@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import hikari
 
 import crescent
+from crescent import options
 
 # Hooks can be executed after commands.
 # After hooks are NOT run when there is an exception.
@@ -17,7 +20,7 @@ async def hook(ctx: crescent.Context) -> None:
 @crescent.hook(hook, after=True)
 @crescent.command(name="say")
 class Say:
-    word = crescent.option(str)
+    word = options.string("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)

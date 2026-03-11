@@ -1,29 +1,29 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Sequence
+    from collections.abc import Callable
 
     from crescent.client import Client
 
-T = TypeVar("T", contravariant=True)
+T_contra = TypeVar("T_contra", contravariant=True)
 
-__all__: Sequence[str] = ("Includable",)
+__all__ = ("Includable",)
 
 
 @dataclass
-class Includable(Generic[T]):
-    metadata: T
+class Includable(Generic[T_contra]):
+    metadata: T_contra
 
     manager: Any | None = None
     _client: Client | None = None
 
-    client_set_hooks: list[Callable[[Includable[T]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
-    plugin_unload_hooks: list[Callable[[Includable[T]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    client_set_hooks: list[Callable[[Includable[T_contra]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    plugin_unload_hooks: list[Callable[[Includable[T_contra]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     @property
     def client(self) -> Client:

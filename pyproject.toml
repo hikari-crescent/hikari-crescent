@@ -63,7 +63,6 @@ dev = [
 [tool.uv.build-backend]
 module-name = ["crescent"]
 module-root = ""
-source-include = ["crescent/banner.txt"]
 
 [build-system]
 requires = ["uv_build>=0.9.9,<0.10.0"]
@@ -72,11 +71,6 @@ build-backend = "uv_build"
 [tool.mypy]
 python_version = "3.10"
 strict = true
-warn_unused_configs = true
-warn_return_any = true
-warn_redundant_casts = true
-namespace_packages = true
-warn_unused_ignores = false
 
 [tool.pyright]
 include = ["crescent", "examples"]
@@ -84,30 +78,13 @@ exclude = ["tests"]
 pythonVersion = "3.10"
 typeCheckingMode = "strict"
 reportPrivateUsage = false
-reportImportCycles = false
 reportIncompatibleMethodOverride = false
-reportWildcardImportFromLibrary = false
 
 [tool.ruff]
-target-version = "py310"
-lint.ignore = [
-  # Allow * imports to be used in the module level
-  "F403",
-  "F405",
-]
-lint.select = [
-  # Pyflakes
-  "E",
-  "F",
-  # Dangling Tasks
-  "RUF006",
-]
+lint.select = ["E", "W", "F", "RUF", "I", "PT"]
 line-length = 99
 
 [tool.ruff.lint.pyflakes]
 extend-generics = [
     "crescent.Plugin"
 ]
-
-[tool.pytest.ini_options]
-asyncio_mode = 'strict'

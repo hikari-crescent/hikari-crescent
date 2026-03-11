@@ -1,18 +1,9 @@
+"""Builder-based option declarations for class commands."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Awaitable,
-    Callable,
-    Generic,
-    Sequence,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast, overload
 
 from hikari import (
     UNDEFINED,
@@ -20,153 +11,249 @@ from hikari import (
     ChannelType,
     CommandChoice,
     CommandOption,
-    DMChannel,
-    GroupDMChannel,
-    GuildCategory,
-    GuildForumChannel,
-    GuildNewsChannel,
-    GuildNewsThread,
-    GuildPrivateThread,
-    GuildPublicThread,
-    GuildStageChannel,
-    GuildTextChannel,
-    GuildVoiceChannel,
     InteractionChannel,
     OptionType,
-    PartialChannel,
     Role,
-    UndefinedNoneOr,
     UndefinedOr,
     User,
 )
+from typing_extensions import Never, Self
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
-from crescent.mentionable import Mentionable
 
 if TYPE_CHECKING:
-    from crescent.typedefs import AutocompleteCallbackT, OptionTypesT
+    from collections.abc import Awaitable, Callable, Sequence
 
+    from crescent.mentionable import Mentionable
+    from crescent.typedefs import AutocompleteCallbackT
 
 __all__ = (
-    "OPTIONS_TYPE_MAP",
-    "VALID_CHANNEL_TYPES",
-    "CHANNEL_TYPE_MAP",
-    "get_channel_types",
-    "option",
+    "AttachmentMarker",
+    "BoolMarker",
+    "ChannelMarker",
     "ClassCommandOption",
+    "FloatMarker",
+    "IntMarker",
+    "Marker",
+    "MentionableMarker",
+    "RoleMarker",
+    "StrMarker",
+    "UserMarker",
+    "attachment",
+    "boolean",
+    "channel",
+    "floating",
+    "mentionable",
+    "number",
+    "role",
+    "string",
+    "user",
 )
 
-OPTIONS_TYPE_MAP: dict[type[OptionTypesT], OptionType] = {
-    str: OptionType.STRING,
-    bool: OptionType.BOOLEAN,
-    int: OptionType.INTEGER,
-    float: OptionType.FLOAT,
-    PartialChannel: OptionType.CHANNEL,
-    Role: OptionType.ROLE,
-    User: OptionType.USER,
-    Mentionable: OptionType.MENTIONABLE,
-    Attachment: OptionType.ATTACHMENT,
-}
-VALID_CHANNEL_TYPES = Union[
-    GuildTextChannel,
-    DMChannel,
-    GroupDMChannel,
-    GuildVoiceChannel,
-    GuildCategory,
-    GuildNewsChannel,
-    GuildNewsThread,
-    GuildPublicThread,
-    GuildPrivateThread,
-    GuildStageChannel,
-    GuildForumChannel,
-]
-CHANNEL_TYPE_MAP: dict[type[VALID_CHANNEL_TYPES], ChannelType] = {
-    GuildTextChannel: ChannelType.GUILD_TEXT,
-    DMChannel: ChannelType.DM,
-    GuildVoiceChannel: ChannelType.GUILD_VOICE,
-    GroupDMChannel: ChannelType.GROUP_DM,
-    GuildCategory: ChannelType.GUILD_CATEGORY,
-    GuildNewsChannel: ChannelType.GUILD_NEWS,
-    GuildNewsThread: ChannelType.GUILD_NEWS_THREAD,
-    GuildPublicThread: ChannelType.GUILD_PUBLIC_THREAD,
-    GuildPrivateThread: ChannelType.GUILD_PRIVATE_THREAD,
-    GuildStageChannel: ChannelType.GUILD_STAGE,
-    GuildForumChannel: ChannelType.GUILD_FORUM,
-}
+
+# fmt: off
+class Marker: ...
+class StrMarker(Marker): ...
+class BoolMarker(Marker): ...
+class IntMarker(Marker): ...
+class FloatMarker(Marker): ...
+class ChannelMarker(Marker): ...
+class RoleMarker(Marker): ...
+class UserMarker(Marker): ...
+class MentionableMarker(Marker): ...
+class AttachmentMarker(Marker): ...
+# fmt: on
 
 
-def build_choices(
-    choices: Sequence[tuple[str | LocaleBuilder, str | int | float]],
+MarkT = TypeVar("MarkT", bound=Marker)
+InT = TypeVar("InT")
+ConverterT = TypeVar("ConverterT")
+DefaultT = TypeVar("DefaultT")
+T = TypeVar("T")
+
+
+def _build_choices(
+    choices: Sequence[tuple[str | LocaleBuilder, str | int | float] | CommandChoice],
 ) -> list[CommandChoice]:
     result: list[CommandChoice] = []
-    for name, value in choices:
+    for choice in choices:
+        if isinstance(choice, CommandChoice):
+            result.append(choice)
+            continue
+
+        name, value = choice
         name, name_localizations = str_or_build_locale(name)
         result.append(CommandChoice(name=name, name_localizations=name_localizations, value=value))
 
     return result
 
 
-def get_channel_types(*channels: type[PartialChannel]) -> set[ChannelType]:
-    if len(channels) == 1 and channels[0] is PartialChannel:
-        return set()
+@dataclass(slots=True)
+class ClassCommandOption(Generic[MarkT, InT, ConverterT, DefaultT]):
+    """A declarative option definition used by class-based slash commands.
 
-    types: set[ChannelType] = set()
-    for k, v in CHANNEL_TYPE_MAP.items():
-        if issubclass(k, channels):  # pyright: ignore
-            types.add(v)
+    Instances of this class are usually created through the builder objects
+    exported by this module, such as [`string`][crescent.commands.options.string]
+    or [`channel`][crescent.commands.options.channel].
+    """
 
-    return types
+    _type: OptionType
+    _description: str | LocaleBuilder
+    _name: UndefinedOr[str | LocaleBuilder] = UNDEFINED
+    _default: UndefinedOr[DefaultT] = UNDEFINED
+    _choices: Sequence[CommandChoice] | None = None
+    _channel_types: Sequence[ChannelType] | None = None
+    _min_value: int | float | None = None
+    _max_value: int | float | None = None
+    _min_length: int | None = None
+    _max_length: int | None = None
+    _autocomplete: AutocompleteCallbackT[Any] | None = None
+    _converter: Callable[[InT], ConverterT | Awaitable[ConverterT]] | None = None
 
+    def name(self, name: str | LocaleBuilder) -> Self:
+        """Set the Discord-facing name for this option."""
+        return replace(self, _name=name)
 
-T = TypeVar("T")
-In = TypeVar("In")
-Out = TypeVar("Out")
-Self = TypeVar("Self")
-
-
-@dataclass
-class ClassCommandOption(Generic[In, Out]):
-    name: str | LocaleBuilder | None
-    type: OptionType
-    description: str | LocaleBuilder
-    default: UndefinedNoneOr[Any]
-    choices: Sequence[CommandChoice] | None
-    channel_types: Sequence[ChannelType] | None
-    min_value: int | float | None
-    max_value: int | float | None
-    min_length: int | None
-    max_length: int | None
-    autocomplete: AutocompleteCallbackT[Any] | None
-    converter: Callable[[In], Out | Awaitable[Out]] | None
-
-    def convert(self, converter: Callable[[In], T | Awaitable[T]]) -> ClassCommandOption[In, T]:
-        return replace(cast("ClassCommandOption[In, T]", self), converter=converter)
-
-    def _gen_option(self, name: str) -> CommandOption:
-        name, name_localizations = str_or_build_locale(self.name or name)
-        description, description_localizations = str_or_build_locale(self.description)
-
-        return CommandOption(
-            type=self.type,
-            name=name,
-            name_localizations=name_localizations,
-            description=description,
-            description_localizations=description_localizations,
-            is_required=self.default is UNDEFINED,
-            choices=self.choices,
-            channel_types=self.channel_types,
-            min_value=self.min_value,
-            max_value=self.max_value,
-            min_length=self.min_length,
-            max_length=self.max_length,
-            autocomplete=bool(self.autocomplete),
+    def default(self, default: T) -> ClassCommandOption[MarkT, InT, ConverterT, T]:
+        """Set a default value, making this option optional."""
+        return replace(
+            cast("ClassCommandOption[MarkT, InT, ConverterT, T]", self),
+            _default=default,
         )
 
-    @overload
-    def __get__(self: Self, inst: None, cls: Any) -> Self: ...
+    def convert(
+        self,
+        converter: Callable[[InT], T | Awaitable[T]],
+    ) -> ClassCommandOption[MarkT, InT, T, DefaultT]:
+        """Convert the raw option value before assigning it to the command instance."""
+        return replace(
+            cast("ClassCommandOption[MarkT, InT, T, DefaultT]", self),
+            _converter=converter,
+        )
+
+    def channel_types(
+        self: ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT],
+        types: Sequence[ChannelType],
+    ) -> ClassCommandOption[ChannelMarker, InT, ConverterT, DefaultT]:
+        """Restrict which Discord channel types may be selected for this option."""
+        return replace(self, _channel_types=types)
 
     @overload
-    def __get__(self, inst: object, cls: Any) -> Out: ...
+    def autocomplete(
+        self: ClassCommandOption[IntMarker, InT, ConverterT, DefaultT],
+        autocomplete: AutocompleteCallbackT[int],
+    ) -> ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]: ...
+    @overload
+    def autocomplete(
+        self: ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT],
+        autocomplete: AutocompleteCallbackT[float],
+    ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
+    @overload
+    def autocomplete(
+        self: ClassCommandOption[StrMarker, InT, ConverterT, DefaultT],
+        autocomplete: AutocompleteCallbackT[str],
+    ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]: ...
+
+    def autocomplete(self, autocomplete: AutocompleteCallbackT[Any]) -> Any:
+        """Attach an autocomplete callback to this option."""
+        return replace(self, _autocomplete=autocomplete)
+
+    @overload
+    def choices(
+        self: ClassCommandOption[IntMarker, InT, ConverterT, DefaultT],
+        choices: Sequence[tuple[str | LocaleBuilder, int] | CommandChoice],
+    ) -> ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]: ...
+    @overload
+    def choices(
+        self: ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT],
+        choices: Sequence[tuple[str | LocaleBuilder, float] | CommandChoice],
+    ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
+    @overload
+    def choices(
+        self: ClassCommandOption[StrMarker, InT, ConverterT, DefaultT],
+        choices: Sequence[tuple[str | LocaleBuilder, str] | CommandChoice],
+    ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]: ...
+
+    def choices(
+        self,
+        choices: Sequence[tuple[str | LocaleBuilder, int | str | float] | CommandChoice],
+    ) -> Any:
+        """Set the fixed choices users may select for this option."""
+        return replace(self, _choices=_build_choices(choices))
+
+    @overload
+    def min_value(
+        self: ClassCommandOption[IntMarker, InT, ConverterT, DefaultT],
+        value: int,
+    ) -> ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]: ...
+
+    @overload
+    def min_value(
+        self: ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT],
+        value: float,
+    ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
+
+    def min_value(self, value: float) -> Any:
+        """Set the inclusive minimum numeric value for this option."""
+        return replace(self, _min_value=value)
+
+    @overload
+    def max_value(
+        self: ClassCommandOption[IntMarker, InT, ConverterT, DefaultT],
+        value: int,
+    ) -> ClassCommandOption[IntMarker, InT, ConverterT, DefaultT]: ...
+
+    @overload
+    def max_value(
+        self: ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT],
+        value: float,
+    ) -> ClassCommandOption[FloatMarker, InT, ConverterT, DefaultT]: ...
+
+    def max_value(self, value: float) -> Any:
+        """Set the inclusive maximum numeric value for this option."""
+        return replace(self, _max_value=value)
+
+    def min_length(
+        self: ClassCommandOption[StrMarker, InT, ConverterT, DefaultT],
+        value: int,
+    ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]:
+        """Set the inclusive minimum string length for this option."""
+        return replace(self, _min_length=value)
+
+    def max_length(
+        self: ClassCommandOption[StrMarker, InT, ConverterT, DefaultT],
+        value: int,
+    ) -> ClassCommandOption[StrMarker, InT, ConverterT, DefaultT]:
+        """Set the inclusive maximum string length for this option."""
+        return replace(self, _max_length=value)
+
+    @overload
+    def __get__(self, inst: None, cls: Any) -> Self: ...
+
+    @overload
+    def __get__(
+        self: ClassCommandOption[MarkT, InT, Never, Never],
+        inst: object,
+        cls: Any,
+    ) -> InT: ...
+    @overload
+    def __get__(
+        self: ClassCommandOption[MarkT, InT, ConverterT, Never],
+        inst: object,
+        cls: Any,
+    ) -> ConverterT: ...
+    @overload
+    def __get__(
+        self: ClassCommandOption[MarkT, InT, Never, DefaultT],
+        inst: object,
+        cls: Any,
+    ) -> InT | DefaultT: ...
+    @overload
+    def __get__(
+        self: ClassCommandOption[MarkT, InT, ConverterT, DefaultT],
+        inst: object,
+        cls: Any,
+    ) -> ConverterT | DefaultT: ...
 
     def __get__(self, inst: Any | None, cls: Any) -> Any:
         if inst is None:
@@ -175,321 +262,49 @@ class ClassCommandOption(Generic[In, Out]):
         # we should never reach this point
         raise NotImplementedError
 
+    def _gen_option(self, name: str) -> CommandOption:
+        name, name_localizations = str_or_build_locale(self._name or name)
+        description, description_localizations = str_or_build_locale(self._description)
 
-DEFAULT = TypeVar("DEFAULT")
-
-# mypy doesn't understand abstract classes, so this is necessary and hence # pyright: ignore
-# (github issues 4717, 5374)
-USER = TypeVar("USER", bound="type[User]")
-ROLE = TypeVar("ROLE", bound="type[Role]")
-ATTACHMENT = TypeVar("ATTACHMENT", bound="type[Attachment]")
-
-
-@overload
-def option(
-    option_type: type[PartialChannel] | Sequence[type[PartialChannel]],
-    description: str | LocaleBuilder = ...,
-    *,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[InteractionChannel, InteractionChannel]: ...
-
-
-@overload
-def option(
-    option_type: type[PartialChannel] | Sequence[type[PartialChannel]],
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[InteractionChannel | DEFAULT, InteractionChannel | DEFAULT]: ...
+        return CommandOption(
+            type=self._type,
+            name=name,
+            name_localizations=name_localizations,
+            description=description,
+            description_localizations=description_localizations,
+            is_required=self._default is UNDEFINED,
+            choices=self._choices,
+            channel_types=self._channel_types,
+            min_value=self._min_value,
+            max_value=self._max_value,
+            min_length=self._min_length,
+            max_length=self._max_length,
+            autocomplete=self._autocomplete is not None,
+        )
 
 
-# fmt: off
-@overload
-def option(
-    option_type: USER,  # pyright: ignore
-    description: str | LocaleBuilder = ...,
-    *,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[User, User]:
-    ...
-# fmt: on
+@dataclass(slots=True, frozen=True)
+class _OptionBuilder(Generic[MarkT, InT]):
+    """Internal callable builder for a specific Discord option type."""
+
+    _type: OptionType
+
+    def __call__(
+        self,
+        description: str | LocaleBuilder,
+    ) -> ClassCommandOption[MarkT, InT, Never, Never]:
+        """Create an option declaration with the provided description."""
+        return ClassCommandOption(_description=description, _type=self._type)
 
 
-@overload
-def option(
-    option_type: USER,  # pyright: ignore
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[User | DEFAULT, User | DEFAULT]: ...
-
-
-# fmt: off
-@overload
-def option(
-    option_type: ROLE,  # pyright: ignore
-    description: str | LocaleBuilder = ...,
-    *,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Role, Role]:
-    ...
-# fmt: on
-
-
-@overload
-def option(
-    option_type: ROLE,  # pyright: ignore
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Role | DEFAULT, Role | DEFAULT]: ...
-
-
-# fmt: off
-@overload
-def option(
-    option_type: ATTACHMENT,  # pyright: ignore
-    description: str | LocaleBuilder = ...,
-    *,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Attachment, Attachment]:
-    ...
-# fmt: on
-
-
-@overload
-def option(
-    option_type: ATTACHMENT,  # pyright: ignore
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Attachment | DEFAULT, Attachment | DEFAULT]: ...
-
-
-@overload
-def option(
-    option_type: type[Mentionable],
-    description: str | LocaleBuilder = ...,
-    *,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Mentionable, Mentionable]: ...
-
-
-@overload
-def option(
-    option_type: type[Mentionable],
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[Mentionable | DEFAULT, Mentionable | DEFAULT]: ...
-
-
-# We have type ignores here because bool and float both inherit from int.
-# This makes the typechecker wrongly believe that the overloads overlap.
-
-
-@overload
-def option(  # type: ignore
-    option_type: type[bool],
-    description: str | LocaleBuilder = ...,
-    *,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[bool, bool]: ...
-
-
-@overload
-def option(  # type: ignore
-    option_type: type[bool],
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[bool | DEFAULT, bool | DEFAULT]: ...
-
-
-@overload
-def option(  # type: ignore
-    option_type: type[int],
-    description: str | LocaleBuilder = ...,
-    *,
-    choices: Sequence[tuple[str | LocaleBuilder, int]] | None = ...,
-    autocomplete: AutocompleteCallbackT[int] | None = ...,
-    min_value: int | None = ...,
-    max_value: int | None = ...,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[int, int]: ...
-
-
-@overload
-def option(  # type: ignore
-    option_type: type[int],
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    choices: Sequence[tuple[str | LocaleBuilder, int]] | None = ...,
-    autocomplete: AutocompleteCallbackT[int] | None = ...,
-    min_value: int | None = ...,
-    max_value: int | None = ...,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[int | DEFAULT, int | DEFAULT]: ...
-
-
-@overload
-def option(
-    option_type: type[float],
-    description: str | LocaleBuilder = ...,
-    *,
-    choices: Sequence[tuple[str | LocaleBuilder, float]] | None = ...,
-    autocomplete: AutocompleteCallbackT[float] | None = ...,
-    min_value: float | None = ...,
-    max_value: float | None = ...,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[float, float]: ...
-
-
-@overload
-def option(
-    option_type: type[float],
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    choices: Sequence[tuple[str | LocaleBuilder, float]] | None = ...,
-    autocomplete: AutocompleteCallbackT[float] | None = ...,
-    min_value: float | None = ...,
-    max_value: float | None = ...,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[float | DEFAULT, float | DEFAULT]: ...
-
-
-@overload
-def option(
-    option_type: type[str],
-    description: str | LocaleBuilder = ...,
-    *,
-    min_length: int | None = ...,
-    max_length: int | None = ...,
-    choices: Sequence[tuple[str | LocaleBuilder, str]] | None = ...,
-    autocomplete: AutocompleteCallbackT[str] | None = ...,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[str, str]: ...
-
-
-@overload
-def option(
-    option_type: type[str],
-    description: str | LocaleBuilder = ...,
-    *,
-    default: DEFAULT,
-    min_length: int | None = ...,
-    max_length: int | None = ...,
-    choices: Sequence[tuple[str | LocaleBuilder, str]] | None = ...,
-    autocomplete: AutocompleteCallbackT[str] | None = ...,
-    name: str | LocaleBuilder | None = ...,
-) -> ClassCommandOption[str | DEFAULT, int | DEFAULT]: ...
-
-
-def option(
-    option_type: type[OptionTypesT] | Sequence[type[PartialChannel]],
-    description: str | LocaleBuilder = "No Description",
-    *,
-    name: str | LocaleBuilder | None = None,
-    default: UndefinedOr[Any] = UNDEFINED,
-    choices: Sequence[tuple[str | LocaleBuilder, str | int | float]] | None = None,
-    min_value: int | float | None = None,
-    max_value: int | float | None = None,
-    min_length: int | None = None,
-    max_length: int | None = None,
-    autocomplete: AutocompleteCallbackT[Any] | None = None,
-) -> ClassCommandOption[Any, Any]:
-    """
-    An option when declaring a command using class syntax.
-
-    ### Example
-    ```python
-    @client.include
-    @crescent.command(name="say")
-    class Say:
-        word = crescent.option(str)
-
-        async def callback(self, ctx: crescent.Context):
-            await ctx.respond(self.word)
-    ```
-
-    Args:
-        description:
-            The description for this option. Defaults to "No Description".
-        name:
-            The name to use for this option. By default, the name of the
-            property on the option the option is set to will be used for the
-            name. In the above example the name would be `word`.
-        default:
-            The default value for this option. Specifying this will make this
-            option optional.
-        choices:
-            A set of choices a user can pick from for this option. Only available
-            for `int`, `str`, and `float` option types.
-        min_value:
-            The minimum value for a number the user inputs. Only available for
-            `int` and `float` option types.
-        man_value:
-            The maximum value for a number the user inputs. Only available for
-            `int` and `float` option types.
-        min_length:
-            The minimum length for a `str` that the user inputs.
-        max_length:
-            The maximum length for a `str` that the user inputs.
-        autocomplete:
-            An autocomplete callback for this option.
-
-            ### Example
-            ```python
-            async def autocomplete_response(
-                ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
-            ) -> list[tuple[str, str]]:
-                # Return a list of tuples of (option name, option value)
-                return [("Some Option", "1234")]
-
-            @client.include
-            @crescent.command
-            class autocomplete:
-                result = crescent.option(str, "Respond to the message", autocomplete=autocomplete_response)
-
-                async def callback(self, ctx: crescent.Context) -> None:
-                    await ctx.respond(self.result, ephemeral=True)
-            ```
-    """  # noqa: E501
-    _option_type: type[OptionTypesT]
-    if (
-        isinstance(option_type, type)
-        and issubclass(option_type, PartialChannel)
-        and option_type is not PartialChannel
-    ):
-        option_type = cast("type[VALID_CHANNEL_TYPES]", option_type)
-        channel_types = get_channel_types(option_type)
-        _option_type = PartialChannel
-    elif isinstance(option_type, Sequence):
-        channel_types = get_channel_types(*option_type)
-        _option_type = PartialChannel
-    else:
-        _option_type = option_type
-        channel_types = None
-
-    return ClassCommandOption(
-        type=OPTIONS_TYPE_MAP[_option_type],
-        description=description,
-        default=default,
-        choices=build_choices(choices) if choices else None,
-        channel_types=list(channel_types) if channel_types else None,
-        min_value=min_value,
-        max_value=max_value,
-        min_length=min_length,
-        max_length=max_length,
-        name=name,
-        autocomplete=autocomplete,
-        converter=None,
-    )
+string: _OptionBuilder[StrMarker, str] = _OptionBuilder(OptionType.STRING)
+boolean: _OptionBuilder[BoolMarker, bool] = _OptionBuilder(OptionType.BOOLEAN)
+number: _OptionBuilder[IntMarker, int] = _OptionBuilder(OptionType.INTEGER)
+floating: _OptionBuilder[FloatMarker, float] = _OptionBuilder(OptionType.FLOAT)
+channel: _OptionBuilder[ChannelMarker, InteractionChannel] = _OptionBuilder(OptionType.CHANNEL)
+role: _OptionBuilder[RoleMarker, Role] = _OptionBuilder(OptionType.ROLE)
+user: _OptionBuilder[UserMarker, User] = _OptionBuilder(OptionType.USER)
+mentionable: _OptionBuilder[MentionableMarker, Mentionable] = _OptionBuilder(
+    OptionType.MENTIONABLE,
+)
+attachment: _OptionBuilder[AttachmentMarker, Attachment] = _OptionBuilder(OptionType.ATTACHMENT)

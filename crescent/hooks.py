@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
 
 from hikari import Event
 
@@ -9,13 +9,15 @@ from crescent.events import EventMeta
 from crescent.internal.app_command import AppCommandMeta
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from crescent.internal.includable import Includable
     from crescent.typedefs import CommandHookCallbackT, EventHookCallbackT
 
 IncludableT = TypeVar("IncludableT")
-EventT = TypeVar("EventT", bound=Event, contravariant=True)
+EventT_contra = TypeVar("EventT_contra", bound=Event, contravariant=True)
 
-__all__: Sequence[str] = ("HookResult", "hook")
+__all__ = ("HookResult", "hook")
 
 
 @dataclass
@@ -37,12 +39,14 @@ def hook(*callbacks: CommandHookCallbackT, after: bool = False) -> _Hook[AppComm
 
 @overload
 def hook(
-    *callbacks: EventHookCallbackT[EventT], after: bool = False
-) -> _Hook[EventMeta[EventT]]: ...
+    *callbacks: EventHookCallbackT[EventT_contra],
+    after: bool = False,
+) -> _Hook[EventMeta[EventT_contra]]: ...
 
 
 def hook(
-    *callbacks: CommandHookCallbackT | EventHookCallbackT[EventT], after: bool = False
+    *callbacks: CommandHookCallbackT | EventHookCallbackT[EventT_contra],
+    after: bool = False,
 ) -> _Hook[Any]:
     # TODO: Example for events
     """
@@ -63,23 +67,25 @@ def hook(
     Args:
         after: If true, run this hook after the command or event has completed.
     """
-    return _Hook(callbacks, after)
+    return _Hook(callbacks, after=after)
 
 
 class _Hook(Generic[IncludableT]):
-    def __init__(self, callbacks: Any, after: bool):
+    def __init__(self, callbacks: Any, *, after: bool) -> None:
         self.callbacks = callbacks
         self.after = after
 
     @overload
     def __call__(
-        self: _Hook[AppCommandMeta], obj: Includable[AppCommandMeta]
+        self: _Hook[AppCommandMeta],
+        obj: Includable[AppCommandMeta],
     ) -> Includable[AppCommandMeta]: ...
 
     @overload
     def __call__(
-        self: _Hook[EventMeta[EventT]], obj: Includable[EventMeta[EventT]]
-    ) -> Includable[EventMeta[EventT]]: ...
+        self: _Hook[EventMeta[EventT_contra]],
+        obj: Includable[EventMeta[EventT_contra]],
+    ) -> Includable[EventMeta[EventT_contra]]: ...
 
     def __call__(self, obj: Includable[Any]) -> Includable[Any]:
         if isinstance(obj.metadata, AppCommandMeta):

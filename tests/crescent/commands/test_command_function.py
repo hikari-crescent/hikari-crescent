@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from types import FunctionType
 
 from hikari import UNDEFINED, CommandType, Message, User

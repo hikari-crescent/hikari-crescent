@@ -1,6 +1,6 @@
-from unittest.mock import Mock
+from __future__ import annotations
 
-from crescent.internal.app_command import AppCommand
+from unittest.mock import Mock
 
 from hikari import (
     ApplicationIntegrationType,
@@ -9,6 +9,7 @@ from hikari import (
     SlashCommand,
 )
 
+from crescent.internal.app_command import AppCommand
 
 DEFAULT_CONTEXT = ()
 DEFAULT_INT = (ApplicationIntegrationType.GUILD_INSTALL,)

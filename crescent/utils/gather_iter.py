@@ -1,7 +1,12 @@
-from asyncio import gather
-from typing import Awaitable, Iterable, Sequence, TypeVar
+from __future__ import annotations
 
-__all__: Sequence[str] = ("gather_iter",)
+from asyncio import gather
+from typing import TYPE_CHECKING, TypeVar
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable, Iterable
+
+__all__ = ("gather_iter",)
 
 
 T = TypeVar("T")

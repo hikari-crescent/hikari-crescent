@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from crescent.context import InteractionContext
 
 

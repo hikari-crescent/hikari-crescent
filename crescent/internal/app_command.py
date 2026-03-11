@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Iterable, TypeVar
+from typing import TYPE_CHECKING, Any
 
 from hikari import (
     UNDEFINED,
@@ -12,21 +12,22 @@ from hikari import (
     SlashCommand,
     Snowflakeish,
 )
-from hikari.api import EntityFactory
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.utils import add_hooks
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, Type
+    from collections.abc import Iterable, Sequence
 
     from hikari import CommandType, Snowflake, UndefinedOr, UndefinedType
+    from hikari.api import EntityFactory
 
     from crescent.commands.groups import Group, SubGroup
     from crescent.internal.includable import Includable
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT, CommandHookCallbackT
 
-    Self = TypeVar("Self")
+
+__all__ = ("AppCommand", "AppCommandMeta")
 
 
 @dataclass(frozen=True)
@@ -38,7 +39,7 @@ class Unique:
     sub_group: str | None
 
     @classmethod
-    def from_meta_struct(cls: Type[Unique], command: Includable[AppCommandMeta]) -> Unique:
+    def from_meta_struct(cls, command: Includable[AppCommandMeta]) -> Unique:
         return cls(
             name=str_or_build_locale(command.metadata.app_command.name)[0],
             type=command.metadata.app_command.type,
@@ -52,7 +53,7 @@ class Unique:
         )
 
     @classmethod
-    def from_app_command_meta(cls: Type[Unique], command: AppCommandMeta) -> Unique:
+    def from_app_command_meta(cls, command: AppCommandMeta) -> Unique:
         return cls(
             name=str_or_build_locale(command.app_command.name)[0],
             type=command.app_command.type,
@@ -62,9 +63,6 @@ class Unique:
             if command.sub_group
             else None,
         )
-
-
-__all__: Sequence[str] = ("AppCommandMeta", "AppCommand")
 
 
 @dataclass
@@ -97,7 +95,7 @@ class AppCommand:
                     description != other.description,
                     (self.options or None) != (other.options or None),
                     description_localizations != other.description_localizations,
-                )
+                ),
             ):
                 return False
 
@@ -111,8 +109,8 @@ class AppCommand:
                 name == other.name,
                 name_localizations == other.name_localizations,
                 context_types == set(other.context_types),
-                self.build_default_member_perms() or 0 == other.default_member_permissions,
-            )
+                other.default_member_permissions == self.build_default_member_perms() or 0,
+            ),
         )
 
     def build_default_member_perms(self) -> Permissions | None:
@@ -161,7 +159,11 @@ class AppCommandMeta:
     after_hooks: list[CommandHookCallbackT] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     def add_hooks(
-        self, hooks: Sequence[CommandHookCallbackT], prepend: bool = False, *, after: bool
+        self,
+        hooks: Sequence[CommandHookCallbackT],
+        *,
+        prepend: bool = False,
+        after: bool,
     ) -> None:
         add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)
 

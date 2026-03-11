@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
-
-import hikari
-from hikari import Locale, Member, PartialInteraction, Snowflake, User
+from typing import TYPE_CHECKING, Any, TypeVar
 
 if TYPE_CHECKING:
+    import builtins
     from asyncio import Future
-    from typing import Any, Sequence, Type, TypeVar
+    from collections.abc import Sequence
 
+    import hikari
+    from hikari import Locale, Member, PartialInteraction, Snowflake, User
     from hikari.api import InteractionResponseBuilder
 
     from crescent.client import Client, GatewayTraits, RESTTraits
@@ -17,38 +17,12 @@ if TYPE_CHECKING:
     ContextT = TypeVar("ContextT", bound="InteractionContext")
 
 
-__all__: Sequence[str] = ("InteractionContext",)
+__all__ = ("InteractionContext",)
 
 
-@dataclass
+@dataclass(slots=True)
 class InteractionContext:
     """Represents the context for interactions"""
-
-    __slots__ = (
-        "interaction",
-        "app",
-        "client",
-        "application_id",
-        "type",
-        "token",
-        "id",
-        "version",
-        "channel_id",
-        "guild_id",
-        "registered_guild_id",
-        "user",
-        "member",
-        "entitlements",
-        "locale",
-        "command",
-        "command_type",
-        "group",
-        "sub_group",
-        "options",
-        "_has_created_response",
-        "_has_deferred_response",
-        "_rest_interaction_future",
-    )
 
     interaction: PartialInteraction
     """The interaction object."""
@@ -117,11 +91,10 @@ class InteractionContext:
             return self._rest_interaction_future
         return None
 
-    def into(self, context_t: Type[ContextT]) -> ContextT:
+    def into(self, context_t: builtins.type[ContextT]) -> ContextT:
         """Convert to a context of a different type."""
         if type(self) is context_t:
-            # pyright can't tell this is of type `context_t`
-            return self  # pyright: ignore
+            return self
 
         return context_t(
             interaction=self.interaction,

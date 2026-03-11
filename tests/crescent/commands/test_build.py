@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hikari import CommandType, Permissions
 from hikari.impl.entity_factory import EntityFactoryImpl
 
