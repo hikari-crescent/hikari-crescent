@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from crescent.typedefs import CommandHookCallbackT, EventHookCallbackT
 
 IncludableT = TypeVar("IncludableT")
-EventT = TypeVar("EventT", bound=Event, contravariant=True)
+EventT_contra = TypeVar("EventT_contra", bound=Event, contravariant=True)
 
 __all__ = ("HookResult", "hook")
 
@@ -39,13 +39,13 @@ def hook(*callbacks: CommandHookCallbackT, after: bool = False) -> _Hook[AppComm
 
 @overload
 def hook(
-    *callbacks: EventHookCallbackT[EventT],
+    *callbacks: EventHookCallbackT[EventT_contra],
     after: bool = False,
-) -> _Hook[EventMeta[EventT]]: ...
+) -> _Hook[EventMeta[EventT_contra]]: ...
 
 
 def hook(
-    *callbacks: CommandHookCallbackT | EventHookCallbackT[EventT],
+    *callbacks: CommandHookCallbackT | EventHookCallbackT[EventT_contra],
     after: bool = False,
 ) -> _Hook[Any]:
     # TODO: Example for events
@@ -83,9 +83,9 @@ class _Hook(Generic[IncludableT]):
 
     @overload
     def __call__(
-        self: _Hook[EventMeta[EventT]],
-        obj: Includable[EventMeta[EventT]],
-    ) -> Includable[EventMeta[EventT]]: ...
+        self: _Hook[EventMeta[EventT_contra]],
+        obj: Includable[EventMeta[EventT_contra]],
+    ) -> Includable[EventMeta[EventT_contra]]: ...
 
     def __call__(self, obj: Includable[Any]) -> Includable[Any]:
         if isinstance(obj.metadata, AppCommandMeta):

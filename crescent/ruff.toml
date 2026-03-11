@@ -2,7 +2,7 @@ extend = "../pyproject.toml"
 
 [lint]
 select = [
-    # --- Correctness & Bug Prevention ---
+    # Correctness
     "F",    # Pyflakes
     "E",    # pycodestyle (errors)
     "W",    # pycodestyle (warnings)
@@ -13,10 +13,13 @@ select = [
     "RSE",  # flake8-raise
     "RET",  # flake8-return
 
-    # --- Security ---
+    # Specific pylint rules
+    "PLC0105", # type-name-incorrect-variance
+
+    # Security
     #"S",    # flake8-bandit
 
-    # --- Style & Formatting ---
+    # Style & formatting
     "N",    # pep8-naming
     "Q",    # flake8-quotes
     "COM",  # flake8-commas
@@ -24,7 +27,7 @@ select = [
     #"D",    # pydocstyle
     #"DOC",  # pydoclint
 
-    # --- Simplification & Modernization ---
+    # Simplification & modernization
     "UP",   # pyupgrade
     "SIM",  # flake8-simplify
     "FURB", # refurb
@@ -33,17 +36,17 @@ select = [
     "FLY",  # flynt
     "ERA",  # eradicate
 
-    # --- Performance & Complexity ---
+    # Performance & complexity
     "PERF", # Perflint
     #"C90",  # mccabe
 
-    # --- Type Annotations & Checking ---
+    # Type annotations & checking
     "ANN",  # flake8-annotations
     "TC",   # flake8-type-checking
     "FA",   # flake8-future-annotations
     "PYI",  # flake8-pyi
 
-    # --- Best Practices & Clean Code ---
+    # Best practices & clean code
     "A",    # flake8-builtins
     "ARG",  # flake8-unused-arguments
     "FBT",  # flake8-boolean-trap
@@ -57,14 +60,14 @@ select = [
     "INP",  # flake8-no-pep420
     "SLOT", # flake8-slots
 
-    # --- Logging ---
+    # Logging
     "LOG",  # flake8-logging
     "G",    # flake8-logging-format
 
     # --- Async ---
     "ASYNC", # flake8-async
 
-    # --- Development Hygiene ---
+    # Development hygiene
     "T10",  # flake8-debugger
     "T20",  # flake8-print
     #"FIX",  # flake8-fixme
@@ -73,7 +76,7 @@ select = [
     "DTZ",  # flake8-datetimez
     #"CPY",  # flake8-copyright
 
-    # --- Framework-Specific ---
+    # Framework-specific
     #"AIR",  # Airflow
     #"FAST", # FastAPI
     #"DJ",   # flake8-django
@@ -81,7 +84,7 @@ select = [
     #"NPY",  # NumPy-specific rules
     #"PD",   # pandas-vet
 
-    # --- Miscellaneous ---
+    # Miscellaneous
     "YTT",  # flake8-2020
     "INT",  # flake8-gettext
     "RUF",  # Ruff-specific rules

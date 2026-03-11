@@ -65,11 +65,11 @@ class ClassCommandProto(Protocol):
     async def callback(self, ctx: Any) -> Any: ...
 
 
-ErrorT = TypeVar("ErrorT", bound=Exception, contravariant=True)
+ErrorT_contra = TypeVar("ErrorT_contra", bound=Exception, contravariant=True)
 
-CommandErrorHandlerCallbackT = Callable[[ErrorT, Any], Awaitable[None]]
-EventErrorHandlerCallbackT = Callable[[ErrorT, Event], Awaitable[None]]
+CommandErrorHandlerCallbackT = Callable[[ErrorT_contra, Any], Awaitable[None]]
+EventErrorHandlerCallbackT = Callable[[ErrorT_contra, Event], Awaitable[None]]
 AutocompleteErrorHandlerCallbackT = Callable[
-    [ErrorT, Any, AutocompleteInteractionOption],
+    [ErrorT_contra, Any, AutocompleteInteractionOption],
     Awaitable[None],
 ]
