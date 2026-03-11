@@ -17,6 +17,9 @@ if TYPE_CHECKING:
     ContextT = TypeVar("ContextT", bound="InteractionContext")
 
 
+__all__ = ("InteractionContext",)
+
+
 @dataclass(slots=True)
 class InteractionContext:
     """Represents the context for interactions"""
