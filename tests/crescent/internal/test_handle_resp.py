@@ -72,6 +72,7 @@ def MockEvent(name, client, arg: "str | None" = None):
             options=options,
             app_permissions=None,
             entitlements=None,
+            attachment_size_limit=10 * 1024 * 1024,
         ),
     )
 
@@ -100,6 +101,7 @@ def MockAutocompleteEvent(name, option_name, client):
             command_type=CommandType.SLASH,
             registered_guild_id=None,
             entitlements=None,
+            attachment_size_limit=10 * 1024 * 1024,
             options=[
                 AutocompleteInteractionOption(
                     name=option_name,
