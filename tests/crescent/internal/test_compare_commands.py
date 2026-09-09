@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from unittest.mock import Mock
 
+import pytest
 from hikari import (
+    UNDEFINED,
     ApplicationIntegrationType,
     PartialCommand,
     Permissions,
@@ -15,12 +17,29 @@ DEFAULT_CONTEXT = ()
 DEFAULT_INT = (ApplicationIntegrationType.GUILD_INSTALL,)
 
 
-def test_compare_commands():
+@pytest.mark.parametrize(
+    ("local_permissions", "remote_permissions", "expected"),
+    [
+        pytest.param(UNDEFINED, Permissions.NONE, True, id="unset-matches-default"),
+        pytest.param(UNDEFINED, Permissions.BAN_MEMBERS, False, id="unset-mismatches-required"),
+        pytest.param(0, Permissions.NONE, True, id="explicit-zero"),
+        pytest.param(Permissions.NONE, Permissions.NONE, True, id="explicit-none"),
+        pytest.param(Permissions.BAN_MEMBERS, Permissions.BAN_MEMBERS, True, id="matching"),
+        pytest.param(int(Permissions.BAN_MEMBERS), Permissions.BAN_MEMBERS, True, id="integer"),
+        pytest.param(
+            Permissions.BAN_MEMBERS, Permissions.NONE, False, id="required-mismatches-default"
+        ),
+        pytest.param(Permissions.BAN_MEMBERS, Permissions.KICK_MEMBERS, False, id="different"),
+    ],
+)
+def test_compare_commands_default_member_permissions(
+    local_permissions, remote_permissions, expected
+):
     assert AppCommand(
         type=1,
         name="hello",
         guild_id=None,
-        default_member_permissions=0,
+        default_member_permissions=local_permissions,
         nsfw=False,
     ).eq_partial_command(
         PartialCommand(
@@ -29,7 +48,7 @@ def test_compare_commands():
             type=1,
             application_id=None,
             name="hello",
-            default_member_permissions=Permissions(0),
+            default_member_permissions=remote_permissions,
             is_nsfw=False,
             guild_id=None,
             version=None,
@@ -37,7 +56,7 @@ def test_compare_commands():
             context_types=DEFAULT_CONTEXT,
             integration_types=DEFAULT_INT,
         )
-    )
+    ) is expected
 
 
 def test_compare_commands_no_options():
