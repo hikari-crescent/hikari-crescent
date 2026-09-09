@@ -178,7 +178,7 @@ def command(
     if isclass(callback):
         # If callback is a class it must be `type[ClassCommandProto]` because of the function
         # signature.
-        callback = cast("type[ClassCommandProto]", callback)
+        callback = cast("type[ClassCommandProto]", callback)  # pyright: ignore[reportUnnecessaryCast]
 
         name_to_field: dict[str, str] = {}
         defaults: dict[str, Any] = {}
