@@ -1,57 +1,36 @@
 from __future__ import annotations
 
-from crescent.context import InteractionContext
+from unittest.mock import Mock
+
+import pytest
+from hikari import AutocompleteInteraction, CommandInteraction, CommandType, Locale
+
+from crescent.context import AutocompleteContext, Context
+from crescent.internal.handle_resp import _context_from_interaction_resp
 
 
-def test_into():
-    ctx = InteractionContext(
-        interaction=1,
-        client=2,
-        app=3,
-        application_id=4,
-        type=5,
-        token=6,
-        id=7,
-        version=8,
-        channel_id=9,
-        guild_id=10,
-        user=11,
-        member=12,
-        locale=13,
-        command=14,
-        command_type=15,
-        group=16,
-        sub_group=17,
-        options=18,
-        registered_guild_id=19,
-        entitlements=20,
-        _has_created_response=21,
-        _has_deferred_response=22,
-        _rest_interaction_future=23,
+@pytest.mark.parametrize(
+    ("interaction_type", "context_type"),
+    [(CommandInteraction, Context), (AutocompleteInteraction, AutocompleteContext)],
+)
+def test_context_from_interaction(interaction_type, context_type):
+    interaction = Mock(
+        spec=interaction_type,
+        command_name="test",
+        command_type=CommandType.SLASH,
+        locale=Locale.EN_US,
+        options=[],
     )
+    client = Mock()
 
-    ctx2 = ctx.into(InteractionContext)
+    ctx = _context_from_interaction_resp(client, interaction)
 
-    assert ctx.interaction == ctx2.interaction
-    assert ctx.app == ctx2.app
-    assert ctx.app == ctx2.app
-    assert ctx.application_id == ctx2.application_id
-    assert ctx.type == ctx2.type
-    assert ctx.token == ctx2.token
-    assert ctx.id == ctx2.id
-    assert ctx.version == ctx2.version
-    assert ctx.channel_id == ctx2.channel_id
-    assert ctx.guild_id == ctx2.guild_id
-    assert ctx.user == ctx2.user
-    assert ctx.member == ctx2.member
-    assert ctx.locale == ctx2.locale
-    assert ctx.command == ctx2.command
-    assert ctx.command_type == ctx2.command_type
-    assert ctx.group == ctx2.group
-    assert ctx.sub_group == ctx2.sub_group
-    assert ctx.options == ctx2.options
-    assert ctx.registered_guild_id == ctx2.registered_guild_id
-    assert ctx.entitlements == ctx2.entitlements
-    assert ctx._has_created_response == ctx2._has_created_response
-    assert ctx._has_deferred_response == ctx2._has_deferred_response
-    assert ctx._rest_interaction_future == ctx2._rest_interaction_future
+    assert type(ctx) is context_type
+    assert ctx.interaction is interaction
+    assert ctx.client is client
+    assert ctx.app is client.app
+    assert ctx.command == "test"
+    assert ctx.options == {}
+    assert not ctx._has_created_response
+    assert not ctx._has_deferred_response
+    assert ctx._rest_interaction_future is None

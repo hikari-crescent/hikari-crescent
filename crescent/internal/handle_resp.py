@@ -9,7 +9,6 @@ from hikari import (
     AutocompleteInteractionOption,
     CommandInteraction,
     CommandType,
-    InteractionType,
     Locale,
     OptionType,
     Snowflake,
@@ -68,10 +67,10 @@ async def handle_resp(
     ctx = _context_from_interaction_resp(client, interaction)
     ctx._rest_interaction_future = future
 
-    if interaction.type is InteractionType.AUTOCOMPLETE:
-        await _handle_autocomplete_resp(command, ctx.into(AutocompleteContext))
+    if isinstance(ctx, AutocompleteContext):
+        await _handle_autocomplete_resp(command, ctx)
     else:
-        await _handle_slash_resp(command, ctx.into(Context))
+        await _handle_slash_resp(command, ctx)
 
 
 async def _handle_hooks(hooks: Sequence[CommandHookCallbackT], ctx: Context) -> bool:
@@ -95,7 +94,7 @@ async def _handle_slash_resp(command: Includable[AppCommandMeta], ctx: Context) 
         _ = await _handle_hooks(command.metadata.after_hooks, ctx)
     except Exception as exc:
         handled = await command.client._command_error_handler.try_handle(exc, [exc, ctx])
-        await command.client.on_crescent_command_error(exc, ctx.into(Context), handled)
+        await command.client.on_crescent_command_error(exc, ctx, handled)
 
 
 async def _handle_autocomplete_resp(
@@ -124,7 +123,7 @@ async def _handle_autocomplete_resp(
         )
         await command.client.on_crescent_autocomplete_error(
             exc,
-            ctx.into(AutocompleteContext),
+            ctx,
             option,
             handled,
         )
@@ -214,7 +213,7 @@ def _get_crescent_command_data(
 def _context_from_interaction_resp(
     client: Client,
     interaction: CommandInteraction | AutocompleteInteraction,
-) -> Context:
+) -> Context | AutocompleteContext:
     command_name, group, sub_group, options = _get_crescent_command_data(interaction)
 
     if interaction.command_type is CommandType.SLASH:
@@ -225,7 +224,8 @@ def _context_from_interaction_resp(
         assert isinstance(interaction, CommandInteraction)
         callback_options = _resolved_data_to_kwargs(interaction)
 
-    return Context(
+    ctx_t = Context if isinstance(interaction, CommandInteraction) else AutocompleteContext
+    return ctx_t(
         interaction=interaction,
         app=client.app,
         client=client,

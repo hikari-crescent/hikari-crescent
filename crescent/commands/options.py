@@ -17,12 +17,13 @@ from hikari import (
     UndefinedOr,
     User,
 )
-from typing_extensions import Never, Self
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Sequence
+
+    from typing_extensions import Never, Self
 
     from crescent.mentionable import Mentionable
     from crescent.typedefs import AutocompleteCallbackT
