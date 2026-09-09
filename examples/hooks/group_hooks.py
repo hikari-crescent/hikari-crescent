@@ -46,7 +46,7 @@ sub_group = group.sub_group("my_sub_group", hooks=[second_hook], after_hooks=[se
 @crescent.hook(third_hook, after=True)
 @crescent.command(name="say")
 class Say:
-    word = options.string("The word to say")
+    word = options.String("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)

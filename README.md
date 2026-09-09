@@ -48,7 +48,7 @@ in over 17k servers.
 ## Usage
 Crescent uses [class commands](https://github.com/hikari-crescent/hikari-crescent/blob/main/examples/basic/basic.py)
 to simplify creating commands. Class commands allow you to create a command similar to how you declare a
-dataclass. Options are declared with builder objects from `crescent.options`.
+dataclass. Options are declared with option classes from `crescent.options`.
 
 ```python
 import crescent
@@ -63,7 +63,7 @@ client = crescent.Client(bot)
 # Create a slash command
 @crescent.command(name="say")
 class Say:
-    word = options.string("The word to say")
+    word = options.String("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)
@@ -81,18 +81,18 @@ async def ping(ctx: crescent.Context):
     await ctx.respond("Pong!")
 ```
 
-### Option Builders Lookup Table
-| Builder | Option Type |
+### Option Classes Lookup Table
+| Option Class | Option Type |
 |---|---|
-| `options.string(...)` | Text |
-| `options.number(...)` | Integer |
-| `options.boolean(...)` | Boolean |
-| `options.floating(...)` | Number |
-| `options.user(...)` | User |
-| `options.role(...)` | Role |
-| `options.mentionable(...)` | Role or User |
-| `options.channel(...)` | Channel. Use `.channel_types([...])` to restrict channel kinds. |
-| `options.attachment(...)` | Attachment |
+| `options.String(...)` | Text |
+| `options.Integer(...)` | Integer |
+| `options.Boolean(...)` | Boolean |
+| `options.Float(...)` | Number |
+| `options.User(...)` | User |
+| `options.Role(...)` | Role |
+| `options.Mentionable(...)` | Role or User |
+| `options.Channel(...)` | Channel. Use `channel_types=[...]` to restrict channel kinds. |
+| `options.Attachment(...)` | Attachment |
 
 
 ### Autocomplete
@@ -111,7 +111,7 @@ async def autocomplete(
 @client.include
 @crescent.command(name="class-command")
 class ClassCommand:
-    option = options.string("Choose a value").autocomplete(autocomplete)
+    option = options.String("Choose a value", autocomplete=autocomplete)
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.option)

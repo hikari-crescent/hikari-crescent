@@ -16,7 +16,7 @@ from hikari import (
     UndefinedType,
 )
 
-from crescent.commands.options import ClassCommandOption, Marker
+from crescent.commands.options import ClassCommandOption, _ChoiceOption
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
 
@@ -40,50 +40,49 @@ __all__ = ("command", "message_command", "user_command")
 def _class_command_callback(
     cls: type[ClassCommandProto],
     defaults: dict[str, Any],
-    name_map: dict[str, str],
+    name_to_field: dict[str, str],
     converters: dict[str, Callable[[Any], Any]],
 ) -> CommandCallbackT:
     @wraps(cls.callback)
     async def callback(*args: Any, **kwargs: Any) -> Any:
-        values = defaults.copy()
-        values.update(kwargs)
-
         cmd = cls()
 
-        async def set_later(key: str, value: object | Awaitable[object]) -> None:
-            if isawaitable(value):
-                value = await value
-            setattr(cmd, key, value)
+        for name, value in defaults.items():
+            if name in kwargs:
+                continue
+
+            setattr(cmd, name_to_field.get(name, name), value)
+
+        async def set_later(field: str, value: Awaitable[object]) -> None:
+            setattr(cmd, field, await value)
 
         errors: list[ConverterExceptionMeta] = []
-        tasks: list[tuple[Task[None], str, Any]] = []
-        # [(Task, option key, raw value)]
+        tasks: list[tuple[Task[None], str, object]] = []
+        # [(task, field, raw value)]
 
-        for key, raw_val in values.items():
-            # val: The converted (if a converter existed) value
-            # raw_val: The original value passed by Discord
-            # key: The key of the option on the class
-            # name: The name of the option used by Discord
+        for name, raw_val in kwargs.items():
+            field = name_to_field.get(name, name)
 
-            key = name_map.get(key, key)
-
-            if conv := converters.get(key):
+            if (converter := converters.get(name)) is not None:
                 try:
-                    val = conv(raw_val)
+                    val = converter(raw_val)
                 except Exception as e:
-                    errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
+                    errors.append(ConverterExceptionMeta(cls, field, raw_val, e))
                     continue
             else:
                 val = raw_val
 
-            tasks.append((create_task(set_later(key, val)), key, raw_val))
+            if isawaitable(val):
+                tasks.append((create_task(set_later(field, val)), field, raw_val))
+            else:
+                setattr(cmd, field, val)
 
         # TODO: can we gather these tasks?
-        for t, key, raw_val in tasks:
+        for task, field, raw_val in tasks:
             try:
-                await t
+                await task
             except Exception as e:
-                errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
+                errors.append(ConverterExceptionMeta(cls, field, raw_val, e))
 
         if errors:
             raise ConverterExceptions(errors)
@@ -181,32 +180,28 @@ def command(
         # signature.
         callback = cast("type[ClassCommandProto]", callback)
 
-        name_map: dict[str, str] = {}
+        name_to_field: dict[str, str] = {}
         defaults: dict[str, Any] = {}
         converters: dict[str, Callable[[Any], Any]] = {}
 
-        for n, v in callback.__dict__.items():
-            if not isinstance(v, ClassCommandOption):
+        for field, value in callback.__dict__.items():
+            if not isinstance(value, ClassCommandOption):
                 continue
 
-            if TYPE_CHECKING:
-                v = cast("ClassCommandOption[Marker, Any, Any, Any]", v)
-
-            generated = v._gen_option(n)
+            option = cast("ClassCommandOption[Any, object, object]", value)
+            generated = option._gen_option(field)
             options.append(generated)
 
-            if v._autocomplete:
-                autocomplete[generated.name] = v._autocomplete
+            if isinstance(option, _ChoiceOption) and option.autocomplete is not None:
+                autocomplete[generated.name] = option.autocomplete
 
-            if v._converter:
-                converters[generated.name] = v._converter
+            if option.converter is not None:
+                converters[generated.name] = option.converter
 
-            if generated.name != n:
-                name_map[generated.name] = n
+            name_to_field[generated.name] = field
+            defaults[generated.name] = option.default
 
-            defaults[generated.name] = v._default
-
-        callback_func = _class_command_callback(callback, defaults, name_map, converters)
+        callback_func = _class_command_callback(callback, defaults, name_to_field, converters)
 
     elif isfunction(callback):
         callback_func = callback

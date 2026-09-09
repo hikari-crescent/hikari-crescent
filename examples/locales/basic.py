@@ -42,8 +42,9 @@ class Command:
     # "en-option-name" and "en-option-description" will be used when the user is
     # using the `en-US` locale. Otherwise "option-name" and "option-description"
     # will be visible.
-    word = options.string(Locale("option-description", en_US="en-option-description")).name(
-        Locale("option-name", en_US="en-option-name")
+    word = options.String(
+        Locale("option-description", en_US="en-option-description"),
+        name=Locale("option-name", en_US="en-option-name"),
     )
 
     async def callback(self, ctx: crescent.Context) -> None:

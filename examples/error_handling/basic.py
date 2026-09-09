@@ -44,7 +44,7 @@ async def on_autocomplete_random_error(
 @client.include
 @crescent.command(name="raise-error-cmd")
 class RaiseErrorCmd:
-    unhandled = options.boolean("Raise an unhandled error instead")
+    unhandled = options.Boolean("Raise an unhandled error instead")
 
     def callback(self, ctx: crescent.Context):
         if self.unhandled:
@@ -84,7 +84,7 @@ async def autocomplete(
 @client.include
 @crescent.command(name="autocomplete-error")
 class AutocompleteError:
-    option = options.string("Type error to error out").autocomplete(autocomplete)
+    option = options.String("Type error to error out", autocomplete=autocomplete)
 
     async def callback(self, ctx: crescent.Context):
         await ctx.respond(f"{self.option} (type unhandled or error inside option)")

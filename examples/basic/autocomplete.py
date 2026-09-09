@@ -31,7 +31,7 @@ async def fetch_autocomplete_options(
 @client.include
 @crescent.command
 class class_example:
-    result = options.string("Respond to the message").autocomplete(autocomplete_response)
+    result = options.String("Respond to the message", autocomplete=autocomplete_response)
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.result, ephemeral=True)

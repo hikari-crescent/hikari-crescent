@@ -33,7 +33,7 @@ client = crescent.Client(bot)
 @crescent.hook(first_hook, second_hook(5))
 @crescent.command(name="test-command")
 class TestCommand:
-    number = options.number("A number")
+    number = options.Integer("A number")
 
     async def callback(self, ctx: crescent.Context) -> None:
         # This code will never be reached due to `first_hook`
@@ -46,7 +46,7 @@ class TestCommand:
 @crescent.hook(second_hook(5))
 @crescent.command(name="test-command-two")
 class TestCommand2:
-    number = options.number("A number")
+    number = options.Integer("A number")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond("Done!")

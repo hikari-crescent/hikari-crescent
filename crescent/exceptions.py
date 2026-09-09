@@ -23,9 +23,9 @@ class CrescentException(Exception):  # noqa: N818
 @dataclass
 class ConverterExceptionMeta:
     command: type[ClassCommandProto]
-    option_key: str
-    """The key of the option on the command class"""
-    value: Any
+    field: str
+    """The field of the option on the command class"""
+    value: object
     """The unconverted value"""
     exception: Exception
 
