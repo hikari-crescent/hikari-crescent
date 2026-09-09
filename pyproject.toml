@@ -6,7 +6,7 @@ authors = [
     { name = "Lunarmagpie", email = "bambolambo0@gmail.com" },
     { name = "circuitsacul", email = "circuitsacul@icloud.com" },
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 readme = "README.md"
 license = "MPL-2.0"
 maintainers = [
@@ -23,9 +23,6 @@ keywords = [
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
@@ -69,13 +66,13 @@ requires = ["uv_build>=0.9.9,<0.10.0"]
 build-backend = "uv_build"
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.13"
 strict = true
 
 [tool.pyright]
 include = ["crescent", "examples"]
 exclude = ["tests"]
-pythonVersion = "3.10"
+pythonVersion = "3.13"
 typeCheckingMode = "strict"
 reportPrivateUsage = false
 reportIncompatibleMethodOverride = false

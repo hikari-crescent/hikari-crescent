@@ -33,7 +33,7 @@
 > 🎨 | [Template Project](https://github.com/hikari-crescent/template)<br>
 
 ## Installation
-Crescent is supported in python3.9+.
+Crescent supports Python 3.13+.
 ```
 pip install hikari-crescent
 ```

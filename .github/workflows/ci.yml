@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        python: ['3.13', '3.14']
         os: ['ubuntu']
       fail-fast: false
 

@@ -82,7 +82,7 @@ def _class_command_callback(
         for t, key, raw_val in tasks:
             try:
                 await t
-            except Exception as e:  # noqa: PERF203
+            except Exception as e:
                 errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
 
         if errors:
