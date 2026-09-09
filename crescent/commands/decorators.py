@@ -16,7 +16,7 @@ from hikari import (
     UndefinedType,
 )
 
-from crescent.commands.options import ClassCommandOption, _ChoiceOption
+from crescent.commands.options import ChoiceOption, ClassCommandOption
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
 
@@ -192,7 +192,7 @@ def command(
             generated = option._gen_option(field)
             options.append(generated)
 
-            if isinstance(option, _ChoiceOption) and option.autocomplete is not None:
+            if isinstance(option, ChoiceOption) and option.autocomplete is not None:
                 autocomplete[generated.name] = option.autocomplete
 
             if option.converter is not None:

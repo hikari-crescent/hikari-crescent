@@ -1,4 +1,22 @@
-"""Typed option descriptors for class commands."""
+"""Option classes for class commands.
+
+Options are declared as class attributes on a class command. The attribute name
+is used as the option name unless `name` is given.
+
+```python
+import crescent
+from crescent import options
+
+@client.include
+@crescent.command(name="repeat")
+class Repeat:
+    word = options.String("The word to repeat")
+    times = options.Integer("How many times", default=1, min_value=1, max_value=10)
+
+    async def callback(self, ctx: crescent.Context) -> None:
+        await ctx.respond(" ".join(self.word for i in range(self.times))
+```
+"""
 
 from __future__ import annotations
 
@@ -20,10 +38,12 @@ __all__ = (
     "Attachment",
     "Boolean",
     "Channel",
+    "ChoiceOption",
     "ClassCommandOption",
     "Float",
     "Integer",
     "Mentionable",
+    "NumericOption",
     "Role",
     "String",
     "User",
@@ -57,25 +77,23 @@ def _build_choices(
 
 @dataclass(frozen=True, slots=True)
 class ClassCommandOption(Generic[T, C_co, D]):
-    """The base option class for slash commands.
-
-    Don't use this directly; use one of the subclasses:
-    - [`String`][crescent.commands.options.String]
-    - [`Integer`][crescent.commands.options.Integer]
-    - [`Float`][crescent.commands.options.Float]
-    - [`Boolean`][crescent.commands.options.Boolean]
-    - [`Channel`][crescent.commands.options.Channel]
-    - [`Role`][crescent.commands.options.Role]
-    - [`User`][crescent.commands.options.User]
-    - [`Mentionable`][crescent.commands.options.Mentionable]
-    - [`Attachment`][crescent.commands.options.Attachment]
-    """
+    """Base class for all option types."""
 
     description: str | LocaleBuilder
+    """The description for the option."""
     _: KW_ONLY
     name: hikari.UndefinedOr[str | LocaleBuilder] = hikari.UNDEFINED
+    """The user-facing option name. Defaults to the attribute name."""
     default: hikari.UndefinedOr[D] = hikari.UNDEFINED
+    """The value to use when the user does not fill out the option.
+
+    Setting this makes the option optional. Default values bypass converters."""
     converter: Callable[[T], C_co] | None = None
+    """A callable that takes the value returned by Discord and converts it.
+
+    Supports async, sync, and sync->Awaitable callables. Exceptions raised are
+    aggregated together into a [`ConverterExceptions`][crescent.exceptions.ConverterExceptions].
+    """
 
     _type: ClassVar[hikari.OptionType]
 
@@ -124,36 +142,67 @@ class ClassCommandOption(Generic[T, C_co, D]):
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class _ChoiceOption(ClassCommandOption[ChoiceT, C_co, D], Generic[ChoiceT, C_co, D]):
+class ChoiceOption(ClassCommandOption[ChoiceT, C_co, D], Generic[ChoiceT, C_co, D]):
+    """Base class for options that support choices and autocomplete."""
+
     choices: Sequence[tuple[str | LocaleBuilder, ChoiceT] | hikari.CommandChoice] | None = None
+    """A fixed set of values the user must pick from.
+
+    Must be a sequence of `(name, value)` tuples or
+    [`hikari.CommandChoice`][hikari.commands.CommandChoice]s. Discord allows up to 25 options.
+
+    Mutually exclusive with autocomplete."""
     autocomplete: AutocompleteCallbackT[ChoiceT] | None = None
+    """A callable that provides suggestions for options as the user types.
+
+    Takes an [`AutocompleteContext`][crescent.context.AutocompleteContext] and
+    the focused `hikari.AutocompleteInteractionOption`, and returns a sequence of
+    `(name, value)` tuples.
+
+    ```python
+    async def suggest(
+        ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
+    ) -> list[tuple[str, str]]:
+        return [("Some Option", "1234")]
+
+    class Command:
+        result = options.String("Pick a value", autocomplete=suggest)
+    ```
+
+    Mutually exclusive with choices."""
 
     def _gen_option(self, field: str) -> hikari.CommandOption:
-        option = super(_ChoiceOption, self)._gen_option(field)
+        option = super(ChoiceOption, self)._gen_option(field)
         option.choices = _build_choices(self.choices) if self.choices is not None else None
         option.autocomplete = self.autocomplete is not None
         return option
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class _NumericOption(_ChoiceOption[NumericT, C_co, D], Generic[NumericT, C_co, D]):
+class NumericOption(ChoiceOption[NumericT, C_co, D], Generic[NumericT, C_co, D]):
+    """Base class for number options."""
+
     min_value: NumericT | None = None
+    """The minimum allowed value."""
     max_value: NumericT | None = None
+    """The maximum allowed value."""
 
     def _gen_option(self, field: str) -> hikari.CommandOption:
-        option = super(_NumericOption, self)._gen_option(field)
+        option = super(NumericOption, self)._gen_option(field)
         option.min_value = self.min_value
         option.max_value = self.max_value
         return option
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class String(_ChoiceOption[str, C_co, D], Generic[C_co, D]):
+class String(ChoiceOption[str, C_co, D], Generic[C_co, D]):
     """A string option."""
 
     _type: ClassVar[hikari.OptionType] = hikari.OptionType.STRING
     min_length: int | None = None
+    """The minimum number of characters."""
     max_length: int | None = None
+    """The maximum number of characters."""
 
     def _gen_option(self, field: str) -> hikari.CommandOption:
         option = super(String, self)._gen_option(field)
@@ -163,14 +212,14 @@ class String(_ChoiceOption[str, C_co, D], Generic[C_co, D]):
 
 
 @dataclass(frozen=True, slots=True)
-class Integer(_NumericOption[int, C_co, D], Generic[C_co, D]):
+class Integer(NumericOption[int, C_co, D], Generic[C_co, D]):
     """An integer option."""
 
     _type: ClassVar[hikari.OptionType] = hikari.OptionType.INTEGER
 
 
 @dataclass(frozen=True, slots=True)
-class Float(_NumericOption[float, C_co, D], Generic[C_co, D]):
+class Float(NumericOption[float, C_co, D], Generic[C_co, D]):
     """A float option."""
 
     _type: ClassVar[hikari.OptionType] = hikari.OptionType.FLOAT
@@ -185,10 +234,14 @@ class Boolean(ClassCommandOption[bool, C_co, D], Generic[C_co, D]):
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Channel(ClassCommandOption[hikari.InteractionChannel, C_co, D], Generic[C_co, D]):
-    """A channel option."""
+    """A channel option.
+
+    Value: [`hikari.InteractionChannel`][hikari.interactions.base_interactions.InteractionChannel]
+    """
 
     _type: ClassVar[hikari.OptionType] = hikari.OptionType.CHANNEL
     channel_types: Sequence[hikari.ChannelType] | None = None
+    """Which channel types the user may select. Defaults to allowing all."""
 
     def _gen_option(self, field: str) -> hikari.CommandOption:
         option = super(Channel, self)._gen_option(field)
@@ -198,27 +251,35 @@ class Channel(ClassCommandOption[hikari.InteractionChannel, C_co, D], Generic[C_
 
 @dataclass(frozen=True, slots=True)
 class Role(ClassCommandOption[hikari.Role, C_co, D], Generic[C_co, D]):
-    """A role option."""
+    """A role option.
+
+    Value: [`hikari.Role`][hikari.guilds.Role]"""
 
     _type: ClassVar[hikari.OptionType] = hikari.OptionType.ROLE
 
 
 @dataclass(frozen=True, slots=True)
 class User(ClassCommandOption[hikari.User, C_co, D], Generic[C_co, D]):
-    """A user option."""
+    """A user option.
+
+    Value: [`hikari.User`][hikari.users.User]"""
 
     _type: ClassVar[hikari.OptionType] = hikari.OptionType.USER
 
 
 @dataclass(frozen=True, slots=True)
 class Mentionable(ClassCommandOption[CrescentMentionable, C_co, D], Generic[C_co, D]):
-    """A mentionable option (i.e., user or role)."""
+    """A mentionable option (i.e., user or role).
+
+    Value: [`Mentionable`][crescent.mentionable.Mentionable]"""
 
     _type: ClassVar[hikari.OptionType] = hikari.OptionType.MENTIONABLE
 
 
 @dataclass(frozen=True, slots=True)
 class Attachment(ClassCommandOption[hikari.Attachment, C_co, D], Generic[C_co, D]):
-    """An attachment option."""
+    """An attachment option.
+
+    Value: [`hikari.Attachment`][hikari.messages.Attachment]"""
 
     _type: ClassVar[hikari.OptionType] = hikari.OptionType.ATTACHMENT
