@@ -48,7 +48,7 @@ if TYPE_CHECKING:
 __all__ = ("Client", "GatewayTraits", "RESTTraits")
 
 
-logger: logging.Logger = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 @runtime_checkable
@@ -277,7 +277,7 @@ class Client:
             return
         with suppress(Exception):
             await ctx.respond("An unexpected error occurred.", ephemeral=True)
-        logger.error(
+        _LOG.error(
             "Unhandled exception occurred in the command %s",
             ctx.command,
             exc_info=exc,
@@ -297,7 +297,7 @@ class Client:
         """
         if was_handled:
             return
-        logger.error(
+        _LOG.error(
             "Unhandled exception occurred for %s",
             type(event),
             exc_info=exc,
@@ -318,7 +318,7 @@ class Client:
         """
         if was_handled:
             return
-        logger.error(
+        _LOG.error(
             "Unhandled exception occurred in the autocomplete interaction for %s (option: %s)",
             ctx.command,
             option.name,
