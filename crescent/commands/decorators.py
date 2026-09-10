@@ -51,7 +51,7 @@ def _class_command_callback(
             if name in kwargs:
                 continue
 
-            setattr(cmd, name_to_field.get(name, name), value)
+            setattr(cmd, name_to_field[name], value)
 
         async def set_later(field: str, value: Awaitable[object]) -> None:
             setattr(cmd, field, await value)
@@ -61,7 +61,7 @@ def _class_command_callback(
         # [(task, field, raw value)]
 
         for name, raw_val in kwargs.items():
-            field = name_to_field.get(name, name)
+            field = name_to_field[name]
 
             if (converter := converters.get(name)) is not None:
                 try:
