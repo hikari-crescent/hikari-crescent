@@ -13,7 +13,7 @@ lint:
     uv run --dev ruff check
 
 mypy:
-    uv run --dev --all-extras mypy crescent
+    uv run --dev --all-extras mypy
 
 pyright:
     uv run --dev pyright

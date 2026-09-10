@@ -66,12 +66,12 @@ requires = ["uv_build>=0.9.9,<0.10.0"]
 build-backend = "uv_build"
 
 [tool.mypy]
+files = ["crescent", "tests/typing"]
 python_version = "3.13"
 strict = true
 
 [tool.pyright]
-include = ["crescent", "examples"]
-exclude = ["tests"]
+include = ["crescent", "examples", "tests/typing"]
 pythonVersion = "3.13"
 typeCheckingMode = "strict"
 reportPrivateUsage = false
