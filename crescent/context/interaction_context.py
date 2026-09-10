@@ -1,54 +1,25 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
-
-import hikari
-from hikari import Locale, Member, PartialInteraction, Snowflake, User
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from asyncio import Future
-    from typing import Any, Sequence, Type, TypeVar
+    from collections.abc import Sequence
 
+    import hikari
+    from hikari import Locale, Member, PartialInteraction, Snowflake, User
     from hikari.api import InteractionResponseBuilder
 
     from crescent.client import Client, GatewayTraits, RESTTraits
 
-    ContextT = TypeVar("ContextT", bound="InteractionContext")
+
+__all__ = ("InteractionContext",)
 
 
-__all__: Sequence[str] = ("InteractionContext",)
-
-
-@dataclass
+@dataclass(slots=True)
 class InteractionContext:
     """Represents the context for interactions"""
-
-    __slots__ = (
-        "interaction",
-        "app",
-        "client",
-        "application_id",
-        "type",
-        "token",
-        "id",
-        "version",
-        "channel_id",
-        "guild_id",
-        "registered_guild_id",
-        "user",
-        "member",
-        "entitlements",
-        "locale",
-        "command",
-        "command_type",
-        "group",
-        "sub_group",
-        "options",
-        "_has_created_response",
-        "_has_deferred_response",
-        "_rest_interaction_future",
-    )
 
     interaction: PartialInteraction
     """The interaction object."""
@@ -106,6 +77,7 @@ class InteractionContext:
     """
 
     _rest_interaction_future: Future[InteractionResponseBuilder] | None
+    """Future used to handle the callback for RESTBot."""
 
     @property
     def _unset_future(self) -> Future[InteractionResponseBuilder] | None:
@@ -116,35 +88,3 @@ class InteractionContext:
         if self._rest_interaction_future and not self._rest_interaction_future.done():
             return self._rest_interaction_future
         return None
-
-    def into(self, context_t: Type[ContextT]) -> ContextT:
-        """Convert to a context of a different type."""
-        if type(self) is context_t:
-            # pyright can't tell this is of type `context_t`
-            return self  # pyright: ignore
-
-        return context_t(
-            interaction=self.interaction,
-            app=self.app,
-            client=self.client,
-            application_id=self.application_id,
-            type=self.type,
-            token=self.token,
-            id=self.id,
-            version=self.version,
-            channel_id=self.channel_id,
-            guild_id=self.guild_id,
-            registered_guild_id=self.registered_guild_id,
-            user=self.user,
-            member=self.member,
-            entitlements=self.entitlements,
-            locale=self.locale,
-            command=self.command,
-            command_type=self.command_type,
-            group=self.group,
-            sub_group=self.sub_group,
-            options=self.options,
-            _has_created_response=self._has_created_response,
-            _has_deferred_response=self._has_deferred_response,
-            _rest_interaction_future=self._rest_interaction_future,
-        )

@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+from collections.abc import Awaitable, Callable
 from datetime import timedelta
-from typing import Any, Awaitable, Callable, Optional
-
-from hikari import Snowflake
+from typing import TYPE_CHECKING, Any
 
 from crescent import Context, HookResult
 
-__all__ = ("CooldownCallbackT", "BucketCallbackT", "cooldown")
+if TYPE_CHECKING:
+    from hikari import Snowflake
 
-CooldownCallbackT = Callable[[Context, timedelta], Awaitable[Optional[HookResult]]]
+__all__ = ("BucketCallbackT", "CooldownCallbackT", "cooldown")
+
+CooldownCallbackT = Callable[[Context, timedelta], Awaitable[HookResult | None]]
 BucketCallbackT = Callable[[Context], Any]
 
 
@@ -19,12 +21,10 @@ def _default_bucket(ctx: Context) -> Snowflake:
 
 async def _default_callback(ctx: Context, retry: timedelta) -> None:
     seconds = round(retry.total_seconds())
-    if seconds <= 1:
-        message = "1 second"
-    else:
-        message = f"{seconds} seconds"
+    message = "1 second" if seconds <= 1 else f"{seconds} seconds"
     await ctx.respond(
-        f"You're using this command too much! Try again in {message}.", ephemeral=True
+        f"You're using this command too much! Try again in {message}.",
+        ephemeral=True,
     )
 
 
@@ -51,10 +51,10 @@ def cooldown(
 
     try:
         from floodgate import FixedMapping
-    except ImportError:
+    except ImportError as exc:
         raise ModuleNotFoundError(
-            "`hikari-crescent[cooldowns]` must be installed to use `crescent.ext.cooldowns`."
-        )
+            "`hikari-crescent[cooldowns]` must be installed to use `crescent.ext.cooldowns`.",
+        ) from exc
 
     cooldown: FixedMapping[Any] = FixedMapping(period=period, capacity=capacity)
 

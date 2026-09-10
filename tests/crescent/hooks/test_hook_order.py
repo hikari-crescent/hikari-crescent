@@ -3,8 +3,9 @@ from __future__ import annotations
 from types import MethodType
 from typing import TYPE_CHECKING, Any
 
-from crescent import Group, Plugin, command, hook, event
 from hikari import Event
+
+from crescent import Group, Plugin, command, event, hook
 from tests.utils import MockClient
 
 

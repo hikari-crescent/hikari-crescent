@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import Task, create_task
 from functools import partial, wraps
 from inspect import isawaitable, isclass, isfunction
-from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, cast, overload
+from typing import TYPE_CHECKING, Any, cast, overload
 
 from hikari import (
     UNDEFINED,
@@ -16,16 +16,17 @@ from hikari import (
     UndefinedType,
 )
 
-from crescent.commands.options import ClassCommandOption
+from crescent.commands.options import ChoiceOption, ClassCommandOption
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
-from crescent.locale import LocaleBuilder
+from crescent.utils import get_name
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, TypeVar
+    from collections.abc import Awaitable, Callable, Iterable
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable
+    from crescent.locale import LocaleBuilder
     from crescent.typedefs import (
         AutocompleteCallbackT,
         ClassCommandProto,
@@ -34,57 +35,55 @@ if TYPE_CHECKING:
         UserCommandCallbackT,
     )
 
-    T = TypeVar("T")
-
-__all__: Sequence[str] = ("command", "user_command", "message_command")
+__all__ = ("command", "message_command", "user_command")
 
 
 def _class_command_callback(
     cls: type[ClassCommandProto],
     defaults: dict[str, Any],
-    name_map: dict[str, str],
+    name_to_field: dict[str, str],
     converters: dict[str, Callable[[Any], Any]],
 ) -> CommandCallbackT:
     @wraps(cls.callback)
     async def callback(*args: Any, **kwargs: Any) -> Any:
-        values = defaults.copy()
-        values.update(kwargs)
-
         cmd = cls()
 
-        async def set_later(key: str, value: object | Awaitable[object]) -> None:
-            if isawaitable(value):
-                value = await value
-            setattr(cmd, key, value)
+        for name, value in defaults.items():
+            if name in kwargs:
+                continue
+
+            setattr(cmd, name_to_field[name], value)
+
+        async def set_later(field: str, value: Awaitable[object]) -> None:
+            setattr(cmd, field, await value)
 
         errors: list[ConverterExceptionMeta] = []
-        tasks: list[tuple[Task[None], str, Any]] = []
-        # [(Task, option key, raw value)]
+        tasks: list[tuple[Task[None], str, object]] = []
+        # [(task, field, raw value)]
 
-        for key, raw_val in values.items():
-            # val: The converted (if a converter existed) value
-            # raw_val: The original value passed by Discord
-            # key: The key of the option on the class
-            # name: The name of the option used by Discord
+        for name, raw_val in kwargs.items():
+            field = name_to_field[name]
 
-            key = name_map.get(key, key)
-
-            if conv := converters.get(key):
+            if (converter := converters.get(name)) is not None:
                 try:
-                    val = conv(raw_val)
+                    val = converter(raw_val)
                 except Exception as e:
-                    errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
+                    errors.append(ConverterExceptionMeta(cls, field, raw_val, e))
                     continue
             else:
                 val = raw_val
 
-            tasks.append((create_task(set_later(key, val)), key, raw_val))
+            if isawaitable(val):
+                tasks.append((create_task(set_later(field, val)), field, raw_val))
+            else:
+                setattr(cmd, field, val)
 
-        for t, key, raw_val in tasks:
+        # TODO: can we gather these tasks?
+        for task, field, raw_val in tasks:
             try:
-                await t
+                await task
             except Exception as e:
-                errors.append(ConverterExceptionMeta(cls, key, raw_val, e))
+                errors.append(ConverterExceptionMeta(cls, field, raw_val, e))
 
         if errors:
             raise ConverterExceptions(errors)
@@ -96,7 +95,15 @@ def _class_command_callback(
 
 @overload
 def command(
-    callback: CommandCallbackT | type[ClassCommandProto], /
+    callback: CommandCallbackT | type[ClassCommandProto],
+    /,
+    *,
+    guild: Snowflakeish | None = ...,
+    name: str | LocaleBuilder | None = ...,
+    description: str | LocaleBuilder | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = ...,
+    nsfw: bool | None = ...,
 ) -> Includable[AppCommandMeta]: ...
 
 
@@ -171,7 +178,7 @@ def command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore
+        )
 
     autocomplete: dict[str, AutocompleteCallbackT[Any]] = {}
     options: list[CommandOption] = []
@@ -179,34 +186,30 @@ def command(
     if isclass(callback):
         # If callback is a class it must be `type[ClassCommandProto]` because of the function
         # signature.
-        callback = cast("type[ClassCommandProto]", callback)
+        callback = cast("type[ClassCommandProto]", callback)  # pyright: ignore[reportUnnecessaryCast]
 
-        name_map: dict[str, str] = {}
+        name_to_field: dict[str, str] = {}
         defaults: dict[str, Any] = {}
         converters: dict[str, Callable[[Any], Any]] = {}
 
-        for n, v in callback.__dict__.items():
-            if not isinstance(v, ClassCommandOption):
+        for field, value in callback.__dict__.items():
+            if not isinstance(value, ClassCommandOption):
                 continue
 
-            if TYPE_CHECKING:
-                v = cast("ClassCommandOption[Any, Any]", v)  # type: ignore[redundant-cast]
-
-            generated = v._gen_option(n)
+            option = cast("ClassCommandOption[Any, object, object]", value)
+            generated = option._gen_option(field)
             options.append(generated)
 
-            if v.autocomplete:
-                autocomplete[generated.name] = v.autocomplete
+            if isinstance(option, ChoiceOption) and option.autocomplete is not None:
+                autocomplete[generated.name] = option.autocomplete
 
-            if v.converter:
-                converters[generated.name] = v.converter
+            if option.converter is not None:
+                converters[generated.name] = option.converter
 
-            if generated.name != n:
-                name_map[generated.name] = n
+            name_to_field[generated.name] = field
+            defaults[generated.name] = option.default
 
-            defaults[generated.name] = v.default
-
-        callback_func = _class_command_callback(callback, defaults, name_map, converters)
+        callback_func = _class_command_callback(callback, defaults, name_to_field, converters)
 
     elif isfunction(callback):
         callback_func = callback
@@ -217,7 +220,7 @@ def command(
         callback=callback_func,
         owner=callback,
         command_type=CommandType.SLASH,
-        name=name or callback.__name__,
+        name=name or get_name(callback, error="please provide a command name"),
         guild=guild,
         description=description or "No Description",
         options=options,
@@ -239,7 +242,16 @@ def _kwargs_to_args_callback(
 
 
 @overload
-def user_command(callback: UserCommandCallbackT, /) -> Includable[AppCommandMeta]: ...
+def user_command(
+    callback: UserCommandCallbackT,
+    /,
+    *,
+    guild: Snowflakeish | None = ...,
+    name: str | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    context_types: UndefinedOr[list[ApplicationContextType]] = ...,
+    nsfw: bool | None = ...,
+) -> Includable[AppCommandMeta]: ...
 
 
 @overload
@@ -305,13 +317,13 @@ def user_command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore
+        )
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.USER,
-        name=name or callback.__name__,
+        name=name or get_name(callback, error="please provide a command name"),
         guild=guild,
         default_member_permissions=default_member_permissions,
         context_types=context_types,
@@ -320,7 +332,16 @@ def user_command(
 
 
 @overload
-def message_command(callback: MessageCommandCallbackT, /) -> Includable[AppCommandMeta]: ...
+def message_command(
+    callback: MessageCommandCallbackT,
+    /,
+    *,
+    guild: Snowflakeish | None = ...,
+    name: str | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    context_types: UndefinedOr[list[ApplicationContextType]] = ...,
+    nsfw: bool | None = ...,
+) -> Includable[AppCommandMeta]: ...
 
 
 @overload
@@ -386,13 +407,13 @@ def message_command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore
+        )
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.MESSAGE,
-        name=name or callback.__name__,
+        name=name or get_name(callback, error="please provide a command name"),
         guild=guild,
         default_member_permissions=default_member_permissions,
         context_types=context_types,

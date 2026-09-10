@@ -1,14 +1,22 @@
 from __future__ import annotations
 
-from typing import Sequence, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
-__all__: Sequence[str] = ("add_hooks",)
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+__all__ = ("add_hooks",)
 
 T = TypeVar("T")
 
 
 def add_hooks(
-    hooks: list[T], after_hooks: list[T], hooks_to_add: Sequence[T], *, prepend: bool, after: bool
+    hooks: list[T],
+    after_hooks: list[T],
+    hooks_to_add: Sequence[T],
+    *,
+    prepend: bool,
+    after: bool,
 ) -> None:
     def extend_or_prepend(list_to_edit: list[T]) -> None:
         if prepend:

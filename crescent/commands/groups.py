@@ -1,21 +1,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING
 
 from hikari import UNDEFINED, ApplicationContextType, Permissions, UndefinedType
 
 from crescent.exceptions import PermissionsError
 
 if TYPE_CHECKING:
-    from typing import Sequence
+    from collections.abc import Iterable
 
     from crescent.internal.app_command import AppCommandMeta
     from crescent.internal.includable import Includable
     from crescent.locale import LocaleBuilder
     from crescent.typedefs import CommandHookCallbackT
 
-__all__: Sequence[str] = ("Group", "SubGroup")
+__all__ = ("Group", "SubGroup")
 
 
 def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
@@ -23,7 +23,7 @@ def _check_permissions(includable: Includable[AppCommandMeta]) -> None:
     if includable.metadata.app_command.default_member_permissions:
         raise PermissionsError(
             "`default_member_permissions` cannot be declared for subcommands."
-            " Permissions must be declared in the `crescent.Group` object."
+            " Permissions must be declared in the `crescent.Group` object.",
         )
 
 

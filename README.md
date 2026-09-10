@@ -33,7 +33,7 @@
 > 🎨 | [Template Project](https://github.com/hikari-crescent/template)<br>
 
 ## Installation
-Crescent is supported in python3.9+.
+Crescent supports Python 3.13+.
 ```
 pip install hikari-crescent
 ```
@@ -48,11 +48,12 @@ in over 17k servers.
 ## Usage
 Crescent uses [class commands](https://github.com/hikari-crescent/hikari-crescent/blob/main/examples/basic/basic.py)
 to simplify creating commands. Class commands allow you to create a command similar to how you declare a
-dataclass. The option function takes a type followed by the description, then optional information.
+dataclass. Options are declared with option classes from `crescent.options`.
 
 ```python
 import crescent
 import hikari
+from crescent import options
 
 bot = hikari.GatewayBot("YOUR_TOKEN")
 client = crescent.Client(bot)
@@ -62,7 +63,7 @@ client = crescent.Client(bot)
 # Create a slash command
 @crescent.command(name="say")
 class Say:
-    word = crescent.option(str, "The word to say")
+    word = options.String("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.word)
@@ -80,19 +81,18 @@ async def ping(ctx: crescent.Context):
     await ctx.respond("Pong!")
 ```
 
-### Typing to Option Types Lookup Table 
-| Type | Option Type |
+### Option Classes Lookup Table
+| Option Class | Option Type |
 |---|---|
-| `str` | Text |
-| `int` | Integer |
-| `bool` | Boolean |
-| `float` | Number |
-| `hikari.User` | User |
-| `hikari.Role` | Role |
-| `crescent.Mentionable` | Role or User |
-| Any Hikari channel type. | Channel. The options will be the channel type and its subclasses. |
-| `List[Channel Types]` | Channel. ^ |
-| `hikari.Attachment` | Attachment |
+| `options.String(...)` | Text |
+| `options.Integer(...)` | Integer |
+| `options.Boolean(...)` | Boolean |
+| `options.Float(...)` | Number |
+| `options.User(...)` | User |
+| `options.Role(...)` | Role |
+| `options.Mentionable(...)` | Role or User |
+| `options.Channel(...)` | Channel. Use `channel_types=[...]` to restrict channel kinds. |
+| `options.Attachment(...)` | Attachment |
 
 
 ### Autocomplete
@@ -101,6 +101,8 @@ value is the option name and the second value is the option value. `str`, `int`,
 can be used.
 
 ```python
+from crescent import options
+
 async def autocomplete(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> list[tuple[str, str]]:
@@ -109,9 +111,9 @@ async def autocomplete(
 @client.include
 @crescent.command(name="class-command")
 class ClassCommand:
-    option = crescent.option(str, autocomplete=autocomplete)
+    option = options.String("Choose a value", autocomplete=autocomplete)
 
-    async def callback(self) -> None:
+    async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(self.option)
 ```
 

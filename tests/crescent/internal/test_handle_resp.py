@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from asyncio import get_event_loop
-from typing import List, cast
+from typing import cast
 from unittest.mock import AsyncMock, Mock
 
+import pytest
 from hikari import (
     ApplicationContextType,
     AutocompleteInteraction,
@@ -16,11 +19,9 @@ from hikari import (
     OptionType,
 )
 from hikari.impl import RESTClientImpl
-from pytest import mark
 
-from crescent import Context, catch_autocomplete, catch_command, command, hook
 import crescent
-from crescent.commands.options import option
+from crescent import Context, catch_autocomplete, catch_command, command, hook
 from crescent.exceptions import ConverterExceptions
 from crescent.internal.handle_resp import handle_resp
 from tests.utils import MockClient, MockRESTClient
@@ -38,7 +39,7 @@ def MockChannel(client):
     )
 
 
-def MockEvent(name, client, arg: "str | None" = None):
+def MockEvent(name, client, arg: str | None = None):
     if arg:
         options = (
             CommandInteractionOption(name="arg", type=OptionType.STRING, value=arg, options=None),
@@ -71,6 +72,7 @@ def MockEvent(name, client, arg: "str | None" = None):
             options=options,
             app_permissions=None,
             entitlements=None,
+            attachment_size_limit=10 * 1024 * 1024,
         ),
     )
 
@@ -99,6 +101,7 @@ def MockAutocompleteEvent(name, option_name, client):
             command_type=CommandType.SLASH,
             registered_guild_id=None,
             entitlements=None,
+            attachment_size_limit=10 * 1024 * 1024,
             options=[
                 AutocompleteInteractionOption(
                     name=option_name,
@@ -112,7 +115,7 @@ def MockAutocompleteEvent(name, option_name, client):
     )
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_converter_ok() -> None:
     client = MockClient()
 
@@ -121,7 +124,7 @@ async def test_converter_ok() -> None:
     @client.include
     @command
     class test_command:
-        arg = option(str).convert(int)
+        arg = crescent.options.String("arg", converter=int)
 
         async def callback(self, ctx: Context) -> None:
             nonlocal arg_val
@@ -132,12 +135,12 @@ async def test_converter_ok() -> None:
     assert arg_val == 1
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_converter_error() -> None:
     client = MockClient()
 
     arg_val = None
-    exc: "ConverterExceptions | None" = None
+    exc: ConverterExceptions | None = None
 
     @client.include
     @catch_command(ConverterExceptions)
@@ -146,7 +149,7 @@ async def test_converter_error() -> None:
         exc = _exc
 
     class test_command:
-        arg = option(str).convert(int)
+        arg = crescent.options.String("arg", converter=int)
 
         async def callback(self, ctx: Context) -> None:
             nonlocal arg_val
@@ -163,12 +166,12 @@ async def test_converter_error() -> None:
     assert len(exc.errors) == 1
 
     meta = exc.errors[0]
-    assert meta.option_key == "arg"
+    assert meta.field == "arg"
     assert meta.value == "oops"
     assert meta.command is test_command
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_handle_resp_slash_function():
     client = MockClient()
 
@@ -185,7 +188,7 @@ async def test_handle_resp_slash_function():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_handle_resp_slash_class():
     client = MockClient()
 
@@ -203,7 +206,7 @@ async def test_handle_resp_slash_class():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_hooks():
     client = MockClient()
     command_was_run = False
@@ -239,7 +242,7 @@ async def test_hooks():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_handle_command_error():
     client = MockClient()
     command_was_run = False
@@ -265,7 +268,7 @@ async def test_handle_command_error():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_unhandled_command_error():
     client = MockClient()
     command_was_run = False
@@ -290,7 +293,7 @@ async def test_unhandled_command_error():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_handle_autocomplete_error():
     client = MockClient()
     command_was_run = False
@@ -308,7 +311,7 @@ async def test_handle_autocomplete_error():
 
     async def autocomplete_resp(
         ctx: Context, option: AutocompleteInteractionOption
-    ) -> List[CommandChoice]:
+    ) -> list[CommandChoice]:
         nonlocal autocomplete_was_run
         autocomplete_was_run = True
         raise Exception
@@ -316,9 +319,9 @@ async def test_handle_autocomplete_error():
     @client.include
     @command(name="test_command")
     class TestCommand:
-        option = crescent.option(str, autocomplete=autocomplete_resp)
+        option = crescent.options.String("option", autocomplete=autocomplete_resp)
 
-        def callback(ctx: Context):
+        def callback(self, ctx: Context):
             nonlocal command_was_run
             command_was_run = True
 
@@ -333,7 +336,7 @@ async def test_handle_autocomplete_error():
     assert not command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_unhandled_autocomplete_error():
     client = MockClient()
     command_was_run = False
@@ -350,7 +353,7 @@ async def test_unhandled_autocomplete_error():
 
     async def autocomplete_resp(
         ctx: Context, option: AutocompleteInteractionOption
-    ) -> List[CommandChoice]:
+    ) -> list[CommandChoice]:
         nonlocal autocomplete_was_run
         autocomplete_was_run = True
         raise TypeError
@@ -358,9 +361,9 @@ async def test_unhandled_autocomplete_error():
     @client.include
     @command(name="test_command")
     class TestCommand:
-        option = crescent.option(str, autocomplete=autocomplete_resp)
+        option = crescent.options.String("option", autocomplete=autocomplete_resp)
 
-        def callback(ctx: Context):
+        def callback(self, ctx: Context):
             nonlocal command_was_run
             command_was_run = True
 
@@ -375,7 +378,7 @@ async def test_unhandled_autocomplete_error():
     assert not command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_rest_bot_command():
     client = MockRESTClient()
 
@@ -404,7 +407,7 @@ async def test_rest_bot_command():
     assert command_was_run
 
 
-@mark.asyncio
+@pytest.mark.asyncio
 async def test_rest_future_is_set():
     client = MockRESTClient()
 

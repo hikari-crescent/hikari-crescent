@@ -4,7 +4,7 @@ title: Getting Started
 
 # Installation
 
-`hikari-crescent` supports Python 3.9 and newer.
+`hikari-crescent` supports Python 3.13 and newer.
 
 ```sh
 pip install hikari-crescent
@@ -77,6 +77,7 @@ Copy this code into a python file, and run with `python filename.py`.
     ```python
     import crescent
     import hikari
+    from crescent import options
 
     bot = hikari.GatewayBot("YOUR_TOKEN")
     client = crescent.Client(bot)
@@ -84,7 +85,7 @@ Copy this code into a python file, and run with `python filename.py`.
     @client.include
     @crescent.command(name="say")
     class Say:
-        word = crescent.option(str, "The word to say")
+        word = options.String("The word to say")
 
         async def callback(self, ctx: crescent.Context) -> None:
             await ctx.respond(self.word)
@@ -97,6 +98,7 @@ Copy this code into a python file, and run with `python filename.py`.
     ```python
     import crescent
     import hikari
+    from crescent import options
 
     bot = hikari.RESTBot("YOUR_TOKEN")
     client = crescent.Client(bot)
@@ -104,7 +106,7 @@ Copy this code into a python file, and run with `python filename.py`.
     @client.include
     @crescent.command(name="say")
     class Say:
-        word = crescent.option(str, "The word to say")
+        word = options.String("The word to say")
 
         async def callback(self, ctx: crescent.Context) -> None:
             await ctx.respond(self.word)

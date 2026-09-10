@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Sequence
+from typing import TYPE_CHECKING, Any
 
 from hikari import (
     AutocompleteInteraction,
@@ -19,7 +19,10 @@ from crescent.context.interaction_context import InteractionContext
 from crescent.mentionable import Mentionable
 from crescent.utils import gather_iter
 
-__all__: Sequence[str] = ("AutocompleteContext",)
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+__all__ = ("AutocompleteContext",)
 
 
 async def _fetch_user(ctx: AutocompleteContext, value: Snowflake) -> User | Member:
@@ -33,16 +36,14 @@ async def _fetch_user(ctx: AutocompleteContext, value: Snowflake) -> User | Memb
 
     if ctx.guild_id:
         return await ctx.app.rest.fetch_member(ctx.guild_id, value)
-    else:
-        return await ctx.app.rest.fetch_user(value)
+    return await ctx.app.rest.fetch_user(value)
 
 
 async def _fetch_role(ctx: AutocompleteContext, value: Snowflake) -> Role:
     assert ctx.guild_id
 
-    if isinstance(ctx.app, CacheAware):
-        if role := ctx.app.cache.get_role(value):
-            return role
+    if isinstance(ctx.app, CacheAware) and (role := ctx.app.cache.get_role(value)):
+        return role
 
     roles = await ctx.app.rest.fetch_roles(ctx.guild_id)
     return next(filter(lambda r: r.id == value, roles))
@@ -66,9 +67,8 @@ async def _fetch_mentionable(ctx: AutocompleteContext, value: Snowflake) -> Ment
 
 
 async def _fetch_channel(ctx: AutocompleteContext, value: Snowflake) -> PartialChannel:
-    if isinstance(ctx.app, CacheAware):
-        if channel := ctx.app.cache.get_guild_channel(value):
-            return channel
+    if isinstance(ctx.app, CacheAware) and (channel := ctx.app.cache.get_guild_channel(value)):
+        return channel
 
     return await ctx.app.rest.fetch_channel(value)
 

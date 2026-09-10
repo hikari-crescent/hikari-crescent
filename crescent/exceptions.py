@@ -1,30 +1,31 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any
 
-from crescent.typedefs import ClassCommandProto
+if TYPE_CHECKING:
+    from crescent.typedefs import ClassCommandProto
 
-__all__: Sequence[str] = (
-    "CrescentException",
-    "ConverterExceptions",
-    "ConverterExceptionMeta",
+__all__ = (
     "AlreadyRegisteredError",
-    "PluginAlreadyLoadedError",
+    "ConverterExceptionMeta",
+    "ConverterExceptions",
+    "CrescentException",
     "PermissionsError",
+    "PluginAlreadyLoadedError",
 )
 
 
-class CrescentException(Exception):
+class CrescentException(Exception):  # noqa: N818
     """Base Exception for all exceptions Crescent throws"""
 
 
 @dataclass
 class ConverterExceptionMeta:
     command: type[ClassCommandProto]
-    option_key: str
-    """The key of the option on the command class"""
-    value: Any
+    field: str
+    """The field of the option on the command class"""
+    value: object
     """The unconverted value"""
     exception: Exception
 

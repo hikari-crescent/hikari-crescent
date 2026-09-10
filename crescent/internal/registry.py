@@ -4,7 +4,7 @@ from asyncio import gather
 from collections import defaultdict
 from inspect import iscoroutinefunction
 from logging import getLogger
-from typing import TYPE_CHECKING, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from hikari import (
     UNDEFINED,
@@ -24,17 +24,15 @@ from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
 from crescent.locale import LocaleBuilder, str_or_build_locale
-from crescent.utils import gather_iter, unwrap
+from crescent.utils import gather_iter, get_name, unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Callable, DefaultDict, Iterable, Sequence
+    from collections.abc import Awaitable, Callable, Iterable, Sequence
 
     from hikari import PartialGuild, Snowflakeish, SnowflakeishOr
 
     from crescent.client import Client
     from crescent.typedefs import AutocompleteCallbackT, CommandCallbackT
-
-    T = TypeVar("T", bound="Callable[..., Awaitable[Any]]")
 
 _log = getLogger(__name__)
 
@@ -48,6 +46,7 @@ def _command_client_set_hook(self: Includable[AppCommandMeta]) -> None:
 
 
 def register_command(
+    *,
     owner: Any,
     callback: CommandCallbackT,
     command_type: CommandType,
@@ -57,11 +56,14 @@ def register_command(
     options: Sequence[CommandOption] | None = None,
     default_member_permissions: UndefinedType | int | Permissions = UNDEFINED,
     context_types: UndefinedOr[Iterable[ApplicationContextType]] = UNDEFINED,
-    autocomplete: dict[str, AutocompleteCallbackT[Any]] = {},
+    autocomplete: dict[str, AutocompleteCallbackT[Any]] | None = None,
     nsfw: bool | None = None,
 ) -> Includable[AppCommandMeta]:
+    if autocomplete is None:
+        autocomplete = {}
     if not iscoroutinefunction(callback):
-        raise ValueError(f"`{callback.__name__}` must be an async function.")
+        name = get_name(callback)
+        raise ValueError(f"`{name}` must be an async function.")
 
     includable: Includable[AppCommandMeta] = Includable(
         client_set_hooks=[_command_client_set_hook],
@@ -86,22 +88,21 @@ def register_command(
     return includable
 
 
-_E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
-
-
-class ErrorHandler(Generic[_E]):
-    __slots__: Sequence[str] = ("bot", "registry", "subclass_registry", "supports_custom_ctx")
+class ErrorHandler[E: Callable[..., Awaitable[Any]]]:
+    __slots__ = ("bot", "registry", "subclass_registry", "supports_custom_ctx")
 
     def __init__(self) -> None:
-        self.registry: dict[type[Exception], Includable[_E]] = {}
-        self.subclass_registry: dict[type[Exception], Includable[_E]] = {}
+        self.registry: dict[type[Exception], Includable[E]] = {}
+        self.subclass_registry: dict[type[Exception], Includable[E]] = {}
 
-    def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
+    def register(self, includable: Includable[E], exc: type[Exception]) -> None:
         if reg_includable := self.registry.get(exc):
+            new_name = get_name(includable.metadata)
+            old_name = get_name(reg_includable.metadata)
+
             raise AlreadyRegisteredError(
-                f"`{getattr(includable.metadata, '__name__')}` can not catch `{exc.__name__}`."
-                f" `{exc.__name__}` is already registered to"
-                f" `{reg_includable.metadata.__name__}`."
+                f"`{new_name}` cannot catch "
+                f"`{get_name(exc)}`, as it is already registered to `{old_name}`.",
             )
 
         self.registry[exc] = includable
@@ -131,7 +132,7 @@ class ErrorHandler(Generic[_E]):
 
 
 class CommandHandler:
-    __slots__: Sequence[str] = ("_client", "_guilds", "_application_id", "_registry")
+    __slots__ = ("_application_id", "_client", "_guilds", "_registry")
 
     def __init__(self, client: Client, guilds: Sequence[Snowflakeish]) -> None:
         self._client: Client = client
@@ -198,11 +199,9 @@ class CommandHandler:
 
                 children = cast("list[CommandOption]", unwrap(built_commands[key].options))
 
-                name, name_localizations = str_or_build_locale(
-                    unwrap(command.metadata.sub_group).name
-                )
+                name, name_localizations = str_or_build_locale(command.metadata.sub_group.name)
                 description, description_localizations = str_or_build_locale(
-                    unwrap(command.metadata.sub_group).description or "No Description"
+                    command.metadata.sub_group.description or "No Description",
                 )
 
                 sub_command_group = CommandOption(
@@ -231,7 +230,7 @@ class CommandHandler:
                 name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
                 assert command.metadata.app_command.description
                 description, description_localizations = str_or_build_locale(
-                    command.metadata.app_command.description
+                    command.metadata.app_command.description,
                 )
 
                 cast("list[CommandOption]", sub_command_group.options).append(
@@ -243,7 +242,7 @@ class CommandHandler:
                         type=OptionType.SUB_COMMAND,
                         options=command.metadata.app_command.options,
                         is_required=False,
-                    )
+                    ),
                 )
 
             elif command.metadata.group:
@@ -268,7 +267,7 @@ class CommandHandler:
                 if key not in built_commands:
                     built_commands[key] = AppCommand(
                         name=command.metadata.group.name,
-                        description=unwrap(command.metadata.group).description or "No Description",
+                        description=command.metadata.group.description or "No Description",
                         type=command.metadata.app_command.type,
                         guild_id=command.metadata.app_command.guild_id,
                         options=[],
@@ -282,7 +281,7 @@ class CommandHandler:
                 name, name_localizations = str_or_build_locale(command.metadata.app_command.name)
                 assert command.metadata.app_command.description
                 description, description_localizations = str_or_build_locale(
-                    command.metadata.app_command.description
+                    command.metadata.app_command.description,
                 )
 
                 cast("list[CommandOption]", built_commands[key].options).append(
@@ -294,7 +293,7 @@ class CommandHandler:
                         type=command.metadata.app_command.type,
                         options=command.metadata.app_command.options,
                         is_required=False,
-                    )
+                    ),
                 )
 
             else:
@@ -303,14 +302,16 @@ class CommandHandler:
         return tuple(built_commands.values())
 
     async def __post_application_commands(
-        self, commands: Sequence[AppCommand], guild: UndefinedOr[Snowflakeish]
+        self,
+        commands: Sequence[AppCommand],
+        guild: UndefinedOr[Snowflakeish],
     ) -> None:
         try:
             if self._application_id is None:
                 raise AttributeError("Client `application_id` is not defined")
 
             existing_commands = await self._client.app.rest.fetch_application_commands(
-                application=self._application_id
+                application=self._application_id,
             )
 
             def exists(command: AppCommand) -> bool:
@@ -332,14 +333,13 @@ class CommandHandler:
                 else:
                     _log.info("No global application commands need to be updated.")
                 return
-            else:
-                _log.info(f"Outdated commands: {', '.join(missing)}")
-                _log.info(f"Already updated: {', '.join(updated)}")
+            _log.info(f"Outdated commands: {', '.join(missing)}")
+            _log.info(f"Already updated: {', '.join(updated)}")
 
             await self._client.app.rest.set_application_commands(
                 application=self._application_id,
                 # The only method that is called has been implemented.
-                commands=commands,  # type: ignore
+                commands=commands,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
                 guild=guild,
             )
             if guild:
@@ -392,10 +392,7 @@ class CommandHandler:
             await self._client.app.rest.set_application_commands(self._application_id, ())
 
         guilds_to_purge: Iterable[PartialGuild | Snowflake | int]
-        if purge_everything:
-            guilds_to_purge = {*guilds, *self._guilds}
-        else:
-            guilds_to_purge = guilds
+        guilds_to_purge = {*guilds, *self._guilds} if purge_everything else guilds
 
         for guild in guilds_to_purge:
             await self._client.app.rest.set_application_commands(self._application_id, (), guild)
@@ -405,7 +402,7 @@ class CommandHandler:
 
         commands = self.__build_commands()
 
-        command_guilds: DefaultDict[Snowflakeish, list[AppCommand]] = defaultdict(list)
+        command_guilds: defaultdict[Snowflakeish, list[AppCommand]] = defaultdict(list)
         global_commands: list[AppCommand] = []
 
         for command in commands:
@@ -428,7 +425,9 @@ class CommandHandler:
             ),
             gather_iter(
                 self._client.app.rest.set_application_commands(
-                    application=self._application_id, commands=[], guild=guild
+                    application=self._application_id,
+                    commands=[],
+                    guild=guild,
                 )
                 for guild in guilds
             ),

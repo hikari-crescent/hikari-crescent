@@ -5,49 +5,64 @@ from functools import partial
 from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Generic, TypeVar, get_type_hints, overload
 
-from hikari import EventManagerAware
+from hikari import Event, EventManagerAware
 
 from crescent.internal.includable import Includable
-from crescent.typedefs import EventHookCallbackT
-from crescent.utils import add_hooks
+from crescent.utils import add_hooks, get_name
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Coroutine, Sequence
+    from collections.abc import Callable, Coroutine, Sequence
 
-    from hikari import Event
     from hikari.api.event_manager import CallbackT
 
-EventT = TypeVar("EventT", bound="Event", contravariant=True)
+    from crescent.typedefs import EventHookCallbackT
 
-__all__: Sequence[str] = ("event",)
+__all__ = ("event",)
 
+EventT_co = TypeVar("EventT_co", bound="Event", covariant=True)
 
 @dataclass
-class EventMeta(Generic[EventT]):
-    callback: CallbackT[EventT]
-    hooks: list[EventHookCallbackT[EventT]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
-    after_hooks: list[EventHookCallbackT[EventT]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+class EventMeta(Generic[EventT_co]):
+    callback: CallbackT[EventT_co]
+    hooks: list[EventHookCallbackT[EventT_co]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    after_hooks: list[EventHookCallbackT[EventT_co]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     def add_hooks(
-        self, hooks: Sequence[EventHookCallbackT[Any]], prepend: bool = False, *, after: bool
+        self,
+        hooks: Sequence[EventHookCallbackT[EventT_co]],
+        *,
+        prepend: bool = False,
+        after: bool,
     ) -> None:
         add_hooks(self.hooks, self.after_hooks, hooks, prepend=prepend, after=after)
 
 
 @overload
-def event(callback: CallbackT[EventT], /) -> Includable[EventMeta[EventT]]: ...
+def event[E: Event](
+    callback: CallbackT[E],
+    /,
+    *,
+    event_type: type[E] | None = ...,
+) -> Includable[EventMeta[E]]: ...
 
 
 @overload
-def event(
-    *, event_type: type[EventT] | None
-) -> Callable[[CallbackT[EventT]], Includable[EventMeta[EventT]]]: ...
+def event[E: Event](
+    *,
+    event_type: type[E] | None,
+) -> Callable[[CallbackT[E]], Includable[EventMeta[E]]]: ...
 
 
-def event(
-    callback: CallbackT[EventT] | None = None, /, *, event_type: type[EventT] | None = None
-) -> Callable[[CallbackT[EventT]], Includable[EventMeta[EventT]]] | Includable[EventMeta[EventT]]:
+def event[E: Event](
+    callback: CallbackT[E] | None = None,
+    /,
+    *,
+    event_type: type[E] | None = None,
+) -> (
+    Callable[[CallbackT[E]], Includable[EventMeta[E]]]
+    | Includable[EventMeta[E]]
+):
     """
     Listen to an event. This function should be used instead of
     `hikari.GatewayBot.listen` whenever possible.
@@ -69,7 +84,7 @@ def event(
     to use type annotations.
     """
     if callback is None:
-        return partial(event, event_type=event_type)  # pyright: ignore
+        return partial(event, event_type=event_type)
 
     if not event_type:
         event_type = next(iter(get_type_hints(callback).values()))
@@ -78,24 +93,26 @@ def event(
         raise ValueError("`event_type` must be provided in the decorator or as a typehint")
 
     if not iscoroutinefunction(callback):
-        raise ValueError(f"`{callback.__name__}` must be an async function.")
+        raise ValueError(f"`{get_name(callback)}` must be an async function.")
 
-    def hook(includable: Includable[EventMeta[EventT]]) -> None:
+    def hook(includable: Includable[EventMeta[Event]]) -> None:
         if isinstance(includable.client.app, EventManagerAware):
             includable.client.app.event_manager.subscribe(
-                event_type=unwrap(event_type), callback=event_callback
+                event_type=unwrap(event_type),
+                callback=event_callback,
             )
         else:
             raise ValueError(
-                "Events can only be used with bots that implement `hikari.EventManagerAware`."
+                "Events can only be used with bots that implement `hikari.EventManagerAware`.",
             )
 
-    def on_remove(includable: Includable[EventMeta[EventT]]) -> None:
+    def on_remove(includable: Includable[EventMeta[Event]]) -> None:
         # if it's not `EventManagerAware`, the event could never have been
         # added in the first place.
         assert isinstance(includable.client.app, EventManagerAware)
         includable.client.app.event_manager.unsubscribe(
-            event_type=unwrap(event_type), callback=event_callback
+            event_type=unwrap(event_type),
+            callback=event_callback,
         )
 
     includable = Includable(
@@ -109,7 +126,7 @@ def event(
 
 
 def _event_callback(
-    self: Includable[EventMeta[Any]],
+    self: Includable[EventMeta[Event]],
 ) -> Callable[[Event], Coroutine[None, None, None]]:
     async def func(event: Event) -> None:
         try:

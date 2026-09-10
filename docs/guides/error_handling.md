@@ -11,17 +11,22 @@ This error will be handled with the [`@crescent.catch_command`][crescent.errors.
 This function takes an exception and [`crescent.Context`][crescent.context.Context] as an argument. All subclasses of the exception will be caught.
 
 ```python
+from crescent import options
+
 # Creating a new error class gives more control over what errors are handled.
 class MyError(Exception):
   ...
 
 @client.include
-@crescent.command
-async def my_command(ctx: crescent.Context, number: int):
-  # Lets raise an error if the number wasn't positive.
-  if number < 0:
-    raise MyError
-  await ctx.reply(str(number))
+@crescent.command(name="my-command")
+class MyCommand:
+    number = options.Integer("A number")
+
+    async def callback(self, ctx: crescent.Context) -> None:
+        # Lets raise an error if the number wasn't positive.
+        if self.number < 0:
+            raise MyError
+        await ctx.respond(str(self.number))
 
 
 # Handle the error

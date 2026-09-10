@@ -1,23 +1,21 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Sequence
 
 import hikari
-
 from crescent import LocaleBuilder
 
 try:
-    import i18n as i18n_  # type: ignore
+    import i18n as i18n_  # type: ignore[import-untyped]
 except ImportError:
     i18n_ = None
 
 
-__all__: Sequence[str] = ("i18n", "LocaleMap")
+__all__ = ("LocaleMap", "i18n")
 
 
 def _translate(key: str, *, locale: str | None = None) -> str:
-    return i18n_.t(key, locale=locale)  # type: ignore
+    return i18n_.t(key, locale=locale)  # type: ignore  # noqa: PGH003
 
 
 class i18n(LocaleBuilder):

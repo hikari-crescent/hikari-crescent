@@ -4,6 +4,7 @@ site_url: https://hikari-crescent.github.io/
 repo_url: https://github.com/hikari-crescent/hikari-crescent
 copyright: Copyright &copy; 2022 crescent maintainers
 edit_uri: edit/main/docs/
+strict: true
 theme:
   name: material
   icon:
@@ -95,7 +96,7 @@ plugins:
         python:
           paths: ["", "crescent/ext/"]
           import:
-            - https://docs.python.org/3.9/objects.inv
+            - https://docs.python.org/3.13/objects.inv
             - https://docs.hikari-py.dev/en/latest/objects.inv
           options:
             heading_level: 3
@@ -130,6 +131,7 @@ nav:
     - api_reference/index.md
     - api_reference/client.md
     - api_reference/commands.md
+    - api_reference/options.md
     - api_reference/context.md
     - api_reference/events.md
     - api_reference/errors.md

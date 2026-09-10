@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Generic, Sequence, TypeVar, overload
+from typing import TYPE_CHECKING, Any, overload
 
 from hikari import Event
 
@@ -9,13 +9,12 @@ from crescent.events import EventMeta
 from crescent.internal.app_command import AppCommandMeta
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from crescent.internal.includable import Includable
     from crescent.typedefs import CommandHookCallbackT, EventHookCallbackT
 
-IncludableT = TypeVar("IncludableT")
-EventT = TypeVar("EventT", bound=Event, contravariant=True)
-
-__all__: Sequence[str] = ("HookResult", "hook")
+__all__ = ("HookResult", "hook")
 
 
 @dataclass
@@ -36,13 +35,15 @@ def hook(*callbacks: CommandHookCallbackT, after: bool = False) -> _Hook[AppComm
 
 
 @overload
-def hook(
-    *callbacks: EventHookCallbackT[EventT], after: bool = False
-) -> _Hook[EventMeta[EventT]]: ...
+def hook[E: Event](
+    *callbacks: EventHookCallbackT[E],
+    after: bool = False,
+) -> _Hook[EventMeta[E]]: ...
 
 
-def hook(
-    *callbacks: CommandHookCallbackT | EventHookCallbackT[EventT], after: bool = False
+def hook[E: Event](
+    *callbacks: CommandHookCallbackT | EventHookCallbackT[E],
+    after: bool = False,
 ) -> _Hook[Any]:
     # TODO: Example for events
     """
@@ -63,45 +64,43 @@ def hook(
     Args:
         after: If true, run this hook after the command or event has completed.
     """
-    return _Hook(callbacks, after)
+    return _Hook(callbacks, after=after)
 
 
-class _Hook(Generic[IncludableT]):
-    def __init__(self, callbacks: Any, after: bool):
+class _Hook[T]:
+    def __init__(self, callbacks: Any, *, after: bool) -> None:
         self.callbacks = callbacks
         self.after = after
 
     @overload
     def __call__(
-        self: _Hook[AppCommandMeta], obj: Includable[AppCommandMeta]
+        self: _Hook[AppCommandMeta],
+        obj: Includable[AppCommandMeta],
     ) -> Includable[AppCommandMeta]: ...
 
     @overload
-    def __call__(
-        self: _Hook[EventMeta[EventT]], obj: Includable[EventMeta[EventT]]
-    ) -> Includable[EventMeta[EventT]]: ...
+    def __call__[E: Event](
+        self: _Hook[EventMeta[E]],
+        obj: Includable[EventMeta[E]],
+    ) -> Includable[EventMeta[E]]: ...
 
-    def __call__(self, obj: Includable[Any]) -> Includable[Any]:
-        if isinstance(obj.metadata, AppCommandMeta):
-            obj.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
-        elif isinstance(metadata := obj.metadata, EventMeta):
-            metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
-        else:
-            raise TypeError("Unsupported type, this should never happen.")
+    def __call__(self, obj: Includable[AppCommandMeta | EventMeta[Event]]) -> Includable[Any]:
+        obj.metadata.add_hooks(self.callbacks, prepend=True, after=self.after)
 
         return obj
 
 
 def add_hooks(
-    obj: Includable[Any],
+    obj: Includable[AppCommandMeta | EventMeta[Event]],
     command_hooks: Sequence[CommandHookCallbackT],
     command_after_hooks: Sequence[CommandHookCallbackT],
     event_hooks: Sequence[EventHookCallbackT[Event]],
     event_after_hooks: Sequence[EventHookCallbackT[Event]],
 ) -> None:
-    if isinstance(obj.metadata, AppCommandMeta):
-        obj.metadata.add_hooks(command_hooks, after=False)
-        obj.metadata.add_hooks(command_after_hooks, after=True)
-    elif isinstance(metadata := obj.metadata, EventMeta):
-        metadata.add_hooks(event_hooks, after=False)
-        metadata.add_hooks(event_after_hooks, after=True)
+    match obj.metadata:
+        case AppCommandMeta():
+            obj.metadata.add_hooks(command_hooks, after=False)
+            obj.metadata.add_hooks(command_after_hooks, after=True)
+        case EventMeta():
+            obj.metadata.add_hooks(event_hooks, after=False)
+            obj.metadata.add_hooks(event_after_hooks, after=True)

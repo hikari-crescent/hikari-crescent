@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Mapping, Sequence
+from typing import TYPE_CHECKING
 
-__all__: Sequence[str] = ("LocaleBuilder", "str_or_build_locale")
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+__all__ = ("LocaleBuilder", "str_or_build_locale")
 
 
 class LocaleBuilder(ABC):
@@ -19,7 +22,7 @@ class LocaleBuilder(ABC):
         language codes to strings.
 
         [Discord API Docs Localization.](https://discord.com/developers/docs/interactions/application-commands#localization)
-        """  # noqa: E501
+        """
 
     @property
     @abstractmethod
@@ -30,5 +33,4 @@ class LocaleBuilder(ABC):
 def str_or_build_locale(string_or_locale: str | LocaleBuilder) -> tuple[str, Mapping[str, str]]:
     if isinstance(string_or_locale, LocaleBuilder):
         return (string_or_locale.fallback, string_or_locale.build())
-    else:
-        return (string_or_locale, {})
+    return (string_or_locale, {})

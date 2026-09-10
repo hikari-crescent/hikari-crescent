@@ -1,7 +1,10 @@
-from hikari import GatewayBot, Snowflake, StartedEvent, RESTBot
+from __future__ import annotations
+
+from typing import Any
+
+from hikari import GatewayBot, RESTBot, Snowflake, StartedEvent
 
 from crescent import Client
-from typing import Any
 from crescent.internal.registry import CommandHandler
 
 

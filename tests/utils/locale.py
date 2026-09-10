@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
 
 from crescent import LocaleBuilder
 
-__all__: Sequence[str] = ("Locale",)
+__all__ = ("Locale",)
 
 
 @dataclass

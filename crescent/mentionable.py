@@ -4,14 +4,12 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Sequence
-
     from hikari import CommandInteraction, Role, User
 
-__all__: Sequence[str] = ("Mentionable",)
+__all__ = ("Mentionable",)
 
 
-@dataclass
+@dataclass(slots=True)
 class Mentionable:
     """
     Represent's discord's mentionable type. A mentionable can be a User or Role.
@@ -28,8 +26,6 @@ class Mentionable:
             role = mentionable.unwrap_role()
     ```
     """
-
-    __slots__ = ("user", "role")
 
     user: User | None
     role: Role | None
