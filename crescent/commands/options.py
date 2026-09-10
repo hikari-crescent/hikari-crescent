@@ -173,7 +173,7 @@ class ChoiceOption(ClassCommandOption[ChoiceT, C_co, D], Generic[ChoiceT, C_co, 
 
     def _gen_option(self, field: str) -> hikari.CommandOption:
         option = super(ChoiceOption, self)._gen_option(field)
-        option.choices = _build_choices(self.choices) if self.choices is not None else None
+        option.choices = _build_choices(self.choices) if self.choices else None
         option.autocomplete = self.autocomplete is not None
         return option
 
@@ -245,7 +245,7 @@ class Channel(ClassCommandOption[hikari.InteractionChannel, C_co, D], Generic[C_
 
     def _gen_option(self, field: str) -> hikari.CommandOption:
         option = super(Channel, self)._gen_option(field)
-        option.channel_types = self.channel_types
+        option.channel_types = list(self.channel_types) if self.channel_types else None
         return option
 
 

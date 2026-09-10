@@ -8,16 +8,16 @@ from crescent import command, options
 def test_option_types():
     @command(name="all-option-types")
     class AllOptionTypes:
-        text = options.String("text")
+        text = options.String("text", choices=[])
         integer = options.Integer("integer")
         boolean = options.Boolean("boolean")
         number = options.Float("number")
         user = options.User("user")
         role = options.Role("role")
         mentionable = options.Mentionable("mentionable")
-        channel = options.Channel("channel")
+        channel = options.Channel("channel", channel_types=[])
         channel_list = options.Channel(
-            "channel list", channel_types=[ChannelType.GUILD_TEXT, ChannelType.GUILD_VOICE]
+            "channel list", channel_types=(ChannelType.GUILD_TEXT, ChannelType.GUILD_VOICE)
         )
         attachment = options.Attachment("attachment")
 
@@ -38,6 +38,8 @@ def test_option_types():
     assert command_options[8].type == OptionType.CHANNEL
     assert command_options[9].type == OptionType.ATTACHMENT
     assert command_options[8].channel_types == [ChannelType.GUILD_TEXT, ChannelType.GUILD_VOICE]
+    assert command_options[0].choices is None
+    assert command_options[7].channel_types is None
 
 
 def test_string_length_limits():
