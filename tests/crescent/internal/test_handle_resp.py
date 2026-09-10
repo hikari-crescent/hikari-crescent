@@ -130,7 +130,7 @@ async def test_converter_ok() -> None:
             nonlocal arg_val
             arg_val = self.arg
 
-    await handle_resp(client, MockEvent("test_command", client, "1").interaction, None)
+    await handle_resp(client, MockEvent("test-command", client, "1").interaction, None)
 
     assert arg_val == 1
 
@@ -157,7 +157,7 @@ async def test_converter_error() -> None:
 
     client.include(command(test_command))
 
-    await handle_resp(client, MockEvent("test_command", client, "oops").interaction, None)
+    await handle_resp(client, MockEvent("test-command", client, "oops").interaction, None)
 
     assert arg_val is None
     assert exc is not None
@@ -183,7 +183,7 @@ async def test_handle_resp_slash_function():
         nonlocal command_was_run
         command_was_run = True
 
-    await handle_resp(client, MockEvent("test_command", client).interaction, None)
+    await handle_resp(client, MockEvent("test-command", client).interaction, None)
 
     assert command_was_run
 
@@ -201,7 +201,7 @@ async def test_handle_resp_slash_class():
             nonlocal command_was_run
             command_was_run = True
 
-    await handle_resp(client, MockEvent("test_command", client).interaction, None)
+    await handle_resp(client, MockEvent("test-command", client).interaction, None)
 
     assert command_was_run
 
@@ -235,7 +235,7 @@ async def test_hooks():
         command_was_run = True
         assert ctx.id is mock_id
 
-    await handle_resp(client, MockEvent("test_command", client).interaction, None)
+    await handle_resp(client, MockEvent("test-command", client).interaction, None)
 
     assert hook_was_run
     assert hook_no_annotations_was_run
@@ -262,7 +262,7 @@ async def test_handle_command_error():
         command_was_run = True
         raise Exception
 
-    await handle_resp(client, MockEvent("test_command", client).interaction, None)
+    await handle_resp(client, MockEvent("test-command", client).interaction, None)
 
     assert error_handler_was_run
     assert command_was_run
@@ -287,7 +287,7 @@ async def test_unhandled_command_error():
         command_was_run = True
         raise TypeError
 
-    await handle_resp(client, MockEvent("test_command", client).interaction, None)
+    await handle_resp(client, MockEvent("test-command", client).interaction, None)
 
     assert not error_handler_was_run
     assert command_was_run
@@ -398,7 +398,7 @@ async def test_rest_bot_command():
 
     await handle_resp(
         client,
-        MockEvent("test_command", client).interaction,
+        MockEvent("test-command", client).interaction,
         future=get_event_loop().create_future(),
     )
 
@@ -424,6 +424,6 @@ async def test_rest_future_is_set():
         print(ctx._rest_interaction_future.set_result)
         await ctx.followup("something")
 
-    await handle_resp(client, MockEvent("test_command", client).interaction, future=mock_future)
+    await handle_resp(client, MockEvent("test-command", client).interaction, future=mock_future)
 
     set_result.assert_called_once()

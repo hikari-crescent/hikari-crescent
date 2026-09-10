@@ -162,7 +162,6 @@ Crescent has 3 builtin extensions.
 These extensions can be installed with pip.
 
 - [crescent-ext-docstrings](https://github.com/hikari-crescent/crescent-ext-docstrings) - Lets you use docstrings to write descriptions for commands and options.
-- [crescent-ext-kebabify](https://github.com/hikari-crescent/crescent-ext-kebabify) - Turns your command names into kebabs!
 
 # Support
 You can ask questions in the `#crescent` channel in the [Hikari Discord server](https://discord.gg/Jx4cNGG). My Discord username is `lunarmagpie`.

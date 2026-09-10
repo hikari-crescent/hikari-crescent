@@ -1,7 +1,7 @@
 """Option classes for class commands.
 
 Options are declared as class attributes on a class command. The attribute name
-is used as the option name unless `name` is given.
+is converted to kebab-case for the option name unless `name` is given.
 
 ```python
 import crescent
@@ -27,6 +27,7 @@ import hikari
 
 from crescent.locale import LocaleBuilder, str_or_build_locale
 from crescent.mentionable import Mentionable as CrescentMentionable
+from crescent.utils import kebab_case
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Sequence
@@ -83,7 +84,7 @@ class ClassCommandOption(Generic[T, C_co, D]):
     """The description for the option."""
     _: KW_ONLY
     name: hikari.UndefinedOr[str | LocaleBuilder] = hikari.UNDEFINED
-    """The user-facing option name. Defaults to the attribute name."""
+    """The user-facing option name. Defaults to the attribute name in kebab-case."""
     default: hikari.UndefinedOr[D] = hikari.UNDEFINED
     """The value to use when the user does not fill out the option.
 
@@ -128,7 +129,9 @@ class ClassCommandOption(Generic[T, C_co, D]):
         raise NotImplementedError
 
     def _gen_option(self, field: str) -> hikari.CommandOption:
-        name, name_localizations = str_or_build_locale(self.name or field)
+        name, name_localizations = str_or_build_locale(
+            kebab_case(field) if self.name is hikari.UNDEFINED else self.name,
+        )
         description, description_localizations = str_or_build_locale(self.description)
 
         return hikari.CommandOption(

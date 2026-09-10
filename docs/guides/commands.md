@@ -75,6 +75,15 @@ So what's going on here? `@crescent.command` turns your class into a command obj
 to your bot with `@bot.include`, these are called Includables and we will go over
 them in more detail later.
 
+Command and option names are automatically converted to kebab-case. Underscores are replaced with
+hyphens, camel-case word boundaries are split by hyphen, and the whole name is lowered. Examples:
+
+- `MyCommand` -> `my-command`
+- `MyOption` -> `my-option`
+- `MakeHTTP2Request` -> `make-http2-request`
+
+Set `name=` to override.
+
 If you are new to Python, you may not have seen `ctx: crescent.Context` before. This
 is called a type hint. It tells the reader what type `ctx` is, and your IDE can use
 type hints to provide better autocomplete. Although they are not required, it is
@@ -101,7 +110,7 @@ from crescent import options
 @client.include
 @crescent.command(name="say")
 class SayCommand:
-    # The attribute name becomes the option name by default.
+    # The attribute name becomes the option name in kebab-case by default.
     word = options.String("The word to say")
 
     async def callback(self, ctx: crescent.Context) -> None:

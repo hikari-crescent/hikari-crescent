@@ -4,6 +4,7 @@ from crescent.utils.any_issubclass import any_issubclass
 from crescent.utils.gather_iter import gather_iter
 from crescent.utils.get_name import get_name
 from crescent.utils.hooks import add_hooks
+from crescent.utils.kebab_case import kebab_case
 from crescent.utils.options import map_or, unwrap
 from crescent.utils.tasks import create_task
 
@@ -13,6 +14,7 @@ __all__ = (
     "create_task",
     "gather_iter",
     "get_name",
+    "kebab_case",
     "map_or",
     "unwrap",
 )
