@@ -19,7 +19,7 @@ from hikari import (
 from crescent.commands.options import ChoiceOption, ClassCommandOption
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
-from crescent.utils import get_name
+from crescent.utils import get_name, kebab_case
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Iterable
@@ -152,8 +152,8 @@ def command(
 
     Args:
         name:
-            The name of this command. If not specified the function name will
-            be used.
+            The name of this command. Defaults to the class or function name
+            converted to kebab-case. Explicit names are used unchanged.
         description:
             The description of this command. If not specified the description
             will be set to "No Description".
@@ -220,7 +220,11 @@ def command(
         callback=callback_func,
         owner=callback,
         command_type=CommandType.SLASH,
-        name=name or get_name(callback, error="please provide a command name"),
+        name=(
+            name
+            if name is not None
+            else kebab_case(get_name(callback, error="please provide a command name"))
+        ),
         guild=guild,
         description=description or "No Description",
         options=options,
@@ -295,8 +299,8 @@ def user_command(
 
     Args:
         name:
-            The name of this command. If not specified the function name will
-            be used.
+            The name of this command. Defaults to the function name converted
+            to kebab-case. Explicit names are used unchanged.
         guild:
             The guild to register this command to. If not specified this
             command will be registered globally.
@@ -323,7 +327,11 @@ def user_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.USER,
-        name=name or get_name(callback, error="please provide a command name"),
+        name=(
+            name
+            if name is not None
+            else kebab_case(get_name(callback, error="please provide a command name"))
+        ),
         guild=guild,
         default_member_permissions=default_member_permissions,
         context_types=context_types,
@@ -385,8 +393,8 @@ def message_command(
 
     Args:
         name:
-            The name of this command. If not specified the function name will
-            be used.
+            The name of this command. Defaults to the function name converted
+            to kebab-case. Explicit names are used unchanged.
         guild:
             The guild to register this command to. If not specified this
             command will be registered globally.
@@ -413,7 +421,11 @@ def message_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.MESSAGE,
-        name=name or get_name(callback, error="please provide a command name"),
+        name=(
+            name
+            if name is not None
+            else kebab_case(get_name(callback, error="please provide a command name"))
+        ),
         guild=guild,
         default_member_permissions=default_member_permissions,
         context_types=context_types,

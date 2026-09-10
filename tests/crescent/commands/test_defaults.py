@@ -9,7 +9,7 @@ def test_defaults():
     @command
     async def test_command(ctx: Context): ...
 
-    assert test_command.metadata.app_command.name == "test_command"
+    assert test_command.metadata.app_command.name == "test-command"
     assert test_command.metadata.app_command.guild_id is None
     assert test_command.metadata.app_command.description == "No Description"
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
@@ -20,17 +20,17 @@ def test_user_command_defaults():
     @user_command
     async def test_command(ctx: Context, user: User): ...
 
-    assert test_command.metadata.app_command.name == "test_command"
+    assert test_command.metadata.app_command.name == "test-command"
     assert test_command.metadata.app_command.guild_id is None
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
     assert test_command.metadata.app_command.nsfw is None
 
 
 def test_message_command_defaults():
-    @user_command
-    async def test_command(ctx: Context, user: Message): ...
+    @message_command
+    async def test_command(ctx: Context, message: Message): ...
 
-    assert test_command.metadata.app_command.name == "test_command"
+    assert test_command.metadata.app_command.name == "test-command"
     assert test_command.metadata.app_command.guild_id is None
     assert test_command.metadata.app_command.default_member_permissions is UNDEFINED
     assert test_command.metadata.app_command.context_types is UNDEFINED
