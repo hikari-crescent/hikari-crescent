@@ -4,7 +4,7 @@ from asyncio import gather
 from collections import defaultdict
 from inspect import iscoroutinefunction
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from hikari import (
     UNDEFINED,
@@ -24,7 +24,7 @@ from crescent.exceptions import AlreadyRegisteredError
 from crescent.internal.app_command import AppCommand, AppCommandMeta, Unique
 from crescent.internal.includable import Includable
 from crescent.locale import LocaleBuilder, str_or_build_locale
-from crescent.utils import gather_iter, unwrap
+from crescent.utils import gather_iter, get_name, unwrap
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Iterable, Sequence
@@ -46,6 +46,7 @@ def _command_client_set_hook(self: Includable[AppCommandMeta]) -> None:
 
 
 def register_command(
+    *,
     owner: Any,
     callback: CommandCallbackT,
     command_type: CommandType,
@@ -61,7 +62,8 @@ def register_command(
     if autocomplete is None:
         autocomplete = {}
     if not iscoroutinefunction(callback):
-        raise ValueError(f"`{callback.__name__}` must be an async function.")
+        name = get_name(callback)
+        raise ValueError(f"`{name}` must be an async function.")
 
     includable: Includable[AppCommandMeta] = Includable(
         client_set_hooks=[_command_client_set_hook],
@@ -86,22 +88,21 @@ def register_command(
     return includable
 
 
-_E = TypeVar("_E", bound="Callable[..., Awaitable[Any]]")
-
-
-class ErrorHandler(Generic[_E]):
+class ErrorHandler[E: Callable[..., Awaitable[Any]]]:
     __slots__ = ("bot", "registry", "subclass_registry", "supports_custom_ctx")
 
     def __init__(self) -> None:
-        self.registry: dict[type[Exception], Includable[_E]] = {}
-        self.subclass_registry: dict[type[Exception], Includable[_E]] = {}
+        self.registry: dict[type[Exception], Includable[E]] = {}
+        self.subclass_registry: dict[type[Exception], Includable[E]] = {}
 
-    def register(self, includable: Includable[_E], exc: type[Exception]) -> None:
+    def register(self, includable: Includable[E], exc: type[Exception]) -> None:
         if reg_includable := self.registry.get(exc):
+            new_name = get_name(includable.metadata)
+            old_name = get_name(reg_includable.metadata)
+
             raise AlreadyRegisteredError(
-                f"`{includable.metadata.__name__}` can not catch `{exc.__name__}`."
-                f" `{exc.__name__}` is already registered to"
-                f" `{reg_includable.metadata.__name__}`.",
+                f"`{new_name}` cannot catch "
+                f"`{get_name(exc)}`, as it is already registered to `{old_name}`.",
             )
 
         self.registry[exc] = includable
@@ -338,7 +339,7 @@ class CommandHandler:
             await self._client.app.rest.set_application_commands(
                 application=self._application_id,
                 # The only method that is called has been implemented.
-                commands=commands,  # type: ignore[arg-type]
+                commands=commands,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
                 guild=guild,
             )
             if guild:

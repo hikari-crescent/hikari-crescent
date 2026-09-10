@@ -10,20 +10,20 @@ if TYPE_CHECKING:
 
     from crescent.client import Client
 
-T_contra = TypeVar("T_contra", contravariant=True)
+T_co = TypeVar("T_co", covariant=True)
 
 __all__ = ("Includable",)
 
 
 @dataclass
-class Includable(Generic[T_contra]):
-    metadata: T_contra
+class Includable(Generic[T_co]):
+    metadata: T_co  # type: ignore[misc]
 
     manager: Any | None = None
     _client: Client | None = None
 
-    client_set_hooks: list[Callable[[Includable[T_contra]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
-    plugin_unload_hooks: list[Callable[[Includable[T_contra]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    client_set_hooks: list[Callable[[Includable[T_co]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    plugin_unload_hooks: list[Callable[[Includable[T_co]], None]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     @property
     def client(self) -> Client:

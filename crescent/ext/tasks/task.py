@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import TimerHandle, get_running_loop
-from collections.abc import Awaitable, Callable
-from typing import TYPE_CHECKING, TypeVar
+from collections.abc import Callable, Coroutine
+from typing import TYPE_CHECKING, Any
 
 from crescent.exceptions import CrescentException
 from crescent.utils import create_task
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from crescent.client import Client
     from crescent.internal.includable import Includable
 
-TaskCallbackT = Callable[[], Awaitable[None]]
+TaskCallbackT = Callable[[], Coroutine[Any, Any, None]]
 
 __all__ = ("Task", "TaskCallbackT", "TaskError")
 
@@ -66,19 +66,16 @@ class Task(ABC):
         ...
 
     @staticmethod
-    def _link(includable: Includable[_TaskType]) -> None:
+    def _link(includable: Includable[Task]) -> None:
         """Sets hooks on Includable required for Task to function properly."""
         includable.client_set_hooks.append(_on_client_set)
         includable.plugin_unload_hooks.append(_unload)
 
 
-_TaskType = TypeVar("_TaskType", bound=Task)
-
-
-def _on_client_set(self: Includable[_TaskType]) -> None:
+def _on_client_set(self: Includable[Task]) -> None:
     self.metadata.client = self.client
     self.metadata.start()
 
 
-def _unload(self: Includable[_TaskType]) -> None:
+def _unload(self: Includable[Task]) -> None:
     self.metadata.stop()

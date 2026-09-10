@@ -19,6 +19,7 @@ from hikari import (
 from crescent.commands.options import ChoiceOption, ClassCommandOption
 from crescent.exceptions import ConverterExceptionMeta, ConverterExceptions
 from crescent.internal.registry import register_command
+from crescent.utils import get_name
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Iterable
@@ -96,6 +97,13 @@ def _class_command_callback(
 def command(
     callback: CommandCallbackT | type[ClassCommandProto],
     /,
+    *,
+    guild: Snowflakeish | None = ...,
+    name: str | LocaleBuilder | None = ...,
+    description: str | LocaleBuilder | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    context_types: UndefinedOr[Iterable[ApplicationContextType]] = ...,
+    nsfw: bool | None = ...,
 ) -> Includable[AppCommandMeta]: ...
 
 
@@ -170,7 +178,7 @@ def command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore[reportReturnType]
+        )
 
     autocomplete: dict[str, AutocompleteCallbackT[Any]] = {}
     options: list[CommandOption] = []
@@ -212,7 +220,7 @@ def command(
         callback=callback_func,
         owner=callback,
         command_type=CommandType.SLASH,
-        name=name or callback.__name__,
+        name=name or get_name(callback, error="please provide a command name"),
         guild=guild,
         description=description or "No Description",
         options=options,
@@ -234,7 +242,16 @@ def _kwargs_to_args_callback(
 
 
 @overload
-def user_command(callback: UserCommandCallbackT, /) -> Includable[AppCommandMeta]: ...
+def user_command(
+    callback: UserCommandCallbackT,
+    /,
+    *,
+    guild: Snowflakeish | None = ...,
+    name: str | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    context_types: UndefinedOr[list[ApplicationContextType]] = ...,
+    nsfw: bool | None = ...,
+) -> Includable[AppCommandMeta]: ...
 
 
 @overload
@@ -300,13 +317,13 @@ def user_command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore[reportReturnType]
+        )
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.USER,
-        name=name or callback.__name__,
+        name=name or get_name(callback, error="please provide a command name"),
         guild=guild,
         default_member_permissions=default_member_permissions,
         context_types=context_types,
@@ -315,7 +332,16 @@ def user_command(
 
 
 @overload
-def message_command(callback: MessageCommandCallbackT, /) -> Includable[AppCommandMeta]: ...
+def message_command(
+    callback: MessageCommandCallbackT,
+    /,
+    *,
+    guild: Snowflakeish | None = ...,
+    name: str | None = ...,
+    default_member_permissions: UndefinedType | int | Permissions = ...,
+    context_types: UndefinedOr[list[ApplicationContextType]] = ...,
+    nsfw: bool | None = ...,
+) -> Includable[AppCommandMeta]: ...
 
 
 @overload
@@ -381,13 +407,13 @@ def message_command(
             default_member_permissions=default_member_permissions,
             context_types=context_types,
             nsfw=nsfw,
-        )  # pyright: ignore[reportReturnType]
+        )
 
     return register_command(
         callback=_kwargs_to_args_callback(callback),
         owner=callback,
         command_type=CommandType.MESSAGE,
-        name=name or callback.__name__,
+        name=name or get_name(callback, error="please provide a command name"),
         guild=guild,
         default_member_permissions=default_member_permissions,
         context_types=context_types,

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from asyncio import get_event_loop
-from typing import List, cast
+from typing import cast
 from unittest.mock import AsyncMock, Mock
 
 import pytest
@@ -39,7 +39,7 @@ def MockChannel(client):
     )
 
 
-def MockEvent(name, client, arg: "str | None" = None):
+def MockEvent(name, client, arg: str | None = None):
     if arg:
         options = (
             CommandInteractionOption(name="arg", type=OptionType.STRING, value=arg, options=None),
@@ -140,7 +140,7 @@ async def test_converter_error() -> None:
     client = MockClient()
 
     arg_val = None
-    exc: "ConverterExceptions | None" = None
+    exc: ConverterExceptions | None = None
 
     @client.include
     @catch_command(ConverterExceptions)
@@ -311,7 +311,7 @@ async def test_handle_autocomplete_error():
 
     async def autocomplete_resp(
         ctx: Context, option: AutocompleteInteractionOption
-    ) -> List[CommandChoice]:
+    ) -> list[CommandChoice]:
         nonlocal autocomplete_was_run
         autocomplete_was_run = True
         raise Exception
@@ -353,7 +353,7 @@ async def test_unhandled_autocomplete_error():
 
     async def autocomplete_resp(
         ctx: Context, option: AutocompleteInteractionOption
-    ) -> List[CommandChoice]:
+    ) -> list[CommandChoice]:
         nonlocal autocomplete_was_run
         autocomplete_was_run = True
         raise TypeError

@@ -185,11 +185,11 @@ class Client:
         app.interaction_server.set_listener(
             CommandInteraction,
             self._on_rest_interaction,  # type: ignore[arg-type]
-        )
+        )  # ty: ignore[no-matching-overload]
         app.interaction_server.set_listener(
             AutocompleteInteraction,  # type: ignore[arg-type]
             self._on_rest_interaction,  # type: ignore[arg-type]
-        )
+        )  # ty: ignore[no-matching-overload]
 
     async def _on_rest_interaction(
         self,

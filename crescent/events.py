@@ -3,36 +3,34 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import partial
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, get_type_hints, overload
+from typing import TYPE_CHECKING, Generic, TypeVar, get_type_hints, overload
 
-from hikari import EventManagerAware
+from hikari import Event, EventManagerAware
 
 from crescent.internal.includable import Includable
-from crescent.utils import add_hooks
+from crescent.utils import add_hooks, get_name
 from crescent.utils.options import unwrap
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine, Sequence
 
-    from hikari import Event
     from hikari.api.event_manager import CallbackT
 
     from crescent.typedefs import EventHookCallbackT
 
-EventT_contra = TypeVar("EventT_contra", bound="Event", contravariant=True)
-
 __all__ = ("event",)
 
+EventT_co = TypeVar("EventT_co", bound="Event", covariant=True)
 
 @dataclass
-class EventMeta(Generic[EventT_contra]):
-    callback: CallbackT[EventT_contra]
-    hooks: list[EventHookCallbackT[EventT_contra]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
-    after_hooks: list[EventHookCallbackT[EventT_contra]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+class EventMeta(Generic[EventT_co]):
+    callback: CallbackT[EventT_co]
+    hooks: list[EventHookCallbackT[EventT_co]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
+    after_hooks: list[EventHookCallbackT[EventT_co]] = field(default_factory=list)  # pyright: ignore[reportUnknownVariableType]
 
     def add_hooks(
         self,
-        hooks: Sequence[EventHookCallbackT[Any]],
+        hooks: Sequence[EventHookCallbackT[EventT_co]],
         *,
         prepend: bool = False,
         after: bool,
@@ -41,24 +39,29 @@ class EventMeta(Generic[EventT_contra]):
 
 
 @overload
-def event(callback: CallbackT[EventT_contra], /) -> Includable[EventMeta[EventT_contra]]: ...
+def event[E: Event](
+    callback: CallbackT[E],
+    /,
+    *,
+    event_type: type[E] | None = ...,
+) -> Includable[EventMeta[E]]: ...
 
 
 @overload
-def event(
+def event[E: Event](
     *,
-    event_type: type[EventT_contra] | None,
-) -> Callable[[CallbackT[EventT_contra]], Includable[EventMeta[EventT_contra]]]: ...
+    event_type: type[E] | None,
+) -> Callable[[CallbackT[E]], Includable[EventMeta[E]]]: ...
 
 
-def event(
-    callback: CallbackT[EventT_contra] | None = None,
+def event[E: Event](
+    callback: CallbackT[E] | None = None,
     /,
     *,
-    event_type: type[EventT_contra] | None = None,
+    event_type: type[E] | None = None,
 ) -> (
-    Callable[[CallbackT[EventT_contra]], Includable[EventMeta[EventT_contra]]]
-    | Includable[EventMeta[EventT_contra]]
+    Callable[[CallbackT[E]], Includable[EventMeta[E]]]
+    | Includable[EventMeta[E]]
 ):
     """
     Listen to an event. This function should be used instead of
@@ -81,7 +84,7 @@ def event(
     to use type annotations.
     """
     if callback is None:
-        return partial(event, event_type=event_type)  # pyright: ignore[reportReturnType]
+        return partial(event, event_type=event_type)
 
     if not event_type:
         event_type = next(iter(get_type_hints(callback).values()))
@@ -90,9 +93,9 @@ def event(
         raise ValueError("`event_type` must be provided in the decorator or as a typehint")
 
     if not iscoroutinefunction(callback):
-        raise ValueError(f"`{callback.__name__}` must be an async function.")
+        raise ValueError(f"`{get_name(callback)}` must be an async function.")
 
-    def hook(includable: Includable[EventMeta[EventT_contra]]) -> None:
+    def hook(includable: Includable[EventMeta[Event]]) -> None:
         if isinstance(includable.client.app, EventManagerAware):
             includable.client.app.event_manager.subscribe(
                 event_type=unwrap(event_type),
@@ -103,7 +106,7 @@ def event(
                 "Events can only be used with bots that implement `hikari.EventManagerAware`.",
             )
 
-    def on_remove(includable: Includable[EventMeta[EventT_contra]]) -> None:
+    def on_remove(includable: Includable[EventMeta[Event]]) -> None:
         # if it's not `EventManagerAware`, the event could never have been
         # added in the first place.
         assert isinstance(includable.client.app, EventManagerAware)
@@ -123,7 +126,7 @@ def event(
 
 
 def _event_callback(
-    self: Includable[EventMeta[Any]],
+    self: Includable[EventMeta[Event]],
 ) -> Callable[[Event], Coroutine[None, None, None]]:
     async def func(event: Event) -> None:
         try:

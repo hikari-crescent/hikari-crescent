@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 import attrs
 from hikari import OptionType, ResolvedOptionData, Snowflake
 
@@ -10,7 +8,7 @@ from crescent.internal.handle_resp import _extract_value
 
 @attrs.define
 class MockInteraction:
-    resolved: Optional[ResolvedOptionData]
+    resolved: ResolvedOptionData | None
 
 
 @attrs.define

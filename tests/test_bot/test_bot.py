@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import os
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Sequence
 
 import dotenv
 import hikari
